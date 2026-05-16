@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface-container-highest: #e3e1e9;
+  --color-surface: #faf8ff;
+  --color-tertiary-container: #6e2c00;
+  --color-surface-tint: #4059aa;
+  --color-on-primary-fixed: #00164e;
+  --color-secondary-container: #ffc329;
+  --color-tertiary: #4b1c00;
+  --color-on-surface: #1a1b21;
+  --color-on-primary-container: #90a8ff;
+  --color-on-secondary-container: #6f5100;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-dim: #dad9e1;
+  --color-surface-container-high: #e9e7ef;
+  --color-inverse-surface: #2f3036;
+  --color-on-secondary-fixed-variant: #5c4300;
+  --color-on-error-container: #93000a;
+  --color-inverse-primary: #b6c4ff;
+  --color-accent-dark: #F59E0B;
+  --color-secondary-fixed-dim: #f9bd22;
+  --color-surface-variant: #e3e1e9;
+  --color-surface-container: #eeedf4;
+  --color-on-primary-fixed-variant: #264191;
+  --color-success: #10B981;
+  --color-on-secondary: #ffffff;
+  --color-outline: #757682;
+  --color-success-dark: #34D399;
+  --color-primary-fixed-dim: #b6c4ff;
+  --color-tertiary-fixed-dim: #ffb691;
+  --color-on-secondary-fixed: #261a00;
+  --color-inverse-on-surface: #f1f0f7;
+  --color-on-tertiary: #ffffff;
+  --color-primary-fixed: #dce1ff;
+  --color-on-tertiary-fixed: #341100;
+  --color-secondary: #795900;
+  --color-surface-container-low: #f4f3fa;
+  --color-primary: #00236f;
+  --color-on-background: #1a1b21;
+  --color-on-surface-variant: #444651;
+  --color-primary-dark: #3B82F6;
+  --color-grouped-bg-dark: #1C1C1E;
+  --color-secondary-fixed: #ffdf9f;
+  --color-background: #faf8ff;
+  --color-outline-variant: #c5c5d3;
+  --color-error: #ba1a1a;
+  --color-primary-container: #1e3a8a;
+  --color-on-primary: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-grouped-bg-light: #F2F2F7;
+  --color-on-error: #ffffff;
+  --color-surface-bright: #faf8ff;
+  --color-on-tertiary-fixed-variant: #773205;
+  --color-tertiary-fixed: #ffdbcb;
+  --color-on-tertiary-container: #f39461;
+
+  --font-footnote: "Inter", sans-serif;
+  --font-label-caps: "Inter", sans-serif;
+  --font-headline: "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-headline-large: "Inter", sans-serif;
+  --font-headline-large-mobile: "Inter", sans-serif;
+
+  --radius-default: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+
+  --spacing-safe-area-inset: 16px;
+  --spacing-gutter: 12px;
+  --spacing-stack-gap: 8px;
+  --spacing-section-margin: 20px;
+}
+
+/* Base resets and defaults */
+@layer base {
+  body {
+    @apply bg-grouped-bg-light text-on-background antialiased;
+    min-height: max(884px, 100dvh);
+  }
+}
+
+@layer utilities {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+}

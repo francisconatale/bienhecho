@@ -25,7 +25,25 @@ Un **gestor de presupuestos digital** diseñado para profesionales independiente
 
 ---
 
-## 2. OBJETIVO Y SCOPE DEL MVP
+## 2. IDENTIDAD DE MARCA Y VOZ
+
+### Propósito (Brand Purpose)
+Dignificar y simplificar el trabajo administrativo de los profesionales de oficio, devolviéndoles tiempo para lo que realmente saben hacer.
+
+### Valores del Proyecto
+- **Pragmatismo**: Soluciones directas que funcionan en el momento.
+- **Cercanía**: Soporte humano y lenguaje de igual a igual.
+- **Claridad**: Cero tecnicismos innecesarios.
+- **Orgullo del Oficio**: Respeto total por el trabajo manual y técnico.
+
+### Tono de Voz
+- **Personalidad**: Práctica, honesta, directa y laburadora. Como un colega que te da un buen consejo.
+- **Palabras a usar**: Hacer el presupuesto, mandar el PDF, cobrar, tus clientes, fácil, en el acto.
+- **Palabras a evitar**: Transformación digital, sinergia, SaaS, ecosistema, disrupción.
+
+---
+
+## 3. OBJETIVO Y SCOPE DEL MVP
 
 ### Objetivo principal
 Lanzar una versión funcional en **1-2 meses** que permita a un usuario:
