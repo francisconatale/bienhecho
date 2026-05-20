@@ -1,6 +1,7 @@
 "use client";
 
 import { LayoutDashboard, Users, Settings } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 interface NavItemProps {
@@ -16,7 +17,7 @@ function NavItem({ icon, label, href, active }: NavItemProps) {
     : "text-on-surface-variant/60 hover:text-on-surface";
 
   return (
-    <a
+    <Link
       className={`flex flex-col items-center justify-center px-4 py-2 transition-all ${activeClasses}`}
       href={href}
     >
@@ -24,7 +25,7 @@ function NavItem({ icon, label, href, active }: NavItemProps) {
         {icon}
       </div>
       <span className="text-[10px] font-bold uppercase tracking-tighter">{label}</span>
-    </a>
+    </Link>
   );
 }
 

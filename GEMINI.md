@@ -101,7 +101,6 @@ Cada página **siempre** sigue esta estructura:
 // app/mi-ruta/page.tsx
 import { Header } from "@/components/layout/header";
 import { MiContent } from "./components/mi-content";
-import { BottomNav } from "@/components/layout/bottom-nav";
 
 export default function MiPage() {
   return (
@@ -110,7 +109,6 @@ export default function MiPage() {
       <main className="flex-1 px-4 py-6 space-y-6 mt-20 pb-24 max-w-3xl mx-auto w-full">
         <MiContent />
       </main>
-      <BottomNav />
     </>
   );
 }
@@ -118,7 +116,7 @@ export default function MiPage() {
 
 ### Reglas de composición:
 - El `<main>` **siempre** tiene: `flex-1 px-4 py-6 space-y-6 mt-20 pb-24 max-w-3xl mx-auto w-full`.
-- `mt-20` para el Header fijo y `pb-24` para el BottomNav fijo.
+- `mt-20` para el Header fijo y `pb-24` para el BottomNav fijo (que reside en el `RootLayout`).
 - Invocar el componente `Header` directamente en la página.
 - Metadatos en el `page.tsx` de cada ruta.
 
@@ -187,6 +185,38 @@ Usar componentes centralizados:
 - **Zod** para los esquemas de validación.
 - Extraer campos de formulario a componentes reutilizables.
 - Mantener la lógica de envío en custom hooks.
+
+---
+
+## Listas e Items (Generic Components)
+
+Para mantener la consistencia en el diseño de listas, se utilizan los componentes genéricos en `src/components/ui/`.
+
+```tsx
+// Ejemplo de uso
+import { ListGroup } from "@/components/ui/list-group";
+import { ListItem } from "@/components/ui/list-item";
+
+<ListGroup>
+  {items.map((item) => (
+    <ListItem
+      key={item.id}
+      icon={item.name.charAt(0)}
+      title={item.name}
+      subtitle={item.category}
+      onClick={() => handleSelect(item)}
+      trailing={<StatusBadge status={item.status} />}
+    />
+  ))}
+</ListGroup>
+```
+
+### Reglas de Listas:
+- **`ListGroup`**: Contenedor decorativo que maneja bordes, radio (`rounded-2xl`) y sombras.
+- **`ListItem`**: Componente atómico para cada fila.
+  - Acepta `icon`, `title`, `subtitle`, `trailing`, `onClick` y `href`.
+  - Si tiene `onClick` o `href`, muestra automáticamente un chevron de navegación.
+  - El "action" (onClick/href) se pasa como prop para hacerlo genérico y reutilizable.
 
 ---
 

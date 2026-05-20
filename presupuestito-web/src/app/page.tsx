@@ -3,7 +3,6 @@ import { Header } from "@/components/layout/header";
 import { SummarySection } from "@/app/(dashboard)/components/summary-section";
 import { QuickActions } from "@/app/(dashboard)/components/quick-actions";
 import { RecentActivity } from "@/app/(dashboard)/components/recent-activity";
-import { BottomNav } from "@/components/layout/bottom-nav";
 
 export default function DashboardPage() {
   return (
@@ -33,8 +32,6 @@ export default function DashboardPage() {
         <QuickActions />
         <RecentActivity />
       </main>
-
-      <BottomNav />
     </>
   );
 }

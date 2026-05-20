@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/layout/header";
 import { EditarPerfilContent } from "@/app/ajustes/perfil/components/content";
-import { BottomNav } from "@/components/layout/bottom-nav";
 
 export const metadata: Metadata = {
   title: "Presupuestito - Editar Perfil",
@@ -35,8 +34,6 @@ export default function EditarPerfilPage() {
       <main className="flex-1 px-4 py-6 space-y-6 mt-20 pb-24 max-w-3xl mx-auto w-full">
         <EditarPerfilContent />
       </main>
-
-      <BottomNav />
     </>
   );
 }

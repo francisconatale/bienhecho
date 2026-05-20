@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { PlusCircle } from "lucide-react";
 import { Header } from "@/components/layout/header";
-import { ClientsContent } from "@/app/clientes/components/content";
-import { BottomNav } from "@/components/layout/bottom-nav";
+import { ClientList } from "./components/client-list";
 
 export const metadata: Metadata = {
   title: "Presupuestito - Clientes",
@@ -25,10 +24,8 @@ export default function ClientesPage() {
       />
 
       <main className="flex-1 px-4 py-6 space-y-6 mt-20 pb-24 max-w-3xl mx-auto w-full">
-        <ClientsContent />
+        <ClientList />
       </main>
-
-      <BottomNav />
     </>
   );
 }

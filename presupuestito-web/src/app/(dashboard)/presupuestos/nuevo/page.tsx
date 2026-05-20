@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Metadata } from "next";
 import { Header } from "@/components/layout/header";
-import { BottomNav } from "@/components/layout/bottom-nav";
 import { ClientSelector } from "./components/client-selector";
 import { ConceptList } from "./components/concept-list";
 import { TotalsSummary } from "./components/totals-summary";
@@ -44,7 +43,6 @@ export default function NuevoPresupuestoPage() {
         />
         <NotesField />
       </main>
-      <BottomNav />
     </>
   );
 }
