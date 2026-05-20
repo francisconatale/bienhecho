@@ -1,4 +1,5 @@
 import { ChevronRight } from "lucide-react";
+import { ListItem } from "@/components/ui/list-item";
 
 type ClientStatus = "Activo" | "Pendiente" | "Inactivo";
 
@@ -9,12 +10,10 @@ export interface Client {
   status: ClientStatus;
 }
 
-import { ListItem } from "@/components/ui/list-item";
-
 const STATUS_CONFIG: Record<ClientStatus, { label: string; classes: string }> = {
-  Activo: { label: "Activo", classes: "text-success-dark bg-success/10" },
-  Pendiente: { label: "Pendiente", classes: "text-on-error-container bg-error-container" },
-  Inactivo: { label: "Inactivo", classes: "text-on-surface-variant bg-surface-container-highest" },
+  Activo: { label: "Activo", classes: "text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-400/10 border border-emerald-200/50 dark:border-emerald-400/20" },
+  Pendiente: { label: "Pendiente", classes: "text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-400/10 border border-amber-200/50 dark:border-amber-400/20" },
+  Inactivo: { label: "Inactivo", classes: "text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-white/5 border border-gray-200/50 dark:border-white/10" },
 };
 
 interface ClientRowProps {
@@ -31,7 +30,7 @@ export function ClientRow({ client, onClick }: ClientRowProps) {
       subtitle={client.category}
       onClick={onClick}
       trailing={
-        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide ${status.classes}`}>
+        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide ${status.classes}`}>
           {status.label}
         </span>
       }
