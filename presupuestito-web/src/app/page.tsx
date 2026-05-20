@@ -1,37 +1,37 @@
-import { CircleUserRound, PlusCircle } from "lucide-react";
-import { Header } from "@/components/layout/header";
-import { SummarySection } from "@/app/(dashboard)/components/summary-section";
-import { QuickActions } from "@/app/(dashboard)/components/quick-actions";
+import { Metadata } from "next";
+import Link from "next/link";
+import { PlusCircle } from "lucide-react";
+import { DashboardHero } from "@/app/(dashboard)/components/dashboard-hero";
 import { RecentActivity } from "@/app/(dashboard)/components/recent-activity";
+
+export const metadata: Metadata = {
+  title: "Presupuestito - Dashboard",
+  description: "Gestioná tus presupuestos y clientes desde un solo lugar",
+};
 
 export default function DashboardPage() {
   return (
-    <>
-      <Header
-        title="Presupuestito"
-        leftAction={
-          <button
-            aria-label="Profile"
-            className="text-primary p-2 -ml-2 rounded-full hover:bg-surface-variant transition-colors"
-          >
-            <CircleUserRound className="w-8 h-8" strokeWidth={1.5} />
-          </button>
-        }
-        rightAction={
-          <button
-            aria-label="Add"
-            className="text-primary p-2 -mr-2 rounded-full hover:bg-surface-variant transition-colors"
-          >
-            <PlusCircle className="w-8 h-8" strokeWidth={1.5} />
-          </button>
-        }
-      />
+    <main className="flex-1 pb-24 max-w-3xl mx-auto w-full">
+      <DashboardHero name="Francisco" activeBudgets={12} totalPending="$4,500" />
 
-      <main className="flex-1 px-4 py-6 space-y-6 mt-20 pb-24 max-w-3xl mx-auto w-full">
-        <SummarySection />
-        <QuickActions />
+      {/* Primary Actions Area */}
+      <div className="px-5 mt-8 mb-6">
+        <Link href="/presupuestos/nuevo" className="block w-full">
+          <button
+            className="w-full h-14 rounded-full flex items-center justify-center gap-2 font-bold text-white text-[15px] bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#1E40AF] dark:hover:bg-[#1E3A8A] active:scale-[0.98] transition-all"
+            style={{
+              boxShadow: '0 8px 24px -6px rgba(30,64,175,0.5)' // Sombra basada en blue-800
+            }}
+          >
+            <PlusCircle className="w-[22px] h-[22px]" strokeWidth={2} />
+            Crear Nuevo Presupuesto
+          </button>
+        </Link>
+      </div>
+
+      <div className="space-y-6">
         <RecentActivity />
-      </main>
-    </>
+      </div>
+    </main>
   );
 }
