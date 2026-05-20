@@ -17,12 +17,12 @@ export function DashboardHero({
     <div className="relative w-full">
       {/* Aurora Background (difuso, inmersivo, sin cortes secos) */}
       <div className="absolute top-0 left-0 right-0 h-[500px] pointer-events-none overflow-hidden"
-           style={{ zIndex: -1, WebkitMaskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)' }}>
-        
+        style={{ zIndex: -1, WebkitMaskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)' }}>
+
         {/* Light Mode Blobs */}
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/30 blur-[100px] rounded-full -translate-y-1/4 translate-x-1/4 dark:hidden" />
         <div className="absolute top-[100px] left-[-100px] w-[350px] h-[350px] bg-indigo-500/20 blur-[120px] rounded-full dark:hidden" />
-        
+
         {/* Dark Mode Blobs (Azul/Índigo original respetado, pero en estilo Aurora) */}
         <div className="hidden dark:block absolute top-[-50px] right-[-50px] w-[500px] h-[500px] bg-[#3B82F6]/25 blur-[120px] rounded-full" />
         <div className="hidden dark:block absolute top-[150px] left-[-150px] w-[400px] h-[400px] bg-[#1E3A8A]/40 blur-[130px] rounded-full" />
