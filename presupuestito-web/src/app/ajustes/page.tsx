@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { AjustesHeader } from "../components/ajustes-header";
-import { AjustesContent } from "../components/ajustes-content";
-import { BottomNav } from "../components/bottom-nav";
+import { AjustesHeader } from "@/app/ajustes/components/header";
+import { AjustesContent } from "@/app/ajustes/components/content";
+import { BottomNav } from "@/components/layout/bottom-nav";
 
 export const metadata: Metadata = {
   title: "Presupuestito - Ajustes",

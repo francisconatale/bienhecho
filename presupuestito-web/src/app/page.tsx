@@ -1,8 +1,8 @@
-import { DashboardHeader } from "./components/dashboard-header";
-import { SummarySection } from "./components/summary-section";
-import { QuickActions } from "./components/quick-actions";
-import { RecentActivity } from "./components/recent-activity";
-import { BottomNav } from "./components/bottom-nav";
+import { DashboardHeader } from "@/app/(dashboard)/components/dashboard-header";
+import { SummarySection } from "@/app/(dashboard)/components/summary-section";
+import { QuickActions } from "@/app/(dashboard)/components/quick-actions";
+import { RecentActivity } from "@/app/(dashboard)/components/recent-activity";
+import { BottomNav } from "@/components/layout/bottom-nav";
 
 export default function DashboardPage() {
   return (

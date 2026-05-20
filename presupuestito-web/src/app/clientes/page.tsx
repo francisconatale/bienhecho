@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { ClientsHeader } from "../components/clients-header";
-import { ClientsContent } from "../components/clients-content";
-import { BottomNav } from "../components/bottom-nav";
+import { ClientsHeader } from "@/app/clientes/components/header";
+import { ClientsContent } from "@/app/clientes/components/content";
+import { BottomNav } from "@/components/layout/bottom-nav";
 
 export const metadata: Metadata = {
   title: "Presupuestito - Clientes",
