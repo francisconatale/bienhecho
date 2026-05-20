@@ -14,7 +14,7 @@ const clientSchema = z.object({
 
 export type ClientFormValues = z.infer<typeof clientSchema>;
 
-export function useClientForm() {
+export function useClientForm(onSuccess?: (clientId: string) => void) {
   const router = useRouter();
   
   const form = useForm<ClientFormValues>({
@@ -30,7 +30,13 @@ export function useClientForm() {
   const onSubmit = (data: ClientFormValues) => {
     console.log("Nuevo cliente:", data);
     // Simular guardado
-    router.push("/clientes");
+    const newClientId = "new-client-id-" + Math.random().toString(36).substr(2, 9);
+    
+    if (onSuccess) {
+      onSuccess(newClientId);
+    } else {
+      router.push("/clientes");
+    }
   };
 
   return {

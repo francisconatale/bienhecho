@@ -2,8 +2,12 @@
 
 import { useClientForm } from "../hooks/use-client-form";
 
-export function ClientForm() {
-  const { form, onSubmit, isLoading } = useClientForm();
+interface ClientFormProps {
+  onSuccess?: (clientId: string) => void;
+}
+
+export function ClientForm({ onSuccess }: ClientFormProps) {
+  const { form, onSubmit, isLoading } = useClientForm(onSuccess);
   const { register, formState: { errors } } = form;
 
   return (
