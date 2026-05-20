@@ -28,7 +28,7 @@ export function ListItem({
   const content = (
     <>
       {icon && (
-        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
+        <div className="w-11 h-11 rounded-[16px] bg-blue-100 dark:bg-[#3B82F6]/20 flex items-center justify-center text-blue-600 dark:text-[#60A5FA] font-bold text-lg shrink-0">
           {icon}
         </div>
       )}
@@ -48,7 +48,7 @@ export function ListItem({
     </>
   );
 
-  const baseClasses = `w-full flex items-center gap-3 px-4 py-3 border-b border-outline-variant/10 last:border-0 hover:bg-surface-variant/30 transition-colors text-left group ${className}`;
+  const baseClasses = `w-full flex items-center gap-4 px-5 py-4 border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 hover:bg-black/5 dark:hover:bg-white/[0.03] transition-all duration-300 text-left group ${className}`;
 
   if (href) {
     return (
