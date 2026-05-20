@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Search, FileText, Wallet } from "lucide-react";
+import { FileText, Wallet } from "lucide-react";
 
 interface DashboardHeroProps {
   name?: string;
@@ -9,7 +9,7 @@ interface DashboardHeroProps {
 }
 
 export function DashboardHero({
-  name = "Diego",
+  name = "Francisco",
   activeBudgets = 12,
   totalPending = "$4,500",
 }: DashboardHeroProps) {
@@ -29,23 +29,7 @@ export function DashboardHero({
       </div>
 
       {/* Main Foreground Content */}
-      <div className="relative pt-6 px-5">
-        {/* Header Bar */}
-        <div className="flex items-center justify-between mb-8">
-          <button
-            aria-label="Perfil"
-            className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/[0.03] backdrop-blur-3xl flex items-center justify-center border border-black/[0.05] dark:border-white/[0.05] hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
-          >
-            <User className="w-5 h-5 text-gray-800 dark:text-white" />
-          </button>
-          <button
-            aria-label="Buscar"
-            className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/[0.03] backdrop-blur-3xl flex items-center justify-center border border-black/[0.05] dark:border-white/[0.05] hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
-          >
-            <Search className="w-5 h-5 text-gray-800 dark:text-white" strokeWidth={2} />
-          </button>
-        </div>
-
+      <div className="relative pt-16 px-5">
         {/* Título */}
         <div className="mb-10 px-2">
           <h1 className="text-[38px] leading-tight font-extrabold text-gray-900 dark:text-white tracking-tight">
