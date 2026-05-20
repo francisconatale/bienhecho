@@ -13,18 +13,19 @@ interface NavItemProps {
 
 function NavItem({ icon, label, href, active }: NavItemProps) {
   const activeClasses = active
-    ? "text-primary"
-    : "text-on-surface-variant/60 hover:text-on-surface";
+    ? "text-blue-600 dark:text-blue-400"
+    : "text-gray-400 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-300";
 
   return (
     <Link
-      className={`flex flex-col items-center justify-center px-4 py-2 transition-all ${activeClasses}`}
+      className={`flex flex-col items-center justify-center p-2 transition-all ${activeClasses}`}
       href={href}
     >
-      <div className={`${active ? "bg-primary/10" : ""} rounded-2xl p-2 mb-1`}>
+      <div 
+        className={`${active ? "bg-blue-100 dark:bg-[#3B82F6]/20 border border-blue-200/50 dark:border-white/5" : "bg-transparent border border-transparent"} rounded-[16px] p-2.5 transition-all duration-300`}
+      >
         {icon}
       </div>
-      <span className="text-[10px] font-bold uppercase tracking-tighter">{label}</span>
     </Link>
   );
 }
@@ -33,9 +34,9 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 pt-2 pb-safe md:hidden bg-surface/90 dark:bg-surface-dim/90 backdrop-blur-lg border-t border-outline-variant/10 rounded-t-[24px] shadow-2xl">
+    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-sm z-50 flex justify-between items-center px-4 py-2.5 md:hidden bg-white/95 dark:bg-[#1A1C20]/90 backdrop-blur-3xl border border-gray-200/50 dark:border-white/[0.08] rounded-full shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]">
       <NavItem
-        icon={<LayoutDashboard className="w-6 h-6" strokeWidth={2.5} />}
+        icon={<LayoutDashboard className="w-6 h-6" strokeWidth={2} />}
         label="Dashboard"
         href="/"
         active={pathname === "/"}
