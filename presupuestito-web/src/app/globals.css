@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-surface-container-highest: #e3e1e9;
   --color-surface: #faf8ff;
@@ -75,8 +77,64 @@
 /* Base resets and defaults */
 @layer base {
   body {
-    @apply bg-grouped-bg-light text-on-background antialiased;
+    @apply bg-grouped-bg-light text-on-background antialiased transition-colors duration-200;
     min-height: max(884px, 100dvh);
+  }
+
+  html.dark, :root.dark {
+    --color-surface-container-highest: #2d2f39;
+    --color-surface: #1e1f26;
+    --color-tertiary-container: #471a00;
+    --color-surface-tint: #b6c4ff;
+    --color-on-primary-fixed: #dce1ff;
+    --color-secondary-container: #795900;
+    --color-tertiary: #ffdbcb;
+    --color-on-surface: #e3e1e9;
+    --color-on-primary-container: #dce1ff;
+    --color-on-secondary-container: #ffdf9f;
+    --color-surface-container-lowest: #0f0f12;
+    --color-surface-dim: #151518;
+    --color-surface-container-high: #24252f;
+    --color-inverse-surface: #faf8ff;
+    --color-on-secondary-fixed-variant: #ffdf9f;
+    --color-on-error-container: #ffdad6;
+    --color-inverse-primary: #00236f;
+    --color-accent-dark: #fbbf24;
+    --color-secondary-fixed-dim: #f9bd22;
+    --color-surface-variant: #2d2f39;
+    --color-surface-container: #1e1f26;
+    --color-on-primary-fixed-variant: #b6c4ff;
+    --color-success: #10b981;
+    --color-on-secondary: #000000;
+    --color-outline: #8f909c;
+    --color-success-dark: #34d399;
+    --color-primary-fixed-dim: #b6c4ff;
+    --color-tertiary-fixed-dim: #ffb691;
+    --color-on-secondary-fixed: #000000;
+    --color-inverse-on-surface: #1a1b21;
+    --color-on-tertiary: #000000;
+    --color-primary-fixed: #264191;
+    --color-on-tertiary-fixed: #000000;
+    --color-secondary: #ffc329;
+    --color-surface-container-low: #17181e;
+    --color-primary: #b6c4ff;
+    --color-on-background: #e3e1e9;
+    --color-on-surface-variant: #c5c5d3;
+    --color-primary-dark: #60a5fa;
+    --color-grouped-bg-dark: #121214;
+    --color-secondary-fixed: #ffdf9f;
+    --color-background: #121214;
+    --color-outline-variant: #444651;
+    --color-error: #ffb4ab;
+    --color-primary-container: #264191;
+    --color-on-primary: #00236f;
+    --color-error-container: #93000a;
+    --color-grouped-bg-light: #121214;
+    --color-on-error: #690005;
+    --color-surface-bright: #1c1d24;
+    --color-on-tertiary-fixed-variant: #ffb691;
+    --color-tertiary-fixed: #ffdbcb;
+    --color-on-tertiary-container: #ffdbcb;
   }
 }
 

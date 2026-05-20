@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useTheme } from "../../components/layout/theme-provider";
 import {
   ChevronRight,
   Star,
@@ -132,7 +132,7 @@ function Row(props: RowProps) {
 
 // ─── Main Component ──────────────────────────────────────────
 export function AjustesContent() {
-  const [darkMode, setDarkMode] = useState(false);
+  const { darkMode, setDarkMode } = useTheme();
 
   return (
     <>
