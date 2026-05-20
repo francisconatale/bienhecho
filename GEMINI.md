@@ -124,6 +124,56 @@ export default function MiPage() {
 
 ---
 
+## Anti-patrón: NO usar `content.tsx` como wrapper monolítico
+
+**Decisión**: No crear un archivo `content.tsx` genérico que agrupe todo el contenido de una página. Es un indirection innecesaria que no aporta valor.
+
+**❌ Incorrecto — wrapper vacío:**
+```tsx
+// page.tsx
+import { NuevoPresupuestoContent } from "./components/content";
+
+<main ...>
+  <NuevoPresupuestoContent /> {/* ¿Qué hay adentro? Hay que ir a verlo */}
+</main>
+```
+
+**✅ Correcto — composición directa de componentes con responsabilidad única:**
+```tsx
+// page.tsx
+import { ClientSelector } from "./components/client-selector";
+import { ConceptList } from "./components/concept-list";
+import { TotalsSummary } from "./components/totals-summary";
+import { NotesField } from "./components/notes-field";
+
+<main ...>
+  <ClientSelector />       {/* Sección: selector de cliente */}
+  <ConceptList />          {/* Sección: lista de conceptos */}
+  <TotalsSummary ... />    {/* Sección: subtotal/iva/total */}
+  <NotesField />           {/* Sección: notas del presupuesto */}
+</main>
+```
+
+### Estructura de componentes por feature:
+```
+mi-ruta/
+├── page.tsx                  ← composición pura (Header + main + BottomNav)
+└── components/
+    ├── client-selector.tsx   ← organism: sección con su lógica propia
+    ├── concept-item.tsx      ← atom: fila reutilizable
+    ├── concept-list.tsx      ← organism: lista + botón añadir
+    ├── totals-summary.tsx    ← molecule: acepta props de cálculo
+    └── notes-field.tsx       ← atom: campo de texto
+```
+
+### Beneficios:
+- La página es legible y autodocumentada.
+- Cada componente tiene **responsabilidad única**.
+- Los átomos son directamente reutilizables.
+- Los datos se pasan como props, listos para conectar a un hook.
+
+---
+
 ## Estados de Carga (Loading States)
 Usar componentes centralizados:
 - `<LoadingScreen />` para cargas de página completa.
