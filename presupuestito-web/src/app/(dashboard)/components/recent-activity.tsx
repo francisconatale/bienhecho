@@ -43,10 +43,15 @@ const ACTIVITIES: ActivityItemProps[] = [
 
 export function RecentActivity() {
   return (
-    <section className="px-4">
-      <h3 className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-3 px-1">
-        Actividad Reciente
-      </h3>
+    <section className="px-5 md:px-8 lg:px-12 md:mt-12 transition-all">
+      <div className="flex items-center justify-between mb-3 md:mb-5 px-1">
+        <h3 className="text-xs md:text-sm font-bold text-on-surface-variant uppercase tracking-widest">
+          Actividad Reciente
+        </h3>
+        <button className="hidden md:block text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+          Ver todo
+        </button>
+      </div>
 
       <ListGroup>
         {ACTIVITIES.map((a, i) => (
