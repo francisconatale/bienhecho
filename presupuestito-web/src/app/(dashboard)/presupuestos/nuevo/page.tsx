@@ -13,26 +13,39 @@ export const metadata: Metadata = {
 
 export default function NuevoPresupuestoPage() {
   return (
-    <>
-      <Header
-        title="Nuevo Presupuesto"
-        leftAction={
+    <div className="relative w-full min-h-screen">
+      {/* Aurora Background (difuso, inmersivo) único para Nuevo Presupuesto */}
+      <div className="absolute top-0 left-0 right-0 h-[450px] pointer-events-none overflow-hidden"
+           style={{ zIndex: -1, WebkitMaskImage: 'linear-gradient(to bottom, black 15%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 15%, transparent 100%)' }}>
+        
+        {/* Light Mode Blobs */}
+        <div className="absolute top-[-50px] right-[-50px] w-[350px] h-[350px] bg-blue-500/20 blur-[100px] rounded-full dark:hidden" />
+        <div className="absolute top-[80px] left-[-100px] w-[300px] h-[300px] bg-indigo-500/20 blur-[110px] rounded-full dark:hidden" />
+        
+        {/* Dark Mode Blobs (Centro disperso) */}
+        <div className="hidden dark:block absolute top-[50px] left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#3B82F6]/25 blur-[140px] rounded-[100%]" />
+        <div className="hidden dark:block absolute top-[-50px] right-[-100px] w-[350px] h-[350px] bg-[#1E3A8A]/35 blur-[120px] rounded-full" />
+      </div>
+
+      <main className="relative flex-1 px-5 pt-14 pb-32 max-w-3xl mx-auto w-full space-y-6">
+        {/* Header Actions */}
+        <div className="flex items-center justify-between mb-8">
           <Link
             href="/"
-            className="text-primary font-medium text-body px-2 -ml-2 hover:bg-surface-variant rounded-lg py-1 transition-colors min-w-20"
+            className="text-gray-600 dark:text-gray-300 font-medium hover:text-gray-900 dark:hover:text-white transition-colors pb-1 text-[15px] select-none"
           >
             Cancelar
           </Link>
-        }
-        rightAction={
+          <h1 className="text-[20px] leading-tight font-bold text-gray-900 dark:text-white tracking-tight absolute left-1/2 -translate-x-1/2">
+            Nuevo Presupuesto
+          </h1>
           <button
-            className="text-primary font-bold text-headline px-2 -mr-2 hover:bg-surface-variant rounded-lg py-1 transition-colors min-w-20 text-right"
+            className="text-blue-600 dark:text-blue-400 font-bold hover:text-blue-700 dark:hover:text-blue-300 transition-colors pb-1 text-[15px] select-none"
           >
             Guardar
           </button>
-        }
-      />
-      <main className="flex-1 px-4 py-6 space-y-6 mt-20 pb-24 max-w-3xl mx-auto w-full">
+        </div>
+
         <ClientSelector />
         <ConceptList />
         <TotalsSummary
@@ -43,6 +56,6 @@ export default function NuevoPresupuestoPage() {
         />
         <NotesField />
       </main>
-    </>
+    </div>
   );
 }
