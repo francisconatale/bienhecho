@@ -9,7 +9,7 @@ export function DashboardHeader() {
       >
         <CircleUserRound className="w-8 h-8" strokeWidth={1.5} />
       </button>
-      <h1 className="font-headline-large-mobile text-headline-large-mobile text-on-surface dark:text-inverse-on-surface flex-1 text-center font-bold tracking-tight">
+      <h1 className="font-headline-large-mobile text-headline-large-mobile text-primary flex-1 text-center font-bold tracking-tight">
         Presupuestito
       </h1>
       <button
