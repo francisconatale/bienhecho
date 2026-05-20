@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function DashboardPage() {
   return (
-    <main className="flex-1 pb-24 max-w-3xl mx-auto w-full">
+    <main className="flex-1 pb-24 md:pb-12 max-w-3xl md:max-w-5xl lg:max-w-6xl mx-auto w-full pt-4 md:pt-10 transition-all">
       <DashboardHero name="Francisco" activeBudgets={12} totalPending="$4,500" />
 
       {/* Primary Actions Area */}

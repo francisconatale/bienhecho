@@ -8,10 +8,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "lucide-react": "latest",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
+    "react-hook-form": "^7.76.0",
+    "zod": "^4.4.3",
     "zustand": "latest"
   },
   "devDependencies": {
