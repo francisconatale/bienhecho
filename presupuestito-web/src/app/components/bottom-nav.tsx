@@ -1,4 +1,7 @@
+"use client";
+
 import { LayoutDashboard, Users, Settings } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -26,23 +29,27 @@ function NavItem({ icon, label, href, active }: NavItemProps) {
 }
 
 export function BottomNav() {
+  const pathname = usePathname();
+
   return (
     <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 pt-2 pb-safe md:hidden bg-surface/90 dark:bg-surface-dim/90 backdrop-blur-lg border-t border-outline-variant/10 rounded-t-[24px] shadow-2xl">
       <NavItem
         icon={<LayoutDashboard className="w-6 h-6" strokeWidth={2.5} />}
         label="Dashboard"
-        href="#"
-        active
+        href="/"
+        active={pathname === "/"}
       />
       <NavItem
         icon={<Users className="w-6 h-6" strokeWidth={2} />}
         label="Clientes"
-        href="#"
+        href="/clientes"
+        active={pathname === "/clientes"}
       />
       <NavItem
         icon={<Settings className="w-6 h-6" strokeWidth={2} />}
         label="Ajustes"
-        href="#"
+        href="/ajustes"
+        active={pathname === "/ajustes"}
       />
     </nav>
   );
