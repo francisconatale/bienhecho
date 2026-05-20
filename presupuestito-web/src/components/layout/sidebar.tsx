@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LayoutDashboard, Users, Settings, Wallet, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Users, Settings, Wallet, ChevronLeft, ChevronRight, Folder } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -89,6 +89,13 @@ export function Sidebar() {
           label="Clientes"
           href="/clientes"
           active={pathname === "/clientes"}
+          isExpanded={isExpanded}
+        />
+        <NavItem
+          icon={<Folder className="w-[18px] h-[18px]" strokeWidth={2.5} />}
+          label="Proyectos"
+          href="/proyectos"
+          active={pathname.startsWith("/proyectos")}
           isExpanded={isExpanded}
         />
         <NavItem

@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, Users, Settings } from "lucide-react";
+import { LayoutDashboard, Users, Settings, Folder } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -51,6 +51,12 @@ export function BottomNav() {
         label="Clientes"
         href="/clientes"
         active={pathname === "/clientes"}
+      />
+      <NavItem
+        icon={<Folder className="w-6 h-6" strokeWidth={2} />}
+        label="Proyectos"
+        href="/proyectos"
+        active={pathname.startsWith("/proyectos")}
       />
       <NavItem
         icon={<Settings className="w-6 h-6" strokeWidth={2} />}

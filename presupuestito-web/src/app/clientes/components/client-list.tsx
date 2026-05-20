@@ -25,11 +25,11 @@ export function ClientList() {
   );
 
   return (
-    <>
+    <div className="space-y-10">
       <ClientSearch value={search} onChange={setSearch} />
 
       <section>
-        <div className="flex items-center justify-between px-2 mb-3">
+        <div className="flex items-center justify-between px-2 mb-4">
           <h3 className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">
             Todos los clientes
           </h3>
@@ -49,6 +49,6 @@ export function ClientList() {
           )}
         </ListGroup>
       </section>
-    </>
+    </div>
   );
 }

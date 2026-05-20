@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Header } from "@/components/layout/header";
 import { EditarPerfilContent } from "@/app/ajustes/perfil/components/content";
 
 export const metadata: Metadata = {

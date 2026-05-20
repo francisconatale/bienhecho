@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { UserPlus } from "lucide-react";
+import Link from "next/link";
 import { ClientList } from "./components/client-list";
 
 export const metadata: Metadata = {
@@ -24,18 +25,20 @@ export default function ClientesPage() {
       </div>
 
       {/* Main Content */}
-      <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-16 pb-32 w-full transition-all">
+      <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-16 pb-32 w-full transition-all max-w-4xl mx-auto">
         {/* Header Actions */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-[38px] leading-tight font-extrabold text-gray-900 dark:text-white tracking-tight">
             Mis Clientes
           </h1>
-          <button
-            aria-label="Agregar cliente"
-            className="w-12 h-12 shrink-0 rounded-full bg-black/5 dark:bg-white/[0.03] backdrop-blur-3xl flex items-center justify-center border border-black/[0.05] dark:border-white/[0.05] hover:bg-black/10 dark:hover:bg-white/10 transition-colors active:scale-95"
-          >
-            <UserPlus className="w-5 h-5 text-gray-800 dark:text-white" strokeWidth={2} />
-          </button>
+          <Link href="/clientes/nuevo">
+            <button
+              aria-label="Agregar cliente"
+              className="w-12 h-12 shrink-0 rounded-full bg-blue-600 dark:bg-blue-500 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors active:scale-95"
+            >
+              <UserPlus className="w-6 h-6" strokeWidth={2} />
+            </button>
+          </Link>
         </div>
 
         <ClientList />
