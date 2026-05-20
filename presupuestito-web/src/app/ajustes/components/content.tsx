@@ -1,6 +1,7 @@
 "use client";
 
-import { useTheme } from "../../components/layout/theme-provider";
+import { useTheme } from "@/components/layout/theme-provider";
+import Link from "next/link";
 import {
   ChevronRight,
   Star,
@@ -140,7 +141,10 @@ export function AjustesContent() {
       <section>
         <SectionLabel label="Cuenta" />
         <div className="bg-surface rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden">
-          <button className="w-full flex items-center gap-4 px-4 py-3 hover:bg-surface-variant/30 transition-colors text-left group">
+          <Link
+            href="/ajustes/perfil"
+            className="w-full flex items-center gap-4 px-4 py-3 hover:bg-surface-variant/30 transition-colors text-left group"
+          >
             <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
               <CircleUserRound className="w-8 h-8" strokeWidth={1.5} />
             </div>
@@ -154,7 +158,7 @@ export function AjustesContent() {
               className="w-4 h-4 text-outline-variant group-hover:text-primary transition-colors shrink-0"
               strokeWidth={2.5}
             />
-          </button>
+          </Link>
         </div>
       </section>
 
