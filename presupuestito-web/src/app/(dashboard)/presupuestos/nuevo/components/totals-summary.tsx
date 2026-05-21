@@ -1,9 +1,12 @@
 "use client";
 
 import { useBudgetStore, Currency } from "../hooks/use-budget";
+import { useConceptLogic } from "../hooks/use-concept-logic";
+import { Plus } from "lucide-react";
 
 export function TotalsSummary() {
   const { concepts, currency, setCurrency } = useBudgetStore();
+  const { handleOpenAdd } = useConceptLogic();
   
   const parseAmount = (amountStr: string) => {
     const cleanStr = amountStr.replace(/\./g, "").replace(",", ".");
@@ -22,7 +25,7 @@ export function TotalsSummary() {
 
   return (
     <section className="animate-in fade-in slide-in-from-right-4 duration-500">
-      <div className="bg-primary text-on-primary rounded-[32px] p-8 shadow-2xl shadow-primary/20 relative overflow-hidden">
+      <div className="bg-[#2563EB] text-white rounded-[32px] p-8 shadow-2xl shadow-blue-500/20 relative overflow-hidden">
         {/* Decorative background circle */}
         <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-3xl" />
         
@@ -64,6 +67,17 @@ export function TotalsSummary() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Acción principal: Añadir Concepto */}
+          <div className="pt-2">
+            <button
+              onClick={handleOpenAdd}
+              className="w-full py-4 bg-white text-[#2563EB] rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-xl shadow-black/10 hover:bg-blue-50 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            >
+              <Plus className="w-4 h-4" strokeWidth={3} />
+              Añadir Concepto
+            </button>
           </div>
         </div>
       </div>
