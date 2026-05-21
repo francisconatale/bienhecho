@@ -24,6 +24,7 @@ export function ClientSelector() {
         subtitle={selectedClient ? selectedClient.email : "Requerido para continuar"}
         onClick={handleToggleClients}
         className="!py-5"
+        showChevron={false}
         trailing={
           isClientListOpen ? (
             <ChevronUp className="w-5 h-5 text-primary" />

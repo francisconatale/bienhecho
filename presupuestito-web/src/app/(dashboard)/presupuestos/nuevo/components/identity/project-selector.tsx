@@ -27,6 +27,7 @@ export function ProjectSelector() {
         subtitle={selectedProject ? selectedProject.status : "Opcional"}
         onClick={handleToggleProjects}
         className="!py-5"
+        showChevron={false}
         trailing={
           isProjectListOpen ? (
             <ChevronUp className="w-5 h-5 text-primary" />
