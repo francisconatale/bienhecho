@@ -1,47 +1,36 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, Briefcase, User, ChevronRight, Plus, X, Filter, Check, ListFilter } from "lucide-react";
+import { Search, Briefcase, User, ChevronRight, Plus, X, Filter, Check } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export default function TrabajosPage() {
-  const { works, projects, clients } = useDataStore();
+  const { jobs, clients } = useDataStore();
   const [search, setSearch] = useState("");
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // Filter logic
-  const filteredWorks = useMemo(() => {
-    return works.filter((work) => {
-      const project = projects.find((p) => p.id === work.projectId);
-      const client = project ? clients.find((c) => c.id === project.clientId) : null;
+  const filteredJobs = useMemo(() => {
+    return jobs.filter((job) => {
+      const client = clients.find((c) => c.id === job.clientId);
       
-      const matchesSearch = work.name.toLowerCase().includes(search.toLowerCase()) ||
-                           (project?.name.toLowerCase().includes(search.toLowerCase()) ?? false) ||
+      const matchesSearch = job.name.toLowerCase().includes(search.toLowerCase()) ||
                            (client?.name.toLowerCase().includes(search.toLowerCase()) ?? false);
       
-      const matchesClient = !selectedClientId || project?.clientId === selectedClientId;
-      const matchesProject = !selectedProjectId || work.projectId === selectedProjectId;
+      const matchesClient = !selectedClientId || job.clientId === selectedClientId;
 
-      return matchesSearch && matchesClient && matchesProject;
+      return matchesSearch && matchesClient;
     });
-  }, [works, projects, clients, search, selectedClientId, selectedProjectId]);
+  }, [jobs, clients, search, selectedClientId]);
 
-  const availableProjects = useMemo(() => {
-    return selectedClientId 
-      ? projects.filter(p => p.clientId === selectedClientId)
-      : projects;
-  }, [projects, selectedClientId]);
-
-  const activeFiltersCount = (selectedClientId ? 1 : 0) + (selectedProjectId ? 1 : 0);
+  const activeFiltersCount = selectedClientId ? 1 : 0;
 
   const clearFilters = () => {
     setSearch("");
     setSelectedClientId(null);
-    setSelectedProjectId(null);
   };
 
   return (
@@ -73,7 +62,7 @@ export default function TrabajosPage() {
               <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/30 group-focus-within:text-[#2563EB] transition-colors" />
               <input
                 type="text"
-                placeholder="Buscar trabajo, proyecto o cliente..."
+                placeholder="Buscar trabajo o cliente..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full bg-surface border border-outline-variant/30 rounded-2xl pl-14 pr-12 py-4 text-base font-bold text-on-surface focus:ring-4 focus:ring-[#2563EB]/5 focus:border-[#2563EB] outline-none transition-all placeholder:text-on-surface-variant/20 shadow-sm"
@@ -124,12 +113,9 @@ export default function TrabajosPage() {
                     {/* Cliente Selector (Scalable with scroll) */}
                     <div className="space-y-3">
                         <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40 ml-1">Seleccionar Cliente</label>
-                        <div className="max-h-[160px] overflow-y-auto pr-2 space-y-1 custom-scrollbar">
+                        <div className="max-h-[240px] overflow-y-auto pr-2 space-y-1 custom-scrollbar">
                             <button
-                                onClick={() => {
-                                    setSelectedClientId(null);
-                                    setSelectedProjectId(null);
-                                }}
+                                onClick={() => setSelectedClientId(null)}
                                 className={cn(
                                     "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all",
                                     selectedClientId === null ? "bg-[#2563EB]/10 text-[#2563EB]" : "hover:bg-on-surface/5 text-on-surface"
@@ -141,10 +127,7 @@ export default function TrabajosPage() {
                             {clients.map(client => (
                                 <button
                                     key={client.id}
-                                    onClick={() => {
-                                        setSelectedClientId(client.id);
-                                        setSelectedProjectId(null);
-                                    }}
+                                    onClick={() => setSelectedClientId(client.id)}
                                     className={cn(
                                         "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all",
                                         selectedClientId === client.id ? "bg-[#2563EB]/10 text-[#2563EB]" : "hover:bg-on-surface/5 text-on-surface"
@@ -156,38 +139,6 @@ export default function TrabajosPage() {
                             ))}
                         </div>
                     </div>
-
-                    {/* Proyecto Selector (Contextual) */}
-                    {(selectedClientId || availableProjects.length > 0) && (
-                        <div className="space-y-3 pt-4 border-t border-outline-variant/10">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40 ml-1">Seleccionar Proyecto</label>
-                            <div className="max-h-[160px] overflow-y-auto pr-2 space-y-1 custom-scrollbar">
-                                <button
-                                    onClick={() => setSelectedProjectId(null)}
-                                    className={cn(
-                                        "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all",
-                                        selectedProjectId === null ? "bg-[#2563EB]/10 text-[#2563EB]" : "hover:bg-on-surface/5 text-on-surface"
-                                    )}
-                                >
-                                    Todos los proyectos
-                                    {selectedProjectId === null && <Check className="w-4 h-4" />}
-                                </button>
-                                {availableProjects.map(project => (
-                                    <button
-                                        key={project.id}
-                                        onClick={() => setSelectedProjectId(project.id)}
-                                        className={cn(
-                                            "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all",
-                                            selectedProjectId === project.id ? "bg-[#2563EB]/10 text-[#2563EB]" : "hover:bg-on-surface/5 text-on-surface"
-                                        )}
-                                    >
-                                        {project.name}
-                                        {selectedProjectId === project.id && <Check className="w-4 h-4" />}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
                 </div>
 
                 <button 
@@ -203,7 +154,7 @@ export default function TrabajosPage() {
         {/* Status bar de resultados */}
         <div className="flex items-center justify-between px-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">
-                {filteredWorks.length} {filteredWorks.length === 1 ? 'Trabajo encontrado' : 'Trabajos encontrados'}
+                {filteredJobs.length} {filteredJobs.length === 1 ? 'Trabajo encontrado' : 'Trabajos encontrados'}
             </span>
             {(search || activeFiltersCount > 0) && (
                 <div className="flex items-center gap-2">
@@ -215,15 +166,14 @@ export default function TrabajosPage() {
 
         {/* Lista de Trabajos */}
         <div className="bg-surface rounded-[32px] border border-outline-variant/30 shadow-sm overflow-hidden divide-y divide-outline-variant/10">
-          {filteredWorks.length > 0 ? (
-            filteredWorks.map((work) => {
-              const project = projects.find(p => p.id === work.projectId);
-              const client = project ? clients.find(c => c.id === project.clientId) : null;
+          {filteredJobs.length > 0 ? (
+            filteredJobs.map((job) => {
+              const client = clients.find(c => c.id === job.clientId);
               
               return (
                 <Link 
-                  key={work.id} 
-                  href={`/trabajos/${work.id}`}
+                  key={job.id} 
+                  href={`/trabajos/${job.id}`}
                   className="flex items-center justify-between p-6 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors group"
                 >
                   <div className="flex items-center gap-5 flex-1 min-w-0">
@@ -232,18 +182,19 @@ export default function TrabajosPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-1.5">
-                        <h3 className="font-bold text-lg text-on-surface truncate tracking-tight">{work.name}</h3>
+                        <h3 className="font-bold text-lg text-on-surface truncate tracking-tight">{job.name}</h3>
                         <span className={`text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider ${
-                          work.status === 'Finalizado' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 
-                          work.status === 'En Progreso' ? 'bg-[#2563EB]/10 text-[#2563EB]' : 'bg-on-surface/5 text-on-surface-variant'
+                          job.status === 'Completado' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 
+                          job.status === 'En Progreso' ? 'bg-[#2563EB]/10 text-[#2563EB]' : 'bg-on-surface/5 text-on-surface-variant'
                         }`}>
-                          {work.status}
+                          {job.status}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-[13px] text-on-surface-variant/60 font-medium">
-                        <span className="text-on-surface font-bold">{client?.name}</span>
-                        <span className="opacity-30">/</span>
-                        <span>{project?.name}</span>
+                        <User className="w-3 h-3 opacity-40" />
+                        <span className="text-on-surface font-bold">{client?.name || "Sin cliente"}</span>
+                        <span className="opacity-30">•</span>
+                        <span>Iniciado el {new Date(job.createdAt).toLocaleDateString()}</span>
                       </div>
                     </div>
                   </div>
