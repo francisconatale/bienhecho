@@ -5,12 +5,19 @@ import { QuickActions } from "@/app/(dashboard)/components/quick-actions";
 import { RecentActivity } from "@/app/(dashboard)/components/recent-activity";
 
 import { useDataStore } from "@/lib/store";
+import { useEffect, useState } from "react";
 
 export default function DashboardPage() {
   const { budgets } = useDataStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   const totalPendingNum = budgets.reduce((acc, b) => acc + b.total, 0);
   const formatCurrency = (num: number) => {
+    if (!mounted) return "$0";
     return num.toLocaleString("es-AR", { style: "currency", currency: "ARS", minimumFractionDigits: 0 });
   };
 

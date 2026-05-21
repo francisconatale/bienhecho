@@ -2,6 +2,7 @@
 
 import { FileText, Wallet } from "lucide-react";
 import { useUserStore } from "@/lib/user-store";
+import { useEffect, useState } from "react";
 
 interface DashboardHeroProps {
   name?: string;
@@ -15,7 +16,13 @@ export function DashboardHero({
   totalPending = "$4,500",
 }: DashboardHeroProps) {
   const user = useUserStore((state) => state.user);
-  const displayName = name || user?.name || "Francisco";
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const displayName = name || (mounted ? user?.name : null) || "Francisco";
 
   return (
     <div className="relative w-full">
