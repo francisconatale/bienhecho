@@ -42,7 +42,7 @@ export const useBudgetStore = create<BudgetState>((set) => ({
     { id: "1", name: "Diseño de Interfaz UX/UI", description: "Proyecto completo de rediseño móvil", quantity: 1, unit: "unidades", price: "850,00", amount: "850,00" },
     { id: "2", name: "Consultoría Técnica", description: "2 horas de auditoría de sistema", quantity: 2, unit: "horas", price: "60,00", amount: "120,00" },
   ],
-  currency: "€",
+  currency: "ARS",
   setStep: (step) => set({ step }),
   setBudgetName: (name) => set({ budgetName: name }),
   setClient: (id) => set({ clientId: id, projectId: null, workId: null }), // Reset project and work when client changes
