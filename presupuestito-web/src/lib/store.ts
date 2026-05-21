@@ -1,11 +1,9 @@
 import { create } from "zustand";
-import { Client, Project, Work, Budget } from "@/types";
-import { MOCK_CLIENTS, MOCK_PROJECTS, MOCK_WORKS, MOCK_BUDGETS } from "@/mocks";
+import { Client, Job, Budget } from "@/types";
 
 interface DataState {
   clients: Client[];
-  projects: Project[];
-  works: Work[];
+  jobs: Job[];
   budgets: Budget[];
 
   // Actions
@@ -13,24 +11,27 @@ interface DataState {
   updateClient: (id: string, client: Partial<Client>) => void;
   removeClient: (id: string) => void;
 
-  addProject: (project: Omit<Project, "id">) => Project;
-  updateProject: (id: string, project: Partial<Project>) => void;
-  removeProject: (id: string) => void;
+  addJob: (job: Omit<Job, "id" | "createdAt" | "status">) => Job;
+  updateJob: (id: string, job: Partial<Job>) => void;
+  removeJob: (id: string) => void;
 
-  addWork: (work: Omit<Work, "id">) => Work;
-  updateWork: (id: string, work: Partial<Work>) => void;
-  removeWork: (id: string) => void;
-
-  addBudget: (budget: Omit<Budget, "id">) => Budget;
+  addBudget: (budget: Omit<Budget, "id" | "date">) => Budget;
   updateBudget: (id: string, budget: Partial<Budget>) => void;
   removeBudget: (id: string) => void;
 }
 
 export const useDataStore = create<DataState>((set, get) => ({
-  clients: [...MOCK_CLIENTS],
-  projects: [...MOCK_PROJECTS],
-  works: [...MOCK_WORKS],
-  budgets: [...MOCK_BUDGETS],
+  clients: [
+    { id: 'c1', name: 'Constructora del Sur', category: 'Obras Civiles', status: 'Activo', email: 'contacto@constructora.com' },
+    { id: 'c2', name: 'Estudio de Arquitectura M&P', category: 'Diseño & Proyectos', status: 'Pendiente', email: 'info@mparquitectura.com' },
+    { id: 'c3', name: 'Administración San Jose', category: 'Consorcios', status: 'Activo', email: 'admin@sanjose.com' },
+  ],
+  jobs: [
+    { id: 'j1', clientId: 'c1', name: 'Edificio Las Heras', status: 'Activo', createdAt: new Date().toISOString() },
+    { id: 'j2', clientId: 'c2', name: 'Reforma Consultorio Dental', status: 'En Progreso', createdAt: new Date().toISOString() },
+    { id: 'j3', clientId: 'c3', name: 'Mantenimiento General', status: 'Activo', createdAt: new Date().toISOString() },
+  ],
+  budgets: [],
 
   addClient: (clientData) => {
     const newClient = { ...clientData, id: crypto.randomUUID() };
@@ -44,32 +45,29 @@ export const useDataStore = create<DataState>((set, get) => ({
     clients: state.clients.filter((c) => c.id !== id)
   })),
 
-  addProject: (projectData) => {
-    const newProject = { ...projectData, id: crypto.randomUUID() };
-    set((state) => ({ projects: [newProject, ...state.projects] }));
-    return newProject;
+  addJob: (jobData) => {
+    const newJob = { 
+      ...jobData, 
+      id: crypto.randomUUID(), 
+      createdAt: new Date().toISOString(),
+      status: 'Activo' as const
+    };
+    set((state) => ({ jobs: [newJob, ...state.jobs] }));
+    return newJob;
   },
-  updateProject: (id, projectData) => set((state) => ({
-    projects: state.projects.map((p) => (p.id === id ? { ...p, ...projectData } : p))
+  updateJob: (id, jobData) => set((state) => ({
+    jobs: state.jobs.map((j) => (j.id === id ? { ...j, ...jobData } : j))
   })),
-  removeProject: (id) => set((state) => ({
-    projects: state.projects.filter((p) => p.id !== id)
-  })),
-
-  addWork: (workData) => {
-    const newWork = { ...workData, id: crypto.randomUUID() };
-    set((state) => ({ works: [newWork, ...state.works] }));
-    return newWork;
-  },
-  updateWork: (id, workData) => set((state) => ({
-    works: state.works.map((w) => (w.id === id ? { ...w, ...workData } : w))
-  })),
-  removeWork: (id) => set((state) => ({
-    works: state.works.filter((w) => w.id !== id)
+  removeJob: (id) => set((state) => ({
+    jobs: state.jobs.filter((j) => j.id !== id)
   })),
 
   addBudget: (budgetData) => {
-    const newBudget = { ...budgetData, id: crypto.randomUUID() };
+    const newBudget = { 
+      ...budgetData, 
+      id: crypto.randomUUID(),
+      date: new Date().toISOString()
+    };
     set((state) => ({ budgets: [newBudget, ...state.budgets] }));
     return newBudget;
   },

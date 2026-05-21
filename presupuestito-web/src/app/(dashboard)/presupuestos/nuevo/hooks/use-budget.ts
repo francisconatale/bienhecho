@@ -9,23 +9,21 @@ export interface Concept {
   description: string;
   quantity: number;
   unit: Unit;
-  price: string; // Store unit price as string, e.g. "150,00"
-  amount: string; // Store total as string, e.g. "450,00"
+  price: string;
+  amount: string;
 }
 
 interface BudgetState {
   step: 1 | 2;
   budgetName: string;
   clientId: string | null;
-  projectId: string | null;
-  workId: string | null;
+  jobId: string | null; // Renombrado de projectId
   concepts: Concept[];
   currency: Currency;
   setStep: (step: 1 | 2) => void;
   setBudgetName: (name: string) => void;
   setClient: (id: string | null) => void;
-  setProject: (id: string | null) => void;
-  setWork: (id: string | null) => void;
+  setJob: (id: string | null) => void;
   addConcept: (data: Omit<Concept, "id">) => void;
   updateConcept: (id: string, data: Omit<Concept, "id">) => void;
   removeConcept: (id: string) => void;
@@ -37,15 +35,13 @@ export const useBudgetStore = create<BudgetState>((set) => ({
   step: 1,
   budgetName: "",
   clientId: null,
-  projectId: null,
-  workId: null,
+  jobId: null,
   concepts: [],
   currency: "ARS",
   setStep: (step) => set({ step }),
   setBudgetName: (name) => set({ budgetName: name }),
-  setClient: (id) => set({ clientId: id, projectId: null, workId: null }), // Reset project and work when client changes
-  setProject: (id) => set({ projectId: id, workId: null }), // Reset work when project changes
-  setWork: (id) => set({ workId: id }),
+  setClient: (id) => set({ clientId: id, jobId: null }), // Reset job when client changes
+  setJob: (id) => set({ jobId: id }),
   addConcept: (data) => set((state) => ({
     concepts: [...state.concepts, { id: crypto.randomUUID(), ...data }]
   })),
@@ -62,8 +58,7 @@ export const useBudgetStore = create<BudgetState>((set) => ({
     step: 1,
     budgetName: "",
     clientId: null,
-    projectId: null,
-    workId: null,
+    jobId: null,
     concepts: [],
     currency: "ARS"
   })

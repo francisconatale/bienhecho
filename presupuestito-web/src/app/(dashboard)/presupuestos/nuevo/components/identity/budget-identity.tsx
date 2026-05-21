@@ -2,7 +2,7 @@
 
 import { BudgetNameInput } from "./budget-name-input";
 import { ClientSelector } from "./client-selector";
-import { ProjectSelector } from "./project-selector";
+import { JobSelector } from "./job-selector";
 import { EntityModals } from "./entity-modals";
 
 export function BudgetIdentity() {
@@ -14,7 +14,7 @@ export function BudgetIdentity() {
       
       <div className="bg-surface rounded-3xl shadow-sm border border-outline-variant/30 overflow-hidden divide-y divide-outline-variant/10">
         <ClientSelector />
-        <ProjectSelector />
+        <JobSelector />
       </div>
 
       <EntityModals />

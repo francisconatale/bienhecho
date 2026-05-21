@@ -1,44 +1,45 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useBudgetStore } from "./use-budget";
 import { useDataStore } from "@/lib/store";
 
 export function useBudgetIdentity() {
-  const { clientId, projectId, setClient, setProject } = useBudgetStore();
-  const { clients, projects } = useDataStore();
+  const { clientId, jobId, setClient, setJob } = useBudgetStore();
+  const { clients, jobs, addClient, addJob } = useDataStore();
 
   const [isClientListOpen, setIsClientListOpen] = useState(false);
-  const [isProjectListOpen, setIsProjectListOpen] = useState(false);
+  const [isJobListOpen, setIsJobListOpen] = useState(false);
   
-  const [isNewClientModalOpen, setIsNewClientModalOpen] = useState(false);
-  const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
-
   const [clientSearch, setClientSearch] = useState("");
-  const [projectSearch, setProjectSearch] = useState("");
+  const [jobSearch, setJobSearch] = useState("");
+
+  const [isNewClientModalOpen, setIsNewClientModalOpen] = useState(false);
+  const [isNewJobModalOpen, setIsNewJobModalOpen] = useState(false);
 
   const selectedClient = clients.find((c) => c.id === clientId);
-  const selectedProject = projects.find((p) => p.id === projectId);
-  
-  const clientProjects = projects.filter((p) => p.clientId === clientId);
+  const selectedJob = jobs.find((j) => j.id === jobId);
 
-  const filteredClients = clients.filter(c => 
-    c.name.toLowerCase().includes(clientSearch.toLowerCase()) || 
-    c.email?.toLowerCase().includes(clientSearch.toLowerCase())
-  );
+  const filteredClients = useMemo(() => {
+    return clients.filter((c) =>
+      c.name.toLowerCase().includes(clientSearch.toLowerCase())
+    );
+  }, [clients, clientSearch]);
 
-  const filteredProjects = clientProjects.filter(p => 
-    p.name.toLowerCase().includes(projectSearch.toLowerCase())
-  );
+  const filteredJobs = useMemo(() => {
+    // Solo mostramos trabajos del cliente seleccionado
+    return jobs.filter((j) =>
+      j.clientId === clientId &&
+      j.name.toLowerCase().includes(jobSearch.toLowerCase())
+    );
+  }, [jobs, clientId, jobSearch]);
 
   const handleToggleClients = () => {
-    setIsProjectListOpen(false);
     setIsClientListOpen(!isClientListOpen);
-    setClientSearch("");
+    setIsJobListOpen(false);
   };
 
-  const handleToggleProjects = () => {
+  const handleToggleJobs = () => {
+    setIsJobListOpen(!isJobListOpen);
     setIsClientListOpen(false);
-    setIsProjectListOpen(!isProjectListOpen);
-    setProjectSearch("");
   };
 
   const handleSelectClient = (id: string) => {
@@ -46,44 +47,39 @@ export function useBudgetIdentity() {
     setIsClientListOpen(false);
   };
 
-  const handleSelectProject = (id: string) => {
-    setProject(id);
-    setIsProjectListOpen(false);
+  const handleSelectJob = (id: string) => {
+    setJob(id);
+    setIsJobListOpen(false);
   };
 
   const openNewClientModal = () => setIsNewClientModalOpen(true);
   const closeNewClientModal = () => setIsNewClientModalOpen(false);
   
-  const openNewProjectModal = () => setIsNewProjectModalOpen(true);
-  const closeNewProjectModal = () => setIsNewProjectModalOpen(false);
+  const openNewJobModal = () => setIsNewJobModalOpen(true);
+  const closeNewJobModal = () => setIsNewJobModalOpen(false);
 
   return {
-    // Data
     clientId,
-    projectId,
+    jobId,
     selectedClient,
-    selectedProject,
-    filteredClients,
-    filteredProjects,
-    
-    // UI State
+    selectedJob,
     isClientListOpen,
-    isProjectListOpen,
-    isNewClientModalOpen,
-    isNewProjectModalOpen,
+    isJobListOpen,
     clientSearch,
-    projectSearch,
-    
-    // Actions
+    jobSearch,
+    filteredClients,
+    filteredJobs,
+    isNewClientModalOpen,
+    isNewJobModalOpen,
     setClientSearch,
-    setProjectSearch,
+    setJobSearch,
     handleToggleClients,
-    handleToggleProjects,
+    handleToggleJobs,
     handleSelectClient,
-    handleSelectProject,
+    handleSelectJob,
     openNewClientModal,
     closeNewClientModal,
-    openNewProjectModal,
-    closeNewProjectModal,
+    openNewJobModal,
+    closeNewJobModal,
   };
 }

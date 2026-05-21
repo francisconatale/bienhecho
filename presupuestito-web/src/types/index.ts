@@ -7,28 +7,20 @@ export interface Client {
   status?: 'Activo' | 'Pendiente' | 'Inactivo';
 }
 
-export interface Project {
+export interface Job {
   id: string;
   clientId: string;
-  name: string;
+  name: string; // Ej: "Obra Las Heras" o "Arreglo Termotanque"
   description?: string;
-  status: 'Activo' | 'Completado' | 'Pausado';
+  status: 'Activo' | 'Completado' | 'Pausado' | 'En Progreso';
   createdAt: string;
-}
-
-export interface Work {
-  id: string;
-  projectId: string;
-  name: string;
-  status: 'Pendiente' | 'En Progreso' | 'Finalizado';
 }
 
 export interface Budget {
   id: string;
   clientId: string;
-  projectId?: string;
-  workId?: string;
-  type: 'Materiales' | 'Mano de Obra' | 'Mixto';
+  jobId: string; // Siempre pertenece a un Trabajo
+  type: string;
   total: number;
-  // Conceptos will be added here
+  date: string;
 }
