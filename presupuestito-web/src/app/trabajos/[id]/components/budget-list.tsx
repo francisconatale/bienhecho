@@ -7,23 +7,23 @@ import { useDataStore } from "@/lib/store";
 import { useShallow } from 'zustand/react/shallow';
 
 interface BudgetListProps {
-  workId: string;
+  jobId: string;
 }
 
-export function BudgetList({ workId }: BudgetListProps) {
+export function BudgetList({ jobId }: BudgetListProps) {
   const budgets = useDataStore(
-    useShallow((state) => state.budgets.filter((b) => b.workId === workId))
+    useShallow((state) => state.budgets.filter((b) => b.jobId === jobId))
   );
 
   return (
-    <ListGroup>
+    <div className="bg-surface rounded-[32px] border border-outline-variant/30 shadow-sm overflow-hidden divide-y divide-outline-variant/10">
       {budgets.length > 0 ? (
         budgets.map((budget) => <BudgetRow key={budget.id} budget={budget} />)
       ) : (
-        <div className="flex flex-col items-center justify-center py-10 text-on-surface-variant">
-          <p className="text-sm font-medium">No hay presupuestos generados.</p>
+        <div className="flex flex-col items-center justify-center py-16 text-on-surface-variant">
+          <p className="text-sm font-bold opacity-40">No hay presupuestos generados para este trabajo.</p>
         </div>
       )}
-    </ListGroup>
+    </div>
   );
 }

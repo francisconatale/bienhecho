@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ChevronLeft, Plus } from "lucide-react";
+import { ChevronLeft, Plus, User, Calendar, Clock } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BudgetList } from "./components/budget-list";
@@ -13,14 +13,15 @@ interface TrabajoPageProps {
 
 export default function TrabajoPage({ params }: TrabajoPageProps) {
   const { id } = React.use(params);
-  const { works, projects } = useDataStore();
-  const work = works.find(w => w.id === id);
+  const { jobs, clients } = useDataStore();
   
-  if (!work) {
+  const job = jobs.find(j => j.id === id);
+  
+  if (!job) {
     notFound();
   }
 
-  const project = projects.find(p => p.id === work.projectId);
+  const client = clients.find(c => c.id === job.clientId);
 
   return (
     <div className="relative w-full min-h-screen">
@@ -33,7 +34,7 @@ export default function TrabajoPage({ params }: TrabajoPageProps) {
         <div className="hidden dark:block absolute top-[50px] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-[#1E3A8A]/35 md:bg-[#1E3A8A]/25 blur-[120px] md:blur-[160px] rounded-full transition-all duration-700" />
       </div>
 
-      <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-16 pb-32 w-full transition-all max-w-4xl mx-auto space-y-6">
+      <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-16 pb-32 w-full transition-all max-w-4xl mx-auto space-y-8">
         {/* Header Actions */}
         <div className="flex items-center gap-4 mb-2">
           <Link href="/trabajos">
@@ -45,34 +46,64 @@ export default function TrabajoPage({ params }: TrabajoPageProps) {
             </button>
           </Link>
           <h1 className="text-[32px] md:text-[38px] leading-tight font-extrabold text-gray-900 dark:text-white tracking-tight">
-            Trabajo
+            Detalle del Trabajo
           </h1>
         </div>
 
-        <div className="bg-surface rounded-3xl p-6 border border-outline-variant/10 shadow-sm">
-          <div className="flex items-start justify-between mb-2">
-            <div>
-              <h2 className="text-xl font-bold text-on-surface mb-1">{work.name}</h2>
-              <p className="text-sm font-medium text-on-surface-variant">{project?.name || 'Proyecto desconocido'}</p>
+        <div className="bg-surface rounded-[32px] p-8 border border-outline-variant/10 shadow-sm space-y-6">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-[#2563EB] animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#2563EB]">Obra activa</span>
+              </div>
+              <h2 className="text-2xl font-black text-on-surface tracking-tight leading-none">{job.name}</h2>
+              <div className="flex items-center gap-2 text-on-surface-variant/60 font-medium">
+                <User className="w-4 h-4" />
+                <span className="text-sm font-bold text-on-surface">{client?.name || "Sin cliente"}</span>
+              </div>
             </div>
-            <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-300`}>
-              {work.status}
-            </span>
+            
+            <div className={`self-start text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest ${
+              job.status === 'Completado' ? 'bg-emerald-500/10 text-emerald-600' : 
+              job.status === 'En Progreso' ? 'bg-[#2563EB]/10 text-[#2563EB]' : 'bg-on-surface/5 text-on-surface-variant'
+            }`}>
+              {job.status}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 border-t border-outline-variant/10">
+            <div className="flex items-center gap-3 p-4 bg-on-surface/5 rounded-2xl">
+                <Calendar className="w-5 h-5 text-on-surface-variant/40" />
+                <div>
+                    <p className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/40">Fecha de inicio</p>
+                    <p className="text-sm font-bold text-on-surface">{new Date(job.createdAt).toLocaleDateString()}</p>
+                </div>
+            </div>
+            <div className="flex items-center gap-3 p-4 bg-on-surface/5 rounded-2xl">
+                <Clock className="w-5 h-5 text-on-surface-variant/40" />
+                <div>
+                    <p className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/40">Última actualización</p>
+                    <p className="text-sm font-bold text-on-surface">Hace poco</p>
+                </div>
+            </div>
           </div>
         </div>
 
-        <section>
-          <div className="flex items-center justify-between mb-4 px-1">
-            <h3 className="text-sm font-bold text-on-surface-variant uppercase tracking-widest">
-              Presupuestos
+        <section className="space-y-4">
+          <div className="flex items-center justify-between px-2">
+            <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-[0.2em]">
+              Historial de Presupuestos
             </h3>
-            <button className="flex items-center gap-1.5 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-colors">
-              <Plus className="w-4 h-4" />
-              <span>Nuevo</span>
-            </button>
+            <Link href="/presupuestos/nuevo">
+                <button className="flex items-center gap-2 px-4 py-2 bg-[#2563EB]/10 text-[#2563EB] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#2563EB]/20 transition-all active:scale-95">
+                    <Plus className="w-3.5 h-3.5" strokeWidth={3} />
+                    <span>Añadir</span>
+                </button>
+            </Link>
           </div>
           
-          <BudgetList workId={work.id} />
+          <BudgetList jobId={job.id} />
         </section>
       </main>
     </div>
