@@ -14,12 +14,14 @@ export interface Concept {
 }
 
 interface BudgetState {
+  step: 1 | 2;
   budgetName: string;
   clientId: string | null;
   projectId: string | null;
   workId: string | null;
   concepts: Concept[];
   currency: Currency;
+  setStep: (step: 1 | 2) => void;
   setBudgetName: (name: string) => void;
   setClient: (id: string | null) => void;
   setProject: (id: string | null) => void;
@@ -31,6 +33,7 @@ interface BudgetState {
 }
 
 export const useBudgetStore = create<BudgetState>((set) => ({
+  step: 1,
   budgetName: "",
   clientId: null,
   projectId: null,
@@ -40,6 +43,7 @@ export const useBudgetStore = create<BudgetState>((set) => ({
     { id: "2", name: "Consultoría Técnica", description: "2 horas de auditoría de sistema", quantity: 2, unit: "horas", price: "60,00", amount: "120,00" },
   ],
   currency: "€",
+  setStep: (step) => set({ step }),
   setBudgetName: (name) => set({ budgetName: name }),
   setClient: (id) => set({ clientId: id, projectId: null, workId: null }), // Reset project and work when client changes
   setProject: (id) => set({ projectId: id, workId: null }), // Reset work when project changes

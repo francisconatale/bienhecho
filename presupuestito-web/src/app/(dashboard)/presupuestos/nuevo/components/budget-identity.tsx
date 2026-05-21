@@ -1,36 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { User, ChevronDown, ChevronUp, Briefcase, Hammer, Plus, Search, X, Info, FileText } from "lucide-react";
+import { User, ChevronDown, ChevronUp, Briefcase, Plus, Search, X, FileText } from "lucide-react";
 import { useBudgetStore } from "../hooks/use-budget";
 import { useDataStore } from "@/lib/store";
 import { ListGroup } from "@/components/ui/list-group";
 import { ListItem } from "@/components/ui/list-item";
 import { ProjectForm } from "@/app/proyectos/nuevo/components/project-form";
-import { WorkForm } from "@/app/trabajos/components/work-form";
 import { ClientForm } from "@/app/clientes/components/client-form";
 
 export function BudgetIdentity() {
-  const { budgetName, setBudgetName, clientId, projectId, workId, setClient, setProject, setWork } = useBudgetStore();
-  const { clients, projects, works } = useDataStore();
+  const { budgetName, setBudgetName, clientId, projectId, setClient, setProject } = useBudgetStore();
+  const { clients, projects } = useDataStore();
   
   const [isClientListOpen, setIsClientListOpen] = useState(false);
   const [isProjectListOpen, setIsProjectListOpen] = useState(false);
-  const [isWorkListOpen, setIsWorkListOpen] = useState(false);
   
-  const [showNewClientForm, setShowNewClientForm] = useState(false);
-  const [showNewProjectForm, setShowNewProjectForm] = useState(false);
-  const [showNewWorkForm, setShowNewWorkForm] = useState(false);
+  const [isNewClientModalOpen, setIsNewClientModalOpen] = useState(false);
+  const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
 
   const [clientSearch, setClientSearch] = useState("");
   const [projectSearch, setProjectSearch] = useState("");
 
   const selectedClient = clients.find((c) => c.id === clientId);
   const selectedProject = projects.find((p) => p.id === projectId);
-  const selectedWork = works.find((w) => w.id === workId);
   
   const clientProjects = projects.filter((p) => p.clientId === clientId);
-  const projectWorks = works.filter((w) => w.projectId === projectId);
 
   const filteredClients = clients.filter(c => 
     c.name.toLowerCase().includes(clientSearch.toLowerCase()) || 
@@ -43,27 +38,19 @@ export function BudgetIdentity() {
 
   const handleNewClientSuccess = (newClientId: string) => {
     setClient(newClientId);
-    setShowNewClientForm(false);
+    setIsNewClientModalOpen(false);
     setIsClientListOpen(false);
   };
 
   const handleNewProjectSuccess = (newProjectId: string) => {
     setProject(newProjectId);
-    setShowNewProjectForm(false);
+    setIsNewProjectModalOpen(false);
     setIsProjectListOpen(false);
-  };
-
-  const handleNewWorkSuccess = (newWorkId: string) => {
-    setWork(newWorkId);
-    setShowNewWorkForm(false);
-    setIsWorkListOpen(false);
   };
 
   const handleToggle = (setter: React.Dispatch<React.SetStateAction<boolean>>, state: boolean) => {
-    // Close all lists before opening a new one
     setIsClientListOpen(false);
     setIsProjectListOpen(false);
-    setIsWorkListOpen(false);
     setter(!state);
   }
 
@@ -102,17 +89,15 @@ export function BudgetIdentity() {
               subtitle={selectedClient ? selectedClient.email : "Requerido"}
               onClick={() => handleToggle(setIsClientListOpen, isClientListOpen)}
               trailing={
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                    <button 
                       onClick={(e) => {
                         e.stopPropagation();
-                        setShowNewClientForm(!showNewClientForm);
-                        setIsClientListOpen(false);
+                        setIsNewClientModalOpen(true);
                       }}
-                      className={`flex items-center gap-1 text-[10px] font-bold transition-colors ${showNewClientForm ? 'text-on-surface-variant' : 'text-primary'} z-10`}
+                      className="p-1 text-primary/80 hover:text-primary"
                     >
-                      {showNewClientForm ? <X className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
-                      {showNewClientForm ? "CERRAR" : "NUEVO"}
+                      <Plus className="w-5 h-5" />
                     </button>
                   {isClientListOpen ? <ChevronUp className="w-5 h-5 text-primary" /> : <ChevronDown className="w-5 h-5 text-on-surface-variant" />}
                 </div>
@@ -131,15 +116,10 @@ export function BudgetIdentity() {
                 </div>
               </div>
             )}
-            {showNewClientForm && (
-              <div className="p-4 animate-in fade-in zoom-in-95 duration-300">
-                <ClientForm onSuccess={handleNewClientSuccess} onCancel={() => setShowNewClientForm(false)} />
-              </div>
-            )}
           </div>
 
           {/* Project Selector */}
-          {clientId && !showNewClientForm && (
+          {clientId && (
             <div className="flex flex-col border-t border-outline-variant/10">
               <ListItem
                 icon={<Briefcase className="w-5 h-5 text-blue-500" />}
@@ -147,10 +127,9 @@ export function BudgetIdentity() {
                 subtitle="Opcional"
                 onClick={() => handleToggle(setIsProjectListOpen, isProjectListOpen)}
                 trailing={
-                  <div className="flex items-center gap-2">
-                    <button onClick={(e) => { e.stopPropagation(); setShowNewProjectForm(!showNewProjectForm); setIsProjectListOpen(false); }} className={`flex items-center gap-1 text-[10px] font-bold transition-colors ${showNewProjectForm ? 'text-on-surface-variant' : 'text-primary'} z-10`}>
-                      {showNewProjectForm ? <X className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
-                      {showNewProjectForm ? "CERRAR" : "NUEVA"}
+                  <div className="flex items-center gap-3">
+                    <button onClick={(e) => { e.stopPropagation(); setIsNewProjectModalOpen(true);}} className="p-1 text-primary/80 hover:text-primary">
+                      <Plus className="w-5 h-5" />
                     </button>
                     {isProjectListOpen ? <ChevronUp className="w-5 h-5 text-primary" /> : <ChevronDown className="w-5 h-5 text-on-surface-variant" />}
                   </div>
@@ -169,49 +148,39 @@ export function BudgetIdentity() {
                     </div>
                   </div>
               )}
-               {showNewProjectForm && (
-                <div className="p-4 animate-in fade-in zoom-in-95 duration-300">
-                  <ProjectForm initialClientId={clientId} hideClientSelection={true} onSuccess={handleNewProjectSuccess} onCancel={() => setShowNewProjectForm(false)} />
-                </div>
-              )}
             </div>
           )}
-
-          {/* Work Selector */}
-          {projectId && !showNewClientForm && !showNewProjectForm && (
-             <div className="flex flex-col border-t border-outline-variant/10">
-               <ListItem
-                  icon={<Hammer className="w-5 h-5 text-amber-500" />}
-                  title={selectedWork ? selectedWork.name : "Seleccionar Etapa"}
-                  subtitle="Opcional"
-                  onClick={() => handleToggle(setIsWorkListOpen, isWorkListOpen)}
-                  trailing={
-                     <div className="flex items-center gap-2">
-                      <button onClick={(e) => { e.stopPropagation(); setShowNewWorkForm(!showNewWorkForm); setIsWorkListOpen(false);}} className={`flex items-center gap-1 text-[10px] font-bold transition-colors ${showNewWorkForm ? 'text-on-surface-variant' : 'text-primary'} z-10`}>
-                        {showNewWorkForm ? <X className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
-                        {showNewWorkForm ? "CERRAR" : "NUEVA"}
-                      </button>
-                      {isWorkListOpen ? <ChevronUp className="w-5 h-5 text-primary" /> : <ChevronDown className="w-5 h-5 text-on-surface-variant" />}
-                    </div>
-                  }
-                />
-                {isWorkListOpen && (
-                  <div className="px-4 pt-2 pb-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <div className="max-h-[200px] overflow-y-auto pr-1 custom-scrollbar">
-                      {projectWorks.length > 0 ? projectWorks.map((work) => (
-                        <ListItem key={work.id} icon={<Hammer className="w-4 h-4" />} title={work.name} subtitle={work.status} onClick={() => { setWork(work.id); setIsWorkListOpen(false); }} className="!rounded-lg !py-2 !border-none !px-2" showChevron={false} />
-                      )) : <div className="py-4 text-center text-on-surface-variant text-[10px] font-medium">Sin etapas registradas.</div>}
-                    </div>
-                  </div>
-                )}
-                {showNewWorkForm && (
-                  <div className="p-4 animate-in fade-in zoom-in-95 duration-300">
-                    <WorkForm initialProjectId={projectId} hideProjectSelection={true} onSuccess={handleNewWorkSuccess} onCancel={() => setShowNewWorkForm(false)} />
-                  </div>
-                )}
-             </div>
-          )}
         </ListGroup>
+
+        {isNewClientModalOpen && (
+             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center animate-in fade-in duration-300">
+                <div className="relative bg-surface rounded-3xl shadow-2xl m-4 w-full max-w-lg">
+                    <button onClick={() => setIsNewClientModalOpen(false)} className="absolute -top-2 -right-2 w-8 h-8 bg-surface rounded-full flex items-center justify-center border border-outline-variant/30 z-10 text-on-surface-variant hover:scale-110 transition-transform">
+                        <X className="w-4 h-4"/>
+                    </button>
+                    <div className="p-8">
+                        <h3 className="text-lg font-bold text-on-surface text-center mb-1">Nuevo Cliente</h3>
+                        <p className="text-sm text-on-surface-variant text-center mb-6">Añade un nuevo cliente a tu base de datos.</p>
+                        <ClientForm onSuccess={handleNewClientSuccess} onCancel={() => setIsNewClientModalOpen(false)} />
+                    </div>
+                </div>
+            </div>
+        )}
+
+        {isNewProjectModalOpen && (
+             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center animate-in fade-in duration-300">
+                <div className="relative bg-surface rounded-3xl shadow-2xl m-4 w-full max-w-lg">
+                     <button onClick={() => setIsNewProjectModalOpen(false)} className="absolute -top-2 -right-2 w-8 h-8 bg-surface rounded-full flex items-center justify-center border border-outline-variant/30 z-10 text-on-surface-variant hover:scale-110 transition-transform">
+                        <X className="w-4 h-4"/>
+                    </button>
+                    <div className="p-8">
+                        <h3 className="text-lg font-bold text-on-surface text-center mb-1">Nueva Campaña</h3>
+                        <p className="text-sm text-on-surface-variant text-center mb-6">Crea una campaña para organizar tus presupuestos.</p>
+                        <ProjectForm initialClientId={clientId} hideClientSelection={true} onSuccess={handleNewProjectSuccess} onCancel={() => setIsNewProjectModalOpen(false)} />
+                    </div>
+                </div>
+            </div>
+        )}
       </div>
     </section>
   );

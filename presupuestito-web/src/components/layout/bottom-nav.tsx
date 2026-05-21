@@ -33,8 +33,8 @@ function NavItem({ icon, label, href, active }: NavItemProps) {
 export function BottomNav() {
   const pathname = usePathname();
 
-  // Ocultar la barra de navegación en la Landing Page
-  if (pathname === "/landing") {
+  // Ocultar la barra de navegación en la Landing Page y en el flujo de nuevo presupuesto
+  if (pathname === "/landing" || pathname === "/presupuestos/nuevo") {
     return null;
   }
 
