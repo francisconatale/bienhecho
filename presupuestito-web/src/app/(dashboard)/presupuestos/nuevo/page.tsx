@@ -1,21 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Save, Loader2, ArrowRight, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Save, Loader2, ArrowRight, ArrowLeft, CheckCircle2, FileText } from "lucide-react";
 import { BudgetIdentity } from "./components/identity/budget-identity";
 import { ConceptList } from "./components/concepts/concept-list";
 import { TotalsSummary } from "./components/totals-summary";
 import { NotesField } from "./components/notes-field";
 import { useBudgetStore } from "./hooks/use-budget";
 import { useDataStore } from "@/lib/store";
+import { useBudgetPDF } from "@/hooks/use-budget-pdf";
 
 export default function NuevoPresupuestoPage() {
   const router = useRouter();
-  const { step, setStep, clientId, projectId, workId, budgetName, concepts, currency, reset } = useBudgetStore();
+  const { step, setStep, clientId, jobId, budgetName, concepts, currency, reset } = useBudgetStore();
   const { clients, addBudget } = useDataStore();
+  const { downloadPDF } = useBudgetPDF();
+  
   const [isSaving, setIsSaving] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const selectedClient = clients.find((c) => c.id === clientId);
 
@@ -23,6 +32,18 @@ export default function NuevoPresupuestoPage() {
     const cleanStr = amountStr.replace(/\./g, "").replace(",", ".");
     const num = parseFloat(cleanStr);
     return isNaN(num) ? 0 : num;
+  };
+
+  const handleDownloadPreview = async () => {
+    if (!mounted) return;
+    setIsDownloading(true);
+    try {
+      await downloadPDF({ clientId, jobId, total: 0 }, concepts);
+    } catch (err) {
+      console.error("PDF Error:", err);
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const handleSave = () => {
@@ -38,8 +59,7 @@ export default function NuevoPresupuestoPage() {
     setTimeout(() => {
       addBudget({
         clientId,
-        projectId: projectId || "",
-        workId: workId || "",
+        jobId: jobId || "",
         type: "Presupuesto",
         total: total,
       });
@@ -73,7 +93,18 @@ export default function NuevoPresupuestoPage() {
         </button>
       )}
 
-      <div className="flex-[1.5]">
+      <div className="flex-[2] flex gap-3">
+        {step === 2 && (
+            <button
+                onClick={handleDownloadPreview}
+                disabled={isDownloading || !canSave}
+                className="flex-1 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest text-[#2563EB] bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-all active:scale-95 flex items-center justify-center gap-2"
+            >
+                {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
+                <span className="hidden md:inline">Vista Previa</span>
+            </button>
+        )}
+        
         {step === 1 ? (
           <button
             onClick={() => setStep(2)}
@@ -87,14 +118,14 @@ export default function NuevoPresupuestoPage() {
           <button
             onClick={handleSave}
             disabled={!canSave || isSaving}
-            className="w-full py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest text-white bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#2563EB] disabled:bg-[#2563EB]/40 disabled:text-white/60 flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-[#2563EB]/20"
+            className="flex-[2] py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest text-white bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#2563EB] disabled:bg-[#2563EB]/40 disabled:text-white/60 flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-[#2563EB]/20"
           >
             {isSaving ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <Save className="w-4 h-4" />
             )}
-            Guardar Presupuesto
+            Guardar
           </button>
         )}
       </div>

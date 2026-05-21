@@ -16,6 +16,16 @@ export interface Job {
   createdAt: string;
 }
 
+export interface Concept {
+  id: string;
+  name: string;
+  description: string;
+  quantity: number;
+  unit: string;
+  price: string;
+  amount: string;
+}
+
 export interface Budget {
   id: string;
   clientId: string;
