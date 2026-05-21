@@ -4,15 +4,17 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Concept, useBudgetStore } from "../../hooks/use-budget";
-import { useEffect } from "react";
-import { ChevronDown } from "lucide-react";
+import { useUserStore } from "@/lib/user-store";
+import { TRADES } from "@/lib/trades";
+import { useEffect, useState } from "react";
+import { ChevronDown, Sparkles } from "lucide-react";
 
 
 const conceptSchema = z.object({
   name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
   description: z.string().optional(),
   quantity: z.number().min(0.01, "La cantidad debe ser mayor a 0"),
-  unit: z.enum(["unidades", "horas", "un."]),
+  unit: z.enum(["un.", "hs.", "m2", "m3", "ml", "kg", "gl"]),
   price: z.string().min(1, "El precio es requerido")
     .regex(/^[0-9]+([.,][0-9]{1,2})?$/, "Formato numérico inválido (Ej: 150,00)"),
 });
@@ -27,12 +29,15 @@ interface ConceptFormProps {
 
 export function ConceptForm({ initialData, onSubmit, onCancel }: ConceptFormProps) {
   const { currency } = useBudgetStore();
+  const { user } = useUserStore();
+  const [showSuggestions, setShowSuggestions] = useState(true);
 
   const {
     register,
     handleSubmit,
     reset,
     watch,
+    setValue,
     formState: { errors, isValid },
   } = useForm<ConceptFormValues>({
     resolver: zodResolver(conceptSchema),
@@ -40,7 +45,7 @@ export function ConceptForm({ initialData, onSubmit, onCancel }: ConceptFormProp
       name: "",
       description: "",
       quantity: 1,
-      unit: "unidades",
+      unit: "un.",
       price: "",
     },
     mode: "onChange"
@@ -88,6 +93,10 @@ export function ConceptForm({ initialData, onSubmit, onCancel }: ConceptFormProp
     });
   };
 
+  // Sugerencias basadas en el rubro
+  const userTrade = TRADES.find(t => t.id === user?.tradeId);
+  const itemSuggestions = userTrade?.suggestions || [];
+
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
       <div className="bg-surface-container-low dark:bg-white/5 border border-outline-variant/30 rounded-[24px] p-5 shadow-lg shadow-black/5">
@@ -105,6 +114,33 @@ export function ConceptForm({ initialData, onSubmit, onCancel }: ConceptFormProp
           />
           {errors.name && <p className="text-[9px] font-bold text-error mt-1 ml-1">{errors.name.message}</p>}
         </div>
+
+        {/* Sugerencias de ítems */}
+        {itemSuggestions.length > 0 && showSuggestions && !initialData && (
+          <div className="mb-5 animate-in fade-in slide-in-from-top-2">
+            <div className="flex items-center gap-2 mb-2 px-1">
+              <Sparkles className="w-3 h-3 text-[#2563EB]/40" />
+              <span className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/40">
+                Ítems frecuentes de {userTrade?.label}
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {itemSuggestions.map((suggestion) => (
+                <button
+                  key={suggestion}
+                  type="button"
+                  onClick={() => {
+                    setValue("name", suggestion, { shouldValidate: true });
+                    setShowSuggestions(false); // Ocultar tras elegir para limpiar UI
+                  }}
+                  className="px-3 py-1.5 bg-surface-variant/10 hover:bg-[#2563EB]/5 border border-outline-variant/10 hover:border-[#2563EB]/20 rounded-lg text-[10px] font-bold text-on-surface-variant hover:text-[#2563EB] transition-all active:scale-95"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Cantidad y Unidad */}
         <div className="grid grid-cols-2 gap-3 mb-4">
@@ -129,9 +165,13 @@ export function ConceptForm({ initialData, onSubmit, onCancel }: ConceptFormProp
                 {...register("unit")}
                 className="w-full px-4 py-2.5 bg-surface dark:bg-zinc-900 border border-outline-variant/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary text-[14px] font-bold appearance-none text-on-surface transition-all cursor-pointer"
               >
-                <option value="unidades">unid.</option>
-                <option value="horas">horas</option>
                 <option value="un.">un.</option>
+                <option value="hs.">hs.</option>
+                <option value="m2">m²</option>
+                <option value="m3">m³</option>
+                <option value="ml">ml</option>
+                <option value="kg">kg</option>
+                <option value="gl">gl.</option>
               </select>
               <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-on-surface-variant/40 pointer-events-none" />
             </div>

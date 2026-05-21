@@ -1,12 +1,9 @@
 "use client";
 
 import { useBudgetStore, Currency } from "../hooks/use-budget";
-import { useConceptLogic } from "../hooks/use-concept-logic";
-import { Plus } from "lucide-react";
 
 export function TotalsSummary() {
   const { concepts, currency, setCurrency } = useBudgetStore();
-  const { handleOpenAdd } = useConceptLogic();
   
   const parseAmount = (amountStr: string) => {
     const cleanStr = amountStr.replace(/\./g, "").replace(",", ".");
@@ -67,17 +64,6 @@ export function TotalsSummary() {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Acción principal: Añadir Concepto */}
-          <div className="pt-2">
-            <button
-              onClick={handleOpenAdd}
-              className="w-full py-4 bg-white text-[#2563EB] rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-xl shadow-black/10 hover:bg-blue-50 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
-            >
-              <Plus className="w-4 h-4" strokeWidth={3} />
-              Añadir Concepto
-            </button>
           </div>
         </div>
       </div>

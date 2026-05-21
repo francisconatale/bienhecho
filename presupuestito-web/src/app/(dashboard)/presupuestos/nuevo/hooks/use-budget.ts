@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export type Currency = "€" | "$" | "£" | "ARS";
-export type Unit = "unidades" | "horas" | "un.";
+export type Unit = "un." | "hs." | "m2" | "m3" | "ml" | "kg" | "gl";
 
 export interface Concept {
   id: string;

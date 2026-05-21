@@ -27,9 +27,56 @@ export default function NuevoPresupuestoPage() {
   const canContinue = budgetName.length >= 2 && !!clientId;
   const canSave = concepts.length > 0;
 
+  // Componente de botones para reutilizar en el flujo
+  const NavigationActions = ({ className = "" }: { className?: string }) => (
+    <div className={`flex items-center gap-4 ${className}`}>
+      {step === 1 ? (
+        <Link
+          href="/"
+          className="flex-1 py-4 text-[11px] font-black uppercase tracking-widest text-on-surface-variant hover:text-on-surface transition-colors text-center"
+        >
+          Cancelar
+        </Link>
+      ) : (
+        <button
+          onClick={() => setStep(1)}
+          className="flex-1 py-4 text-[11px] font-black uppercase tracking-widest text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Atrás
+        </button>
+      )}
+
+      <div className="flex-[1.5]">
+        {step === 1 ? (
+          <button
+            onClick={() => setStep(2)}
+            disabled={!canContinue}
+            className="w-full py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest text-white bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#2563EB] disabled:bg-[#2563EB]/40 disabled:text-white/60 flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-[#2563EB]/20"
+          >
+            Continuar
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        ) : (
+          <button
+            onClick={handleSave}
+            disabled={!canSave || isSaving}
+            className="w-full py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest text-white bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#2563EB] disabled:bg-[#2563EB]/40 disabled:text-white/60 flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-[#2563EB]/20"
+          >
+            {isSaving ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4" />
+            )}
+            Guardar Presupuesto
+          </button>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <>
-      {/* El main tiene max-w-2xl y px-4 */}
       <main className="flex-1 pb-44 w-full pt-4 md:pt-10 transition-all max-w-2xl mx-auto px-4">
         {/* Breadcrumb Visual */}
         <div className="mb-10 animate-in fade-in slide-in-from-top-4 duration-500">
@@ -60,6 +107,7 @@ export default function NuevoPresupuestoPage() {
                         Completa la información básica para comenzar.
                     </p>
                 </div>
+                
                 <BudgetIdentity />
                 
                 <div className="mt-8 flex items-center gap-3 p-4 bg-[#2563EB]/5 rounded-2xl border border-[#2563EB]/10">
@@ -69,6 +117,11 @@ export default function NuevoPresupuestoPage() {
                     <p className="text-[11px] font-bold text-[#2563EB]/80 leading-tight">
                         Tip: Puedes crear clientes y campañas directamente desde los selectores de arriba.
                     </p>
+                </div>
+
+                {/* Acciones integradas en desktop */}
+                <div className="hidden md:block mt-12 pt-8 border-t border-outline-variant/10">
+                    <NavigationActions />
                 </div>
             </div>
         )}
@@ -100,56 +153,20 @@ export default function NuevoPresupuestoPage() {
                         <NotesField />
                     </div>
                 </div>
+
+                {/* Acciones integradas en desktop */}
+                <div className="hidden md:block mt-12 pt-8 border-t border-outline-variant/10">
+                    <NavigationActions />
+                </div>
             </div>
         )}
       </main>
       
-      {/* Footer / Action Bar - Sincronizado exactamente con el ancho del main */}
-      <footer className="fixed bottom-0 left-0 right-0 z-50 p-4 md:pb-10 pointer-events-none">
+      {/* Footer / Action Bar - Solo visible en móvil */}
+      <footer className="md:hidden fixed bottom-0 left-0 right-0 z-50 p-4 pointer-events-none">
          <div className="max-w-2xl mx-auto px-0">
-            <div className="flex items-center gap-4 p-2.5 bg-surface/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-outline-variant/20 rounded-[28px] shadow-2xl pointer-events-auto">
-                {step === 1 ? (
-                    <Link
-                        href="/"
-                        className="flex-1 py-4 text-[11px] font-black uppercase tracking-widest text-on-surface-variant hover:text-on-surface transition-colors text-center"
-                    >
-                        Cancelar
-                    </Link>
-                ) : (
-                    <button
-                        onClick={() => setStep(1)}
-                        className="flex-1 py-4 text-[11px] font-black uppercase tracking-widest text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center gap-2"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        Atrás
-                    </button>
-                )}
-
-                <div className="flex-1">
-                    {step === 1 ? (
-                        <button
-                            onClick={() => setStep(2)}
-                            disabled={!canContinue}
-                            className="w-full py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest text-white bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#2563EB] disabled:bg-[#2563EB]/40 disabled:text-white/60 flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-[#2563EB]/20"
-                        >
-                            Continuar
-                            <ArrowRight className="w-4 h-4" />
-                        </button>
-                    ) : (
-                        <button
-                            onClick={handleSave}
-                            disabled={!canSave || isSaving}
-                            className="w-full py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest text-white bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#2563EB] disabled:bg-[#2563EB]/40 disabled:text-white/60 flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-[#2563EB]/20"
-                        >
-                            {isSaving ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                                <Save className="w-4 h-4" />
-                            )}
-                            Guardar
-                        </button>
-                    )}
-                </div>
+            <div className="bg-surface/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-outline-variant/20 rounded-[28px] shadow-2xl pointer-events-auto p-2">
+                <NavigationActions />
             </div>
          </div>
       </footer>
