@@ -1,27 +1,30 @@
-import { Metadata } from "next";
+"use client";
+
+import React, { useState } from "react";
 import { ChevronLeft, Plus } from "lucide-react";
 import Link from "next/link";
 import { WorkList } from "./components/work-list";
-import { MOCK_PROJECTS, MOCK_CLIENTS } from "@/mocks";
+import { WorkForm } from "./components/work-form";
+import { useDataStore } from "@/lib/store";
 import { notFound } from "next/navigation";
-
-export const metadata: Metadata = {
-  title: "Presupuestito - Proyecto",
-  description: "Detalle del proyecto",
-};
+import { Modal } from "@/components/ui/modal";
 
 interface ProyectoPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default function ProyectoPage({ params }: ProyectoPageProps) {
-  const project = MOCK_PROJECTS.find(p => p.id === params.id);
+  const { id } = React.use(params);
+  const { projects, clients } = useDataStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const project = projects.find(p => p.id === id);
   
   if (!project) {
     notFound();
   }
 
-  const client = MOCK_CLIENTS.find(c => c.id === project.clientId);
+  const client = clients.find(c => c.id === project.clientId);
 
   return (
     <div className="relative w-full min-h-screen">
@@ -74,7 +77,10 @@ export default function ProyectoPage({ params }: ProyectoPageProps) {
             <h3 className="text-sm font-bold text-on-surface-variant uppercase tracking-widest">
               Trabajos
             </h3>
-            <button className="flex items-center gap-1.5 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-colors">
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-1.5 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-colors"
+            >
               <Plus className="w-4 h-4" />
               <span>Agregar</span>
             </button>
@@ -83,6 +89,20 @@ export default function ProyectoPage({ params }: ProyectoPageProps) {
           <WorkList projectId={project.id} />
         </section>
       </main>
+
+      {/* New Work Modal */}
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        title="Nuevo Trabajo / Fase"
+      >
+        <WorkForm 
+          projectId={project.id} 
+          onSuccess={() => setIsModalOpen(false)} 
+          onCancel={() => setIsModalOpen(false)} 
+        />
+      </Modal>
     </div>
   );
 }
+

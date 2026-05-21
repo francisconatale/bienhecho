@@ -93,7 +93,7 @@ export function Sidebar() {
         />
         <NavItem
           icon={<Folder className="w-[18px] h-[18px]" strokeWidth={2.5} />}
-          label="Proyectos"
+          label="Campañas"
           href="/proyectos"
           active={pathname.startsWith("/proyectos")}
           isExpanded={isExpanded}

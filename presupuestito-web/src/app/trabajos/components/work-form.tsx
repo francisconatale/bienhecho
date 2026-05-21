@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { MOCK_PROJECTS } from "@/mocks";
+import { useDataStore } from "@/lib/store";
 
 interface WorkFormProps {
   initialProjectId?: string;
@@ -12,17 +12,22 @@ interface WorkFormProps {
 
 export function WorkForm({ initialProjectId = "", onSuccess, hideProjectSelection = false }: WorkFormProps) {
   const router = useRouter();
+  const { projects, addWork } = useDataStore();
   const [name, setName] = useState("");
   const [projectId, setProjectId] = useState(initialProjectId);
   const [description, setDescription] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulamos creación
-    const newWorkId = "new-work-id-" + Math.random().toString(36).substr(2, 9);
+    
+    const newWork = addWork({
+      projectId,
+      name,
+      status: "Pendiente",
+    });
     
     if (onSuccess) {
-      onSuccess(newWorkId);
+      onSuccess(newWork.id);
     } else {
       router.back();
     }
@@ -45,7 +50,7 @@ export function WorkForm({ initialProjectId = "", onSuccess, hideProjectSelectio
                 className="w-full bg-grouped-bg-light dark:bg-[#1A1C20] border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none"
               >
                 <option value="" disabled>Seleccionar un proyecto...</option>
-                {MOCK_PROJECTS.map(p => (
+                {projects.map(p => (
                   <option key={p.id} value={p.id}>{p.name}</option>
                 ))}
               </select>

@@ -1,29 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, X } from "lucide-react";
 import { ConceptItem } from "./concept-item";
 import { useBudgetStore, Concept, Currency } from "../hooks/use-budget";
-import { Modal } from "@/components/ui/modal";
 import { ConceptForm } from "./concept-form";
 
 export function ConceptList() {
   const { concepts, addConcept, updateConcept, removeConcept, currency, setCurrency } = useBudgetStore();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingConcept, setEditingConcept] = useState<Concept | null>(null);
 
   const handleOpenAdd = () => {
     setEditingConcept(null);
-    setIsModalOpen(true);
+    setIsFormOpen(true);
   };
 
   const handleOpenEdit = (concept: Concept) => {
     setEditingConcept(concept);
-    setIsModalOpen(true);
+    setIsFormOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
     setEditingConcept(null);
   };
 
@@ -33,7 +32,7 @@ export function ConceptList() {
     } else {
       addConcept(data);
     }
-    handleCloseModal();
+    handleCloseForm();
   };
 
   return (
@@ -59,43 +58,51 @@ export function ConceptList() {
         </div>
       </div>
       
-      <div className="bg-surface rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden mb-3">
-        {concepts.length === 0 ? (
-          <div className="px-4 py-6 text-center text-sm text-on-surface-variant">
-            No hay conceptos en este presupuesto.
+      <div className="space-y-4">
+        <div className="bg-surface rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden">
+          {concepts.length > 0 ? (
+            concepts.map((concept) => (
+              <ConceptItem 
+                key={concept.id} 
+                name={concept.name} 
+                description={concept.description} 
+                quantity={concept.quantity}
+                unit={concept.unit}
+                price={concept.price}
+                amount={`${concept.amount} ${currency}`} 
+                onEdit={() => handleOpenEdit(concept)}
+                onDelete={() => removeConcept(concept.id)}
+              />
+            ))
+          ) : (
+             <div className="py-10 text-center text-sm text-on-surface-variant">
+               No hay conceptos. ¡Agregá el primero!
+             </div>
+          )}
+           <button 
+            onClick={handleOpenAdd}
+            className="flex items-center gap-2 px-4 py-3 text-primary font-semibold active:scale-95 transition-transform w-full border-t border-dashed border-outline-variant/30 hover:bg-primary/5"
+          >
+            <PlusCircle className="w-5 h-5" strokeWidth={2} />
+            <span>Añadir Concepto</span>
+          </button>
+        </div>
+
+        {isFormOpen && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center animate-in fade-in duration-300">
+            <div className="relative w-full max-w-lg p-4">
+               <button onClick={handleCloseForm} className="absolute -top-2 -right-2 w-8 h-8 bg-surface rounded-full flex items-center justify-center border border-outline-variant/30 z-10 text-on-surface-variant hover:scale-110 transition-transform">
+                <X className="w-4 h-4"/>
+              </button>
+              <ConceptForm 
+                initialData={editingConcept}
+                onSubmit={handleSubmit} 
+                onCancel={handleCloseForm} 
+              />
+            </div>
           </div>
-        ) : (
-          concepts.map((concept) => (
-            <ConceptItem 
-              key={concept.id} 
-              name={concept.name} 
-              description={concept.description} 
-              amount={`${concept.amount} ${currency}`} 
-              onEdit={() => handleOpenEdit(concept)}
-              onDelete={() => removeConcept(concept.id)}
-            />
-          ))
         )}
       </div>
-      <button 
-        onClick={handleOpenAdd}
-        className="flex items-center gap-2 px-4 py-2 text-primary font-semibold active:scale-95 transition-transform"
-      >
-        <PlusCircle className="w-6 h-6" strokeWidth={2} />
-        <span>Añadir Concepto</span>
-      </button>
-
-      <Modal 
-        isOpen={isModalOpen} 
-        onClose={handleCloseModal}
-        title={editingConcept ? "Editar Concepto" : "Añadir Concepto"}
-      >
-        <ConceptForm 
-          initialData={editingConcept} 
-          onSubmit={handleSubmit} 
-          onCancel={handleCloseModal} 
-        />
-      </Modal>
     </section>
   );
 }

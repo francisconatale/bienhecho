@@ -3,44 +3,56 @@ import { Pencil, Trash2 } from "lucide-react";
 interface ConceptItemProps {
   name: string;
   description: string;
+  quantity: number;
+  unit: string;
+  price: string;
   amount: string;
   onEdit: () => void;
   onDelete: () => void;
 }
 
-export function ConceptItem({ name, description, amount, onEdit, onDelete }: ConceptItemProps) {
+export function ConceptItem({ name, description, quantity, unit, price, amount, onEdit, onDelete }: ConceptItemProps) {
   return (
-    <div className="flex flex-col gap-1 px-4 py-3.5 border-b border-outline-variant/10 last:border-0 group">
-      <div className="flex justify-between w-full items-start gap-3 sm:gap-4">
-        {/* Texts section */}
+    <div className="flex flex-col gap-1 px-4 py-3.5 border-b border-outline-variant/10 last:border-0 group hover:bg-surface-container-low/30 transition-all duration-200">
+      <div className="flex justify-between w-full items-start gap-3">
+        {/* Main Content */}
         <div className="flex-1 min-w-0">
-          <span className="font-semibold text-on-surface block break-words">{name}</span>
+          <div className="flex flex-wrap items-baseline gap-x-2">
+            <span className="font-bold text-[15px] text-on-surface truncate tracking-tight">{name}</span>
+            <span className="text-[11px] text-on-surface-variant font-bold opacity-40 tabular-nums">
+              {quantity} {unit === 'horas' ? 'hs' : unit === 'unidades' ? 'unid' : 'un'} × {price}
+            </span>
+          </div>
           {description && (
-            <span className="text-xs text-on-surface-variant block mt-0.5 line-clamp-2">
+            <span className="text-xs text-on-surface-variant/80 block mt-1 line-clamp-2 leading-relaxed">
               {description}
             </span>
           )}
         </div>
         
-        {/* Right side: Amount and Actions */}
-        <div className="flex flex-col-reverse sm:flex-row items-end sm:items-center gap-1.5 sm:gap-3 shrink-0">
-          <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+        {/* Amount & Actions */}
+        <div className="flex items-center gap-4 shrink-0">
+          <span className="font-black text-[15px] text-on-surface tabular-nums tracking-tighter">{amount}</span>
+          
+          <div className="flex items-center gap-1">
             <button 
               onClick={onEdit}
-              className="p-1.5 text-on-surface-variant hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-md transition-colors"
+              className="p-2 text-on-surface-variant/40 hover:text-primary hover:bg-primary/10 rounded-xl transition-all active:scale-90"
+              aria-label={`Editar ${name}`}
             >
-              <Pencil className="w-4 h-4 sm:w-4 sm:h-4" />
+              <Pencil className="w-4 h-4" strokeWidth={2.5} />
             </button>
             <button 
               onClick={onDelete}
-              className="p-1.5 text-on-surface-variant hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-md transition-colors"
+              className="p-2 text-on-surface-variant/40 hover:text-error hover:bg-error/10 rounded-xl transition-all active:scale-90"
+              aria-label={`Eliminar ${name}`}
             >
-              <Trash2 className="w-4 h-4 sm:w-4 sm:h-4" />
+              <Trash2 className="w-4 h-4" strokeWidth={2.5} />
             </button>
           </div>
-          <span className="font-semibold text-on-surface whitespace-nowrap">{amount}</span>
         </div>
       </div>
     </div>
   );
 }
+

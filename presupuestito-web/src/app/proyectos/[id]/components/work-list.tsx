@@ -2,14 +2,18 @@
 
 import { WorkRow } from "./work-row";
 import { ListGroup } from "@/components/ui/list-group";
-import { MOCK_WORKS } from "@/mocks";
+import { useDataStore } from "@/lib/store";
+
+import { useShallow } from 'zustand/react/shallow';
 
 interface WorkListProps {
   projectId: string;
 }
 
 export function WorkList({ projectId }: WorkListProps) {
-  const works = MOCK_WORKS.filter((w) => w.projectId === projectId);
+  const works = useDataStore(
+    useShallow((state) => state.works.filter((w) => w.projectId === projectId))
+  );
 
   return (
     <ListGroup>

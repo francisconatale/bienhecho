@@ -1,14 +1,9 @@
+import { ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
 import { ListItem } from "@/components/ui/list-item";
+import { Client } from "@/types";
 
 type ClientStatus = "Activo" | "Pendiente" | "Inactivo";
-
-export interface Client {
-  id: number;
-  name: string;
-  category: string;
-  status: ClientStatus;
-}
 
 const STATUS_CONFIG: Record<ClientStatus, { label: string; classes: string }> = {
   Activo: { label: "Activo", classes: "text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-400/10 border border-emerald-200/50 dark:border-emerald-400/20" },
@@ -19,20 +14,23 @@ const STATUS_CONFIG: Record<ClientStatus, { label: string; classes: string }> = 
 interface ClientRowProps {
   client: Client;
   onClick?: () => void;
+  trailing?: ReactNode;
 }
 
-export function ClientRow({ client, onClick }: ClientRowProps) {
-  const status = STATUS_CONFIG[client.status];
+export function ClientRow({ client, onClick, trailing }: ClientRowProps) {
+  const status = STATUS_CONFIG[(client.status as ClientStatus) || "Pendiente"];
   return (
     <ListItem
       icon={client.name.charAt(0)}
       title={client.name}
-      subtitle={client.category}
+      subtitle={client.category || "Sin categoría"}
       onClick={onClick}
       trailing={
-        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide ${status.classes}`}>
-          {status.label}
-        </span>
+        trailing || (
+          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide ${status.classes}`}>
+            {status.label}
+          </span>
+        )
       }
     />
   );

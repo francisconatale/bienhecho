@@ -66,24 +66,38 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* VIEW 02: FEATURES */}
+        {/* VIEW 02: HOW IT WORKS */}
         <section id="view-2" className="w-full h-screen scroll-snap-align-start flex items-center justify-center px-6 bg-white overflow-hidden">
           <div className="max-w-[1250px] w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div className="space-y-12">
               <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-[#00236F] border-l-8 border-[#D9FF5F] pl-6 uppercase">
-                Todo lo que necesitás, <br /> nada que no usás.
+                De la idea al<br />presupuesto en 3 pasos.
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-8">
+              <div className="flex flex-col gap-8">
                 {[
-                  { title: "Presupuestos en el momento", desc: "Agregá materiales y mano de obra. El total se calcula solo." },
-                  { title: "Tu marca personal", desc: "El PDF sale con tu nombre y logo. Proyectá profesionalismo." },
-                  { title: "Historial de clientes", desc: "Guardá los datos y accedé al historial cuando lo necesités." },
-                  { title: "Facturación Express", desc: "Convertí presupuestos aceptados en facturas con un clic." },
-                ].map((item, i) => (
-                  <div key={i} className="group border-b-2 border-gray-100 pb-6 hover:border-[#00236F]/30 transition-colors cursor-default">
-                    <h3 className="text-lg md:text-xl font-bold tracking-tight mb-2 uppercase text-[#00236F]">{item.title}</h3>
-                    <p className="text-gray-500 font-medium text-sm md:text-base leading-relaxed">{item.desc}</p>
+                  {
+                    step: 1,
+                    title: "Organizá tus proyectos",
+                    desc: 'Registrá a tus clientes y asignales proyectos. Ya sea "Reforma de cocina" o "Desarrollo de E-commerce", todo queda ordenado en un solo lugar.'
+                  },
+                  {
+                    step: 2,
+                    title: "Detallá los conceptos",
+                    desc: 'Dividí el trabajo en partes claras. Agregá "Mano de obra", "Materiales", o fases como "Diseño UX/UI" y "Testing". Tenés control total sobre cada línea.'
+                  },
+                  {
+                    step: 3,
+                    title: "Enviá y ganá",
+                    desc: "Con un solo clic, generá un PDF con tu logo y todos los detalles. Envíalo al instante y dale a tus clientes la confianza que necesitan para decir que sí."
+                  },
+                ].map((item) => (
+                  <div key={item.step} className="group border-b-2 border-gray-100 pb-6 hover:border-[#00236F]/30 transition-colors cursor-default">
+                    <h3 className="text-lg md:text-xl font-bold tracking-tight mb-2 uppercase text-[#00236F]">
+                      <span className="text-blue-500 font-black text-2xl mr-3">{item.step}.</span>
+                      {item.title}
+                    </h3>
+                    <p className="text-gray-500 font-medium text-sm md:text-base leading-relaxed pl-9">{item.desc}</p>
                   </div>
                 ))}
               </div>

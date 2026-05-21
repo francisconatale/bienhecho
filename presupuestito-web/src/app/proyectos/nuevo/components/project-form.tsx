@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { MOCK_CLIENTS } from "@/mocks";
+import { useDataStore } from "@/lib/store";
 
 interface ProjectFormProps {
   initialClientId?: string;
@@ -12,18 +12,24 @@ interface ProjectFormProps {
 
 export function ProjectForm({ initialClientId = "", onSuccess, hideClientSelection = false }: ProjectFormProps) {
   const router = useRouter();
+  const { clients, addProject } = useDataStore();
   const [name, setName] = useState("");
   const [clientId, setClientId] = useState(initialClientId);
   const [description, setDescription] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // En un caso real, aquí iría la mutación. 
-    // Por ahora simulamos que se creó un proyecto con ID "new-project-id"
-    const newProjectId = "new-project-id";
+    
+    const newProject = addProject({
+      clientId,
+      name,
+      description,
+      status: "Activo",
+      createdAt: new Date().toISOString(),
+    });
     
     if (onSuccess) {
-      onSuccess(newProjectId);
+      onSuccess(newProject.id);
     } else {
       router.push("/proyectos");
     }
@@ -46,7 +52,7 @@ export function ProjectForm({ initialClientId = "", onSuccess, hideClientSelecti
                 className="w-full bg-grouped-bg-light dark:bg-[#1A1C20] border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none"
               >
                 <option value="" disabled>Seleccionar un cliente...</option>
-                {MOCK_CLIENTS.map(c => (
+                {clients.map(c => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>

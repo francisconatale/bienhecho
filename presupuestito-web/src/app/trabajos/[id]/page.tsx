@@ -1,27 +1,26 @@
-import { Metadata } from "next";
+"use client";
+
+import React from "react";
 import { ChevronLeft, Plus } from "lucide-react";
 import Link from "next/link";
-import { MOCK_WORKS, MOCK_PROJECTS } from "@/mocks";
 import { notFound } from "next/navigation";
 import { BudgetList } from "./components/budget-list";
-
-export const metadata: Metadata = {
-  title: "Presupuestito - Trabajo",
-  description: "Detalle del trabajo",
-};
+import { useDataStore } from "@/lib/store";
 
 interface TrabajoPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default function TrabajoPage({ params }: TrabajoPageProps) {
-  const work = MOCK_WORKS.find(w => w.id === params.id);
+  const { id } = React.use(params);
+  const { works, projects } = useDataStore();
+  const work = works.find(w => w.id === id);
   
   if (!work) {
     notFound();
   }
 
-  const project = MOCK_PROJECTS.find(p => p.id === work.projectId);
+  const project = projects.find(p => p.id === work.projectId);
 
   return (
     <div className="relative w-full min-h-screen">

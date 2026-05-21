@@ -23,19 +23,31 @@ export function TotalsSummary() {
   const totalNum = subtotalNum + ivaNum;
 
   return (
-    <section>
-      <div className="bg-surface rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden">
-        <div className="flex justify-between px-4 py-3 border-b border-outline-variant/10">
-          <span className="text-on-surface">Subtotal</span>
-          <span className="text-on-surface font-medium">{formatAmount(subtotalNum)} {currency}</span>
+    <section className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="bg-surface-container-low/50 dark:bg-white/5 rounded-[28px] border border-outline-variant/20 p-6 space-y-4">
+        <div className="flex justify-between items-center px-1">
+          <span className="font-black text-[11px] text-on-surface-variant/60 uppercase tracking-widest">Subtotal</span>
+          <span className="font-black text-[15px] text-on-surface tabular-nums">
+            {formatAmount(subtotalNum)} <span className="opacity-20 text-[10px] font-bold">{currency}</span>
+          </span>
         </div>
-        <div className="flex justify-between px-4 py-3 border-b border-outline-variant/10">
-          <span className="text-on-surface">IVA ({ivaRate}%)</span>
-          <span className="text-on-surface font-medium">{formatAmount(ivaNum)} {currency}</span>
+        <div className="flex justify-between items-center px-1">
+          <span className="font-black text-[11px] text-on-surface-variant/60 uppercase tracking-widest">IVA ({ivaRate}%)</span>
+          <span className="font-black text-[15px] text-on-surface tabular-nums">
+            {formatAmount(ivaNum)} <span className="opacity-20 text-[10px] font-bold">{currency}</span>
+          </span>
         </div>
-        <div className="flex justify-between px-4 py-4">
-          <span className="font-bold text-lg text-on-surface">Total</span>
-          <span className="font-bold text-lg text-primary">{formatAmount(totalNum)} {currency}</span>
+        <div className="pt-5 mt-1 border-t border-outline-variant/10 flex justify-between items-end px-1">
+          <div className="space-y-0.5">
+            <span className="font-black text-[12px] text-primary uppercase tracking-widest leading-none">Total Presupuesto</span>
+            <p className="text-[10px] font-bold text-on-surface-variant/40 lowercase italic">Impuestos incluidos</p>
+          </div>
+          <div className="text-right">
+            <span className="block font-black text-3xl text-primary tracking-tighter tabular-nums leading-none">
+              {formatAmount(totalNum)}
+            </span>
+            <span className="text-[11px] font-black text-primary opacity-30 uppercase tracking-[0.2em] mt-1.5 block">{currency}</span>
+          </div>
         </div>
       </div>
     </section>

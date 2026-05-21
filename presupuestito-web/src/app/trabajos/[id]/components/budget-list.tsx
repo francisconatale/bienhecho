@@ -2,14 +2,18 @@
 
 import { BudgetRow } from "./budget-row";
 import { ListGroup } from "@/components/ui/list-group";
-import { MOCK_BUDGETS } from "@/mocks";
+import { useDataStore } from "@/lib/store";
+
+import { useShallow } from 'zustand/react/shallow';
 
 interface BudgetListProps {
   workId: string;
 }
 
 export function BudgetList({ workId }: BudgetListProps) {
-  const budgets = MOCK_BUDGETS.filter((b) => b.workId === workId);
+  const budgets = useDataStore(
+    useShallow((state) => state.budgets.filter((b) => b.workId === workId))
+  );
 
   return (
     <ListGroup>

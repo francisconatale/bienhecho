@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
-import { PlusCircle } from "lucide-react";
-import Link from "next/link";
 import { ProjectList } from "./components/project-list";
 
 export const metadata: Metadata = {
-  title: "Presupuestito - Proyectos",
-  description: "Gestioná tus proyectos y trabajos",
+  title: "Presupuestito - Campañas",
+  description: "Gestioná tus campañas y etapas",
 };
 
 export default function ProyectosPage() {
@@ -22,19 +20,10 @@ export default function ProyectosPage() {
 
       {/* Main Content */}
       <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-16 pb-32 w-full transition-all max-w-4xl mx-auto">
-        {/* Header Actions */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="mb-10">
           <h1 className="text-[38px] leading-tight font-extrabold text-gray-900 dark:text-white tracking-tight">
-            Mis Proyectos
+            Mis Campañas
           </h1>
-          <Link href="/proyectos/nuevo">
-            <button
-              aria-label="Nuevo proyecto"
-              className="w-12 h-12 shrink-0 rounded-full bg-blue-600 dark:bg-blue-500 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors active:scale-95"
-            >
-              <PlusCircle className="w-6 h-6" strokeWidth={2} />
-            </button>
-          </Link>
         </div>
 
         <ProjectList />

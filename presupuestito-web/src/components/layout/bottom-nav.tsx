@@ -54,7 +54,7 @@ export function BottomNav() {
       />
       <NavItem
         icon={<Folder className="w-6 h-6" strokeWidth={2} />}
-        label="Proyectos"
+        label="Campañas"
         href="/proyectos"
         active={pathname.startsWith("/proyectos")}
       />

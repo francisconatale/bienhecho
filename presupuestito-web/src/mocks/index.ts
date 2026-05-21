@@ -1,8 +1,11 @@
 import { Client, Project, Work, Budget } from '../types';
 
 export const MOCK_CLIENTS: Client[] = [
-  { id: 'c1', name: 'Acme Corp', email: 'contacto@acme.com', phone: '123456789' },
-  { id: 'c2', name: 'Stark Industries', email: 'tony@stark.com', phone: '987654321' },
+  { id: 'c1', name: 'Aperture Science', category: 'Portal Tech & Research', status: 'Activo', email: 'glados@aperture.com' },
+  { id: 'c2', name: 'Oscorp Industries', category: 'Genetics & Applied Science', status: 'Pendiente', email: 'norman@oscorp.com' },
+  { id: 'c3', name: 'Stark Industries', category: 'Defense & Clean Energy', status: 'Activo', email: 'tony@stark.com' },
+  { id: 'c4', name: 'Wayne Enterprises', category: 'Global Conglomerate', status: 'Activo', email: 'bruce@wayne.com' },
+  { id: 'c5', name: 'Acme Corp', category: 'Anvils & Explosives', status: 'Inactivo', email: 'wile@acme.com' },
 ];
 
 export const MOCK_PROJECTS: Project[] = [
@@ -17,7 +20,7 @@ export const MOCK_WORKS: Work[] = [
 ];
 
 export const MOCK_BUDGETS: Budget[] = [
-  { id: 'b1', workId: 'w1', type: 'Mano de Obra', total: 1200 },
-  { id: 'b2', workId: 'w2', type: 'Mano de Obra', total: 2500 },
-  { id: 'b3', workId: 'w2', type: 'Materiales', total: 300 }, // Ej. Licencias, assets
+  { id: 'b1', clientId: 'c1', projectId: 'p1', workId: 'w1', type: 'Mano de Obra', total: 1200 },
+  { id: 'b2', clientId: 'c1', projectId: 'p1', workId: 'w2', type: 'Mano de Obra', total: 2500 },
+  { id: 'b3', clientId: 'c1', projectId: 'p1', workId: 'w2', type: 'Materiales', total: 300 }, // Ej. Licencias, assets
 ];

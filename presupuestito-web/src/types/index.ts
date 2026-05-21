@@ -3,6 +3,8 @@ export interface Client {
   name: string;
   email?: string;
   phone?: string;
+  category?: string;
+  status?: 'Activo' | 'Pendiente' | 'Inactivo';
 }
 
 export interface Project {
@@ -23,7 +25,9 @@ export interface Work {
 
 export interface Budget {
   id: string;
-  workId: string;
+  clientId: string;
+  projectId?: string;
+  workId?: string;
   type: 'Materiales' | 'Mano de Obra' | 'Mixto';
   total: number;
   // Conceptos will be added here
