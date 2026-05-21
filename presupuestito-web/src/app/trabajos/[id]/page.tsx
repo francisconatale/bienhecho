@@ -36,7 +36,7 @@ export default function TrabajoPage({ params }: TrabajoPageProps) {
       <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-16 pb-32 w-full transition-all max-w-4xl mx-auto space-y-6">
         {/* Header Actions */}
         <div className="flex items-center gap-4 mb-2">
-          <Link href={`/proyectos/${work.projectId}`}>
+          <Link href="/trabajos">
             <button
               aria-label="Volver"
               className="w-10 h-10 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-white/20 transition-all active:scale-95"

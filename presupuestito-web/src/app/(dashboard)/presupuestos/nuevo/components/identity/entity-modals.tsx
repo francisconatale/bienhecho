@@ -52,8 +52,8 @@ export function EntityModals() {
               <X className="w-4 h-4" />
             </button>
             <div className="p-8">
-              <h3 className="text-lg font-bold text-on-surface text-center mb-1">Nueva Campaña</h3>
-              <p className="text-sm text-on-surface-variant text-center mb-6">Crea una campaña para organizar tus presupuestos.</p>
+              <h3 className="text-lg font-bold text-on-surface text-center mb-1">Nuevo Proyecto</h3>
+              <p className="text-sm text-on-surface-variant text-center mb-6">Crea un proyecto para organizar tus presupuestos.</p>
               <ProjectForm
                 initialClientId={clientId}
                 hideClientSelection={true}

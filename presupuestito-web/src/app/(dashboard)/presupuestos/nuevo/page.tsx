@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Save, Loader2, ArrowRight, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { BudgetIdentity } from "./components/identity/budget-identity";
 import { ConceptList } from "./components/concepts/concept-list";
@@ -11,17 +12,42 @@ import { useBudgetStore } from "./hooks/use-budget";
 import { useDataStore } from "@/lib/store";
 
 export default function NuevoPresupuestoPage() {
-  const { step, setStep, clientId, budgetName, concepts } = useBudgetStore();
-  const { clients } = useDataStore();
+  const router = useRouter();
+  const { step, setStep, clientId, projectId, workId, budgetName, concepts, currency, reset } = useBudgetStore();
+  const { clients, addBudget } = useDataStore();
   const [isSaving, setIsSaving] = useState(false);
 
   const selectedClient = clients.find((c) => c.id === clientId);
 
+  const parseAmount = (amountStr: string) => {
+    const cleanStr = amountStr.replace(/\./g, "").replace(",", ".");
+    const num = parseFloat(cleanStr);
+    return isNaN(num) ? 0 : num;
+  };
+
   const handleSave = () => {
+    if (!clientId || concepts.length === 0) return;
+    
     setIsSaving(true);
+    
+    const subtotal = concepts.reduce((acc, concept) => acc + parseAmount(concept.amount), 0);
+    const iva = subtotal * 0.21;
+    const total = subtotal + iva;
+
+    // Simulate API delay
     setTimeout(() => {
+      addBudget({
+        clientId,
+        projectId: projectId || "",
+        workId: workId || "",
+        type: "Presupuesto",
+        total: total,
+      });
+      
+      reset();
       setIsSaving(false);
-    }, 2000);
+      router.push("/");
+    }, 1500);
   };
 
   const canContinue = budgetName.length >= 2 && !!clientId;
@@ -115,7 +141,7 @@ export default function NuevoPresupuestoPage() {
                         <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
                     </div>
                     <p className="text-[11px] font-bold text-[#2563EB]/80 leading-tight">
-                        Tip: Puedes crear clientes y campañas directamente desde los selectores de arriba.
+                        Tip: Puedes crear clientes y proyectos directamente desde los selectores de abajo.
                     </p>
                 </div>
 

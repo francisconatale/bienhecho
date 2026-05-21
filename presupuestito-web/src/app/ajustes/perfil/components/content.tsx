@@ -50,7 +50,12 @@ function ActionRow({ label, onClick }: ActionRowProps) {
   );
 }
 
+import { useUserStore } from "@/lib/user-store";
+
 export function EditarPerfilContent() {
+  const user = useUserStore((state) => state.user);
+  const displayName = user?.name || "Juan Pérez";
+
   return (
     <div className="space-y-8">
       {/* Profile Picture Section */}
@@ -59,7 +64,7 @@ export function EditarPerfilContent() {
           <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-surface-container-highest shadow-sm bg-surface-variant">
             <img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtLlSZwtWgWGTtJEOxjxbnaAZAtmdvT_rSNGTQm4k_SJ7TS2SAzG4XSdpTCjuhlwm5L4gJZOPnYv2gR-EVysK8AIam_f3uO35aPnu4Ww3YAeip_LniVzfUOtTJT_Y5uEktN6GitT9iWpj0_6czN9Q-F28SMawXmc7CSBH5clYZB7G4TW_lGwrNZ5PFV98aKyVzozGDqKlh-5FAOhENphAuq0ZRxNDObEeYztgxUjqGFHQ4XmNk5CzUpPCtOGZVaxyKOHtoHhsAn-s"
-              alt="Juan Pérez"
+              alt={displayName}
               className="w-full h-full object-cover select-none"
             />
           </div>
@@ -80,7 +85,7 @@ export function EditarPerfilContent() {
             label="Nombre"
             id="full_name"
             type="text"
-            defaultValue="Juan Pérez"
+            defaultValue={displayName}
           />
           <FormField
             label="Correo"

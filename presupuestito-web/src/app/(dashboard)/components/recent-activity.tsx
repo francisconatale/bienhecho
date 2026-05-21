@@ -36,9 +36,9 @@ function ActivityTrailing({ amount, status }: { amount: string; status: Activity
 }
 
 const ACTIVITIES: ActivityItemProps[] = [
-  { initial: "A", client: "Acme Corp",         project: "Diseño Web",       date: "12 Oct", amount: "$1,200", status: "Enviado"  },
-  { initial: "S", client: "Stark Industries",   project: "Consultoría SEO",  date: "10 Oct", amount: "$850",   status: "Borrador" },
-  { initial: "W", client: "Wayne Ent.",          project: "Campaña Ads",      date: "05 Oct", amount: "$2,450", status: "Aceptado" },
+  { initial: "C", client: "Constructora del Sur", project: "Edificio Las Heras", date: "12 Oct", amount: "$1,200", status: "Enviado"  },
+  { initial: "E", client: "Estudio M&P",          project: "Reforma Dental",   date: "10 Oct", amount: "$850",   status: "Borrador" },
+  { initial: "A", client: "Admin. San Jose",     project: "Mantenimiento",     date: "05 Oct", amount: "$2,450", status: "Aceptado" },
 ];
 
 export function RecentActivity() {

@@ -1,4 +1,4 @@
-import { PlusCircle, UserPlus } from "lucide-react";
+import { PlusCircle, UserPlus, Briefcase } from "lucide-react";
 import Link from "next/link";
 
 export function QuickActions() {
@@ -7,7 +7,7 @@ export function QuickActions() {
       <h3 className="text-xs md:text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-4 px-1">
         Acciones Rápidas
       </h3>
-      <div className="grid grid-cols-2 md:flex md:flex-row gap-3 md:gap-4">
+      <div className="grid grid-cols-1 md:flex md:flex-row gap-3 md:gap-4">
         <Link href="/presupuestos/nuevo" className="flex-1 md:max-w-[280px]">
           <button
             className="w-full h-[52px] md:h-14 rounded-2xl flex items-center justify-center gap-2 font-semibold text-white text-[14px] md:text-[15px] bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#2563EB] active:scale-[0.98] transition-all"
@@ -19,9 +19,17 @@ export function QuickActions() {
             <span className="truncate">Nuevo Presupuesto</span>
           </button>
         </Link>
-        <Link href="/clientes" className="flex-1 md:max-w-[220px]">
+        <Link href="/trabajos" className="flex-1 md:max-w-[220px]">
           <button
             className="w-full h-[52px] md:h-14 rounded-2xl flex items-center justify-center gap-2 font-semibold text-[#2563EB] dark:text-[#60A5FA] bg-blue-50 dark:bg-[#3B82F6]/10 hover:bg-blue-100 dark:hover:bg-[#3B82F6]/20 active:scale-[0.98] transition-all border border-blue-100 dark:border-[#3B82F6]/20"
+          >
+            <Briefcase className="w-5 h-5 md:w-[22px] md:h-[22px]" strokeWidth={2} />
+            <span className="truncate">Ver Trabajos</span>
+          </button>
+        </Link>
+        <Link href="/clientes" className="flex-1 md:max-w-[220px]">
+          <button
+            className="w-full h-[52px] md:h-14 rounded-2xl flex items-center justify-center gap-2 font-semibold text-on-surface-variant bg-surface-variant/10 hover:bg-surface-variant/20 active:scale-[0.98] transition-all border border-outline-variant/10"
           >
             <UserPlus className="w-5 h-5 md:w-[22px] md:h-[22px]" strokeWidth={2} />
             <span className="truncate">Nuevo Cliente</span>

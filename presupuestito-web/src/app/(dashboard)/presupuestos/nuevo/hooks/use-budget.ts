@@ -30,6 +30,7 @@ interface BudgetState {
   updateConcept: (id: string, data: Omit<Concept, "id">) => void;
   removeConcept: (id: string) => void;
   setCurrency: (currency: Currency) => void;
+  reset: () => void;
 }
 
 export const useBudgetStore = create<BudgetState>((set) => ({
@@ -38,10 +39,7 @@ export const useBudgetStore = create<BudgetState>((set) => ({
   clientId: null,
   projectId: null,
   workId: null,
-  concepts: [
-    { id: "1", name: "Diseño de Interfaz UX/UI", description: "Proyecto completo de rediseño móvil", quantity: 1, unit: "unidades", price: "850,00", amount: "850,00" },
-    { id: "2", name: "Consultoría Técnica", description: "2 horas de auditoría de sistema", quantity: 2, unit: "horas", price: "60,00", amount: "120,00" },
-  ],
+  concepts: [],
   currency: "ARS",
   setStep: (step) => set({ step }),
   setBudgetName: (name) => set({ budgetName: name }),
@@ -59,5 +57,14 @@ export const useBudgetStore = create<BudgetState>((set) => ({
   removeConcept: (id) => set((state) => ({
     concepts: state.concepts.filter((concept) => concept.id !== id)
   })),
-  setCurrency: (currency) => set({ currency })
+  setCurrency: (currency) => set({ currency }),
+  reset: () => set({
+    step: 1,
+    budgetName: "",
+    clientId: null,
+    projectId: null,
+    workId: null,
+    concepts: [],
+    currency: "ARS"
+  })
 }));
