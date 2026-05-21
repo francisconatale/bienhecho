@@ -38,8 +38,8 @@ export function ProjectSelector() {
       />
       
       {isProjectListOpen && (
-        <div className="px-4 pt-2 pb-4 space-y-3 bg-surface-variant/5 border-t border-outline-variant/5 animate-in fade-in slide-in-from-top-2 duration-300">
-          <div className="relative mx-2">
+        <div className="px-5 pt-2 pb-5 space-y-4 bg-surface-variant/5 border-t border-outline-variant/5 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-on-surface-variant/40" />
             <input
               type="text"
@@ -57,7 +57,7 @@ export function ProjectSelector() {
                 title={project.name}
                 subtitle={project.status}
                 onClick={() => handleSelectProject(project.id)}
-                className="!rounded-lg !py-2 !border-none !px-2"
+                className="!rounded-lg !py-2 !border-none !px-0"
                 showChevron={false}
               />
             ))}

@@ -1,6 +1,7 @@
 "use client";
 
 import { FileText, Wallet } from "lucide-react";
+import { useUserStore } from "@/lib/user-store";
 
 interface DashboardHeroProps {
   name?: string;
@@ -9,10 +10,13 @@ interface DashboardHeroProps {
 }
 
 export function DashboardHero({
-  name = "Francisco",
+  name,
   activeBudgets = 12,
   totalPending = "$4,500",
 }: DashboardHeroProps) {
+  const user = useUserStore((state) => state.user);
+  const displayName = name || user?.name || "Francisco";
+
   return (
     <div className="relative w-full">
       {/* Aurora Background */}
@@ -35,7 +39,7 @@ export function DashboardHero({
           {/* Título */}
           <div className="mb-10 md:mb-0 px-2 md:px-0 md:flex-1">
             <h1 className="text-[38px] md:text-[56px] lg:text-[64px] leading-tight font-extrabold text-gray-900 dark:text-white tracking-tight md:tracking-tighter transition-all">
-              ¡Hola, {name}!
+              ¡Hola, {displayName}!
             </h1>
             <p className="hidden md:block mt-4 text-lg text-gray-600 dark:text-gray-400 font-medium max-w-md">
               Aquí tienes el resumen de tu actividad financiera. Administra tus presupuestos de manera profesional.

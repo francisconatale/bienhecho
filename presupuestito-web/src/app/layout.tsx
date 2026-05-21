@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Sidebar } from "@/components/layout/sidebar";
+import { AuthRedirect } from "@/components/auth/auth-redirect";
 import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -36,13 +37,15 @@ export default function RootLayout({
           `}
         </Script>
         <ThemeProvider>
-          <div className="flex min-h-screen">
-            <Sidebar />
-            <div className="flex-1 flex flex-col min-w-0 pb-24 md:pb-0">
-              {children}
+          <AuthRedirect>
+            <div className="flex min-h-screen">
+              <Sidebar />
+              <div className="flex-1 flex flex-col min-w-0 pb-24 md:pb-0">
+                {children}
+              </div>
             </div>
-          </div>
-          <BottomNav />
+            <BottomNav />
+          </AuthRedirect>
         </ThemeProvider>
       </body>
     </html>
