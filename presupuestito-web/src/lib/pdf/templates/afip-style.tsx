@@ -5,161 +5,213 @@ import {
   Text,
   View,
   StyleSheet,
-  Font,
 } from "@react-pdf/renderer";
-import { Client, Job, Budget } from "@/types";
-import { Concept } from "@/app/(dashboard)/presupuestos/nuevo/hooks/use-budget";
+import { Client, Job, Budget, Concept } from "@/types";
 
-// Helvetica is built-in, so we don't need to register external files for basic usage
-// but we'll set up the styles to match the ReportLab proportions
+/**
+ * Professional Budget Template
+ * Focus: Clarity, Modern Typography, and Hierarchy
+ * Style: Clean SaaS (Stripe/Harvest inspired)
+ */
+
+const primaryColor = "#2563EB";
+const secondaryColor = "#64748B";
+const borderColor = "#E2E8F0";
+const bgShade = "#F8FAFC";
 
 const styles = StyleSheet.create({
   page: {
-    padding: "15mm",
-    fontSize: 8,
+    padding: "20mm",
+    fontSize: 9,
     fontFamily: "Helvetica",
-    color: "#000",
+    color: "#1E293B",
+    lineHeight: 1.5,
   },
-  headerOriginal: {
-    border: "0.5pt solid black",
-    textAlign: "center",
-    paddingVertical: 2,
-    marginBottom: "4mm",
-  },
-  headerOriginalText: {
-    fontSize: 10,
-    fontWeight: "bold",
-    textTransform: "uppercase",
-  },
-  topBlock: {
+  
+  // Header Section
+  header: {
     flexDirection: "row",
-    border: "0.5pt solid black",
-    height: "30mm",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 40,
+    borderBottom: `2pt solid ${primaryColor}`,
+    paddingBottom: 20,
   },
-  issuerColumn: {
-    width: "42%",
-    padding: "3mm",
-    borderRight: "0.5pt solid black",
+  brandContainer: {
+    flexDirection: "column",
   },
-  infoColumn: {
-    flex: 1,
-    padding: "3mm",
-    alignItems: "center",
-  },
-  centralSquare: {
-    position: "absolute",
-    left: "42%",
-    marginLeft: "-7mm",
-    top: "4mm",
-    width: "14mm",
-    height: "14mm",
-    border: "0.5pt solid black",
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 10,
-  },
-  centralLetter: {
-    fontSize: 22,
+  brandName: {
+    fontSize: 24,
     fontWeight: "bold",
+    color: primaryColor,
+    letterSpacing: -0.5,
   },
-  centralCode: {
-    fontSize: 6,
+  brandSlogan: {
+    fontSize: 9,
+    color: secondaryColor,
+    marginTop: 2,
+    textTransform: "uppercase",
+    letterSpacing: 1,
   },
-  fieldLabel: {
+  docInfo: {
+    alignItems: "flex-end",
+  },
+  docTitle: {
+    fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 2,
-  },
-  invoiceTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
+    color: "#0F172A",
     marginBottom: 4,
   },
-  periodBlock: {
-    flexDirection: "row",
-    border: "0.5pt solid black",
-    borderTopWidth: 0,
-    padding: "2mm 3mm",
-    justifyContent: "space-between",
+  docNumber: {
+    fontSize: 10,
+    color: secondaryColor,
   },
-  buyerBlock: {
-    marginTop: "4mm",
-    border: "0.5pt solid black",
-    height: "20mm",
-  },
-  buyerRow: {
+
+  // Info Grid (From / To)
+  infoGrid: {
     flexDirection: "row",
-    borderBottom: "0.5pt solid black",
-    height: "7mm",
-    alignItems: "center",
-    paddingHorizontal: "3mm",
+    marginBottom: 40,
+    gap: 40,
   },
-  buyerBottomRow: {
-    flexDirection: "row",
-    height: "13mm",
-    padding: "3mm",
+  infoBlock: {
+    flex: 1,
+  },
+  infoLabel: {
+    fontSize: 8,
+    fontWeight: "bold",
+    color: secondaryColor,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginBottom: 8,
+    borderBottom: `1pt solid ${borderColor}`,
+    paddingBottom: 4,
+  },
+  infoName: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "#0F172A",
+    marginBottom: 4,
+  },
+  infoDetail: {
+    fontSize: 9,
+    color: "#475569",
+    marginBottom: 2,
+  },
+
+  // Table Section
+  table: {
+    marginTop: 10,
   },
   tableHeader: {
     flexDirection: "row",
-    backgroundColor: "#f0f0f0",
-    border: "0.5pt solid black",
-    marginTop: "4mm",
-    height: "7mm",
-    alignItems: "center",
+    backgroundColor: bgShade,
+    borderBottom: `1pt solid ${borderColor}`,
+    borderTop: `1pt solid ${borderColor}`,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+  },
+  tableHeaderText: {
+    fontSize: 8,
+    fontWeight: "bold",
+    color: "#475569",
+    textTransform: "uppercase",
   },
   tableRow: {
     flexDirection: "row",
-    borderHorizontal: "0.5pt solid black",
-    borderBottom: "0.5pt solid black",
-    height: "7mm",
+    borderBottom: `1pt solid ${borderColor}`,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
     alignItems: "center",
   },
-  column: {
-    borderRight: "0.5pt solid black",
-    height: "100%",
-    justifyContent: "center",
-    paddingHorizontal: 2,
+  tableRowEven: {
+    backgroundColor: "#FFFFFF",
   },
-  colCode: { width: "14mm" },
-  colDesc: { flex: 1 },
-  colQty: { width: "15mm", textAlign: "center" },
-  colUnit: { width: "15mm", textAlign: "center" },
-  colPrice: { width: "20mm", textAlign: "right" },
-  colTotal: { width: "20mm", textAlign: "right", borderRightWidth: 0 },
+  tableCell: {
+    fontSize: 9,
+    color: "#1E293B",
+  },
   
-  itemsArea: {
-    borderHorizontal: "0.5pt solid black",
-    borderBottom: "0.5pt solid black",
-    height: "90mm", // Spacing for empty area
+  // Columns
+  colDesc: { flex: 4 },
+  colQty: { flex: 1, textAlign: "center" },
+  colUnit: { flex: 1, textAlign: "center" },
+  colPrice: { flex: 1.5, textAlign: "right" },
+  colTotal: { flex: 1.5, textAlign: "right", fontWeight: "bold" },
+
+  // Summary Section
+  summaryContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 20,
   },
-  totalsBlock: {
-    marginTop: 0,
-    border: "0.5pt solid black",
-    borderTopWidth: 0,
-    padding: "4mm",
-    alignItems: "flex-end",
+  summaryBox: {
+    width: "40%",
+    backgroundColor: bgShade,
+    borderRadius: 8,
+    padding: 15,
+  },
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 6,
+  },
+  summaryLabel: {
+    fontSize: 9,
+    color: secondaryColor,
+  },
+  summaryValue: {
+    fontSize: 9,
+    fontWeight: "bold",
+    color: "#1E293B",
   },
   totalRow: {
     flexDirection: "row",
-    justifyContent: "flex-end",
-    marginBottom: 2,
+    justifyContent: "space-between",
+    marginTop: 10,
+    paddingTop: 10,
+    borderTop: `1pt solid ${borderColor}`,
+  },
+  totalLabel: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: primaryColor,
+  },
+  totalValue: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: primaryColor,
+  },
+
+  // Notes & Footer
+  notesSection: {
+    marginTop: 40,
+    paddingTop: 20,
+    borderTop: `1pt dashed ${borderColor}`,
+  },
+  notesLabel: {
+    fontSize: 8,
+    fontWeight: "bold",
+    color: secondaryColor,
+    textTransform: "uppercase",
+    marginBottom: 8,
+  },
+  notesText: {
+    fontSize: 9,
+    color: "#64748B",
+    fontStyle: "italic",
   },
   footer: {
-    marginTop: "4mm",
-    border: "0.5pt solid black",
-    height: "12mm",
+    position: "absolute",
+    bottom: 30,
+    left: 20,
+    right: 20,
     flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: "3mm",
     justifyContent: "space-between",
+    borderTop: `1pt solid ${borderColor}`,
+    paddingTop: 10,
+    fontSize: 8,
+    color: secondaryColor,
   },
-  afipSim: {
-    width: "20mm",
-    height: "8mm",
-    border: "0.5pt solid black",
-    justifyContent: "center",
-    alignItems: "center",
-  }
 });
 
 interface BudgetPDFProps {
@@ -177,10 +229,14 @@ interface BudgetPDFProps {
 }
 
 export const BudgetPDF = ({ budget, client, job, concepts, userProfile }: BudgetPDFProps) => {
-  const dateStr = new Date().toLocaleDateString("es-AR");
+  const dateStr = new Date().toLocaleDateString("es-AR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
   
   const subtotal = concepts.reduce((acc, c) => {
-    const price = parseFloat(c.price.replace(".", "").replace(",", "."));
+    const price = parseFloat(c.price.replace(/\./g, "").replace(",", "."));
     return acc + (price * c.quantity);
   }, 0);
   
@@ -193,104 +249,94 @@ export const BudgetPDF = ({ budget, client, job, concepts, userProfile }: Budget
   return (
     <Document title={`Presupuesto - ${client.name}`}>
       <Page size="A4" style={styles.page}>
-        {/* Título Original */}
-        <View style={styles.headerOriginal}>
-          <Text style={styles.headerOriginalText}>Presupuesto</Text>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.brandContainer}>
+            <Text style={styles.brandName}>{userProfile.company || userProfile.name}</Text>
+            <Text style={styles.brandSlogan}>{userProfile.trade || "Servicios Profesionales"}</Text>
+          </View>
+          <View style={styles.docInfo}>
+            <Text style={styles.docTitle}>PRESUPUESTO</Text>
+            <Text style={styles.docNumber}>N° 0001-00000001</Text>
+            <Text style={[styles.docNumber, { marginTop: 4 }]}>{dateStr}</Text>
+          </View>
         </View>
 
-        {/* Bloque Superior */}
-        <View style={styles.topBlock}>
-          {/* Central Square "P" for Presupuesto (instead of C) */}
-          <View style={styles.centralSquare}>
-            <Text style={styles.centralLetter}>P</Text>
-            <Text style={styles.centralCode}>DOC. NO VALIDO COMO FACTURA</Text>
+        {/* Info Grid */}
+        <View style={styles.infoGrid}>
+          <View style={styles.infoBlock}>
+            <Text style={styles.infoLabel}>De</Text>
+            <Text style={styles.infoName}>{userProfile.name}</Text>
+            <Text style={styles.infoDetail}>{userProfile.address || "Domicilio no especificado"}</Text>
+            <Text style={styles.infoDetail}>CUIT: {userProfile.cuit || "Consumidor Final"}</Text>
+          </View>
+          <View style={styles.infoBlock}>
+            <Text style={styles.infoLabel}>Para</Text>
+            <Text style={styles.infoName}>{client.name}</Text>
+            <Text style={styles.infoDetail}>{client.email || "S/D"}</Text>
+            <Text style={[styles.infoDetail, { marginTop: 4, fontWeight: "bold" }]}>
+              Trabajo: {job?.name || "General"}
+            </Text>
+          </View>
+        </View>
+
+        {/* Items Table */}
+        <View style={styles.table}>
+          <View style={styles.tableHeader}>
+            <Text style={[styles.tableHeaderText, styles.colDesc]}>Descripción</Text>
+            <Text style={[styles.tableHeaderText, styles.colQty]}>Cant.</Text>
+            <Text style={[styles.tableHeaderText, styles.colUnit]}>U.M.</Text>
+            <Text style={[styles.tableHeaderText, styles.colPrice]}>Unitario</Text>
+            <Text style={[styles.tableHeaderText, styles.colTotal]}>Total</Text>
           </View>
 
-          <View style={styles.issuerColumn}>
-            <Text style={[styles.fieldLabel, { fontSize: 10 }]}>{userProfile.company || userProfile.name}</Text>
-            <Text style={{ marginTop: 4 }}>Razon Social: {userProfile.name}</Text>
-            <Text>Domicilio: {userProfile.address || "S/D"}</Text>
-            <Text style={{ marginTop: 4 }}>Condición IVA: Responsable Monotributo</Text>
-          </View>
+          {concepts.map((concept, i) => (
+            <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowEven : {}]}>
+              <View style={styles.colDesc}>
+                <Text style={styles.tableCell}>{concept.name}</Text>
+                {concept.description ? (
+                  <Text style={{ fontSize: 7, color: secondaryColor, marginTop: 2 }}>{concept.description}</Text>
+                ) : null}
+              </View>
+              <Text style={[styles.tableCell, styles.colQty]}>{concept.quantity}</Text>
+              <Text style={[styles.tableCell, styles.colUnit]}>{concept.unit}</Text>
+              <Text style={[styles.tableCell, styles.colPrice]}>$ {concept.price}</Text>
+              <Text style={[styles.tableCell, styles.colTotal]}>$ {concept.amount}</Text>
+            </View>
+          ))}
+        </View>
 
-          <View style={styles.infoColumn}>
-            <Text style={styles.invoiceTitle}>PRESUPUESTO</Text>
-            <View style={{ width: "100%", paddingLeft: 20 }}>
-              <Text>Nro: 0001 - 00000001</Text>
-              <Text>Fecha: {dateStr}</Text>
-              <Text>CUIT: {userProfile.cuit || "00-00000000-0"}</Text>
-              <Text>Ingresos Brutos: {userProfile.cuit || "Exento"}</Text>
-              <Text>Inicio de Actividades: 01/01/2024</Text>
+        {/* Summary */}
+        <View style={styles.summaryContainer}>
+          <View style={styles.summaryBox}>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Subtotal</Text>
+              <Text style={styles.summaryValue}>$ {formatCurrency(subtotal)}</Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>IVA (21%)</Text>
+              <Text style={styles.summaryValue}>$ {formatCurrency(iva)}</Text>
+            </View>
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>TOTAL</Text>
+              <Text style={styles.totalValue}>$ {formatCurrency(total)}</Text>
             </View>
           </View>
         </View>
 
-        {/* Bloque Comprador */}
-        <View style={styles.buyerBlock}>
-          <View style={styles.buyerRow}>
-            <Text style={{ width: "50%" }}>CUIT: 00-00000000-0</Text>
-            <Text>Cliente: {client.name}</Text>
-          </View>
-          <View style={styles.buyerBottomRow}>
-            <View style={{ width: "50%" }}>
-              <Text>Condición IVA: Consumidor Final</Text>
-              <Text style={{ marginTop: 4 }}>Condición de venta: Contado</Text>
-            </View>
-            <View>
-              <Text>Domicilio: {client.email || "S/D"}</Text>
-              <Text style={{ marginTop: 4 }}>Trabajo: {job?.name || "General"}</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Tabla de Items */}
-        <View style={styles.tableHeader}>
-          <View style={[styles.column, styles.colCode]}><Text style={{ fontWeight: "bold" }}>Cant.</Text></View>
-          <View style={[styles.column, styles.colDesc]}><Text style={{ fontWeight: "bold" }}>Producto / Servicio</Text></View>
-          <View style={[styles.column, styles.colUnit]}><Text style={{ fontWeight: "bold" }}>U. Medida</Text></View>
-          <View style={[styles.column, styles.colPrice]}><Text style={{ fontWeight: "bold" }}>Precio Unit.</Text></View>
-          <View style={[styles.column, styles.colTotal]}><Text style={{ fontWeight: "bold" }}>Subtotal</Text></View>
-        </View>
-
-        {concepts.map((concept, i) => (
-          <View key={i} style={styles.tableRow}>
-            <View style={[styles.column, styles.colCode]}><Text>{concept.quantity.toFixed(2)}</Text></View>
-            <View style={[styles.column, styles.colDesc]}><Text>{concept.name}</Text></View>
-            <View style={[styles.column, styles.colUnit]}><Text>{concept.unit}</Text></View>
-            <View style={[styles.column, styles.colPrice]}><Text>{concept.price}</Text></View>
-            <View style={[styles.column, styles.colTotal]}><Text>{concept.amount}</Text></View>
-          </View>
-        ))}
-
-        {/* Espacio vacío para completar la hoja si hay pocos items */}
-        <View style={[styles.itemsArea, { height: Math.max(0, 100 - concepts.length * 7) + "mm" }]} />
-
-        {/* Bloque Totales */}
-        <View style={styles.totalsBlock}>
-          <View style={styles.totalRow}>
-            <Text style={{ fontWeight: "bold" }}>Subtotal: $ </Text>
-            <Text style={{ width: "30mm", textAlign: "right" }}>{formatCurrency(subtotal)}</Text>
-          </View>
-          <View style={styles.totalRow}>
-            <Text style={{ fontWeight: "bold" }}>IVA (21%): $ </Text>
-            <Text style={{ width: "30mm", textAlign: "right" }}>{formatCurrency(iva)}</Text>
-          </View>
-          <View style={[styles.totalRow, { marginTop: 4 }]}>
-            <Text style={{ fontWeight: "bold", fontSize: 10 }}>Importe Total: $ </Text>
-            <Text style={{ width: "30mm", textAlign: "right", fontSize: 10, fontWeight: "bold" }}>{formatCurrency(total)}</Text>
-          </View>
-        </View>
-
-        {/* Pie */}
-        <View style={styles.footer}>
-          <View style={styles.afipSim}>
-            <Text style={{ fontWeight: "bold", fontSize: 10 }}>PRESUPUESTITO</Text>
-          </View>
-          <Text>Pág. 1/1</Text>
-          <Text style={{ fontSize: 6, width: "40mm", textAlign: "right" }}>
-            Documento generado digitalmente por Presupuestito. 
-            No válido como factura fiscal.
+        {/* Notes */}
+        <View style={styles.notesSection}>
+          <Text style={styles.notesLabel}>Notas Adicionales</Text>
+          <Text style={styles.notesText}>
+            Este presupuesto tiene una validez de 15 días corridos a partir de la fecha de emisión. 
+            Los precios están sujetos a cambios según disponibilidad de materiales.
           </Text>
+        </View>
+
+        {/* Footer */}
+        <View style={styles.footer} fixed>
+          <Text>Generado con Presupuestito - www.presupuestito.com</Text>
+          <Text render={({ pageNumber, totalPages }) => `Página ${pageNumber} de ${totalPages}`} />
         </View>
       </Page>
     </Document>

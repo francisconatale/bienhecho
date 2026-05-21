@@ -24,6 +24,7 @@ export function useBudgetPDF() {
       company: user?.name || "Mi Empresa",
       address: "Domicilio Comercial S/D",
       cuit: "00-00000000-0",
+      trade: jobs.find(j => j.id === budget.jobId)?.name || "Servicios Profesionales",
     };
 
     const doc = (

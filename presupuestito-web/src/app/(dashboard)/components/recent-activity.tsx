@@ -2,68 +2,71 @@
 
 import { ListGroup } from "@/components/ui/list-group";
 import { ListItem } from "@/components/ui/list-item";
-
-type ActivityStatus = "Enviado" | "Borrador" | "Aceptado";
-
-interface ActivityItemProps {
-  initial: string;
-  client: string;
-  project: string;
-  date: string;
-  amount: string;
-  status: ActivityStatus;
-}
-
-const STATUS_CONFIG: Record<ActivityStatus, { label: string; color: string; bg: string }> = {
-  Enviado: { label: "Enviado", color: "#3B82F6", bg: "rgba(59,130,246,0.15)" },
-  Borrador: { label: "Borrador", color: "#8E8E93", bg: "rgba(142,142,147,0.15)" },
-  Aceptado: { label: "Aceptado", color: "#34D399", bg: "rgba(52,211,153,0.15)" },
-};
-
-function ActivityTrailing({ amount, status }: { amount: string; status: ActivityStatus }) {
-  const cfg = STATUS_CONFIG[status];
-  return (
-    <div className="flex flex-col items-end gap-1 mr-1">
-      <span className="font-semibold text-on-surface text-sm">{amount}</span>
-      <span
-        className="text-[10px] font-semibold px-2 py-0.5 rounded-md uppercase tracking-wide"
-        style={{ color: cfg.color, background: cfg.bg }}
-      >
-        {cfg.label}
-      </span>
-    </div>
-  );
-}
-
-const ACTIVITIES: ActivityItemProps[] = [
-  { initial: "C", client: "Constructora del Sur", project: "Edificio Las Heras", date: "12 Oct", amount: "$1,200", status: "Enviado"  },
-  { initial: "E", client: "Estudio M&P",          project: "Reforma Dental",   date: "10 Oct", amount: "$850",   status: "Borrador" },
-  { initial: "A", client: "Admin. San Jose",     project: "Mantenimiento",     date: "05 Oct", amount: "$2,450", status: "Aceptado" },
-];
+import { useDataStore } from "@/lib/store";
+import { useBudgetPDF } from "@/hooks/use-budget-pdf";
+import { useState, useEffect } from "react";
+import { Download, Loader2 } from "lucide-react";
 
 export function RecentActivity() {
+  const { budgets, clients, jobs } = useDataStore();
+  const { downloadPDF } = useBudgetPDF();
+  const [isDownloading, setIsDownloading] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  const handleDownload = async (budget: any) => {
+    setIsDownloading(budget.id);
+    try {
+      await downloadPDF(budget, budget.concepts);
+    } finally {
+      setIsDownloading(null);
+    }
+  };
+
+  const recentBudgets = budgets.slice(0, 5); // Show last 5
+
   return (
     <section className="px-5 md:px-8 lg:px-12 md:mt-12 transition-all">
       <div className="flex items-center justify-between mb-3 md:mb-5 px-1">
         <h3 className="text-xs md:text-sm font-bold text-on-surface-variant uppercase tracking-widest">
           Actividad Reciente
         </h3>
-        <button className="hidden md:block text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
-          Ver todo
-        </button>
       </div>
 
       <ListGroup>
-        {ACTIVITIES.map((a, i) => (
-          <ListItem
-            key={i}
-            icon={a.initial}
-            title={a.client}
-            subtitle={`${a.project} • ${a.date}`}
-            onClick={() => {}}
-            trailing={<ActivityTrailing amount={a.amount} status={a.status} />}
-          />
-        ))}
+        {recentBudgets.length > 0 ? (
+          recentBudgets.map((budget) => {
+            const client = clients.find(c => c.id === budget.clientId);
+            return (
+              <ListItem
+                key={budget.id}
+                icon={client?.name.charAt(0) || "P"}
+                title={client?.name || "Cliente desconocido"}
+                subtitle={`${budget.name} • ${new Date(budget.date).toLocaleDateString()}`}
+                onClick={() => handleDownload(budget)}
+                trailing={
+                  <div className="flex items-center gap-4">
+                    <span className="font-semibold text-on-surface text-sm">
+                      ${budget.total.toLocaleString()}
+                    </span>
+                    <div className="p-2 text-on-surface-variant/20 hover:text-[#2563EB] transition-colors">
+                      {isDownloading === budget.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                    </div>
+                  </div>
+                }
+              />
+            );
+          })
+        ) : (
+          <div className="py-10 text-center bg-surface rounded-2xl border border-outline-variant/10">
+            <p className="text-sm font-medium text-on-surface-variant/40 italic">No hay actividad reciente.</p>
+          </div>
+        )}
       </ListGroup>
     </section>
   );

@@ -60,6 +60,8 @@ export default function NuevoPresupuestoPage() {
       addBudget({
         clientId,
         jobId: jobId || "",
+        name: budgetName,
+        concepts: [...concepts],
         type: "Presupuesto",
         total: total,
       });
@@ -172,7 +174,7 @@ export default function NuevoPresupuestoPage() {
                         <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
                     </div>
                     <p className="text-[11px] font-bold text-[#2563EB]/80 leading-tight">
-                        Tip: Puedes crear clientes y proyectos directamente desde los selectores de abajo.
+                        Tip: Puedes crear clientes y trabajos directamente desde los selectores de abajo.
                     </p>
                 </div>
 

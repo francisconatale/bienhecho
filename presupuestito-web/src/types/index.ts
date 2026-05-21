@@ -30,7 +30,9 @@ export interface Budget {
   id: string;
   clientId: string;
   jobId: string; // Siempre pertenece a un Trabajo
+  name: string; // Título del presupuesto
   type: string;
   total: number;
   date: string;
+  concepts: Concept[];
 }
