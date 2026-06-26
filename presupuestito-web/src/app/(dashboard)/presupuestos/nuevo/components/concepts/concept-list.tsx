@@ -20,12 +20,12 @@ export function ConceptList() {
 
   return (
     <section>
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-xs font-medium text-on-surface-variant">Conceptos</h3>
+      <div className="flex items-center justify-between mb-2 md:mb-3">
+        <h3 className="text-xs md:text-sm font-medium text-on-surface-variant">Conceptos</h3>
         {!isFormOpen && (
           <button
             onClick={handleOpenAdd}
-            className="flex items-center gap-1 text-xs font-medium text-primary hover:text-primary-dark transition-colors"
+            className="flex items-center gap-1 text-xs md:text-sm font-medium text-primary hover:text-primary-dark transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />
             Añadir
@@ -34,7 +34,7 @@ export function ConceptList() {
       </div>
 
       {!isFormOpen ? (
-        <div className="bg-surface rounded-xl border border-outline-variant/30 overflow-hidden">
+        <div className="bg-surface rounded-xl md:rounded-2xl border border-outline-variant/30 overflow-hidden">
           {concepts.length > 0 ? (
             concepts.map((concept) => (
               <ConceptItem
@@ -50,20 +50,20 @@ export function ConceptList() {
               />
             ))
           ) : (
-            <div className="py-8 text-center">
-              <p className="text-xs text-on-surface-variant/60 italic">Sin conceptos aún</p>
+            <div className="py-10 md:py-12 text-center">
+              <p className="text-xs md:text-sm text-on-surface-variant/60 italic">Sin conceptos aún</p>
             </div>
           )}
         </div>
       ) : (
-        <div className="bg-surface rounded-xl border border-outline-variant/30 p-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-on-surface">
+        <div className="bg-surface rounded-xl md:rounded-2xl border border-outline-variant/30 p-4 md:p-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="flex items-center justify-between mb-4 md:mb-5">
+            <h3 className="text-sm md:text-base font-medium text-on-surface">
               {editingConcept ? "Editar Concepto" : "Nuevo Concepto"}
             </h3>
             <button
               onClick={handleCloseForm}
-              className="p-1 hover:bg-surface-variant/20 rounded-lg transition-colors"
+              className="p-1.5 hover:bg-surface-variant/20 rounded-lg transition-colors"
             >
               <X className="w-4 h-4 text-on-surface-variant/60" />
             </button>

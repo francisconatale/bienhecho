@@ -99,13 +99,13 @@ export default function NuevoPresupuestoPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 md:gap-3">
               {step === 2 && (
                 <>
                   <button
                     onClick={handleDownloadPreview}
                     disabled={isDownloading || !canSave}
-                    className="px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/20 rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-30"
+                    className="px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/20 rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-30"
                   >
                     {isDownloading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FileText className="w-3.5 h-3.5" />}
                     Preview
@@ -113,7 +113,7 @@ export default function NuevoPresupuestoPage() {
                   <button
                     onClick={handleSave}
                     disabled={!canSave || isSaving}
-                    className="px-3 py-1.5 bg-primary text-on-primary text-xs font-medium rounded-lg hover:bg-primary-dark transition-colors flex items-center gap-1.5 disabled:opacity-30"
+                    className="px-3 md:px-4 py-1.5 md:py-2 bg-primary text-on-primary text-xs md:text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors flex items-center gap-1.5 disabled:opacity-30"
                   >
                     {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                     Guardar
@@ -124,19 +124,19 @@ export default function NuevoPresupuestoPage() {
           </div>
 
           {/* Progress */}
-          <div className="px-6 pb-4">
+          <div className="px-6 md:px-8 pb-4 md:pb-5">
             <div className="flex items-center gap-3">
               <div className="flex gap-1.5">
                 {[1, 2].map((s) => (
                   <div
                     key={s}
                     className={`h-1 rounded-full transition-all duration-300 ${
-                      s <= step ? "bg-primary w-8" : "bg-outline-variant w-4"
+                      s <= step ? "bg-primary w-8 md:w-10" : "bg-outline-variant w-4 md:w-5"
                     }`}
                   />
                 ))}
               </div>
-              <span className="text-[10px] font-medium text-on-surface-variant/60">
+              <span className="text-[10px] md:text-xs font-medium text-on-surface-variant/60">
                 {step === 1 ? "Identidad" : "Conceptos"}
               </span>
             </div>
