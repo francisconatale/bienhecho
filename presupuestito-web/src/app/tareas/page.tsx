@@ -95,7 +95,7 @@ export default function TareasPage() {
               </button>
 
               {/* Content */}
-              <Link href={`/trabajos/${task.trabajo_id}`} className="flex-1 min-w-0">
+              <Link href={`/trabajos/${task.trabajo_id}/tareas/${task.id}?from=tareas`} className="flex-1 min-w-0">
                 <p
                   className={cn(
                     "text-sm font-bold transition-all",

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { ChevronLeft, Save, Pencil, X, Check } from "lucide-react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, useSearchParams } from "next/navigation";
 import { useDataStore } from "@/lib/store";
 import { TaskPhotos } from "../../components/task-photos";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,8 @@ interface TareaDetailPageProps {
 
 export default function TareaDetailPage({ params }: TareaDetailPageProps) {
   const { id, tareaId } = React.use(params);
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from");
   const { jobs, tasks, updateTask } = useDataStore();
 
   const job = jobs.find((j) => j.id === id);
@@ -67,7 +69,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
         {/* Header */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-4">
-            <Link href={`/trabajos/${id}`}>
+            <Link href={from === "tareas" ? "/tareas" : `/trabajos/${id}`}>
               <button
                 aria-label="Volver"
                 className="w-10 h-10 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-white/20 transition-all active:scale-95"
@@ -117,9 +119,9 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
           )}
         </div>
 
-        {/* Status + Edit toggle */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        {/* Status + Description */}
+        <div className="bg-surface rounded-[32px] p-5 border border-outline-variant/10 shadow-sm">
+          <div className="flex items-center gap-3 mb-4">
             <button
               onClick={() =>
                 !isEditing && updateTask(task.id, { completada: !task.completada })
@@ -134,33 +136,33 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
             >
               {task.completada && <Check className="w-4 h-4" strokeWidth={3} />}
             </button>
-            <div>
-              <span className="text-sm font-bold text-on-surface block">
-                {task.completada ? "Completada" : "Pendiente"}
-              </span>
-              <span className="text-[10px] text-on-surface-variant/40">
-                Tarea
-              </span>
-            </div>
+            <span className="text-sm font-bold text-on-surface">
+              {task.completada ? "Completada" : "Pendiente"}
+            </span>
           </div>
+
+          {!isEditing ? (
+            <p className="text-sm font-medium text-on-surface leading-relaxed">
+              {task.descripcion}
+            </p>
+          ) : (
+            <textarea
+              value={descripcion}
+              onChange={(e) => setDescripcion(e.target.value)}
+              placeholder="¿Qué se hizo en esta tarea?"
+              rows={2}
+              className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl px-4 py-3 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none"
+            />
+          )}
         </div>
 
-        {/* View mode */}
-        {!isEditing ? (
-          <div className="space-y-3">
-            <div className="bg-surface rounded-[32px] p-5 border border-outline-variant/10 shadow-sm">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 mb-2">
-                Descripción
-              </p>
-              <p className="text-sm font-medium text-on-surface leading-relaxed">
-                {task.descripcion}
-              </p>
-            </div>
-
-            <div className="bg-surface rounded-[32px] p-5 border border-outline-variant/10 shadow-sm">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 mb-2">
-                Precio
-              </p>
+        {/* Price */}
+        <div className="bg-surface rounded-[32px] p-5 border border-outline-variant/10 shadow-sm">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 mb-2">
+            Precio
+          </p>
+          {!isEditing ? (
+            <>
               <p className="text-lg font-black text-on-surface">
                 {task.precio !== null
                   ? `$${task.precio.toLocaleString("es-AR")}`
@@ -171,63 +173,14 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
                   Descriptiva — no va a la factura
                 </p>
               )}
-            </div>
-
-            {/* Notas - collapsed */}
-            <div className="bg-surface rounded-[32px] border border-outline-variant/10 shadow-sm">
-              <button className="w-full flex items-center justify-between p-5">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
-                  Notas internas
-                </span>
-                <svg
-                  className="w-4 h-4 text-on-surface-variant/30"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-        ) : (
-          /* Edit mode */
-          <div className="space-y-3">
-            <div className="bg-surface rounded-[32px] p-5 border-2 border-primary/20 shadow-sm space-y-2">
-              <label
-                htmlFor="descripcion"
-                className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60"
-              >
-                Descripción
-              </label>
-              <textarea
-                id="descripcion"
-                value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
-                placeholder="¿Qué se hizo en esta tarea?"
-                rows={2}
-                className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl px-4 py-3 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none"
-              />
-            </div>
-
-            <div className="bg-surface rounded-[32px] p-5 border-2 border-primary/20 shadow-sm space-y-2">
-              <label
-                htmlFor="precio"
-                className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60"
-              >
-                Precio
-              </label>
+            </>
+          ) : (
+            <div className="space-y-2">
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-on-surface-variant/40">
                   $
                 </span>
                 <input
-                  id="precio"
                   type="number"
                   value={precio}
                   onChange={(e) => setPrecio(e.target.value)}
@@ -237,28 +190,33 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
                 />
               </div>
               <p className="text-[10px] font-medium text-on-surface-variant/30">
-                Si el precio está vacío, la tarea es descriptiva y no va a la
-                factura
+                Si el precio está vacío, la tarea es descriptiva y no va a la factura
               </p>
             </div>
+          )}
+        </div>
 
-            {/* Notas - expanded in edit mode */}
-            <div className="bg-surface rounded-[32px] p-5 border-2 border-primary/20 shadow-sm space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">
-                Notas internas
-              </label>
-              <textarea
-                placeholder="Observaciones, materiales usados, tiempo invertido..."
-                rows={3}
-                className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl px-4 py-3 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none"
+        {/* Notas - collapsed */}
+        <div className="bg-surface rounded-[32px] border border-outline-variant/10 shadow-sm">
+          <button className="w-full flex items-center justify-between p-5">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
+              Notas internas
+            </span>
+            <svg
+              className="w-4 h-4 text-on-surface-variant/30"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
               />
-              <p className="text-[10px] font-medium text-on-surface-variant/30">
-                Estas notas son para tu referencia personal, no aparecen en
-                facturas
-              </p>
-            </div>
-          </div>
-        )}
+            </svg>
+          </button>
+        </div>
 
         {/* Fotos - always visible */}
         <div className="bg-surface rounded-[32px] p-5 border border-outline-variant/10 shadow-sm space-y-3">

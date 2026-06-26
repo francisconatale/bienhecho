@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Plus, Trash2, Image } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Plus, Trash2, Image, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { TaskPhoto } from "@/types";
 import { useDataStore } from "@/lib/store";
 import { PhotoUpload } from "./photo-upload";
@@ -23,6 +23,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [viewerPhotoIndex, setViewerPhotoIndex] = useState<number | null>(null);
 
   const photos = taskPhotos.filter((p) => p.tarea_id === tareaId);
 
@@ -70,6 +71,32 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
     setConfirmDeleteId(null);
   };
 
+  const openViewer = (index: number) => setViewerPhotoIndex(index);
+  const closeViewer = () => setViewerPhotoIndex(null);
+
+  const goToPrev = useCallback(() => {
+    if (viewerPhotoIndex !== null && viewerPhotoIndex > 0) {
+      setViewerPhotoIndex(viewerPhotoIndex - 1);
+    }
+  }, [viewerPhotoIndex]);
+
+  const goToNext = useCallback(() => {
+    if (viewerPhotoIndex !== null && viewerPhotoIndex < photos.length - 1) {
+      setViewerPhotoIndex(viewerPhotoIndex + 1);
+    }
+  }, [viewerPhotoIndex, photos.length]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (viewerPhotoIndex === null) return;
+      if (e.key === "Escape") closeViewer();
+      if (e.key === "ArrowLeft") goToPrev();
+      if (e.key === "ArrowRight") goToNext();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [viewerPhotoIndex, goToPrev, goToNext]);
+
   if (isLoading) {
     return (
       <div className="py-4 text-center">
@@ -105,10 +132,11 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
 
       {photos.length > 0 ? (
         <div className="grid grid-cols-2 gap-2">
-          {photos.map((photo) => (
+          {photos.map((photo, index) => (
             <div
               key={photo.id}
-              className="relative group rounded-xl overflow-hidden bg-on-surface/5"
+              className="relative group rounded-xl overflow-hidden bg-on-surface/5 cursor-pointer"
+              onClick={() => openViewer(index)}
             >
               <img
                 src={photo.url}
@@ -121,7 +149,10 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
                 </p>
               )}
               <button
-                onClick={() => setConfirmDeleteId(photo.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setConfirmDeleteId(photo.id);
+                }}
                 className="absolute top-1 right-1 p-1.5 bg-black/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <Trash2 className="w-3 h-3 text-white" />
@@ -170,6 +201,65 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {viewerPhotoIndex !== null && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
+          onClick={closeViewer}
+        >
+          <button
+            onClick={closeViewer}
+            className="absolute top-4 right-4 p-2 bg-white/10 rounded-full hover:bg-white/20 transition-all z-10"
+          >
+            <X className="w-6 h-6 text-white" />
+          </button>
+
+          {viewerPhotoIndex > 0 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                goToPrev();
+              }}
+              className="absolute left-4 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-all z-10"
+            >
+              <ChevronLeft className="w-6 h-6 text-white" />
+            </button>
+          )}
+
+          <img
+            src={photos[viewerPhotoIndex].url}
+            alt={photos[viewerPhotoIndex].descripcion || "Foto de tarea"}
+            className="max-w-[90vw] max-h-[85vh] object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+
+          {viewerPhotoIndex < photos.length - 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                goToNext();
+              }}
+              className="absolute right-4 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-all z-10"
+            >
+              <ChevronRight className="w-6 h-6 text-white" />
+            </button>
+          )}
+
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
+            <span className="text-white/60 text-sm font-medium">
+              {viewerPhotoIndex + 1} / {photos.length}
+            </span>
+          </div>
+
+          {photos[viewerPhotoIndex].descripcion && (
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 max-w-[80vw]">
+              <p className="text-white/80 text-sm font-medium text-center">
+                {photos[viewerPhotoIndex].descripcion}
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -20,7 +20,7 @@ interface DataState {
   removeTask: (id: string) => void;
   reorderTasks: (trabajoId: string, taskIds: string[]) => void;
 
-  addTaskPhoto: (photo: Omit<TaskPhoto, "id" | "created_at">) => TaskPhoto;
+  addTaskPhoto: (photo: TaskPhoto | Omit<TaskPhoto, "id" | "created_at">) => TaskPhoto;
   updateTaskPhoto: (id: string, photo: Partial<TaskPhoto>) => void;
   removeTaskPhoto: (id: string) => void;
   getTaskPhotos: (tareaId: string) => TaskPhoto[];
@@ -157,10 +157,12 @@ export const useDataStore = create<DataState>((set, get) => ({
     })),
 
   addTaskPhoto: (photoData) => {
+    const existing = get().taskPhotos.find(p => p.id === photoData.id);
+    if (existing) return existing;
     const newPhoto: TaskPhoto = {
       ...photoData,
-      id: crypto.randomUUID(),
-      created_at: new Date().toISOString(),
+      id: photoData.id || crypto.randomUUID(),
+      created_at: photoData.created_at || new Date().toISOString(),
     };
     set((state) => ({ taskPhotos: [...state.taskPhotos, newPhoto] }));
     return newPhoto;

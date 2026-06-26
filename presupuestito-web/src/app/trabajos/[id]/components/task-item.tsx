@@ -60,7 +60,7 @@ export function TaskItem({ task, jobId }: TaskItemProps) {
 
         {/* Content - Link to detail page */}
         <Link
-          href={`/trabajos/${jobId}/tareas/${task.id}`}
+          href={`/trabajos/${jobId}/tareas/${task.id}?from=trabajo`}
           className="flex-1 min-w-0"
         >
           <p

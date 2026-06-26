@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, ArrowRight, Building2, Check, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useDataStore } from "@/lib/store";
