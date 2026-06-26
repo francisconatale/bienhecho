@@ -45,7 +45,7 @@ export function WorkForm({ projectId, onSuccess, onCancel }: WorkFormProps) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Ej. Pintura, Instalación Eléctrica..."
-          className="w-full bg-grouped-bg-light dark:bg-[#1A1C20] border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+          className="w-full bg-grouped-bg-light dark:bg-surface border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
         />
       </div>
 
@@ -60,7 +60,7 @@ export function WorkForm({ projectId, onSuccess, onCancel }: WorkFormProps) {
         <button
           type="submit"
           disabled={isLoading || !name.trim()}
-          className="flex-[2] h-12 rounded-2xl font-bold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
+          className="flex-[2] h-12 rounded-2xl font-bold text-white bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
         >
           {isLoading ? "Guardando..." : "Crear Trabajo"}
         </button>

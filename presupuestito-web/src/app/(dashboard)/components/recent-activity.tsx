@@ -54,7 +54,7 @@ export function RecentActivity() {
                     <span className="font-semibold text-on-surface text-sm">
                       ${budget.total.toLocaleString()}
                     </span>
-                    <div className="p-2 text-on-surface-variant/20 hover:text-[#2563EB] transition-colors">
+                    <div className="p-2 text-on-surface-variant/20 hover:text-primary transition-colors">
                       {isDownloading === budget.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
                     </div>
                   </div>

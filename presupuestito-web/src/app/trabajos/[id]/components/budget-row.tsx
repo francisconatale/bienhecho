@@ -29,8 +29,8 @@ export function BudgetRow({ budget }: BudgetRowProps) {
       onClick={handleDownload}
     >
       <div className="flex items-center gap-4">
-        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-            <FileText className="w-5 h-5 text-blue-500" />
+        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <FileText className="w-5 h-5 text-primary" />
         </div>
         <div>
             <h4 className="text-sm font-bold text-on-surface">{budget.name || `Presupuesto ${budget.type}`}</h4>
@@ -49,13 +49,13 @@ export function BudgetRow({ budget }: BudgetRowProps) {
             <button
                 onClick={handleDownload}
                 disabled={isDownloading}
-                className="p-2.5 bg-surface border border-outline-variant/20 rounded-xl text-on-surface-variant/40 hover:text-[#2563EB] hover:border-[#2563EB]/20 hover:bg-[#2563EB]/5 transition-all active:scale-90"
+                className="p-2.5 bg-surface border border-outline-variant/20 rounded-xl text-on-surface-variant/40 hover:text-primary hover:border-primary/20 hover:bg-primary/5 transition-all active:scale-90"
                 title="Descargar PDF"
             >
                 {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
             </button>
         </div>
-        <ChevronRight className="w-4 h-4 text-on-surface-variant/20 group-hover:text-[#2563EB] group-hover:translate-x-1 transition-all" />
+        <ChevronRight className="w-4 h-4 text-on-surface-variant/20 group-hover:text-primary group-hover:translate-x-1 transition-all" />
       </div>
     </div>
   );

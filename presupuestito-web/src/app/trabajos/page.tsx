@@ -47,7 +47,7 @@ export default function TrabajosPage() {
         </div>
         
         <Link href="/presupuestos/nuevo">
-          <button className="flex items-center justify-center gap-2 px-6 py-3.5 bg-[#2563EB] text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-[#2563EB]/20 hover:bg-[#1D4ED8] transition-all active:scale-95">
+          <button className="flex items-center justify-center gap-2 px-6 py-3.5 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all active:scale-95">
             <Plus className="w-4 h-4" strokeWidth={3} />
             Nuevo Presupuesto
           </button>
@@ -59,13 +59,13 @@ export default function TrabajosPage() {
         <div className="relative z-20">
           <div className="flex gap-3">
             <div className="relative flex-1 group">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/30 group-focus-within:text-[#2563EB] transition-colors" />
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/30 group-focus-within:text-primary transition-colors" />
               <input
                 type="text"
                 placeholder="Buscar trabajo o cliente..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-surface border border-outline-variant/30 rounded-2xl pl-14 pr-12 py-4 text-base font-bold text-on-surface focus:ring-4 focus:ring-[#2563EB]/5 focus:border-[#2563EB] outline-none transition-all placeholder:text-on-surface-variant/20 shadow-sm"
+                className="w-full bg-surface border border-outline-variant/30 rounded-2xl pl-14 pr-12 py-4 text-base font-bold text-on-surface focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all placeholder:text-on-surface-variant/20 shadow-sm"
               />
               {search && (
                 <button 
@@ -82,8 +82,8 @@ export default function TrabajosPage() {
               className={cn(
                 "px-5 rounded-2xl border transition-all flex items-center gap-2 font-black text-[11px] uppercase tracking-widest relative",
                 isFilterOpen || activeFiltersCount > 0
-                ? "bg-[#2563EB] text-white border-[#2563EB] shadow-lg shadow-[#2563EB]/20"
-                : "bg-surface border-outline-variant/30 text-on-surface-variant hover:border-[#2563EB]/30"
+                ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
+                : "bg-surface border-outline-variant/30 text-on-surface-variant hover:border-primary/30"
               )}
             >
               <Filter className="w-4 h-4" />
@@ -103,7 +103,7 @@ export default function TrabajosPage() {
                     <h3 className="font-black text-xs uppercase tracking-[0.2em] text-on-surface">Ajustar Filtros</h3>
                     <button 
                         onClick={clearFilters}
-                        className="text-[10px] font-black uppercase tracking-widest text-[#2563EB] hover:opacity-70 transition-opacity"
+                        className="text-[10px] font-black uppercase tracking-widest text-primary hover:opacity-70 transition-opacity"
                     >
                         Limpiar todo
                     </button>
@@ -118,7 +118,7 @@ export default function TrabajosPage() {
                                 onClick={() => setSelectedClientId(null)}
                                 className={cn(
                                     "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all",
-                                    selectedClientId === null ? "bg-[#2563EB]/10 text-[#2563EB]" : "hover:bg-on-surface/5 text-on-surface"
+                                    selectedClientId === null ? "bg-primary/10 text-primary" : "hover:bg-on-surface/5 text-on-surface"
                                 )}
                             >
                                 Todos los clientes
@@ -130,7 +130,7 @@ export default function TrabajosPage() {
                                     onClick={() => setSelectedClientId(client.id)}
                                     className={cn(
                                         "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all",
-                                        selectedClientId === client.id ? "bg-[#2563EB]/10 text-[#2563EB]" : "hover:bg-on-surface/5 text-on-surface"
+                                        selectedClientId === client.id ? "bg-primary/10 text-primary" : "hover:bg-on-surface/5 text-on-surface"
                                     )}
                                 >
                                     {client.name}
@@ -143,7 +143,7 @@ export default function TrabajosPage() {
 
                 <button 
                     onClick={() => setIsFilterOpen(false)}
-                    className="w-full mt-8 py-4 bg-[#2563EB] text-white rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-lg shadow-[#2563EB]/20 active:scale-95 transition-all"
+                    className="w-full mt-8 py-4 bg-primary text-white rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-lg shadow-primary/20 active:scale-95 transition-all"
                 >
                     Aplicar Filtros
                 </button>
@@ -177,15 +177,15 @@ export default function TrabajosPage() {
                   className="flex items-center justify-between p-6 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors group"
                 >
                   <div className="flex items-center gap-5 flex-1 min-w-0">
-                    <div className="w-14 h-14 rounded-2xl bg-[#2563EB]/5 flex items-center justify-center shrink-0 border border-[#2563EB]/10">
-                      <Briefcase className="w-7 h-7 text-[#2563EB]" />
+                    <div className="w-14 h-14 rounded-2xl bg-primary/5 flex items-center justify-center shrink-0 border border-primary/10">
+                      <Briefcase className="w-7 h-7 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-1.5">
                         <h3 className="font-bold text-lg text-on-surface truncate tracking-tight">{job.name}</h3>
                         <span className={`text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider ${
                           job.status === 'Completado' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 
-                          job.status === 'En Progreso' ? 'bg-[#2563EB]/10 text-[#2563EB]' : 'bg-on-surface/5 text-on-surface-variant'
+                          job.status === 'En Progreso' ? 'bg-primary/10 text-primary' : 'bg-on-surface/5 text-on-surface-variant'
                         }`}>
                           {job.status}
                         </span>
@@ -198,7 +198,7 @@ export default function TrabajosPage() {
                       </div>
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-on-surface-variant/20 group-hover:text-[#2563EB] group-hover:translate-x-1 transition-all" />
+                  <ChevronRight className="w-5 h-5 text-on-surface-variant/20 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                 </Link>
               );
             })
@@ -211,7 +211,7 @@ export default function TrabajosPage() {
               <p className="text-sm font-medium text-on-surface-variant/40">No hay trabajos que coincidan con tu búsqueda.</p>
               <button 
                 onClick={clearFilters}
-                className="mt-6 text-[#2563EB] font-black text-[10px] uppercase tracking-[0.2em] hover:underline"
+                className="mt-6 text-primary font-black text-[10px] uppercase tracking-[0.2em] hover:underline"
               >
                 Ver todos los trabajos
               </button>

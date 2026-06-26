@@ -10,7 +10,7 @@ export function QuickActions() {
       <div className="grid grid-cols-1 md:flex md:flex-row gap-3 md:gap-4">
         <Link href="/presupuestos/nuevo" className="flex-1 md:max-w-[280px]">
           <button
-            className="w-full h-[52px] md:h-14 rounded-2xl flex items-center justify-center gap-2 font-semibold text-white text-[14px] md:text-[15px] bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#2563EB] active:scale-[0.98] transition-all"
+            className="w-full h-[52px] md:h-14 rounded-2xl flex items-center justify-center gap-2 font-semibold text-white text-[14px] md:text-[15px] bg-primary hover:bg-primary-dark dark:bg-primary dark:hover:bg-primary-dark active:scale-[0.98] transition-all"
             style={{
               boxShadow: '0 6px 20px -6px rgba(37,99,235,0.4)'
             }}
@@ -21,7 +21,7 @@ export function QuickActions() {
         </Link>
         <Link href="/trabajos" className="flex-1 md:max-w-[220px]">
           <button
-            className="w-full h-[52px] md:h-14 rounded-2xl flex items-center justify-center gap-2 font-semibold text-[#2563EB] dark:text-[#60A5FA] bg-blue-50 dark:bg-[#3B82F6]/10 hover:bg-blue-100 dark:hover:bg-[#3B82F6]/20 active:scale-[0.98] transition-all border border-blue-100 dark:border-[#3B82F6]/20"
+            className="w-full h-[52px] md:h-14 rounded-2xl flex items-center justify-center gap-2 font-semibold text-primary dark:text-primary bg-primary/10 dark:bg-primary/10 hover:bg-primary/10 dark:hover:bg-primary/20 active:scale-[0.98] transition-all border border-primary/10 dark:border-primary/20"
           >
             <Briefcase className="w-5 h-5 md:w-[22px] md:h-[22px]" strokeWidth={2} />
             <span className="truncate">Ver Trabajos</span>

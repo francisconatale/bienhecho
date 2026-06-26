@@ -32,7 +32,7 @@ export function BudgetNameInput() {
   return (
     <div className="space-y-4">
       <div className="space-y-1.5">
-        <label className="text-[10px] font-black uppercase tracking-widest text-[#2563EB]/60 ml-1">
+        <label className="text-[10px] font-black uppercase tracking-widest text-primary/60 ml-1">
           Nombre del Presupuesto
         </label>
         <div className="relative">
@@ -41,7 +41,7 @@ export function BudgetNameInput() {
             value={budgetName}
             onChange={(e) => setBudgetName(e.target.value)}
             placeholder="Ej: Diseño de Identidad Visual - Q2"
-            className="w-full bg-surface-variant/5 border border-outline-variant/30 rounded-2xl px-6 py-4 text-xl font-black text-on-surface focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/5 outline-none transition-all placeholder:text-on-surface-variant/20 shadow-sm"
+            className="w-full bg-surface-variant/5 border border-outline-variant/30 rounded-2xl px-6 py-4 text-xl font-black text-on-surface focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all placeholder:text-on-surface-variant/20 shadow-sm"
           />
         </div>
       </div>
@@ -49,7 +49,7 @@ export function BudgetNameInput() {
       <div className="space-y-2.5">
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-3 h-3 text-[#2563EB]/40" />
+            <Sparkles className="w-3 h-3 text-primary/40" />
             <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">
               {userTrade ? `Sugerencia para ${userTrade.label}` : "Sugerencias por rubro"}
             </span>
@@ -57,7 +57,7 @@ export function BudgetNameInput() {
           <button 
             type="button"
             onClick={() => setShowAllTrades(!showAllTrades)}
-            className="text-[9px] font-black uppercase tracking-widest text-[#2563EB] hover:opacity-70 transition-opacity flex items-center gap-1"
+            className="text-[9px] font-black uppercase tracking-widest text-primary hover:opacity-70 transition-opacity flex items-center gap-1"
           >
             {showAllTrades ? "Ver menos" : "Ver todos"}
             {showAllTrades ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -70,7 +70,7 @@ export function BudgetNameInput() {
               key={trade.id}
               onClick={() => handleSuggest(trade.template)}
               type="button"
-              className="whitespace-nowrap px-4 py-2 bg-surface border border-outline-variant/20 rounded-xl text-[11px] font-bold text-on-surface-variant hover:border-[#2563EB]/30 hover:bg-[#2563EB]/5 hover:text-[#2563EB] transition-all active:scale-95 shrink-0"
+              className="whitespace-nowrap px-4 py-2 bg-surface border border-outline-variant/20 rounded-xl text-[11px] font-bold text-on-surface-variant hover:border-primary/30 hover:bg-primary/5 hover:text-primary transition-all active:scale-95 shrink-0"
             >
               {trade.label}
             </button>

@@ -26,7 +26,7 @@ function Toggle({ checked, onChange }: ToggleProps) {
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={`relative inline-flex h-[30px] w-[52px] shrink-0 cursor-pointer rounded-full transition-all duration-300 ease-in-out focus:outline-none border ${
-        checked ? "bg-blue-600 dark:bg-[#3B82F6] border-transparent shadow-[0_0_12px_rgba(37,99,235,0.4)]" : "bg-black/10 dark:bg-white/5 border-black/5 dark:border-white/10"
+        checked ? "bg-primary border-transparent shadow-[0_0_12px_rgba(74,140,127,0.4)]" : "bg-surface-variant/30 border-outline-variant/20"
       }`}
     >
       <span
@@ -76,15 +76,15 @@ interface RowDestructiveProps {
 type RowProps = RowNavProps | RowToggleProps | RowDestructiveProps;
 
 function Row(props: RowProps) {
-  const borderClass = "border-b border-black/[0.04] dark:border-white/[0.04] last:border-0";
+  const borderClass = "border-b border-outline-variant/10 last:border-0";
 
   if (props.type === "destructive") {
     return (
       <button
         onClick={props.onClick}
-        className={`w-full flex items-center justify-center px-4 py-3 min-h-[52px] hover:bg-red-500/10 transition-colors text-center ${borderClass}`}
+        className={`w-full flex items-center justify-center px-4 py-3 min-h-[52px] hover:bg-error/10 transition-colors text-center ${borderClass}`}
       >
-        <span className="font-bold text-red-500 dark:text-red-400">{props.label}</span>
+        <span className="font-bold text-error">{props.label}</span>
       </button>
     );
   }
@@ -100,7 +100,7 @@ function Row(props: RowProps) {
         >
           {icon}
         </div>
-        <span className="flex-1 font-semibold text-gray-900 dark:text-white">{label}</span>
+        <span className="flex-1 font-semibold text-on-surface">{label}</span>
         <Toggle checked={props.checked} onChange={props.onToggle} />
       </div>
     );
@@ -110,7 +110,7 @@ function Row(props: RowProps) {
   return (
     <button
       onClick={props.onClick}
-      className={`${base} w-full text-left hover:bg-black/5 dark:hover:bg-white/[0.03] group`}
+      className={`${base} w-full text-left hover:bg-surface-variant/10 group`}
     >
       <div
         className={`w-8 h-8 rounded-xl ${iconBg} flex items-center justify-center shrink-0`}
@@ -140,12 +140,12 @@ export function AjustesContent() {
       {/* Perfil */}
       <section>
         <SectionLabel label="Cuenta" />
-        <div className="bg-white/80 dark:bg-[#1A1C20]/60 backdrop-blur-3xl rounded-[32px] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)] border border-black/5 dark:border-white/[0.08] overflow-hidden">
+        <div className="bg-surface/80 backdrop-blur-3xl rounded-[32px] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)] border border-outline-variant/20 overflow-hidden">
           <Link
             href="/ajustes/perfil"
-            className="w-full flex items-center gap-4 px-5 py-4 hover:bg-black/5 dark:hover:bg-white/[0.03] transition-colors text-left group"
+            className="w-full flex items-center gap-4 px-5 py-4 hover:bg-surface-variant/10 transition-colors text-left group"
           >
-            <div className="w-14 h-14 rounded-full bg-blue-100 dark:bg-[#3B82F6]/20 flex items-center justify-center text-blue-600 dark:text-[#60A5FA] shrink-0">
+            <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
               <CircleUserRound className="w-8 h-8" strokeWidth={1.5} />
             </div>
             <div className="flex-1 min-w-0">
@@ -165,7 +165,7 @@ export function AjustesContent() {
       {/* Suscripción */}
       <section>
         <SectionLabel label="Suscripción" />
-        <div className="bg-white/80 dark:bg-[#1A1C20]/60 backdrop-blur-3xl rounded-[32px] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)] border border-black/5 dark:border-white/[0.08] overflow-hidden">
+        <div className="bg-surface/80 backdrop-blur-3xl rounded-[32px] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)] border border-outline-variant/20 overflow-hidden">
           <Row
             type="nav"
             icon={<Star className="w-4 h-4 text-primary" strokeWidth={2} />}
@@ -187,7 +187,7 @@ export function AjustesContent() {
       {/* Preferencias */}
       <section>
         <SectionLabel label="Preferencias" />
-        <div className="bg-white/80 dark:bg-[#1A1C20]/60 backdrop-blur-3xl rounded-[32px] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)] border border-black/5 dark:border-white/[0.08] overflow-hidden">
+        <div className="bg-surface/80 backdrop-blur-3xl rounded-[32px] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)] border border-outline-variant/20 overflow-hidden">
           <Row
             type="nav"
             icon={<Bell className="w-4 h-4 text-error" strokeWidth={2} />}
@@ -219,7 +219,7 @@ export function AjustesContent() {
 
       {/* Acciones de cuenta */}
       <section>
-        <div className="bg-white/80 dark:bg-[#1A1C20]/60 backdrop-blur-3xl rounded-[32px] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)] border border-red-500/10 dark:border-red-500/20 overflow-hidden">
+        <div className="bg-surface/80 backdrop-blur-3xl rounded-[32px] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)] border border-error/20 overflow-hidden">
           <Row type="destructive" label="Cerrar Sesión" />
         </div>
       </section>

@@ -25,7 +25,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
               type="text"
               {...register("name")}
               placeholder="Ej. Acme Corp o Juan Pérez"
-              className={`w-full bg-grouped-bg-light dark:bg-[#1A1C20] border ${errors.name ? 'border-red-500' : 'border-outline-variant/20'} rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
+              className={`w-full bg-grouped-bg-light bg-surface border ${errors.name ? 'border-red-500' : 'border-outline-variant/20'} rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20`}
             />
             {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>}
           </div>
@@ -39,7 +39,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
               type="text"
               {...register("category")}
               placeholder="Ej. Construcción, Software, etc."
-              className="w-full bg-grouped-bg-light dark:bg-[#1A1C20] border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              className="w-full bg-grouped-bg-light bg-surface border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -52,7 +52,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
               type="email"
               {...register("email")}
               placeholder="cliente@ejemplo.com"
-              className={`w-full bg-grouped-bg-light dark:bg-[#1A1C20] border ${errors.email ? 'border-red-500' : 'border-outline-variant/20'} rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
+              className={`w-full bg-grouped-bg-light bg-surface border ${errors.email ? 'border-red-500' : 'border-outline-variant/20'} rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20`}
             />
             {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
           </div>
@@ -66,7 +66,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
               type="tel"
               {...register("phone")}
               placeholder="+54 11 ..."
-              className="w-full bg-grouped-bg-light dark:bg-[#1A1C20] border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              className="w-full bg-grouped-bg-light bg-surface border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
         </div>
@@ -75,7 +75,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full h-14 rounded-2xl flex items-center justify-center font-bold text-white text-[15px] bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#2563EB] active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none"
+        className="w-full h-14 rounded-2xl flex items-center justify-center font-bold text-white text-[15px] bg-primary hover:bg-primary-dark active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none"
       >
         {isLoading ? "Guardando..." : initialClient ? "Guardar Cambios" : "Crear Cliente"}
       </button>

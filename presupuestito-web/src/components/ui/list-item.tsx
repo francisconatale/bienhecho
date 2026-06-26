@@ -28,7 +28,7 @@ export function ListItem({
   const content = (
     <>
       {icon && (
-        <div className="w-11 h-11 rounded-[16px] bg-blue-100 dark:bg-[#3B82F6]/20 flex items-center justify-center text-blue-600 dark:text-[#60A5FA] font-bold text-lg shrink-0">
+        <div className="w-11 h-11 rounded-[16px] bg-primary/10 flex items-center justify-center text-primary font-bold text-lg shrink-0">
           {icon}
         </div>
       )}

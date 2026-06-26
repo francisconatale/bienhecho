@@ -49,7 +49,7 @@ export function ProjectForm({ initialClientId = "", onSuccess, hideClientSelecti
                 required
                 value={clientId}
                 onChange={(e) => setClientId(e.target.value)}
-                className="w-full bg-grouped-bg-light dark:bg-[#1A1C20] border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none"
+                className="w-full bg-grouped-bg-light dark:bg-surface border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 appearance-none"
               >
                 <option value="" disabled>Seleccionar un cliente...</option>
                 {clients.map(c => (
@@ -76,7 +76,7 @@ export function ProjectForm({ initialClientId = "", onSuccess, hideClientSelecti
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Ej. Remodelación Cocina"
-            className="w-full bg-grouped-bg-light dark:bg-[#1A1C20] border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+            className="w-full bg-grouped-bg-light dark:bg-surface border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
 
@@ -90,7 +90,7 @@ export function ProjectForm({ initialClientId = "", onSuccess, hideClientSelecti
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Detalles adicionales del proyecto..."
             rows={4}
-            className="w-full bg-grouped-bg-light dark:bg-[#1A1C20] border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none"
+            className="w-full bg-grouped-bg-light dark:bg-surface border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
           />
         </div>
       </div>
@@ -98,7 +98,7 @@ export function ProjectForm({ initialClientId = "", onSuccess, hideClientSelecti
       <button
         type="submit"
         disabled={!name || !clientId}
-        className="w-full h-14 rounded-2xl flex items-center justify-center font-bold text-white text-[15px] bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#2563EB] active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none"
+        className="w-full h-14 rounded-2xl flex items-center justify-center font-bold text-white text-[15px] bg-primary hover:bg-primary-dark active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none"
       >
         {onSuccess ? "Guardar y Continuar" : "Crear Proyecto"}
       </button>

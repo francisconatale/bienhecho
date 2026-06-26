@@ -57,7 +57,7 @@ function ClientExpandedView({ client, onDelete }: { client: Client, onDelete: (c
             <button type="button" onClick={() => setIsEditing(false)} className="flex-1 py-3 rounded-2xl font-semibold text-xs text-on-surface-variant hover:bg-surface-variant/20 transition-colors">
               Cancelar
             </button>
-            <button type="submit" disabled={isLoading} className="flex-1 py-3 rounded-2xl font-semibold text-xs text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 transition-colors">
+            <button type="submit" disabled={isLoading} className="flex-1 py-3 rounded-2xl font-semibold text-xs text-white bg-primary hover:bg-primary-dark disabled:opacity-50 transition-colors">
               {isLoading ? "Guardando..." : "Guardar Cambios"}
             </button>
           </div>
@@ -69,7 +69,7 @@ function ClientExpandedView({ client, onDelete }: { client: Client, onDelete: (c
   return (
     <div className="px-5 pb-6 pt-2 animate-in fade-in slide-in-from-top-2 duration-300 space-y-6">
       <div className="flex items-center gap-2">
-        <button onClick={() => setIsEditing(true)} className="flex-1 flex items-center justify-center gap-2 py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded-2xl font-semibold text-xs hover:bg-blue-100 transition-colors">
+        <button onClick={() => setIsEditing(true)} className="flex-1 flex items-center justify-center gap-2 py-3 bg-primary/10 text-primary rounded-2xl font-semibold text-xs hover:bg-primary/20 transition-colors">
           <Edit3 className="w-3.5 h-3.5" /> Editar Perfil
         </button>
         <button onClick={() => onDelete(client)} className="flex-1 flex items-center justify-center gap-2 py-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-2xl font-semibold text-xs hover:bg-red-100 transition-colors">
@@ -165,7 +165,7 @@ export function ClientList() {
           className={`h-14 px-6 rounded-2xl flex items-center justify-center gap-2 font-bold text-sm transition-all active:scale-95 w-full md:w-auto shadow-lg ${
             showCreationForm 
               ? "bg-surface-variant/20 text-on-surface border border-outline-variant/10" 
-              : "bg-blue-600 text-white shadow-blue-500/20 hover:bg-blue-700"
+              : "bg-primary text-white shadow-primary/20 hover:bg-primary-dark"
           }`}
         >
           {showCreationForm ? <X className="w-5 h-5" /> : <UserPlus className="w-5 h-5" />}

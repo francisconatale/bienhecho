@@ -15,7 +15,7 @@ export function SuggestionChips({ suggestions, onSelect }: SuggestionChipsProps)
   return (
     <div className="pt-2">
       <div className="flex items-center gap-2 mb-2">
-        <WandSparkles className="w-3.5 h-3.5 text-blue-500/80" />
+        <WandSparkles className="w-3.5 h-3.5 text-primary/80" />
         <h4 className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
           Sugerencias
         </h4>
@@ -26,7 +26,7 @@ export function SuggestionChips({ suggestions, onSelect }: SuggestionChipsProps)
             key={suggestion}
             type="button"
             onClick={() => onSelect(suggestion)}
-            className="px-3 py-1 bg-blue-50 hover:bg-blue-100 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium transition-colors"
+            className="px-3 py-1 bg-primary/10 hover:bg-primary/20 text-primary rounded-full text-xs font-medium transition-colors"
           >
             {suggestion}
           </button>
