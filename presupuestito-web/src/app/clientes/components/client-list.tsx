@@ -92,7 +92,7 @@ function DetailPane({
       <form onSubmit={onSubmit} className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <div className="group relative overflow-hidden bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[28px] p-6 md:p-8 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
           <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none" />
-          
+
           <div className="relative z-10 flex items-start justify-between">
             <div className="flex items-start gap-4 md:gap-6">
               <div className="w-12 h-12 md:w-16 md:h-16 rounded-[20px] bg-primary/10 flex items-center justify-center text-primary font-black text-xl md:text-2xl shrink-0 shadow-inner">
@@ -109,7 +109,7 @@ function DetailPane({
                       autoFocus
                     />
                     {errors.nombre && <p className="text-xs font-bold text-error mt-1">{errors.nombre.message}</p>}
-                    
+
                     <input
                       type="email"
                       {...register("email")}
@@ -186,7 +186,7 @@ function DetailPane({
                 <span className="text-sm font-semibold text-on-surface">{client.telefono || "—"}</span>
               )}
             </div>
-            
+
             <div className="flex flex-col gap-1.5 cursor-default select-none">
               <span className="text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">Dirección</span>
               {isEditing ? (
@@ -200,7 +200,7 @@ function DetailPane({
                 <span className="text-sm font-semibold text-on-surface truncate">{client.direccion || "—"}</span>
               )}
             </div>
-            
+
             <div className="flex flex-col gap-1.5 cursor-default select-none">
               <span className="text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">Trabajos</span>
               <div className="flex items-center gap-1.5">
@@ -208,7 +208,7 @@ function DetailPane({
                 <Briefcase className="w-3.5 h-3.5 text-primary/60" strokeWidth={2.5} />
               </div>
             </div>
-            
+
             <div className="flex flex-col gap-1.5 cursor-default select-none">
               <span className="text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">Presupuestado</span>
               <span className="text-lg font-black tracking-tight text-primary leading-none mt-auto">{formatCurrency(total)}</span>
@@ -219,7 +219,7 @@ function DetailPane({
         {clientJobs.length > 0 && (
           <div className="relative bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-5 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
             <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none rounded-[28px]" />
-            
+
             <div className="relative z-10 flex items-center justify-between">
               <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">Trabajos del Cliente</h3>
               <Link
@@ -229,7 +229,7 @@ function DetailPane({
                 Nuevo
               </Link>
             </div>
-            
+
             <div className="relative z-10 space-y-3">
               {clientJobs.map((job) => (
                 <Link

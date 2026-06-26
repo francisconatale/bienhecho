@@ -21,7 +21,7 @@ export function TaskList({ jobId }: TaskListProps) {
     .filter((t) => t.trabajo_id === jobId)
     .sort((a, b) => a.orden - b.orden);
 
-  const pag = usePagination(jobTasks, 20);
+  const pag = usePagination(jobTasks, 5);
 
   const handleAdd = (data: { descripcion: string; precio: number | null }) => {
     addTask({

@@ -37,6 +37,13 @@ hooks:
     description: Auto-commit changes after planning
     condition: null
   after_tasks:
+  - extension: agent-context
+    command: speckit.agent-context.update
+    enabled: true
+    optional: false
+    priority: 10
+    description: Refresh agent context after task generation
+    condition: null
   - extension: auto-commit
     command: speckit.auto-commit
     enabled: true
@@ -45,6 +52,13 @@ hooks:
     description: Auto-commit changes after task generation
     condition: null
   after_implement:
+  - extension: agent-context
+    command: speckit.agent-context.update
+    enabled: true
+    optional: false
+    priority: 10
+    description: Refresh agent context after implementation
+    condition: null
   - extension: auto-commit
     command: speckit.auto-commit
     enabled: true
