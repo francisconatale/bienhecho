@@ -48,7 +48,7 @@ export function TaskItem({ task, jobId }: TaskItemProps) {
 
   return (
     <>
-      <div className="flex items-center gap-3 p-4 bg-on-surface/[0.02] rounded-2xl group hover:bg-on-surface/[0.04] transition-colors">
+      <div className="flex items-center gap-3 px-4 py-3 bg-transparent group hover:bg-on-surface/[0.04] transition-colors">
         {/* Checkbox */}
         <button
           onClick={handleToggleComplete}
@@ -108,13 +108,13 @@ export function TaskItem({ task, jobId }: TaskItemProps) {
             <div className="flex gap-3 pt-2">
               <button
                 onClick={() => setConfirmDelete(false)}
-                className="flex-1 py-3 rounded-2xl bg-on-surface/5 text-on-surface font-black text-xs uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95"
+                className="flex-1 py-3 rounded-xl bg-on-surface/5 text-on-surface font-black text-xs uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleDelete}
-                className="flex-1 py-3 rounded-2xl bg-red-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all active:scale-95"
+                className="flex-1 py-3 rounded-xl bg-red-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all active:scale-95"
               >
                 Eliminar
               </button>

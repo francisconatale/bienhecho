@@ -1,7 +1,9 @@
 "use client";
 
-import { User, Calendar, MapPin, DollarSign } from "lucide-react";
+import { useState } from "react";
+import { User, Calendar, MapPin, DollarSign, Pencil, Check, X } from "lucide-react";
 import { Job, Client } from "@/types";
+import { useDataStore } from "@/lib/store";
 
 interface JobHeaderProps {
   job: Job;
@@ -9,15 +11,128 @@ interface JobHeaderProps {
 }
 
 export function JobHeader({ job, client }: JobHeaderProps) {
+  const { updateJob } = useDataStore();
+  const [isEditing, setIsEditing] = useState(false);
+  const [titulo, setTitulo] = useState(job.titulo);
+  const [descripcion, setDescripcion] = useState(job.descripcion || "");
+  const [direccion, setDireccion] = useState(job.direccion || "");
+  const [presupuesto, setPresupuesto] = useState(job.presupuesto.toString());
+  const [fechaInicio, setFechaInicio] = useState(job.fecha_inicio || "");
+  const [fechaFin, setFechaFin] = useState(job.fecha_fin_estimada || "");
+
+  const handleSave = () => {
+    updateJob(job.id, {
+      titulo: titulo.trim(),
+      descripcion: descripcion.trim() || undefined,
+      direccion: direccion.trim() || undefined,
+      presupuesto: presupuesto ? Number(presupuesto) : 0,
+      fecha_inicio: fechaInicio || undefined,
+      fecha_fin_estimada: fechaFin || undefined,
+    });
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setTitulo(job.titulo);
+    setDescripcion(job.descripcion || "");
+    setDireccion(job.direccion || "");
+    setPresupuesto(job.presupuesto.toString());
+    setFechaInicio(job.fecha_inicio || "");
+    setFechaFin(job.fecha_fin_estimada || "");
+    setIsEditing(false);
+  };
+
+  if (isEditing) {
+    return (
+      <div className="bg-surface rounded-2xl p-5 border border-outline-variant/20 shadow-sm space-y-4">
+        <div className="flex items-center justify-between border-b border-outline-variant/10 pb-3">
+          <h3 className="text-sm font-bold text-on-surface">Editar Trabajo</h3>
+          <button onClick={handleCancel} className="p-1 rounded-lg hover:bg-on-surface/5 text-on-surface-variant/50 hover:text-on-surface transition-all">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        
+        <div className="space-y-3">
+          <input
+            type="text"
+            value={titulo}
+            onChange={(e) => setTitulo(e.target.value)}
+            placeholder="Título del trabajo"
+            className="input-field text-sm font-bold"
+            autoFocus
+          />
+          <textarea
+            value={descripcion}
+            onChange={(e) => setDescripcion(e.target.value)}
+            placeholder="Descripción (opcional)"
+            rows={2}
+            className="input-field text-sm resize-none"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 pointer-events-none" />
+              <input
+                type="text"
+                value={direccion}
+                onChange={(e) => setDireccion(e.target.value)}
+                placeholder="Dirección"
+                className="input-field pl-9 text-sm"
+              />
+            </div>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-on-surface-variant/40 pointer-events-none">$</span>
+              <input
+                type="number"
+                value={presupuesto}
+                onChange={(e) => setPresupuesto(e.target.value)}
+                placeholder="Presupuesto"
+                className="input-field pl-8 text-sm"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[10px] font-bold uppercase text-on-surface-variant/40 mb-1.5 block">Inicio</label>
+              <input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} className="input-field text-sm" />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase text-on-surface-variant/40 mb-1.5 block">Fin estimado</label>
+              <input type="date" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} className="input-field text-sm" />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-2 pt-2">
+          <button onClick={handleCancel} className="px-4 py-2 rounded-xl text-xs font-bold bg-on-surface/5 text-on-surface hover:bg-on-surface/10 transition-all">
+            Cancelar
+          </button>
+          <button onClick={handleSave} disabled={!titulo.trim()} className="px-4 py-2 rounded-xl text-xs font-bold bg-primary text-white hover:bg-primary-dark transition-all disabled:opacity-50 flex items-center gap-1.5">
+            <Check className="w-3.5 h-3.5" strokeWidth={3} />
+            Guardar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-surface rounded-[32px] p-6 md:p-8 border border-outline-variant/10 shadow-sm space-y-5">
-      <div className="space-y-2">
-        <h2 className="text-2xl font-black text-on-surface tracking-tight leading-none">
+    <div className="group bg-surface md:bg-transparent rounded-2xl md:rounded-none p-4 md:p-0 border border-outline-variant/10 md:border-transparent shadow-sm md:shadow-none space-y-4 md:space-y-3 relative">
+      <div className="absolute top-4 right-4 md:top-0 md:right-0">
+        <button
+          onClick={() => setIsEditing(true)}
+          className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-primary hover:bg-primary/10 transition-all opacity-100 md:opacity-0 group-hover:opacity-100 active:scale-95"
+          title="Editar información del trabajo"
+        >
+          <Pencil className="w-4 h-4" />
+        </button>
+      </div>
+      <div className="space-y-1.5 md:space-y-1 pr-10">
+        <h2 className="text-2xl md:text-lg font-black text-on-surface tracking-tight md:tracking-normal leading-none md:leading-snug">
           {job.titulo}
         </h2>
         <div className="flex items-center gap-2 text-on-surface-variant/60 font-medium">
-          <User className="w-4 h-4" />
-          <span className="text-sm font-bold text-on-surface">
+          <User className="w-3.5 h-3.5" />
+          <span className="text-sm md:text-xs font-bold text-on-surface">
             {client?.nombre || "Sin cliente"}
           </span>
         </div>
@@ -29,39 +144,42 @@ export function JobHeader({ job, client }: JobHeaderProps) {
         </p>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-4 border-t border-outline-variant/10">
+      <div className="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-2 pt-4 md:pt-3 md:border-t-0 border-t border-outline-variant/10">
         {job.direccion && (
-          <div className="flex items-center gap-3 p-3 bg-on-surface/5 rounded-2xl">
-            <MapPin className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
-            <div>
-              <p className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/40">
+          <div className="flex items-center gap-2.5 p-3 md:py-1.5 md:px-3 bg-on-surface/5 md:bg-on-surface/[0.03] rounded-2xl md:rounded-lg">
+            <MapPin className="w-4 h-4 md:w-3.5 md:h-3.5 text-on-surface-variant/40 shrink-0" />
+            <div className="flex flex-col md:flex-row md:items-center md:gap-1.5">
+              <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest md:tracking-wider text-on-surface-variant/40 md:text-on-surface-variant/60">
                 Dirección
               </p>
-              <p className="text-sm font-bold text-on-surface">{job.direccion}</p>
+              <p className="hidden md:block text-[10px] text-on-surface-variant/40">:</p>
+              <p className="text-sm md:text-xs font-bold text-on-surface">{job.direccion}</p>
             </div>
           </div>
         )}
 
-        <div className="flex items-center gap-3 p-3 bg-on-surface/5 rounded-2xl">
-          <DollarSign className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
-          <div>
-            <p className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/40">
+        <div className="flex items-center gap-2.5 p-3 md:py-1.5 md:px-3 bg-on-surface/5 md:bg-on-surface/[0.03] rounded-2xl md:rounded-lg">
+          <DollarSign className="w-4 h-4 md:w-3.5 md:h-3.5 text-on-surface-variant/40 shrink-0" />
+          <div className="flex flex-col md:flex-row md:items-center md:gap-1.5">
+            <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest md:tracking-wider text-on-surface-variant/40 md:text-on-surface-variant/60">
               Presupuesto
             </p>
-            <p className="text-sm font-bold text-on-surface">
+            <p className="hidden md:block text-[10px] text-on-surface-variant/40">:</p>
+            <p className="text-sm md:text-xs font-bold text-on-surface">
               ${job.presupuesto.toLocaleString("es-AR")}
             </p>
           </div>
         </div>
 
         {job.fecha_inicio && (
-          <div className="flex items-center gap-3 p-3 bg-on-surface/5 rounded-2xl">
-            <Calendar className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
-            <div>
-              <p className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/40">
+          <div className="flex items-center gap-2.5 p-3 md:py-1.5 md:px-3 bg-on-surface/5 md:bg-on-surface/[0.03] rounded-2xl md:rounded-lg">
+            <Calendar className="w-4 h-4 md:w-3.5 md:h-3.5 text-on-surface-variant/40 shrink-0" />
+            <div className="flex flex-col md:flex-row md:items-center md:gap-1.5">
+              <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest md:tracking-wider text-on-surface-variant/40 md:text-on-surface-variant/60">
                 Inicio
               </p>
-              <p className="text-sm font-bold text-on-surface">
+              <p className="hidden md:block text-[10px] text-on-surface-variant/40">:</p>
+              <p className="text-sm md:text-xs font-bold text-on-surface">
                 {new Date(job.fecha_inicio).toLocaleDateString("es-AR")}
               </p>
             </div>
@@ -69,13 +187,14 @@ export function JobHeader({ job, client }: JobHeaderProps) {
         )}
 
         {job.fecha_fin_estimada && (
-          <div className="flex items-center gap-3 p-3 bg-on-surface/5 rounded-2xl">
-            <Calendar className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
-            <div>
-              <p className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/40">
-                Fin estimado
+          <div className="flex items-center gap-2.5 p-3 md:py-1.5 md:px-3 bg-on-surface/5 md:bg-on-surface/[0.03] rounded-2xl md:rounded-lg">
+            <Calendar className="w-4 h-4 md:w-3.5 md:h-3.5 text-on-surface-variant/40 shrink-0" />
+            <div className="flex flex-col md:flex-row md:items-center md:gap-1.5">
+              <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest md:tracking-wider text-on-surface-variant/40 md:text-on-surface-variant/60">
+                Fin
               </p>
-              <p className="text-sm font-bold text-on-surface">
+              <p className="hidden md:block text-[10px] text-on-surface-variant/40">:</p>
+              <p className="text-sm md:text-xs font-bold text-on-surface">
                 {new Date(job.fecha_fin_estimada).toLocaleDateString("es-AR")}
               </p>
             </div>

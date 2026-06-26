@@ -6,6 +6,7 @@ import Link from "next/link";
 import { notFound, useSearchParams } from "next/navigation";
 import { useDataStore } from "@/lib/store";
 import { useBudgetPDF } from "@/hooks/use-budget-pdf";
+import { Header } from "@/components/layout/header";
 import { JobHeader } from "./components/job-header";
 import { JobStatusSelector } from "./components/job-status";
 import { ProgressBar } from "./components/progress-bar";
@@ -69,10 +70,10 @@ function TrabajoDetail({ id }: { id: string }) {
         <div className="hidden dark:block absolute top-[50px] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/35 md:bg-primary-container/25 blur-[120px] md:blur-[160px] rounded-full transition-all duration-700" />
       </div>
 
-      <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-16 pb-32 w-full transition-all max-w-4xl mx-auto space-y-6">
-        {/* Header Actions */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-4">
+      <div className="md:hidden">
+        <Header 
+          title="Detalle del Trabajo" 
+          leftAction={
             <Link href={backHref}>
               <button
                 aria-label="Volver"
@@ -81,54 +82,75 @@ function TrabajoDetail({ id }: { id: string }) {
                 <ChevronLeft className="w-6 h-6 text-on-surface" />
               </button>
             </Link>
-            <h1 className="text-[28px] md:text-[34px] leading-tight font-extrabold text-on-surface tracking-tight">
-              Detalle del Trabajo
-            </h1>
+          }
+          rightAction={<JobStatusSelector job={job} />}
+          actionContainerClassName="flex items-center shrink-0 w-auto min-w-[40px]"
+        />
+      </div>
+
+      <main className="relative flex-1 px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-12 max-w-7xl mx-auto w-full mt-20 md:mt-0">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] gap-6 xl:gap-10 items-start">
+          {/* Columna Principal */}
+          <div className="space-y-6">
+            {/* Desktop Breadcrumb & Status */}
+            <div className="hidden md:flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
+                <Link href={backHref} className="flex items-center gap-1 hover:text-primary transition-colors">
+                  <ChevronLeft className="w-4 h-4" />
+                  Volver a {fromClientes && client ? client.nombre : "Trabajos"}
+                </Link>
+              </div>
+              <JobStatusSelector job={job} />
+            </div>
+
+            <JobHeader job={job} client={client} />
+            <TaskList jobId={job.id} />
           </div>
-          <JobStatusSelector job={job} />
-        </div>
 
-        <JobHeader job={job} client={client} />
+          {/* Columna Secundaria (Sidebar Sticky en Desktop) */}
+          <div className="space-y-4 lg:sticky lg:top-32">
+            <ProgressBar tasks={jobTasks} />
+            
+            {/* Card de Total + Acciones */}
+            <div className="bg-surface rounded-2xl p-4 border border-outline-variant/10 shadow-sm space-y-4">
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
+                  Total estimado
+                </span>
+                <span className="text-3xl font-black text-on-surface mt-1">
+                  ${totalEstimado.toLocaleString("es-AR")}
+                </span>
+                <span className="text-xs font-medium text-on-surface-variant/50">
+                  Tareas con precio
+                </span>
+              </div>
 
-        <ProgressBar tasks={jobTasks} />
-
-        {/* Total estimado + PDF button */}
-        <div className="bg-surface rounded-[32px] p-6 border border-outline-variant/10 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
-              Total estimado (tareas con precio)
-            </span>
-            <span className="text-xl font-black text-on-surface">
-              ${totalEstimado.toLocaleString("es-AR")}
-            </span>
+              <button
+                onClick={handleDownloadPDF}
+                disabled={!hasTasksWithPrice}
+                className={cn(
+                  "w-full py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98] flex items-center justify-center gap-2",
+                  hasTasksWithPrice
+                    ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark"
+                    : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
+                )}
+              >
+                <FileDown className="w-4 h-4" strokeWidth={2.5} />
+                Generar Presupuesto
+              </button>
+              {!hasTasksWithPrice && (
+                <p className="text-xs font-medium text-on-surface-variant/40 text-center">
+                  Agregá tareas con precio para generar el presupuesto
+                </p>
+              )}
+              {pdfError && (
+                <p className="text-xs font-medium text-red-500 text-center">
+                  {pdfError}
+                </p>
+              )}
+            </div>
           </div>
-
-          <button
-            onClick={handleDownloadPDF}
-            disabled={!hasTasksWithPrice}
-            className={cn(
-              "w-full py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98] flex items-center justify-center gap-2",
-              hasTasksWithPrice
-                ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark"
-                : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
-            )}
-          >
-            <FileDown className="w-4 h-4" strokeWidth={2.5} />
-            Generar Presupuesto
-          </button>
-          {!hasTasksWithPrice && (
-            <p className="text-xs font-medium text-on-surface-variant/40 text-center">
-              Agregá tareas con precio para generar el presupuesto
-            </p>
-          )}
-          {pdfError && (
-            <p className="text-xs font-medium text-red-500 text-center">
-              {pdfError}
-            </p>
-          )}
         </div>
-
-        <TaskList jobId={job.id} />
       </main>
     </div>
   );
