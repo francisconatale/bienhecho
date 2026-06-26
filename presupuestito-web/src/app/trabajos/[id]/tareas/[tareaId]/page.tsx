@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ChevronLeft, Save } from "lucide-react";
+import { ChevronLeft, Save, Pencil, X, Check } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useDataStore } from "@/lib/store";
@@ -23,8 +23,8 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
     notFound();
   }
 
+  const [isEditing, setIsEditing] = useState(false);
   const [descripcion, setDescripcion] = useState(task.descripcion);
-  const [notas, setNotas] = useState("");
   const [precio, setPrecio] = useState(
     task.precio !== null ? String(task.precio) : ""
   );
@@ -38,6 +38,13 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
       descripcion: descripcion.trim(),
       precio: precio !== "" ? Number(precio) : null,
     });
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setDescripcion(task.descripcion);
+    setPrecio(task.precio !== null ? String(task.precio) : "");
+    setIsEditing(false);
   };
 
   return (
@@ -77,91 +84,183 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
               </p>
             </div>
           </div>
-          <button
-            onClick={handleSave}
-            disabled={!hasChanges}
-            className={cn(
-              "flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95",
-              hasChanges
-                ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark"
-                : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
-            )}
-          >
-            <Save className="w-4 h-4" strokeWidth={2.5} />
-            Guardar
-          </button>
+          {isEditing ? (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleCancel}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest bg-on-surface/10 text-on-surface-variant hover:bg-on-surface/15 transition-all active:scale-95"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={!hasChanges}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95",
+                  hasChanges
+                    ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark"
+                    : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
+                )}
+              >
+                <Save className="w-4 h-4" strokeWidth={2.5} />
+                Guardar
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest bg-on-surface/5 text-on-surface-variant/60 hover:bg-on-surface/10 transition-all active:scale-95"
+            >
+              <Pencil className="w-4 h-4" />
+              Editar
+            </button>
+          )}
         </div>
 
-        {/* Estado */}
-        <div className="bg-surface rounded-[32px] p-5 border border-outline-variant/10 shadow-sm">
+        {/* Status + Edit toggle */}
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div
+            <button
+              onClick={() =>
+                !isEditing && updateTask(task.id, { completada: !task.completada })
+              }
               className={cn(
-                "w-3 h-3 rounded-full",
-                task.completada ? "bg-green-500" : "bg-amber-500"
+                "w-8 h-8 rounded-xl flex items-center justify-center transition-all",
+                task.completada
+                  ? "bg-green-500 text-white"
+                  : "bg-amber-500/10 text-amber-500"
               )}
-            />
-            <span className="text-sm font-bold text-on-surface">
-              {task.completada ? "Completada" : "Pendiente"}
-            </span>
+              aria-label={task.completada ? "Marcar como pendiente" : "Marcar como completada"}
+            >
+              {task.completada && <Check className="w-4 h-4" strokeWidth={3} />}
+            </button>
+            <div>
+              <span className="text-sm font-bold text-on-surface block">
+                {task.completada ? "Completada" : "Pendiente"}
+              </span>
+              <span className="text-[10px] text-on-surface-variant/40">
+                Tarea
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Descripción */}
-        <div className="bg-surface rounded-[32px] p-5 border border-outline-variant/10 shadow-sm space-y-3">
-          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
-            Descripción
-          </label>
-          <textarea
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
-            placeholder="¿Qué se hizo en esta tarea?"
-            rows={3}
-            className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl px-4 py-3 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none"
-          />
-        </div>
+        {/* View mode */}
+        {!isEditing ? (
+          <div className="space-y-3">
+            <div className="bg-surface rounded-[32px] p-5 border border-outline-variant/10 shadow-sm">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 mb-2">
+                Descripción
+              </p>
+              <p className="text-sm font-medium text-on-surface leading-relaxed">
+                {task.descripcion}
+              </p>
+            </div>
 
-        {/* Precio */}
-        <div className="bg-surface rounded-[32px] p-5 border border-outline-variant/10 shadow-sm space-y-3">
-          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
-            Precio
-          </label>
-          <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-on-surface-variant/40">
-              $
-            </span>
-            <input
-              type="number"
-              value={precio}
-              onChange={(e) => setPrecio(e.target.value)}
-              placeholder="0"
-              min={0}
-              className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl pl-8 pr-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
-            />
+            <div className="bg-surface rounded-[32px] p-5 border border-outline-variant/10 shadow-sm">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 mb-2">
+                Precio
+              </p>
+              <p className="text-lg font-black text-on-surface">
+                {task.precio !== null
+                  ? `$${task.precio.toLocaleString("es-AR")}`
+                  : "Sin precio"}
+              </p>
+              {task.precio === null && (
+                <p className="text-[10px] text-on-surface-variant/30 mt-1">
+                  Descriptiva — no va a la factura
+                </p>
+              )}
+            </div>
+
+            {/* Notas - collapsed */}
+            <div className="bg-surface rounded-[32px] border border-outline-variant/10 shadow-sm">
+              <button className="w-full flex items-center justify-between p-5">
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
+                  Notas internas
+                </span>
+                <svg
+                  className="w-4 h-4 text-on-surface-variant/30"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
-          <p className="text-[10px] font-medium text-on-surface-variant/30">
-            Si el precio está vacío, la tarea es descriptiva y no va a la factura
-          </p>
-        </div>
+        ) : (
+          /* Edit mode */
+          <div className="space-y-3">
+            <div className="bg-surface rounded-[32px] p-5 border-2 border-primary/20 shadow-sm space-y-2">
+              <label
+                htmlFor="descripcion"
+                className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60"
+              >
+                Descripción
+              </label>
+              <textarea
+                id="descripcion"
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+                placeholder="¿Qué se hizo en esta tarea?"
+                rows={2}
+                className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl px-4 py-3 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none"
+              />
+            </div>
 
-        {/* Notas internas */}
-        <div className="bg-surface rounded-[32px] p-5 border border-outline-variant/10 shadow-sm space-y-3">
-          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
-            Notas internas
-          </label>
-          <textarea
-            value={notas}
-            onChange={(e) => setNotas(e.target.value)}
-            placeholder="Observaciones, materiales usados, tiempo invertido..."
-            rows={4}
-            className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl px-4 py-3 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none"
-          />
-          <p className="text-[10px] font-medium text-on-surface-variant/30">
-            Estas notas son para tu referencia personal, no aparecen en facturas
-          </p>
-        </div>
+            <div className="bg-surface rounded-[32px] p-5 border-2 border-primary/20 shadow-sm space-y-2">
+              <label
+                htmlFor="precio"
+                className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60"
+              >
+                Precio
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-on-surface-variant/40">
+                  $
+                </span>
+                <input
+                  id="precio"
+                  type="number"
+                  value={precio}
+                  onChange={(e) => setPrecio(e.target.value)}
+                  placeholder="0"
+                  min={0}
+                  className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl pl-8 pr-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                />
+              </div>
+              <p className="text-[10px] font-medium text-on-surface-variant/30">
+                Si el precio está vacío, la tarea es descriptiva y no va a la
+                factura
+              </p>
+            </div>
 
-        {/* Fotos */}
+            {/* Notas - expanded in edit mode */}
+            <div className="bg-surface rounded-[32px] p-5 border-2 border-primary/20 shadow-sm space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">
+                Notas internas
+              </label>
+              <textarea
+                placeholder="Observaciones, materiales usados, tiempo invertido..."
+                rows={3}
+                className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl px-4 py-3 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none"
+              />
+              <p className="text-[10px] font-medium text-on-surface-variant/30">
+                Estas notas son para tu referencia personal, no aparecen en
+                facturas
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Fotos - always visible */}
         <div className="bg-surface rounded-[32px] p-5 border border-outline-variant/10 shadow-sm space-y-3">
           <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
             Fotos del trabajo
