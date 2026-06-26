@@ -1,5 +1,7 @@
 "use client";
 
+import { usePagination } from "@/hooks/use-pagination";
+import { PaginationButtons } from "@/components/ui/pagination-buttons";
 import { CalendarDays, ArrowRight } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 import { useState, useEffect } from "react";
@@ -13,22 +15,21 @@ export function UpcomingVisits() {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
-
   const today = new Date();
   const sevenDaysFromNow = new Date(today);
   sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
 
-  const upcoming = visits
+  const sortedVisits = visits
     .filter((v) => v.estado === "planificada")
     .filter((v) => {
       const d = new Date(v.fecha + "T00:00:00");
       return d >= today && d <= sevenDaysFromNow;
     })
-    .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora_inicio.localeCompare(b.hora_inicio))
-    .slice(0, 5);
+    .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora_inicio.localeCompare(b.hora_inicio));
 
-  if (upcoming.length === 0) return null;
+  const pag = usePagination(sortedVisits, 5);
+
+  if (!mounted || pag.paginatedItems.length === 0) return null;
 
   return (
     <section className="px-5 md:px-8 lg:px-12 transition-all">
@@ -46,7 +47,7 @@ export function UpcomingVisits() {
       </div>
 
       <div className="bg-surface/80 backdrop-blur-3xl rounded-[32px] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] border border-outline-variant/20 overflow-hidden divide-y divide-black/[0.04] dark:divide-white/[0.04]">
-        {upcoming.map((visit) => {
+        {pag.paginatedItems.map((visit) => {
           const job = jobs.find((j) => j.id === visit.trabajo_id);
           const client = job ? clients.find((c) => c.id === job.cliente_id) : null;
           const dayName = new Date(visit.fecha + "T00:00:00").toLocaleDateString("es-AR", {
@@ -81,6 +82,15 @@ export function UpcomingVisits() {
           );
         })}
       </div>
+
+      <PaginationButtons
+        currentPage={pag.currentPage}
+        totalPages={pag.totalPages}
+        totalItems={pag.totalItems}
+        pageSize={pag.pageSize}
+        onPageChange={pag.goToPage}
+        className="px-5 md:px-8 lg:px-12 mt-3"
+      />
     </section>
   );
 }

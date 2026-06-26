@@ -1,6 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
+at specs/004-paginacion-universal/spec.md
 <!-- SPECKIT END -->
 
 ## Regla: TODO.md
@@ -45,7 +46,11 @@ Antes de implementar cambios bajo estas condiciones, DEBES:
 3. Para el design system completo, leer `design-system/MASTER.md`.
 4. Para reglas de spacing y densidad, leer obligatoriamente `src/SPACING-GUIDELINES.md`.
 5. Para decisiones de peso, tamaño y jerarquía de información, leer `jerarquia-visual.md` en la raíz del proyecto. Estas reglas de densidad son mandatorias.
-6. **Identidad de Páginas de Detalle**: Cuando trabajes en páginas individuales de entidades (Trabajos, Tareas), respeta el patrón "Aurora + Breadcrumb en Desktop" (documentado en `SPACING-GUIDELINES.md`).
+6. **Identidad de Páginas Principales y Vistas de Detalle**: En páginas principales de entidades (como Clientes) y vistas de detalle (Trabajos, Tareas), se **DEBE** usar el patrón "Premium (Aurora + Glassmorphism)":
+   - **Fondo Aurora + Noise**: Incorporar el overlay de `noise.svg` (mix-blend-overlay) y contenedores `absolute pointer-events-none` con manchas radiales difuminadas para dar profundidad, en lugar de un fondo sólido.
+   - **Header Dividido por Breakpoint**: El `<Header />` genérico **solo** se renderiza en mobile (`<div className="md:hidden"><Header ... /></div>`). En desktop, se oculta y en su lugar la navegación (breadcrumbs, buscador) y las acciones se componen nativamente dentro del `<main>`, usando layouts anchos sin estirarse.
+   - **Superficies Glassmorphic**: En lugar de contenedores sólidos (`bg-surface`), los paneles usan `bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[28px]` con bordes y sombras coloreadas sutiles.
+   - **Composición de Layout**: **NUNCA** envolver la página entera en un componente cliente monolítico (anti-patrón `content.tsx`). El layout principal (`grid`, master-detail, breadcrumbs) se arma directamente en el `page.tsx`, importando componentes atómicos o funcionales pequeños.
 
 Al terminar una sesión de desarrollo donde se tomó alguna decisión
 de diseño relevante, **agregar una entrada en el log cronológico**
@@ -68,6 +73,6 @@ En todas las nuevas implementaciones o refactors visuales, se debe abandonar el 
 3. **Motion y Físicas:** Todo elemento interactivo (botones, checkboxes) debe responder con transformaciones reales (ej. `active:scale-95`, `hover:-translate-y-0.5`). 
 4. **Texturas:** Para evitar la esterilidad digital, utilizar overlays de ruido (`noise.svg` con `mix-blend-overlay` al 3% - 6% de opacidad) en páginas de detalle o fondos extensos.
 
-## Regla: Commits Automáticos al Finalizar Tareas
-Al dar por finalizada la asistencia en una tarea o flujo de trabajo solicitado por el usuario, DEBES ejecutar un commit con todos los cambios realizados, describiendo de forma clara (siguiendo Conventional Commits) el trabajo que completaste en esa sesión.
-No debes pedir permiso para hacerlo, simplemente ejecuta el comando de commit correspondiente y avísale al usuario que lo hiciste.
+## Regla: Commits al Finalizar Tareas
+Al dar por finalizada la asistencia en una tarea o flujo de trabajo solicitado por el usuario, DEBES preguntar explícitamente si desea que ejecutes un commit con los cambios realizados.
+No debes commitear automáticamente; siempre espera la confirmación del usuario para evitar registrar código con el que no esté conforme. Si el usuario aprueba, crea el commit describiendo de forma clara (siguiendo Conventional Commits) el trabajo que completaste en esa sesión.

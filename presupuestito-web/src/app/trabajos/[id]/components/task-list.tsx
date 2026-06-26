@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 
+import { usePagination } from "@/hooks/use-pagination";
+import { PaginationButtons } from "@/components/ui/pagination-buttons";
 import { TaskItem } from "./task-item";
 import { TaskForm } from "./task-form";
 
@@ -18,6 +20,8 @@ export function TaskList({ jobId }: TaskListProps) {
   const jobTasks = tasks
     .filter((t) => t.trabajo_id === jobId)
     .sort((a, b) => a.orden - b.orden);
+
+  const pag = usePagination(jobTasks, 20);
 
   const handleAdd = (data: { descripcion: string; precio: number | null }) => {
     addTask({
@@ -52,8 +56,8 @@ export function TaskList({ jobId }: TaskListProps) {
           </div>
         )}
 
-        {jobTasks.length > 0 ? (
-          jobTasks.map((task, idx) => (
+        {pag.paginatedItems.length > 0 ? (
+          pag.paginatedItems.map((task, idx) => (
             <div 
               key={task.id} 
               className="animate-fade-in-up" 
@@ -75,6 +79,13 @@ export function TaskList({ jobId }: TaskListProps) {
           )
         )}
       </div>
+      <PaginationButtons
+        currentPage={pag.currentPage}
+        totalPages={pag.totalPages}
+        totalItems={pag.totalItems}
+        pageSize={pag.pageSize}
+        onPageChange={pag.goToPage}
+      />
     </div>
   );
 }

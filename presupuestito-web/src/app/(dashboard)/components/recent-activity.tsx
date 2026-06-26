@@ -3,6 +3,8 @@
 import { ListGroup } from "@/components/ui/list-group";
 import { ListItem } from "@/components/ui/list-item";
 import { useDataStore } from "@/lib/store";
+import { usePagination } from "@/hooks/use-pagination";
+import { PaginationButtons } from "@/components/ui/pagination-buttons";
 import { useState, useEffect } from "react";
 
 export function RecentActivity() {
@@ -13,11 +15,12 @@ export function RecentActivity() {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  const sortedJobs = [...jobs]
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-  const recentJobs = [...jobs]
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    .slice(0, 5);
+  const pag = usePagination(sortedJobs, 5);
+
+  if (!mounted) return null;
 
   return (
     <section className="px-5 md:px-8 lg:px-12 md:mt-12 transition-all">
@@ -28,8 +31,8 @@ export function RecentActivity() {
       </div>
 
       <ListGroup>
-        {recentJobs.length > 0 ? (
-          recentJobs.map((job) => {
+        {pag.paginatedItems.length > 0 ? (
+          pag.paginatedItems.map((job) => {
             const client = clients.find((c) => c.id === job.cliente_id);
             return (
               <ListItem
@@ -53,6 +56,15 @@ export function RecentActivity() {
           </div>
         )}
       </ListGroup>
+
+      <PaginationButtons
+        currentPage={pag.currentPage}
+        totalPages={pag.totalPages}
+        totalItems={pag.totalItems}
+        pageSize={pag.pageSize}
+        onPageChange={pag.goToPage}
+        className="px-1"
+      />
     </section>
   );
 }

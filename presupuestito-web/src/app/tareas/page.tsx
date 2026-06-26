@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useDataStore } from "@/lib/store";
+import { usePagination } from "@/hooks/use-pagination";
+import { PaginationButtons } from "@/components/ui/pagination-buttons";
 import { Check, Circle, Briefcase } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -21,6 +23,8 @@ export default function TareasPage() {
   const filtered = allTasks.filter((t) =>
     filter === "pendientes" ? !t.completada : t.completada
   );
+
+  const pag = usePagination(filtered, 10);
 
   const pendingCount = allTasks.filter((t) => !t.completada).length;
   const completedCount = allTasks.filter((t) => t.completada).length;
@@ -75,8 +79,8 @@ export default function TareasPage() {
 
       {/* Tasks List */}
       <div className="bg-surface rounded-[32px] border border-outline-variant/10 shadow-sm overflow-hidden divide-y divide-outline-variant/10">
-        {filtered.length > 0 ? (
-          filtered.map((task) => (
+        {pag.paginatedItems.length > 0 ? (
+          pag.paginatedItems.map((task) => (
             <div
               key={task.id}
               className="flex items-center gap-4 px-6 py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
@@ -142,6 +146,14 @@ export default function TareasPage() {
           </div>
         )}
       </div>
+
+      <PaginationButtons
+        currentPage={pag.currentPage}
+        totalPages={pag.totalPages}
+        totalItems={pag.totalItems}
+        pageSize={pag.pageSize}
+        onPageChange={pag.goToPage}
+      />
     </main>
   );
 }

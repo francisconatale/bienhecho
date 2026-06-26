@@ -16,6 +16,8 @@ import { useDataStore } from "@/lib/store";
 import { Client } from "@/types";
 import { ClientForm } from "./client-form";
 import { useClientForm } from "./use-client-form";
+import { usePagination } from "@/hooks/use-pagination";
+import { PaginationButtons } from "@/components/ui/pagination-buttons";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -39,6 +41,7 @@ function getStatusColor(estado: string): string {
   }
 }
 
+
 function DetailPane({
   client,
   onDelete,
@@ -61,160 +64,206 @@ function DetailPane({
   } = form;
 
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="md:hidden px-4 py-2.5 border-b border-outline-variant/8 bg-surface">
+    <div className="flex-1 overflow-y-auto relative w-full min-h-screen">
+      {/* Grain / Noise Overlay */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.04] mix-blend-overlay z-[100] dark:opacity-[0.06]" style={{ backgroundImage: "url('https://grainy-gradients.vercel.app/noise.svg')" }} />
+
+      {/* Aurora Background */}
+      <div
+        className="absolute top-0 left-0 right-0 h-[400px] md:h-[1200px] pointer-events-none overflow-hidden transition-all duration-1000"
+        style={{
+          zIndex: -1,
+          WebkitMaskImage: "linear-gradient(to bottom, black 10%, transparent 100%)",
+          maskImage: "linear-gradient(to bottom, black 10%, transparent 100%)",
+        }}
+      >
+        <div className="absolute top-[-50px] left-[-50px] w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-primary/30 md:bg-primary/20 blur-[100px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000 animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute top-[0px] right-[-100px] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-primary-container/30 md:bg-primary-container/20 blur-[120px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000" />
+        <div className="hidden dark:block absolute top-[-50px] left-[-50px] w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-primary/35 md:bg-primary/25 blur-[120px] md:blur-[180px] rounded-full transition-all duration-1000" />
+        <div className="hidden dark:block absolute top-[50px] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/40 md:bg-primary-container/30 blur-[120px] md:blur-[160px] rounded-full transition-all duration-1000" />
+      </div>
+
+      <div className="md:hidden px-4 py-2.5 border-b border-outline-variant/10 bg-surface/30 backdrop-blur-xl">
         <button onClick={onBack} className="flex items-center gap-1.5 text-xs text-primary font-medium cursor-pointer">
           <ArrowLeft className="w-3.5 h-3.5" /> Volver
         </button>
       </div>
 
-      <form onSubmit={onSubmit}>
-        <div className="px-5 py-4 bg-surface border-b border-outline-variant/8 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/12 flex items-center justify-center text-primary font-bold text-sm md:text-base shrink-0">
-              {client.nombre.charAt(0)}
+      <form onSubmit={onSubmit} className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
+        <div className="group relative overflow-hidden bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[28px] p-6 md:p-8 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none" />
+          
+          <div className="relative z-10 flex items-start justify-between">
+            <div className="flex items-start gap-4 md:gap-6">
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-[20px] bg-primary/10 flex items-center justify-center text-primary font-black text-xl md:text-2xl shrink-0 shadow-inner">
+                {client.nombre.charAt(0)}
+              </div>
+              <div className="flex-1 min-w-0 pt-1 cursor-default select-none">
+                {isEditing ? (
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      {...register("nombre")}
+                      className="w-full bg-transparent border-b border-outline-variant/30 text-2xl md:text-3xl font-black text-on-surface tracking-tighter leading-none focus:outline-none focus:border-primary transition-all py-1"
+                      placeholder="Nombre del cliente"
+                      autoFocus
+                    />
+                    {errors.nombre && <p className="text-xs font-bold text-error mt-1">{errors.nombre.message}</p>}
+                    
+                    <input
+                      type="email"
+                      {...register("email")}
+                      placeholder="Email del cliente (opcional)"
+                      className="w-full bg-transparent border-b border-outline-variant/30 text-sm font-medium text-on-surface-variant focus:outline-none focus:border-primary transition-all py-1 mt-2"
+                    />
+                    {errors.email && <p className="text-xs font-bold text-error mt-1">{errors.email.message}</p>}
+                  </div>
+                ) : (
+                  <div className="group relative flex flex-col">
+                    <h2 className="text-3xl font-black text-on-surface tracking-tighter truncate leading-none">{client.nombre}</h2>
+                    <p className="text-sm font-medium text-on-surface-variant truncate mt-1.5">{client.email || "Sin email registrado"}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40 mt-1.5">
+                      Cliente desde {new Date(client.created_at).toLocaleDateString("es-AR", { month: "long", year: "numeric" })}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
+
+            <div className="flex gap-2 shrink-0 ml-4">
               {isEditing ? (
-                <div className="space-y-1.5">
-                  <input
-                    type="text"
-                    {...register("nombre")}
-                    className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-lg px-3 py-1.5 text-sm md:text-lg font-semibold text-on-surface focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all"
-                  />
-                  {errors.nombre && <p className="text-xs text-error">{errors.nombre.message}</p>}
-                  <input
-                    type="email"
-                    {...register("email")}
-                    placeholder="cliente@ejemplo.com"
-                    className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-lg px-3 py-1.5 text-[11px] md:text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all"
-                  />
-                  {errors.email && <p className="text-xs text-error">{errors.email.message}</p>}
-                </div>
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(false)}
+                    className="p-2.5 rounded-xl bg-on-surface/5 text-on-surface-variant hover:text-on-surface hover:bg-on-surface/10 transition-all active:scale-95"
+                    title="Cancelar"
+                  >
+                    <span className="text-xs font-bold px-1">Cancelar</span>
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="p-2.5 rounded-xl bg-primary text-white hover:bg-primary-dark transition-all disabled:opacity-50 active:scale-95 flex items-center gap-1.5 shadow-md"
+                  >
+                    <span className="text-xs font-bold px-1">{isLoading ? "Guardando..." : "Guardar"}</span>
+                  </button>
+                </>
               ) : (
                 <>
-                  <h2 className="text-sm md:text-lg font-semibold text-on-surface truncate">{client.nombre}</h2>
-                  <p className="text-[11px] md:text-sm text-on-surface-variant truncate">{client.email || "—"}</p>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(true)}
+                    className="p-2.5 rounded-xl bg-on-surface/5 text-on-surface-variant hover:text-primary hover:bg-primary/10 transition-all active:scale-95 group/btn"
+                    title="Editar información"
+                  >
+                    <Pencil className="w-4 h-4 group-hover/btn:scale-110 transition-transform" strokeWidth={2.5} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onDelete(client)}
+                    className="p-2.5 rounded-xl bg-on-surface/5 text-on-surface-variant hover:text-error hover:bg-error/10 transition-all active:scale-95 group/btn"
+                    title="Eliminar cliente"
+                  >
+                    <Trash2 className="w-4 h-4 group-hover/btn:scale-110 transition-transform" strokeWidth={2.5} />
+                  </button>
                 </>
               )}
             </div>
           </div>
-          <div className="flex gap-1.5 shrink-0">
-            {isEditing ? (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                  className="h-7 md:h-9 px-2.5 md:px-3.5 rounded-lg text-[10px] md:text-xs font-medium text-on-surface-variant hover:bg-outline-variant/10 transition-colors cursor-pointer"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="h-7 md:h-9 px-2.5 md:px-3.5 rounded-lg text-[10px] md:text-xs font-medium text-white bg-primary hover:bg-primary-dark disabled:opacity-50 transition-colors cursor-pointer"
-                >
-                  {isLoading ? "Guardando..." : "Guardar"}
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="h-7 md:h-9 px-2.5 md:px-3.5 rounded-lg text-[10px] md:text-xs font-medium text-on-surface-variant hover:bg-grouped-bg-light transition-colors cursor-pointer"
-                >
-                  <Pencil className="w-3 h-3 md:w-4 md:h-4 inline mr-1" /> Editar
-                </button>
-                <button
-                  onClick={() => onDelete(client)}
-                  className="h-7 md:h-9 px-2.5 md:px-3.5 rounded-lg text-[10px] md:text-xs font-medium text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                >
-                  <Trash2 className="w-3 h-3 md:w-4 md:h-4 inline mr-1" /> Eliminar
-                </button>
-              </>
-            )}
-          </div>
-        </div>
 
-        <div className="p-4 md:p-6 space-y-4 md:space-y-5">
-          <div className="grid grid-cols-2 gap-2.5 md:gap-4">
-            <div className="bg-surface rounded-lg p-3 md:p-4 border border-outline-variant/6">
-              <p className="text-[9px] md:text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Telefono</p>
+          <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 mt-6 border-t border-outline-variant/10">
+            <div className="flex flex-col gap-1.5 cursor-default select-none">
+              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">Teléfono</span>
               {isEditing ? (
                 <input
                   type="tel"
                   {...register("telefono")}
                   placeholder="+54 11..."
-                  className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-lg px-3 py-1.5 text-xs md:text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all"
+                  className="w-full bg-transparent border-b border-outline-variant/30 px-0 py-0.5 text-sm font-semibold text-on-surface focus:outline-none focus:border-primary transition-all placeholder:text-on-surface-variant/30"
                 />
               ) : (
-                <p className="text-xs md:text-sm font-semibold text-on-surface">{client.telefono || "—"}</p>
+                <span className="text-sm font-semibold text-on-surface">{client.telefono || "—"}</span>
               )}
             </div>
-            <div className="bg-surface rounded-lg p-3 md:p-4 border border-outline-variant/6">
-              <p className="text-[9px] md:text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Direccion</p>
+            
+            <div className="flex flex-col gap-1.5 cursor-default select-none">
+              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">Dirección</span>
               {isEditing ? (
                 <input
                   type="text"
                   {...register("direccion")}
                   placeholder="Av. Corrientes 1234"
-                  className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-lg px-3 py-1.5 text-xs md:text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all"
+                  className="w-full bg-transparent border-b border-outline-variant/30 px-0 py-0.5 text-sm font-semibold text-on-surface focus:outline-none focus:border-primary transition-all placeholder:text-on-surface-variant/30"
                 />
               ) : (
-                <p className="text-xs md:text-sm font-semibold text-on-surface truncate">{client.direccion || "—"}</p>
+                <span className="text-sm font-semibold text-on-surface truncate">{client.direccion || "—"}</span>
               )}
             </div>
-            <div className="bg-surface rounded-lg p-3 md:p-4 border border-outline-variant/6">
-              <p className="text-[9px] md:text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Trabajos</p>
-              <div className="flex items-center justify-between">
-                <p className="text-xs md:text-sm font-semibold text-on-surface">{clientJobs.length}</p>
-                <Briefcase className="w-4 h-4 md:w-5 md:h-5 text-primary/60" />
+            
+            <div className="flex flex-col gap-1.5 cursor-default select-none">
+              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">Trabajos</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-bold text-on-surface">{clientJobs.length}</span>
+                <Briefcase className="w-3.5 h-3.5 text-primary/60" strokeWidth={2.5} />
               </div>
             </div>
-            <div className="bg-surface rounded-lg p-3 md:p-4 border border-outline-variant/6">
-              <p className="text-[9px] md:text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Facturacion</p>
-              <p className="text-xs md:text-sm font-semibold text-primary">{formatCurrency(total)}</p>
+            
+            <div className="flex flex-col gap-1.5 cursor-default select-none">
+              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">Presupuestado</span>
+              <span className="text-lg font-black tracking-tight text-primary leading-none mt-auto">{formatCurrency(total)}</span>
             </div>
           </div>
+        </div>
 
-          {clientJobs.length > 0 && (
-            <div className="space-y-1.5 md:space-y-2">
-              <div className="flex items-center justify-between">
-                <h3 className="text-[10px] md:text-sm font-bold text-on-surface-variant uppercase tracking-wider">Trabajos</h3>
-                <Link
-                  href={`/trabajos/nuevo?clienteId=${client.id}`}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] md:text-xs font-semibold text-primary hover:bg-primary/8 transition-colors cursor-pointer"
-                >
-                  <Sparkles className="w-3 h-3" strokeWidth={2.5} />
-                  Nuevo
-                </Link>
-              </div>
+        {clientJobs.length > 0 && (
+          <div className="relative bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-5 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none rounded-[28px]" />
+            
+            <div className="relative z-10 flex items-center justify-between">
+              <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">Trabajos del Cliente</h3>
+              <Link
+                href={`/trabajos/nuevo?clienteId=${client.id}`}
+                className="px-3 py-1.5 rounded-[12px] text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 hover:bg-primary/20 transition-all active:scale-95 border border-primary/10"
+              >
+                Nuevo
+              </Link>
+            </div>
+            
+            <div className="relative z-10 space-y-3">
               {clientJobs.map((job) => (
                 <Link
                   key={job.id}
                   href={`/trabajos/${job.id}?from=clientes&clienteId=${client.id}`}
-                  className="flex items-center gap-2.5 md:gap-3 p-2.5 md:p-3.5 bg-surface border border-outline-variant/6 rounded-lg hover:border-primary/20 transition-all group cursor-pointer"
+                  className="group flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 md:p-5 bg-surface/40 dark:bg-surface/20 rounded-[20px] border border-white/10 dark:border-white/5 transition-all duration-300 hover:bg-surface/60 hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)] hover:-translate-y-0.5 cursor-pointer"
                 >
-                  <div className={`w-2 h-2 rounded-full shrink-0 ${getStatusColor(job.estado)}`} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs md:text-sm font-medium text-on-surface group-hover:text-primary transition-colors">{job.titulo}</p>
-                    <p className="text-[10px] md:text-xs text-on-surface-variant capitalize">{job.estado.replace(/_/g, " ")}</p>
+                  <div className="flex items-center gap-4 min-w-0 flex-1">
+                    <div className={`w-3 h-3 rounded-full shrink-0 ${getStatusColor(job.estado)} shadow-[0_0_12px_currentColor] opacity-80 group-hover:opacity-100 transition-opacity`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-base font-bold text-on-surface group-hover:text-primary transition-colors truncate">{job.titulo}</p>
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50 mt-1">{job.estado.replace(/_/g, " ")}</p>
+                    </div>
                   </div>
-                  <p className="text-xs md:text-sm font-semibold text-on-surface font-[tabular-nums]">{formatCurrency(job.presupuesto)}</p>
-                  <ExternalLink className="w-3.5 h-3.5 md:w-4 md:h-4 text-outline opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-4 md:pl-4 md:border-l border-white/10 dark:border-white/5">
+                    {job.presupuesto > 0 ? (
+                      <p className="text-lg font-black tracking-tight text-on-surface">{formatCurrency(job.presupuesto)}</p>
+                    ) : (
+                      <p className="text-sm font-semibold text-on-surface-variant/50">S/P</p>
+                    )}
+                    <div className="w-10 h-10 rounded-full bg-on-surface/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all group-hover:bg-primary/10 group-active:scale-95 shrink-0">
+                      <ExternalLink className="w-5 h-5 text-on-surface-variant group-hover:text-primary" />
+                    </div>
+                  </div>
                 </Link>
               ))}
             </div>
-          )}
-
-          <p className="text-[9px] md:text-xs text-outline">
-            Cliente desde {new Date(client.created_at).toLocaleDateString("es-AR", { month: "long", year: "numeric" })}
-          </p>
-        </div>
+          </div>
+        )}
       </form>
     </div>
   );
 }
+
 
 export function ClientList() {
   const searchParams = useSearchParams();
@@ -231,6 +280,8 @@ export function ClientList() {
       c.email?.toLowerCase().includes(search.toLowerCase()) ||
       false
   );
+
+  const pag = usePagination(filtered, 10);
 
   const selected = clients.find((c) => c.id === selectedId) || null;
 
@@ -290,8 +341,8 @@ export function ClientList() {
             </span>
           </div>
           <div className="flex-1 overflow-y-auto">
-            {filtered.length > 0 ? (
-              filtered.map((client) => {
+            {pag.paginatedItems.length > 0 ? (
+              pag.paginatedItems.map((client) => {
                 const isSelected = selectedId === client.id;
                 const clientJobs = useDataStore.getState().jobs.filter((j) => j.cliente_id === client.id);
                 const totalFacturacion = clientJobs.reduce((acc, j) => acc + j.presupuesto, 0);
@@ -331,6 +382,14 @@ export function ClientList() {
               </div>
             )}
           </div>
+          <PaginationButtons
+            currentPage={pag.currentPage}
+            totalPages={pag.totalPages}
+            totalItems={pag.totalItems}
+            pageSize={pag.pageSize}
+            onPageChange={pag.goToPage}
+            className="px-4 md:px-5 pb-4"
+          />
         </div>
 
         {/* DETAIL PANE */}

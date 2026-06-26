@@ -10,6 +10,8 @@ import {
   Filter,
 } from "lucide-react";
 import { useDataStore } from "@/lib/store";
+import { usePagination } from "@/hooks/use-pagination";
+import { PaginationButtons } from "@/components/ui/pagination-buttons";
 import { Modal } from "@/components/ui/modal";
 import { CalendarMonth } from "@/components/ui/calendar";
 import { SelectInput } from "@/components/ui/select-input";
@@ -64,6 +66,8 @@ function AgendaPage() {
         })
         .sort((a, b) => a.hora_inicio.localeCompare(b.hora_inicio))
     : [];
+
+  const pag = usePagination(dayVisits, 10);
 
   const prevMonth = () => {
     if (month === 0) {
@@ -250,8 +254,8 @@ function AgendaPage() {
               </div>
 
               <div className="divide-y divide-black/[0.04] dark:divide-white/[0.04]">
-                {dayVisits.length > 0 ? (
-                  dayVisits.map((visit) => {
+                {pag.paginatedItems.length > 0 ? (
+                  pag.paginatedItems.map((visit) => {
                     const jobInfo = getJobInfo(visit.trabajo_id);
                     return (
                       <div
@@ -346,6 +350,14 @@ function AgendaPage() {
                   </div>
                 )}
               </div>
+              <PaginationButtons
+                currentPage={pag.currentPage}
+                totalPages={pag.totalPages}
+                totalItems={pag.totalItems}
+                pageSize={pag.pageSize}
+                onPageChange={pag.goToPage}
+                className="pb-4 px-6"
+              />
             </div>
           ) : (
             <div className="bg-surface rounded-[32px] border border-outline-variant/10 shadow-sm py-16 text-center">
