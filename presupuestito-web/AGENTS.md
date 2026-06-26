@@ -3,6 +3,22 @@ For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
 <!-- SPECKIT END -->
 
+## Regla: TODO.md
+
+El archivo `TODO.md` en la raíz del proyecto es la lista de tareas e ideas
+del usuario. Cuando el usuario pida "procesar el TODO" o "ver las tareas
+pendientes", leer ese archivo y trabajar sobre los ítems del Backlog.
+
+**Formato de ítems:**
+```
+- [ ] Descripción de la tarea
+- [ ] (Prioridad alta) Descripción urgente
+```
+
+Cuando un íterm se complete, moverlo a la sección "Completados" y marcar `[x]`.
+
+**NUNCA** borrar ítems completados sin que el usuario lo pida.
+
 ## Regla: database_relations.md
 
 Antes de implementar CUALQUIER cambio en el frontend que toque datos

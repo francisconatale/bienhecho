@@ -3,14 +3,10 @@
 import { ListGroup } from "@/components/ui/list-group";
 import { ListItem } from "@/components/ui/list-item";
 import { useDataStore } from "@/lib/store";
-import { useBudgetPDF } from "@/hooks/use-budget-pdf";
 import { useState, useEffect } from "react";
-import { Download, Loader2 } from "lucide-react";
 
 export function RecentActivity() {
-  const { budgets, clients, jobs } = useDataStore();
-  const { downloadPDF } = useBudgetPDF();
-  const [isDownloading, setIsDownloading] = useState<string | null>(null);
+  const { clients, jobs } = useDataStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -19,16 +15,9 @@ export function RecentActivity() {
 
   if (!mounted) return null;
 
-  const handleDownload = async (budget: any) => {
-    setIsDownloading(budget.id);
-    try {
-      await downloadPDF(budget, budget.concepts);
-    } finally {
-      setIsDownloading(null);
-    }
-  };
-
-  const recentBudgets = budgets.slice(0, 5); // Show last 5
+  const recentJobs = [...jobs]
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, 5);
 
   return (
     <section className="px-5 md:px-8 lg:px-12 md:mt-12 transition-all">
@@ -39,32 +28,28 @@ export function RecentActivity() {
       </div>
 
       <ListGroup>
-        {recentBudgets.length > 0 ? (
-          recentBudgets.map((budget) => {
-            const client = clients.find(c => c.id === budget.clientId);
+        {recentJobs.length > 0 ? (
+          recentJobs.map((job) => {
+            const client = clients.find((c) => c.id === job.cliente_id);
             return (
               <ListItem
-                key={budget.id}
-                icon={client?.name.charAt(0) || "P"}
-                title={client?.name || "Cliente desconocido"}
-                subtitle={`${budget.name} • ${new Date(budget.date).toLocaleDateString()}`}
-                onClick={() => handleDownload(budget)}
+                key={job.id}
+                icon={client?.nombre.charAt(0) || "T"}
+                title={job.titulo}
+                subtitle={`${client?.nombre || "Sin cliente"} • ${new Date(job.created_at).toLocaleDateString()}`}
                 trailing={
-                  <div className="flex items-center gap-4">
-                    <span className="font-semibold text-on-surface text-sm">
-                      ${budget.total.toLocaleString()}
-                    </span>
-                    <div className="p-2 text-on-surface-variant/20 hover:text-primary transition-colors">
-                      {isDownloading === budget.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                    </div>
-                  </div>
+                  <span className="font-semibold text-on-surface text-sm">
+                    ${job.presupuesto.toLocaleString()}
+                  </span>
                 }
               />
             );
           })
         ) : (
           <div className="py-10 text-center bg-surface rounded-2xl border border-outline-variant/10">
-            <p className="text-sm font-medium text-on-surface-variant/40 italic">No hay actividad reciente.</p>
+            <p className="text-sm font-medium text-on-surface-variant/40 italic">
+              No hay actividad reciente.
+            </p>
           </div>
         )}
       </ListGroup>

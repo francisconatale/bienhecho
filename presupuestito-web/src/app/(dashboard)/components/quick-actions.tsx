@@ -8,7 +8,7 @@ export function QuickActions() {
         Acciones Rápidas
       </h3>
       <div className="grid grid-cols-1 md:flex md:flex-row gap-3 md:gap-4">
-        <Link href="/presupuestos/nuevo" className="flex-1 md:max-w-[280px]">
+        <Link href="/trabajos/nuevo" className="flex-1 md:max-w-[280px]">
           <button
             className="w-full h-[52px] md:h-14 rounded-2xl flex items-center justify-center gap-2 font-semibold text-white text-[14px] md:text-[15px] bg-primary hover:bg-primary-dark dark:bg-primary dark:hover:bg-primary-dark active:scale-[0.98] transition-all"
             style={{
@@ -16,7 +16,7 @@ export function QuickActions() {
             }}
           >
             <PlusCircle className="w-5 h-5 md:w-[22px] md:h-[22px]" strokeWidth={2} />
-            <span className="truncate">Nuevo Presupuesto</span>
+            <span className="truncate">Nuevo Trabajo</span>
           </button>
         </Link>
         <Link href="/trabajos" className="flex-1 md:max-w-[220px]">

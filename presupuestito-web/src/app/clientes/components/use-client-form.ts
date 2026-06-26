@@ -9,46 +9,49 @@ import { Client } from "@/types";
 import { useEffect } from "react";
 
 const clientSchema = z.object({
-  name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
+  nombre: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
   email: z.string().email("Email inválido").optional().or(z.literal("")),
-  phone: z.string().optional().or(z.literal("")),
-  category: z.string().optional().or(z.literal("")),
+  telefono: z.string().optional().or(z.literal("")),
+  direccion: z.string().optional().or(z.literal("")),
 });
 
 export type ClientFormValues = z.infer<typeof clientSchema>;
 
-export function useClientForm(initialClient?: Client | null, onSuccess?: (clientId: string) => void) {
+export function useClientForm(
+  initialClient?: Client | null,
+  onSuccess?: (clientId: string) => void
+) {
   const router = useRouter();
   const { addClient, updateClient } = useDataStore();
-  
+
   const form = useForm<ClientFormValues>({
     resolver: zodResolver(clientSchema),
     defaultValues: {
-      name: initialClient?.name || "",
+      nombre: initialClient?.nombre || "",
       email: initialClient?.email || "",
-      phone: initialClient?.phone || "",
-      category: (initialClient as any)?.category || "",
+      telefono: initialClient?.telefono || "",
+      direccion: initialClient?.direccion || "",
     },
   });
 
   useEffect(() => {
     form.reset({
-      name: initialClient?.name || "",
+      nombre: initialClient?.nombre || "",
       email: initialClient?.email || "",
-      phone: initialClient?.phone || "",
-      category: (initialClient as any)?.category || "",
+      telefono: initialClient?.telefono || "",
+      direccion: initialClient?.direccion || "",
     });
   }, [initialClient, form]);
 
   const onSubmit = (data: ClientFormValues) => {
     if (initialClient) {
       updateClient(initialClient.id, {
-        name: data.name,
+        nombre: data.nombre,
         email: data.email || undefined,
-        phone: data.phone || undefined,
-        category: data.category || undefined,
-      } as any);
-      
+        telefono: data.telefono || undefined,
+        direccion: data.direccion || undefined,
+      });
+
       if (onSuccess) {
         onSuccess(initialClient.id);
       } else {
@@ -56,13 +59,12 @@ export function useClientForm(initialClient?: Client | null, onSuccess?: (client
       }
     } else {
       const newClient = addClient({
-        name: data.name,
+        nombre: data.nombre,
         email: data.email || undefined,
-        phone: data.phone || undefined,
-        category: data.category || undefined,
-        status: "Activo",
-      } as any);
-      
+        telefono: data.telefono || undefined,
+        direccion: data.direccion || undefined,
+      });
+
       if (onSuccess) {
         onSuccess(newClient.id);
       } else {

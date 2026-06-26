@@ -1,22 +1,27 @@
 "use client";
 
-import { pdf } from "@react-pdf/renderer";
-import { BudgetPDF } from "@/lib/pdf/templates/afip-style";
+import { generateBudgetPDF } from "@/lib/pdf/generate-budget";
 import { useDataStore } from "@/lib/store";
 import { useUserStore } from "@/lib/user-store";
-import { Budget, Concept } from "@/types"; // Need to make sure Concept is accessible
 
 export function useBudgetPDF() {
-  const { clients, jobs } = useDataStore();
+  const { clients, jobs, tasks } = useDataStore();
   const { user } = useUserStore();
 
-  const downloadPDF = async (budget: Partial<Budget>, concepts: any[]) => {
-    const client = clients.find((c) => c.id === budget.clientId);
-    const job = jobs.find((j) => j.id === budget.jobId);
+  const downloadPDF = async (jobId: string) => {
+    const job = jobs.find((j) => j.id === jobId);
+    const client = clients.find((c) => c.id === job?.cliente_id);
 
-    if (!client) {
-      console.error("Client not found for PDF generation");
-      return;
+    if (!job || !client) {
+      throw new Error("Trabajo o cliente no encontrado");
+    }
+
+    const jobTasks = tasks
+      .filter((t) => t.trabajo_id === jobId && t.precio !== null)
+      .sort((a, b) => a.orden - b.orden);
+
+    if (jobTasks.length === 0) {
+      throw new Error("No hay tareas con precio para generar el presupuesto");
     }
 
     const userProfile = {
@@ -24,26 +29,15 @@ export function useBudgetPDF() {
       company: user?.name || "Mi Empresa",
       address: "Domicilio Comercial S/D",
       cuit: "00-00000000-0",
-      trade: jobs.find(j => j.id === budget.jobId)?.name || "Servicios Profesionales",
+      trade: job.titulo || "Servicios Profesionales",
     };
 
-    const doc = (
-      <BudgetPDF
-        budget={budget}
-        client={client}
-        job={job}
-        concepts={concepts}
-        userProfile={userProfile}
-      />
-    );
-
-    const blob = await pdf(doc).toBlob();
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `presupuesto-${client.name.replace(/\s+/g, "-").toLowerCase()}.pdf`;
-    link.click();
-    URL.revokeObjectURL(url);
+    generateBudgetPDF({
+      client,
+      job,
+      tasks: jobTasks,
+      userProfile,
+    });
   };
 
   return { downloadPDF };

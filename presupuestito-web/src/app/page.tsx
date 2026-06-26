@@ -8,14 +8,16 @@ import { useDataStore } from "@/lib/store";
 import { useEffect, useState } from "react";
 
 export default function DashboardPage() {
-  const { budgets } = useDataStore();
+  const { jobs } = useDataStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-  
-  const totalPendingNum = budgets.reduce((acc, b) => acc + b.total, 0);
+
+  const totalPendingNum = jobs
+    .filter((j) => j.estado === "listo_para_facturar" || j.estado === "facturado")
+    .reduce((acc, j) => acc + j.presupuesto, 0);
   const formatCurrency = (num: number) => {
     if (!mounted) return "$0";
     return num.toLocaleString("es-AR", { style: "currency", currency: "ARS", minimumFractionDigits: 0 });
@@ -23,9 +25,9 @@ export default function DashboardPage() {
 
   return (
     <main className="flex-1 pb-24 md:pb-12 w-full pt-4 md:pt-10 transition-all">
-      <DashboardHero 
-        activeBudgets={budgets.length} 
-        totalPending={formatCurrency(totalPendingNum)} 
+      <DashboardHero
+        activeBudgets={jobs.length}
+        totalPending={formatCurrency(totalPendingNum)}
       />
 
       <QuickActions />
