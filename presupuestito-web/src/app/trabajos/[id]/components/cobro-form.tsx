@@ -4,19 +4,16 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CobroFormValues } from "../hooks/use-payments";
-import { EntregaParcial } from "@/types";
 
 interface CobroFormProps {
   initialData?: CobroFormValues;
-  entregas: EntregaParcial[];
   onSave: (data: CobroFormValues) => void;
   onCancel: () => void;
 }
 
-export function CobroForm({ initialData, entregas, onSave, onCancel }: CobroFormProps) {
+export function CobroForm({ initialData, onSave, onCancel }: CobroFormProps) {
   const todayStr = new Date().toISOString().split("T")[0];
 
-  const [entregaId, setEntregaId] = useState<string>(initialData?.entrega_parcial_id ?? "");
   const [montoCobrado, setMontoCobrado] = useState(
     initialData?.monto_cobrado !== undefined ? String(initialData.monto_cobrado) : ""
   );
@@ -29,7 +26,6 @@ export function CobroForm({ initialData, entregas, onSave, onCancel }: CobroForm
   const handleSave = () => {
     if (!canSave) return;
     onSave({
-      entrega_parcial_id: entregaId || null,
       monto_cobrado: Number(montoCobrado),
       fecha_cobro: fechaCobro,
       forma_pago: formaPago || undefined,
@@ -60,19 +56,6 @@ export function CobroForm({ initialData, entregas, onSave, onCancel }: CobroForm
           <X className="w-4 h-4" />
         </button>
       </div>
-
-      <select
-        value={entregaId}
-        onChange={(e) => setEntregaId(e.target.value)}
-        className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all appearance-none"
-      >
-        <option value="">Cobro general (sin asociar a cuota)</option>
-        {entregas.map((e) => (
-          <option key={e.id} value={e.id}>
-            Cuota {e.numero_entrega}: {e.concepto || "Sin concepto"} - ${e.monto_entrega.toLocaleString("es-AR")}
-          </option>
-        ))}
-      </select>
 
       <div className="flex gap-3">
         <input

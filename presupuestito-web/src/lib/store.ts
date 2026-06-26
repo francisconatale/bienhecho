@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Client, Job, Task, JobStatus, TaskPhoto, Visit, VisitaTarea, VisitStatus, Material, EntregaParcial, Cobro } from "@/types";
+import { Client, Job, Task, JobStatus, TaskPhoto, Visit, VisitaTarea, VisitStatus, Material, Cobro } from "@/types";
 
 interface DataState {
   clients: Client[];
@@ -9,16 +9,11 @@ interface DataState {
   visits: Visit[];
   visitaTareas: VisitaTarea[];
   materiales: Material[];
-  entregasParciales: EntregaParcial[];
   cobros: Cobro[];
 
   addMaterial: (material: Omit<Material, "id" | "created_at">) => Material;
   updateMaterial: (id: string, material: Partial<Material>) => void;
   removeMaterial: (id: string) => void;
-
-  addEntregaParcial: (entrega: Omit<EntregaParcial, "id" | "created_at">) => EntregaParcial;
-  updateEntregaParcial: (id: string, entrega: Partial<EntregaParcial>) => void;
-  removeEntregaParcial: (id: string) => void;
 
   addCobro: (cobro: Omit<Cobro, "id" | "created_at">) => Cobro;
   updateCobro: (id: string, cobro: Partial<Cobro>) => void;
@@ -92,7 +87,6 @@ export const useDataStore = create<DataState>((set, get) => ({
   ],
   visitaTareas: [],
   materiales: [],
-  entregasParciales: [],
   cobros: [],
 
   clients: [
@@ -319,24 +313,6 @@ export const useDataStore = create<DataState>((set, get) => ({
   removeMaterial: (id) =>
     set((state) => ({
       materiales: state.materiales.filter((m) => m.id !== id),
-    })),
-
-  addEntregaParcial: (entregaData) => {
-    const newEntrega: EntregaParcial = {
-      ...entregaData,
-      id: crypto.randomUUID(),
-      created_at: new Date().toISOString(),
-    };
-    set((state) => ({ entregasParciales: [...state.entregasParciales, newEntrega] }));
-    return newEntrega;
-  },
-  updateEntregaParcial: (id, entregaData) =>
-    set((state) => ({
-      entregasParciales: state.entregasParciales.map((e) => (e.id === id ? { ...e, ...entregaData } : e)),
-    })),
-  removeEntregaParcial: (id) =>
-    set((state) => ({
-      entregasParciales: state.entregasParciales.filter((e) => e.id !== id),
     })),
 
   addCobro: (cobroData) => {
