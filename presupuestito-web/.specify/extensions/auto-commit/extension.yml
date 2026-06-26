@@ -1,0 +1,38 @@
+schema_version: "1.0"
+
+extension:
+  id: auto-commit
+  name: "Auto-Commit After Spec Kit Steps"
+  version: "1.0.0"
+  description: "Automatically commits changes after each Spec Kit step to preserve AGENTS.md and other context files across context window limits"
+
+requires:
+  speckit_version: ">=0.2.0"
+
+provides:
+  commands:
+    - name: speckit.auto-commit
+      file: commands/speckit.auto-commit.md
+      description: "Commit uncommitted changes with an auto-generated message"
+
+hooks:
+  after_specify:
+    command: speckit.auto-commit
+    optional: false
+    description: "Auto-commit after specification"
+  after_plan:
+    command: speckit.auto-commit
+    optional: false
+    description: "Auto-commit after planning"
+  after_tasks:
+    command: speckit.auto-commit
+    optional: false
+    description: "Auto-commit after task generation"
+  after_implement:
+    command: speckit.auto-commit
+    optional: false
+    description: "Auto-commit after implementation"
+
+tags:
+  - "workflow"
+  - "commit"

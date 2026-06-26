@@ -76,3 +76,7 @@ En todas las nuevas implementaciones o refactors visuales, se debe abandonar el 
 ## Regla: Commits al Finalizar Tareas
 Al dar por finalizada la asistencia en una tarea o flujo de trabajo solicitado por el usuario, DEBES preguntar explícitamente si desea que ejecutes un commit con los cambios realizados.
 No debes commitear automáticamente; siempre espera la confirmación del usuario para evitar registrar código con el que no esté conforme. Si el usuario aprueba, crea el commit describiendo de forma clara (siguiendo Conventional Commits) el trabajo que completaste en esa sesión.
+
+## Regla: Auto-Commit en Flujo Spec Kit
+Cuando estés trabajando dentro del flujo speckit (specify → plan → tasks → implement), los hooks `after_specify`, `after_plan`, `after_tasks` y `after_implement` ejecutan auto-commits automáticos con mensaje `chore(save): auto-save after <step>`. Esto preserva AGENTS.md y otros archivos de contexto cuando la ventana de contexto se pierde.
+No preguntes por estos commits, son automáticos. Solo aplica la regla de preguntar para commits manuales fuera del flujo speckit.

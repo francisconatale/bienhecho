@@ -17,7 +17,6 @@ export function JobHeader({ job, client }: JobHeaderProps) {
   const [titulo, setTitulo] = useState(job.titulo);
   const [descripcion, setDescripcion] = useState(job.descripcion || "");
   const [direccion, setDireccion] = useState(job.direccion || "");
-  const [presupuesto, setPresupuesto] = useState(job.presupuesto.toString());
   const [fechaInicio, setFechaInicio] = useState(job.fecha_inicio || "");
   const [fechaFin, setFechaFin] = useState(job.fecha_fin_estimada || "");
 
@@ -26,7 +25,6 @@ export function JobHeader({ job, client }: JobHeaderProps) {
       titulo: titulo.trim(),
       descripcion: descripcion.trim() || undefined,
       direccion: direccion.trim() || undefined,
-      presupuesto: presupuesto ? Number(presupuesto) : 0,
       fecha_inicio: fechaInicio || undefined,
       fecha_fin_estimada: fechaFin || undefined,
     });
@@ -37,7 +35,6 @@ export function JobHeader({ job, client }: JobHeaderProps) {
     setTitulo(job.titulo);
     setDescripcion(job.descripcion || "");
     setDireccion(job.direccion || "");
-    setPresupuesto(job.presupuesto.toString());
     setFechaInicio(job.fecha_inicio || "");
     setFechaFin(job.fecha_fin_estimada || "");
     setIsEditing(false);
@@ -104,15 +101,11 @@ export function JobHeader({ job, client }: JobHeaderProps) {
               />
             </div>
 
-            <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium">
+            <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium cursor-default select-none" title="El presupuesto se calcula sumando las tareas">
               <DollarSign className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
-              <input 
-                type="number"
-                value={presupuesto}
-                onChange={(e) => setPresupuesto(e.target.value)}
-                placeholder="0"
-                className="bg-transparent border-b border-outline-variant/30 focus:border-primary outline-none transition-all py-0.5 w-24"
-              />
+              <span className="text-on-surface/50">
+                ${job.presupuesto.toLocaleString("es-AR")}
+              </span>
             </div>
 
             <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium">
@@ -149,7 +142,7 @@ export function JobHeader({ job, client }: JobHeaderProps) {
           </div>
         </div>
       ) : (
-        <>
+        <div className="cursor-default select-none">
           <div className="space-y-1.5 md:space-y-1 pr-10">
             <h2 className="text-2xl md:text-3xl font-bold text-on-surface tracking-tight">
               {job.titulo}
@@ -201,9 +194,9 @@ export function JobHeader({ job, client }: JobHeaderProps) {
                   {new Date(job.fecha_fin_estimada).toLocaleDateString("es-AR", { timeZone: "UTC" })}
                 </span>
               </div>
-              )}
-            </div>
-          </>
+            )}
+          </div>
+        </div>
         )}
       </div>
     </div>

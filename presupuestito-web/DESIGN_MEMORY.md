@@ -48,6 +48,7 @@ import { Header } from "@/components/layout/header";
 ```
 - El `rightAction` debe ser **compacto**: ícono solo o ícono + label corto (`px-3 py-2`)
 - Nunca un botón ancho con `font-black uppercase tracking-widest` como `rightAction`
+- **Excepción en Vistas Premium:** En páginas de detalle y principales con layout ancho, el `<Header />` se debe ocultar en desktop (`<div className="md:hidden"><Header /></div>`) y componer los breadcrumbs/acciones directamente en el layout del `<main>`.
 
 ### `<ListGroup>` + `<ListItem>` — Toda lista navegable
 ```tsx
@@ -243,6 +244,18 @@ rounded-lg      → íconos en lista, avatares pequeños
 - **Filtros:** en desktop mostrar chips inline (`hidden md:flex`), panel flotante solo en mobile
 - **Iconos en lista:** máximo `w-11 h-11` container — `w-14 h-14` es demasiado
 - **Títulos en lista:** `text-sm font-semibold` — `text-lg` es demasiado para listas densas
+
+### 2026-06-26 (Job Header)
+- **Problema:** La edición del Job Header abría un formulario que rompía la jerarquía visual de la página y se sentía pesado.
+- **Decisión:** Se implementó un estilo sutil "tipo Stripe" (Variante F del Design Lab). La información se muestra en read-only manteniendo su jerarquía original. Solo al hacer clic en el ícono del lápiz (que aparece on hover) los textos se transforman en inputs inplace (border-b `outline-variant/30`) minimizando el layout shift y manteniendo el diseño limpio.
+
+### 2026-06-26 (Job Header - Refactor Inline)
+- **Problema:** En la vista de detalle de Trabajos, el `job-header.tsx` presentaba múltiples tarjetas pequeñas (cards con `bg-on-surface/5` para dirección, fechas, presupuesto) generando mucho ruido visual ("muchas cards") y un layout poco cohesivo.
+- **Decisión:** Se unificaron los metadatos de la cabecera en una estructura inline simple. Se eliminó por completo el estilo de tarjeta del componente principal y se posicionaron los elementos de edición (Stripe-like) para que no rompan el layout al editar. Se removió un componente `JobStatusSelector` redundante que ya aparecía en el header nativo/breadcrumb.
+
+### 2026-06-26 (Identidad Premium y Header Dividido)
+- **Problema:** Al aplicar refactors genéricos de layout (`<Header />` visible y `<main>` genérico) en componentes monolíticos complejos como la vista de Clientes o Detalles, se rompía el diseño premium del proyecto y se forzaba un layout encajonado.
+- **Decisión:** Se definió explícitamente el patrón "Premium (Aurora + Glassmorphism)" para vistas principales de entidades. En estas vistas, el `<Header />` móvil se oculta en desktop (`md:hidden`) y el layout se compone directamente en la página con breadcrumbs nativos, fondos de ruido, manchas radiales y tarjetas laterales `backdrop-blur-2xl`. Se prohíbe el uso de componentes monolíticos tipo `content.tsx` o `ClientList.tsx` que oculten la estructura general de la página.
 
 ---
 

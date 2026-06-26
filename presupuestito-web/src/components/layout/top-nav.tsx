@@ -37,6 +37,10 @@ export function TopNav() {
   }
 
   const isDashboardActive = pathname === "/" || pathname.startsWith("/presupuestos/");
+  const isClientesActive = pathname.startsWith("/clientes") || (pathname.startsWith("/trabajos/") && !pathname.includes("/tareas"));
+  const isTareasActive = pathname.startsWith("/tareas") || pathname.includes("/tareas/");
+  const isAgendaActive = pathname.startsWith("/agenda");
+  const isAjustesActive = pathname.startsWith("/ajustes");
 
   return (
     <nav className="hidden md:flex sticky top-0 z-50 h-16 items-center justify-between border-b border-outline-variant/10 bg-surface/80 backdrop-blur-xl px-6 transition-all">
@@ -61,25 +65,25 @@ export function TopNav() {
             icon={<Users className="w-4 h-4" strokeWidth={2.5} />}
             label="Clientes"
             href="/clientes"
-            active={pathname === "/clientes"}
+            active={isClientesActive}
           />
           <NavItem
             icon={<CheckSquare className="w-4 h-4" strokeWidth={2.5} />}
             label="Tareas"
             href="/tareas"
-            active={pathname === "/tareas"}
+            active={isTareasActive}
           />
           <NavItem
             icon={<Calendar className="w-4 h-4" strokeWidth={2.5} />}
             label="Agenda"
             href="/agenda"
-            active={pathname === "/agenda"}
+            active={isAgendaActive}
           />
           <NavItem
             icon={<Settings className="w-4 h-4" strokeWidth={2.5} />}
             label="Ajustes"
             href="/ajustes"
-            active={pathname === "/ajustes"}
+            active={isAjustesActive}
           />
         </div>
       </div>

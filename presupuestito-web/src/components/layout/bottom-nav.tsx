@@ -3,6 +3,7 @@
 import { LayoutDashboard, Users, Settings, CheckSquare, Calendar } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -32,15 +33,39 @@ function NavItem({ icon, label, href, active }: NavItemProps) {
 
 export function BottomNav() {
   const pathname = usePathname();
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
-  // Ocultar la barra de navegación en la Landing Page y en el flujo de nuevo trabajo
-  if (pathname === "/landing" || pathname === "/trabajos/nuevo") {
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Mostrar al hacer scroll up, ocultar al hacer scroll down (pasando un umbral mínimo de 50px)
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
+  // Ocultar completamente la barra de navegación en ciertas páginas
+  if (pathname === "/landing" || pathname === "/trabajos/nuevo" || pathname === "/design-lab") {
     return null;
   }
 
   return (
-    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-sm z-50 flex justify-between items-center px-4 py-2.5 md:hidden bg-surface/95 backdrop-blur-3xl border border-outline-variant/20 rounded-full shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]">
-      <NavItem
+    <div 
+      className={`fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-sm z-50 transition-all duration-300 ease-in-out md:hidden ${
+        isVisible ? "translate-y-0 opacity-100" : "translate-y-24 opacity-0"
+      }`}
+    >
+      <nav className="flex justify-between items-center px-4 py-2.5 bg-surface/95 backdrop-blur-3xl border border-outline-variant/20 rounded-full shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]">
+        <NavItem
         icon={<LayoutDashboard className="w-6 h-6" strokeWidth={2} />}
         label="Dashboard"
         href="/"
@@ -50,26 +75,27 @@ export function BottomNav() {
         icon={<Users className="w-6 h-6" strokeWidth={2} />}
         label="Clientes"
         href="/clientes"
-        active={pathname === "/clientes"}
+        active={pathname.startsWith("/clientes") || (pathname.startsWith("/trabajos/") && !pathname.includes("/tareas"))}
       />
       <NavItem
         icon={<CheckSquare className="w-6 h-6" strokeWidth={2} />}
         label="Tareas"
         href="/tareas"
-        active={pathname === "/tareas"}
+        active={pathname.startsWith("/tareas") || pathname.includes("/tareas/")}
       />
       <NavItem
         icon={<Calendar className="w-6 h-6" strokeWidth={2} />}
         label="Agenda"
         href="/agenda"
-        active={pathname === "/agenda"}
+        active={pathname.startsWith("/agenda")}
       />
       <NavItem
         icon={<Settings className="w-6 h-6" strokeWidth={2} />}
         label="Ajustes"
         href="/ajustes"
-        active={pathname === "/ajustes"}
+        active={pathname.startsWith("/ajustes")}
       />
-    </nav>
+      </nav>
+    </div>
   );
 }

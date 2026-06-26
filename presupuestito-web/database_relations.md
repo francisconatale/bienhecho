@@ -60,6 +60,9 @@ El proyecto grande. Cada trabajo pertenece a un cliente y tiene presupuesto prop
 **Relaciones salientes:**
 - Un trabajo tiene N tareas (`tareas.trabajo_id → trabajos.id`)
 - Un trabajo tiene N visitas (`visitas.trabajo_id → trabajos.id`)
+- Un trabajo tiene N entregas parciales (`entregas_parciales.trabajo_id → trabajos.id`)
+- Un trabajo tiene N cobros (`cobros.trabajo_id → trabajos.id`)
+- Un trabajo tiene N materiales (`materiales.trabajo_id → trabajos.id`)
 
 ---
 
@@ -125,13 +128,69 @@ Tabla intermedia. Registra qué tareas se avanzaron en cada visita.
 
 ---
 
+### `entregas_parciales`
+
+Hitos o cuotas contra el presupuesto de un trabajo. Cada trabajo puede tener N entregas.
+
+| Campo | Tipo | Nullable | Descripción |
+|-------|------|----------|-------------|
+| `id` | uuid PK | no | Identificador único |
+| `trabajo_id` | uuid FK | no | Trabajo al que pertenece (`→ trabajos.id`) |
+| `numero_entrega` | integer | no | Número correlativo por trabajo (1, 2, 3...) |
+| `concepto` | string | sí | Ej: "Anticipo", "Avance 50%", "Materiales gruesa" |
+| `monto_entrega` | decimal | no | Monto comprometido de esta entrega |
+| `fecha_estimada` | date | sí | Fecha tentativa de cobro |
+| `created_at` | timestamp | no | Fecha de creación |
+
+**Relaciones salientes:**
+- Una entrega parcial tiene N cobros (`cobros.entrega_parcial_id → entregas_parciales.id`)
+
+---
+
+### `cobros`
+
+Registro de pagos recibidos. Opcionalmente vinculados a una entrega parcial.
+
+| Campo | Tipo | Nullable | Descripción |
+|-------|------|----------|-------------|
+| `id` | uuid PK | no | Identificador único |
+| `trabajo_id` | uuid FK | no | Trabajo al que pertenece (`→ trabajos.id`) |
+| `entrega_parcial_id` | uuid FK | sí | Entrega asociada (`→ entregas_parciales.id`). Null cuando el cobro no corresponde a una entrega específica (ej: pago anticipado) |
+| `monto_cobrado` | decimal | no | Monto recibido |
+| `fecha_cobro` | date | no | Fecha en que se cobró |
+| `forma_pago` | string | sí | Efectivo, Transferencia, Cheque, etc. |
+| `notas` | text | sí | Comentarios adicionales |
+| `created_at` | timestamp | no | Fecha de creación |
+
+---
+
+### `materiales`
+
+Materiales utilizados o presupuestados para un trabajo.
+
+| Campo | Tipo | Nullable | Descripción |
+|-------|------|----------|-------------|
+| `id` | uuid PK | no | Identificador único |
+| `trabajo_id` | uuid FK | no | Trabajo al que pertenece (`→ trabajos.id`) |
+| `nombre_material` | string | no | Nombre del material |
+| `cantidad` | decimal | no | Cantidad utilizada |
+| `precio_unitario` | decimal | no | Precio por unidad |
+| `subtotal` | decimal | no | cantidad × precio_unitario |
+| `created_at` | timestamp | no | Fecha de creación |
+
+---
+
 ## Mapa de relaciones
 
 ```
 CLIENTE (1) ──── (N) TRABAJO
 TRABAJO  (1) ──── (N) TAREA
 TRABAJO  (1) ──── (N) VISITA
-VISITA   (N) ──── (N) TAREA  →  a través de VISITA_TAREAS
+TRABAJO  (1) ──── (N) ENTREGA_PARCIAL
+TRABAJO  (1) ──── (N) COBRO
+TRABAJO  (1) ──── (N) MATERIAL
+VISITA   (N) ──── (N) TAREA                      →  a través de VISITA_TAREAS
+ENTREGA_PARCIAL (1) ──── (N) COBRO               (relación opcional)
 ```
 
 ---
@@ -154,8 +213,12 @@ VISITA   (N) ──── (N) TAREA  →  a través de VISITA_TAREAS
 - **Barra de progreso**: porcentaje de `tareas` con `completada = true` / total tareas
 - **Lista de tareas**: todas las `tareas` del trabajo, con checkbox y precio
 - **Lista de visitas**: todas las `visitas` del trabajo, realizadas y planificadas
+- **Entregas y cobros**: listado de `entregas_parciales` con su estado de cobro y saldo pendiente
+- **Materiales**: listado de `materiales` del trabajo, con costo total
 - **Notas**: campo `descripcion` del trabajo (editable inline)
 - **Total estimado**: suma de `tareas.precio` where precio IS NOT NULL
+- **Total materiales**: suma de `materiales.subtotal`
+- **Saldo pendiente**: `SUM(entregas_parciales.monto_entrega) - SUM(cobros.monto_cobrado)` del trabajo
 
 ### Agenda / calendario
 - `visitas` agrupadas por semana
@@ -174,6 +237,16 @@ VISITA   (N) ──── (N) TAREA  →  a través de VISITA_TAREAS
 - Total: suma de precios
 - Estados para generar: trabajo debe estar en `listo_para_facturar`
 - Al generar: cambio estado a `facturado`
+
+### Cuentas a cobrar (por trabajo)
+- **Entregas pendientes**: `entregas_parciales` del trabajo, con monto comprometido
+- **Cobros registrados**: `cobros` del trabajo, con fecha y forma de pago
+- **Saldo pendiente**: `SUM(entregas_parciales.monto_entrega) - SUM(cobros.monto_cobrado)`
+- Si no hay entregas parciales, el saldo pendiente = `trabajos.presupuesto - SUM(cobros.monto_cobrado)`
+
+### Materiales (por trabajo)
+- Todos los `materiales` del trabajo
+- Costo total: suma de `subtotal`
 
 ---
 
@@ -200,7 +273,8 @@ cualquier momento, sin cambiar de estado.
 4. Generar PRESUPUESTO PDF → enviar al cliente
 5. Cliente aprueba → cambiar estado a en_curso (o directamente a listo_para_facturar)
 6. Generar FACTURA desde el trabajo
-7. Marcar como cobrado cuando el cliente pague
+7. (Opcional) Registrar entregas parciales y cobros
+8. Marcar como cobrado cuando el cliente pague
 ```
 
 **No se usan**: visitas, agenda, tabla `visita_tareas`.
@@ -210,16 +284,19 @@ cualquier momento, sin cambiar de estado.
 ## Flujo completo (con seguimiento de campo)
 
 ```
-1. Crear CLIENTE
-2. Crear TRABAJO (asociado a CLIENTE, estado: presupuestado)
-3. Agregar TAREAS al TRABAJO (con o sin precio)
-4. Generar PRESUPUESTO PDF → enviar al cliente
-5. Cliente aprueba → cambiar estado a en_curso
-6. Agendar VISITAS al TRABAJO
-7. En cada VISITA, marcar TAREAS avanzadas (visita_tareas)
-8. Cuando todas las tareas completadas → estado listo_para_facturar
-9. Generar FACTURA desde el trabajo
-10. Marcar como cobrado cuando el cliente pague
+ 1. Crear CLIENTE
+ 2. Crear TRABAJO (asociado a CLIENTE, estado: presupuestado)
+ 3. Agregar TAREAS al TRABAJO (con o sin precio)
+ 4. Generar PRESUPUESTO PDF → enviar al cliente
+ 5. Cliente aprueba → cambiar estado a en_curso
+ 6. Agendar VISITAS al TRABAJO
+ 7. En cada VISITA, marcar TAREAS avanzadas (visita_tareas)
+ 8. (Opcional) Registrar MATERIALES utilizados
+ 9. Cuando todas las tareas completadas → estado listo_para_facturar
+10. Generar FACTURA desde el trabajo
+11. (Opcional) Definir entregas parciales
+12. Registrar COBROS (contra entregas o directos)
+13. Marcar como cobrado cuando el cliente pague
 ```
 
 **Se usan**: todas las tablas y funcionalidades.
@@ -236,5 +313,8 @@ cualquier momento, sin cambiar de estado.
 | Agenda | No | Sí |
 | Barra de progreso | No | Sí |
 | Tabla `visita_tareas` | No | Sí |
+| Entregas parciales | Opcional | Opcional |
+| Cobros | Sí | Sí |
+| Materiales | Opcional | Sí |
 
-**La app no fuerza ninguno de los dos flujos.** Las visitas son opcionales.
+**La app no fuerza ninguno de los dos flujos.** Las visitas, entregas parciales y materiales son opcionales.

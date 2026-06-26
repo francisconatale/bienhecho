@@ -232,7 +232,8 @@ rounded-lg      → íconos en lista, avatares pequeños
 
 ## 5. Componentes del Sistema — Cuándo Usar Cada Uno
 
-### `<ListGroup>` + `<ListItem>` — Para TODA lista navegable
+### `<ListGroup>` + `<ListItem>` — Para listas estándar
+Usar para listas de navegación secundarias o configuraciones.
 
 ```tsx
 import { ListGroup } from "@/components/ui/list-group";
@@ -252,9 +253,9 @@ import { ListItem } from "@/components/ui/list-item";
 </ListGroup>
 ```
 
-**NO** crear markup de lista ad-hoc con `divide-y` + `p-6` custom.
+**Excepción Premium:** Para listas principales (ej. Trabajos en dashboard, Tareas en detalle), abandonar `<ListGroup>` a favor de listas flotantes con `space-y-3` donde cada ítem sea una tarjeta independiente `backdrop-blur-2xl` (estilo Glassmorphism). Nunca usar markup de lista ad-hoc con `divide-y` custom.
 
-### `<Header>` — Para TODO encabezado de página
+### `<Header>` — Para encabezados genéricos y páginas simples
 
 ```tsx
 import { Header } from "@/components/layout/header";
@@ -269,7 +270,7 @@ import { Header } from "@/components/layout/header";
 </main>
 ```
 
-**NO** crear `<h1>` inline dentro del `<main>`.
+**Excepción Premium:** En vistas principales (Clientes) y de detalle (Trabajo, Tarea), el `<Header />` genérico **solo** se muestra en mobile (`<div className="md:hidden"><Header /></div>`). En desktop, se oculta y la cabecera (breadcrumbs, título, acciones) se compone nativamente dentro del `<main>` para aprovechar layouts anchos sin estirarse.
 
 ---
 

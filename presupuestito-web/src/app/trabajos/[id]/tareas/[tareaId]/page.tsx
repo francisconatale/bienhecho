@@ -161,7 +161,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
         {/* Titular Principal / Edición */}
         <div ref={editRef} className="space-y-4">
           {!isEditing ? (
-            <h1 className="text-4xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter">
+            <h1 className="text-4xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter cursor-default select-none">
               {task.descripcion}
             </h1>
           ) : (
@@ -181,7 +181,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
             <button
               onClick={() => !isEditing && updateTask(task.id, { completada: !task.completada })}
               className={cn(
-                "relative overflow-hidden p-5 rounded-[24px] text-left transition-all duration-500 flex flex-col gap-2 group",
+                "relative overflow-hidden p-5 rounded-[24px] text-left transition-all duration-500 flex flex-col gap-2 group select-none",
                 task.completada
                   ? "bg-primary/10 hover:bg-primary/15 border border-primary/20 shadow-inner"
                   : "bg-surface/40 dark:bg-surface/10 hover:bg-surface/60 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-lg"
@@ -225,7 +225,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
               
               <div className="relative z-10 mt-1">
                 {!isEditing ? (
-                  <span className="text-2xl font-bold tracking-tight text-on-surface flex items-center gap-1.5">
+                  <span className="text-2xl font-bold tracking-tight text-on-surface flex items-center gap-1.5 cursor-default select-none">
                     {task.precio !== null ? `$${task.precio.toLocaleString("es-AR")}` : "Sin costo extra"}
                   </span>
                 ) : (
@@ -260,7 +260,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
               <ClipboardList className="w-4 h-4 text-on-surface-variant/40" strokeWidth={2.5} />
             </div>
 
-            <div className="relative z-10 space-y-3">
+            <div className="relative z-10 space-y-3 cursor-default select-none">
               {taskProgresses.map((progress, idx) => (
                 <div 
                   key={`${progress.visita_id}-${idx}`}
