@@ -368,6 +368,7 @@ function AgendaPage() {
         <VisitForm
           jobs={jobs}
           clients={clients}
+          defaultFecha={selectedDate || undefined}
           onSubmit={(data) => {
             addVisit(data);
             setShowNewModal(false);
@@ -403,18 +404,18 @@ interface VisitFormProps {
   jobs: Job[];
   clients: Client[];
   initial?: Visit;
+  defaultFecha?: string;
   onSubmit: (data: Omit<Visit, "id" | "created_at">) => void;
   onCancel: () => void;
 }
 
-function VisitForm({ jobs, clients, initial, onSubmit, onCancel }: VisitFormProps) {
+function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCancel }: VisitFormProps) {
   const [trabajoId, setTrabajoId] = useState(initial?.trabajo_id || "");
-  const [fecha, setFecha] = useState(initial?.fecha || new Date().toISOString().split("T")[0]);
+  const [fecha, setFecha] = useState(initial?.fecha || defaultFecha || new Date().toISOString().split("T")[0]);
   const [horaInicio, setHoraInicio] = useState(initial?.hora_inicio || "09:00");
   const [horaFin, setHoraFin] = useState(initial?.hora_fin || "");
   const [notas, setNotas] = useState(initial?.notas || "");
   const [estado, setEstado] = useState<VisitStatus>(initial?.estado || "planificada");
-  const [showCalendar, setShowCalendar] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
 
   const handleSubmit = () => {
@@ -467,40 +468,19 @@ function VisitForm({ jobs, clients, initial, onSubmit, onCancel }: VisitFormProp
         />
       </div>
 
-      {/* Date */}
+      {/* Date (read-only, comes from agenda calendar) */}
       <div>
         <label className="block text-xs font-semibold text-on-surface-variant mb-1.5">
           Fecha
         </label>
-        <button
-          type="button"
-          onClick={() => setShowCalendar(!showCalendar)}
-          className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-xl px-3.5 py-2.5 text-sm text-on-surface text-left focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-        >
-          {fecha
-            ? new Date(fecha + "T12:00").toLocaleDateString("es-AR", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })
-            : "Seleccionar fecha"}
-        </button>
-        {showCalendar && (
-          <div className="mt-2 bg-surface rounded-xl border border-outline-variant/20 shadow-lg p-2">
-            <CalendarMonth
-              year={fecha ? new Date(fecha + "T12:00").getFullYear() : new Date().getFullYear()}
-              month={fecha ? new Date(fecha + "T12:00").getMonth() : new Date().getMonth()}
-              selectedDay={fecha ? new Date(fecha + "T12:00").getDate() : null}
-              onSelectDay={(day) => {
-                const d = fecha ? new Date(fecha + "T12:00") : new Date();
-                d.setDate(day);
-                setFecha(d.toISOString().split("T")[0]);
-                setShowCalendar(false);
-              }}
-            />
-          </div>
-        )}
+        <div className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-xl px-3.5 py-2.5 text-sm text-on-surface">
+          {new Date(fecha + "T12:00").toLocaleDateString("es-AR", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })}
+        </div>
       </div>
 
       {/* Time range */}
