@@ -3,6 +3,7 @@
 import { DashboardHero } from "@/app/(dashboard)/components/dashboard-hero";
 import { QuickActions } from "@/app/(dashboard)/components/quick-actions";
 import { RecentActivity } from "@/app/(dashboard)/components/recent-activity";
+import { UpcomingVisits } from "@/app/(dashboard)/components/upcoming-visits";
 
 import { useDataStore } from "@/lib/store";
 import { useEffect, useState } from "react";
@@ -33,6 +34,7 @@ export default function DashboardPage() {
       <QuickActions />
 
       <div className="space-y-6">
+        <UpcomingVisits />
         <RecentActivity />
       </div>
     </main>

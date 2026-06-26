@@ -32,3 +32,21 @@ del backend (CRUD, consultas, joins, estados, flujos), DEBES:
 
 **NUNCA** inferir nombres de tablas, campos o relaciones de memoria.
 **SIEMPRE** consultar el archivo.
+
+## Regla: DESIGN_MEMORY.md
+
+Antes de implementar CUALQUIER cambio de frontend (componentes, páginas,
+estilos, layouts), DEBES:
+
+1. Leer `DESIGN_MEMORY.md` en la raíz del proyecto.
+2. Respetar los patrones, componentes del sistema, tokens de color,
+   reglas de spacing y decisiones de diseño documentadas ahí.
+3. Para el design system completo, leer `design-system/MASTER.md`.
+4. Para reglas de spacing y densidad, leer `src/SPACING-GUIDELINES.md`.
+
+Al terminar una sesión de desarrollo donde se tomó alguna decisión
+de diseño relevante, **agregar una entrada en el log cronológico**
+de `DESIGN_MEMORY.md` con fecha y descripción de la decisión.
+
+**Antipatrón principal a evitar:** "Mobile-Stretched en Desktop".
+Ver sección específica en `DESIGN_MEMORY.md` y `design-system/MASTER.md`.

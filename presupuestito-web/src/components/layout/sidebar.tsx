@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LayoutDashboard, Users, Settings, Wallet, ChevronLeft, ChevronRight, Briefcase, CheckSquare } from "lucide-react";
+import { LayoutDashboard, Users, Settings, Wallet, ChevronLeft, ChevronRight, Briefcase, CheckSquare, Calendar } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -103,6 +103,13 @@ export function Sidebar() {
           label="Tareas"
           href="/tareas"
           active={pathname === "/tareas"}
+          isExpanded={isExpanded}
+        />
+        <NavItem
+          icon={<Calendar className="w-[18px] h-[18px]" strokeWidth={2.5} />}
+          label="Agenda"
+          href="/agenda"
+          active={pathname === "/agenda"}
           isExpanded={isExpanded}
         />
         <NavItem

@@ -1,11 +1,13 @@
 import { create } from "zustand";
-import { Client, Job, Task, JobStatus, TaskPhoto } from "@/types";
+import { Client, Job, Task, JobStatus, TaskPhoto, Visit, VisitaTarea, VisitStatus } from "@/types";
 
 interface DataState {
   clients: Client[];
   jobs: Job[];
   tasks: Task[];
   taskPhotos: TaskPhoto[];
+  visits: Visit[];
+  visitaTareas: VisitaTarea[];
 
   addClient: (client: Omit<Client, "id" | "created_at">) => Client;
   updateClient: (id: string, client: Partial<Client>) => void;
@@ -24,10 +26,56 @@ interface DataState {
   updateTaskPhoto: (id: string, photo: Partial<TaskPhoto>) => void;
   removeTaskPhoto: (id: string) => void;
   getTaskPhotos: (tareaId: string) => TaskPhoto[];
+
+  addVisit: (visit: Omit<Visit, "id" | "created_at">) => Visit;
+  updateVisit: (id: string, visit: Partial<Visit>) => void;
+  removeVisit: (id: string) => void;
+  getVisitsByDate: (fecha: string) => Visit[];
+  getVisitsByJob: (trabajoId: string) => Visit[];
+  addVisitaTarea: (vt: VisitaTarea) => void;
+  removeVisitaTarea: (visitaId: string, tareaId: string) => void;
 }
+
+const today = new Date();
+const yyyy = today.getFullYear();
+const mm = String(today.getMonth() + 1).padStart(2, "0");
+const dd = String(today.getDate()).padStart(2, "0");
+const todayStr = `${yyyy}-${mm}-${dd}`;
 
 export const useDataStore = create<DataState>((set, get) => ({
   taskPhotos: [],
+  visits: [
+    {
+      id: "v1",
+      trabajo_id: "j1",
+      fecha: todayStr,
+      hora_inicio: "09:00",
+      hora_fin: "12:00",
+      notas: "Revisar instalación eléctrica",
+      estado: "planificada",
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: "v2",
+      trabajo_id: "j1",
+      fecha: todayStr,
+      hora_inicio: "14:00",
+      hora_fin: "17:00",
+      notas: "Medir superficies para pintura",
+      estado: "planificada",
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: "v3",
+      trabajo_id: "j2",
+      fecha: todayStr,
+      hora_inicio: "10:00",
+      notas: "Ver avance de demolición",
+      estado: "realizada",
+      created_at: new Date().toISOString(),
+    },
+  ],
+  visitaTareas: [],
 
   clients: [
     {
@@ -157,12 +205,15 @@ export const useDataStore = create<DataState>((set, get) => ({
     })),
 
   addTaskPhoto: (photoData) => {
-    const existing = get().taskPhotos.find(p => p.id === photoData.id);
-    if (existing) return existing;
+    const hasId = "id" in photoData;
+    if (hasId) {
+      const existing = get().taskPhotos.find(p => p.id === (photoData as TaskPhoto).id);
+      if (existing) return existing;
+    }
     const newPhoto: TaskPhoto = {
-      ...photoData,
-      id: photoData.id || crypto.randomUUID(),
-      created_at: photoData.created_at || new Date().toISOString(),
+      ...(photoData as TaskPhoto),
+      id: hasId ? (photoData as TaskPhoto).id : crypto.randomUUID(),
+      created_at: "created_at" in photoData ? (photoData as TaskPhoto).created_at : new Date().toISOString(),
     };
     set((state) => ({ taskPhotos: [...state.taskPhotos, newPhoto] }));
     return newPhoto;
@@ -176,4 +227,33 @@ export const useDataStore = create<DataState>((set, get) => ({
       taskPhotos: state.taskPhotos.filter((p) => p.id !== id),
     })),
   getTaskPhotos: (tareaId) => get().taskPhotos.filter((p) => p.tarea_id === tareaId),
+
+  addVisit: (visitData) => {
+    const newVisit: Visit = {
+      ...visitData,
+      id: crypto.randomUUID(),
+      created_at: new Date().toISOString(),
+    };
+    set((state) => ({ visits: [...state.visits, newVisit] }));
+    return newVisit;
+  },
+  updateVisit: (id, visitData) =>
+    set((state) => ({
+      visits: state.visits.map((v) => (v.id === id ? { ...v, ...visitData } : v)),
+    })),
+  removeVisit: (id) =>
+    set((state) => ({
+      visits: state.visits.filter((v) => v.id !== id),
+      visitaTareas: state.visitaTareas.filter((vt) => vt.visita_id !== id),
+    })),
+  getVisitsByDate: (fecha) => get().visits.filter((v) => v.fecha === fecha),
+  getVisitsByJob: (trabajoId) => get().visits.filter((v) => v.trabajo_id === trabajoId),
+  addVisitaTarea: (vt) =>
+    set((state) => ({ visitaTareas: [...state.visitaTareas, vt] })),
+  removeVisitaTarea: (visitaId, tareaId) =>
+    set((state) => ({
+      visitaTareas: state.visitaTareas.filter(
+        (vt) => vt.visita_id !== visitaId || vt.tarea_id !== tareaId
+      ),
+    })),
 }));
