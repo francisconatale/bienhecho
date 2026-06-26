@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 import { Client, Job, Budget, Concept } from "@/types";
+import "@/lib/pdf/fonts";
 
 /**
  * Professional Budget Template
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
   page: {
     padding: "20mm",
     fontSize: 9,
-    fontFamily: "Helvetica",
+    fontFamily: "Inter",
     color: "#1E293B",
     lineHeight: 1.5,
   },

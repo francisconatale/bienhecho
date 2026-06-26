@@ -57,12 +57,12 @@
   --color-tertiary-fixed: #ffdbcb;
   --color-on-tertiary-container: #f39461;
 
-  --font-footnote: "Inter", sans-serif;
-  --font-label-caps: "Inter", sans-serif;
-  --font-headline: "Inter", sans-serif;
-  --font-body: "Inter", sans-serif;
-  --font-headline-large: "Inter", sans-serif;
-  --font-headline-large-mobile: "Inter", sans-serif;
+  --font-footnote: var(--font-inter);
+  --font-label-caps: var(--font-inter);
+  --font-headline: var(--font-inter);
+  --font-body: var(--font-inter);
+  --font-headline-large: var(--font-inter);
+  --font-headline-large-mobile: var(--font-inter);
 
   --radius-default: 0.25rem;
   --radius-lg: 0.5rem;

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function ClientesPage() {
   return (
-    <main className="flex-1 h-[calc(100dvh-64px)] md:h-dvh mt-0 md:mt-0 pb-20 md:pb-0">
+    <main className="flex-1 min-h-0">
       <ClientList />
     </main>
   );

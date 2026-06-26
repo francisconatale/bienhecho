@@ -20,10 +20,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning className={inter.variable}>
       <head />
       <body
-        className={`${inter.className} bg-grouped-bg-light text-on-background font-body min-h-screen antialiased transition-colors duration-200`}
+        className="bg-grouped-bg-light text-on-background font-body min-h-screen antialiased transition-colors duration-200"
       >
         <Script id="theme-script" strategy="beforeInteractive">
           {`
