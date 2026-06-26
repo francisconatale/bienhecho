@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, Users, Settings, Wallet, CheckSquare, Calendar } from "lucide-react";
+import { LayoutDashboard, Users, Settings, Wallet, CheckSquare, Calendar, Briefcase } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -37,7 +37,8 @@ export function TopNav() {
   }
 
   const isDashboardActive = pathname === "/" || pathname.startsWith("/presupuestos/");
-  const isClientesActive = pathname.startsWith("/clientes") || (pathname.startsWith("/trabajos/") && !pathname.includes("/tareas"));
+  const isClientesActive = pathname.startsWith("/clientes");
+  const isTrabajosActive = pathname.startsWith("/trabajos") && !pathname.includes("/tareas");
   const isTareasActive = pathname.startsWith("/tareas") || pathname.includes("/tareas/");
   const isAgendaActive = pathname.startsWith("/agenda");
   const isAjustesActive = pathname.startsWith("/ajustes");
@@ -66,6 +67,12 @@ export function TopNav() {
             label="Clientes"
             href="/clientes"
             active={isClientesActive}
+          />
+          <NavItem
+            icon={<Briefcase className="w-4 h-4" strokeWidth={2.5} />}
+            label="Trabajos"
+            href="/trabajos"
+            active={isTrabajosActive}
           />
           <NavItem
             icon={<CheckSquare className="w-4 h-4" strokeWidth={2.5} />}

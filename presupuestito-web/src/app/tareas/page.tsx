@@ -7,6 +7,7 @@ import { PaginationButtons } from "@/components/ui/pagination-buttons";
 import { Check, Circle, Briefcase } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default function TareasPage() {
   const { jobs, clients, tasks, updateTask } = useDataStore();
@@ -35,15 +36,10 @@ export default function TareasPage() {
 
   return (
     <main className="flex-1 pb-32 w-full pt-10 transition-all max-w-4xl mx-auto px-4 md:px-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-black tracking-tight text-on-surface mb-2">
-          Tareas
-        </h1>
-        <p className="text-base text-on-surface-variant/60 font-medium">
-          Seguimiento de tareas de todos tus trabajos.
-        </p>
-      </div>
+      <PageHeader
+        title="Tareas"
+        description="Seguimiento de tareas de todos tus trabajos."
+      />
 
       {/* Filter Tabs */}
       <div className="flex gap-2 mb-6">

@@ -17,7 +17,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      <div className="bg-surface rounded-3xl p-5 md:p-6 border border-outline-variant/10 shadow-sm space-y-5">
+      <div className="space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="md:col-span-2">
             <label

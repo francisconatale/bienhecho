@@ -1,0 +1,28 @@
+{
+  "scope": "page",
+  "isRedesign": true,
+  "targetPath": "src/app/(dashboard)/trabajos/page.tsx",
+  "targetName": "Trabajos",
+  "painPoints": ["Lack of direct access to jobs", "List view might be too disconnected from clients"],
+  "inspiration": {
+    "visual": ["Premium Aurora + Glassmorphism (from Design Memory)", "Stripe-like details"],
+    "functional": ["Master-detail pattern", "Responsive filters"]
+  },
+  "brand": {
+    "adjectives": ["clean", "professional", "premium", "efficient"],
+    "density": "comfortable",
+    "darkMode": true
+  },
+  "persona": {
+    "primary": "Business user",
+    "context": "Both equally",
+    "keyTasks": ["View list of jobs directly", "Filter by status", "Access job details"]
+  },
+  "constraints": {
+    "mustKeep": ["Aurora + Glassmorphism background", "Header hidden in desktop", "Responsive layout"],
+    "technical": ["nextjs-app", "tailwind v4", "lucide-react"]
+  },
+  "framework": "nextjs-app",
+  "packageManager": "npm",
+  "stylingSystem": "tailwind"
+}

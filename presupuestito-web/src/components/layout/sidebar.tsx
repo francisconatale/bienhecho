@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LayoutDashboard, Users, Settings, Wallet, ChevronLeft, ChevronRight, CheckSquare, Calendar } from "lucide-react";
+import { LayoutDashboard, Users, Settings, Wallet, ChevronLeft, ChevronRight, CheckSquare, Calendar, Briefcase } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -89,6 +89,13 @@ export function Sidebar() {
           label="Clientes"
           href="/clientes"
           active={pathname === "/clientes"}
+          isExpanded={isExpanded}
+        />
+        <NavItem
+          icon={<Briefcase className="w-[18px] h-[18px]" strokeWidth={2.5} />}
+          label="Trabajos"
+          href="/trabajos"
+          active={pathname.startsWith("/trabajos")}
           isExpanded={isExpanded}
         />
         <NavItem

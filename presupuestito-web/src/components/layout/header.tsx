@@ -24,7 +24,7 @@ export function Header({
   title,
   leftAction,
   rightAction,
-  titleClassName = "font-headline-large-mobile text-headline-large-mobile text-primary flex-1 text-center font-bold tracking-tight",
+  titleClassName = "text-xl md:text-2xl text-primary flex-1 text-center font-black tracking-tight",
   actionContainerClassName = "w-10 flex items-center shrink-0 min-w-[40px]"
 }: HeaderProps) {
   return (

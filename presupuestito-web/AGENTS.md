@@ -100,3 +100,8 @@ Elementos **interactivos** (botones, links, `onClick`) usan `cursor-pointer` exp
 ## Regla: Auto-Commit en Flujo Spec Kit
 Cuando estés trabajando dentro del flujo speckit (specify → plan → tasks → implement), los hooks `after_specify`, `after_plan`, `after_tasks` y `after_implement` ejecutan auto-commits automáticos con mensaje `chore(save): auto-save after <step>`. Esto preserva AGENTS.md y otros archivos de contexto cuando la ventana de contexto se pierde.
 No preguntes por estos commits, son automáticos. Solo aplica la regla de preguntar para commits manuales fuera del flujo speckit.
+
+## Regla: Layout Master-Detail (Desktop vs Mobile)
+Para páginas como Clientes o vistas duales (lista interactiva + detalle):
+- **Desktop:** Conservar la estructura "Master-Detail" tipo app. El panel de la lista debe quedar anclado a la izquierda ocupando toda la altura (usualmente con `grid-cols-[360px_1fr]` y `min-h-0`), sin que el scroll sea de toda la página.
+- **Mobile:** Se debe utilizar obligatoriamente el componente `<PageHeader />` para el título principal, envolviéndolo en un contenedor solo visible en mobile (ej. `<div className="md:hidden"><PageHeader ... /></div>`). No reemplazar el PageHeader por custom bars sin título en la versión móvil.

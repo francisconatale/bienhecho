@@ -64,6 +64,8 @@
   --font-body: var(--font-inter);
   --font-headline-large: var(--font-inter);
   --font-headline-large-mobile: var(--font-inter);
+  --font-mono: var(--font-inter);
+  --font-tabular-nums: var(--font-inter);
 
   --radius-default: 0.25rem;
   --radius-lg: 0.5rem;

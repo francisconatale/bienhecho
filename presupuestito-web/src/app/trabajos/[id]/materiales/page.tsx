@@ -3,7 +3,7 @@
 import React from "react";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, useSearchParams } from "next/navigation";
 import { useDataStore } from "@/lib/store";
 import { Header } from "@/components/layout/header";
 import { MaterialList } from "../components/material-list";
@@ -14,6 +14,10 @@ interface MaterialesPageProps {
 
 export default function MaterialesPage({ params }: MaterialesPageProps) {
   const { id } = React.use(params);
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from");
+  const clienteId = searchParams.get("clienteId");
+  const backHref = `/trabajos/${id}${from ? `?from=${from}${clienteId ? `&clienteId=${clienteId}` : ""}` : ""}`;
   const { jobs } = useDataStore();
   const job = jobs.find((j) => j.id === id);
 
@@ -22,7 +26,7 @@ export default function MaterialesPage({ params }: MaterialesPageProps) {
   }
 
   const leftAction = (
-    <Link href={`/trabajos/${id}`}>
+    <Link href={backHref}>
       <button
         aria-label="Volver"
         className="w-10 h-10 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-white/20 transition-all active:scale-95"
@@ -66,7 +70,7 @@ export default function MaterialesPage({ params }: MaterialesPageProps) {
         <div className="hidden md:flex items-center justify-between mb-4">
           <div className="flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
             <Link 
-              href={`/trabajos/${id}`}
+              href={backHref}
               className="flex items-center gap-1 hover:text-primary transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />

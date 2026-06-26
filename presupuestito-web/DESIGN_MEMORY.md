@@ -257,6 +257,10 @@ rounded-lg      → íconos en lista, avatares pequeños
 - **Problema:** Al aplicar refactors genéricos de layout (`<Header />` visible y `<main>` genérico) en componentes monolíticos complejos como la vista de Clientes o Detalles, se rompía el diseño premium del proyecto y se forzaba un layout encajonado.
 - **Decisión:** Se definió explícitamente el patrón "Premium (Aurora + Glassmorphism)" para vistas principales de entidades. En estas vistas, el `<Header />` móvil se oculta en desktop (`md:hidden`) y el layout se compone directamente en la página con breadcrumbs nativos, fondos de ruido, manchas radiales y tarjetas laterales `backdrop-blur-2xl`. Se prohíbe el uso de componentes monolíticos tipo `content.tsx` o `ClientList.tsx` que oculten la estructura general de la página.
 
+### 2026-06-26 (Layout Master-Detail y Header Mobile)
+- **Problema:** Los rediseños tendían a romper el layout Master-Detail (panel izquierdo + detalle) en desktop al intentar adaptarlo, y omitían el `<PageHeader />` en mobile a favor de componentes ad-hoc más compactos.
+- **Decisión:** Mantener siempre el layout Master-Detail en desktop (panel anclado a la izquierda, altura completa sin scroll global). Para móvil, es obligatorio mostrar el `<PageHeader />` nativo (mediante `md:hidden`) en la vista de lista principal para mantener la consistencia del sistema de diseño, adaptando las acciones y filtros alrededor de él.
+
 ---
 
 *Actualizar este archivo en cada sesión de desarrollo. Una entrada en el log por decisión relevante.*

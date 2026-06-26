@@ -17,6 +17,7 @@ import { CalendarMonth } from "@/components/ui/calendar";
 import { SelectInput } from "@/components/ui/select-input";
 import { Client, Job, Visit, VisitStatus } from "@/types";
 import { cn } from "@/lib/utils";
+import { PageHeader } from "@/components/ui/page-header";
 
 const MONTHS = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -129,24 +130,19 @@ function AgendaPage() {
 
   return (
     <main className="flex-1 pb-32 w-full pt-10 transition-all max-w-6xl mx-auto px-4 md:px-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-4xl font-black tracking-tight text-on-surface mb-2">
-            Agenda
-          </h1>
-          <p className="text-base text-on-surface-variant/60 font-medium">
-            Gestioná las visitas a obra.
-          </p>
-        </div>
-        <button
-          onClick={() => setShowNewModal(true)}
-          className="h-12 px-5 rounded-2xl bg-primary text-white font-bold text-sm flex items-center gap-2 hover:bg-primary-dark active:scale-[0.98] transition-all shadow-lg shadow-primary/20"
-        >
-          <Plus className="w-4 h-4" strokeWidth={2.5} />
-          Nueva Visita
-        </button>
-      </div>
+      <PageHeader
+        title="Agenda"
+        description="Gestioná las visitas a obra."
+        action={
+          <button
+            onClick={() => setShowNewModal(true)}
+            className="h-12 px-5 rounded-2xl bg-primary text-white font-bold text-sm inline-flex items-center gap-2 hover:bg-primary-dark active:scale-[0.98] transition-all shadow-lg shadow-primary/20"
+          >
+            <Plus className="w-4 h-4" strokeWidth={2.5} />
+            Nueva Visita
+          </button>
+        }
+      />
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Calendar */}
