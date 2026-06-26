@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, ArrowRight, Building2, Check, Sparkles } from "lucide-react";
 import Link from "next/link";
@@ -14,12 +14,14 @@ const questions = [
   { id: "fechas", question: "¿Cuándo arranca y termina?", hint: "Fechas estimadas (opcional)" },
 ];
 
-export default function NuevoTrabajoPage() {
+function NuevoTrabajoForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { clients, addJob } = useDataStore();
 
-  const [currentQ, setCurrentQ] = useState(0);
-  const [clienteId, setClienteId] = useState("");
+  const preselectId = searchParams.get("clienteId");
+  const [currentQ, setCurrentQ] = useState(preselectId ? 1 : 0);
+  const [clienteId, setClienteId] = useState(preselectId || "");
   const [titulo, setTitulo] = useState("");
   const [direccion, setDireccion] = useState("");
   const [descripcion, setDescripcion] = useState("");
@@ -56,13 +58,17 @@ export default function NuevoTrabajoPage() {
       fecha_inicio: fechaInicio || undefined,
       fecha_fin_estimada: fechaFinEstimada || undefined,
     });
-    router.push(`/trabajos/${newJob.id}`);
+    if (preselectId) {
+      router.push(`/clientes?clienteId=${clienteId}`);
+    } else {
+      router.push(`/trabajos/${newJob.id}`);
+    }
   };
 
   return (
     <main className="flex-1 pb-32 w-full pt-10 transition-all max-w-2xl mx-auto px-4 md:px-8">
       <div className="flex items-center gap-4 mb-8">
-        <Link href="/trabajos">
+        <Link href={preselectId ? `/clientes?clienteId=${clienteId}` : "/"}>
           <button
             aria-label="Volver"
             className="w-10 h-10 rounded-full bg-surface border border-outline-variant/30 flex items-center justify-center hover:bg-on-surface/5 transition-all active:scale-95"
@@ -257,5 +263,13 @@ export default function NuevoTrabajoPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function NuevoTrabajoPage() {
+  return (
+    <Suspense>
+      <NuevoTrabajoForm />
+    </Suspense>
   );
 }

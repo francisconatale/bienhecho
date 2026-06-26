@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { ChevronLeft, FileDown } from "lucide-react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, useSearchParams } from "next/navigation";
 import { useDataStore } from "@/lib/store";
 import { useBudgetPDF } from "@/hooks/use-budget-pdf";
 import { JobHeader } from "./components/job-header";
@@ -16,11 +16,19 @@ interface TrabajoPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default function TrabajoPage({ params }: TrabajoPageProps) {
-  const { id } = React.use(params);
+function TrabajoDetail({ id }: { id: string }) {
+  const searchParams = useSearchParams();
   const { jobs, clients, tasks } = useDataStore();
   const { downloadPDF } = useBudgetPDF();
   const [pdfError, setPdfError] = useState<string | null>(null);
+
+  const fromClientes = searchParams.get("from") === "clientes";
+  const clienteId = searchParams.get("clienteId");
+  const backHref = fromClientes && clienteId
+    ? `/clientes?clienteId=${clienteId}`
+    : fromClientes
+      ? "/clientes"
+      : "/trabajos";
 
   const job = jobs.find((j) => j.id === id);
 
@@ -65,7 +73,7 @@ export default function TrabajoPage({ params }: TrabajoPageProps) {
         {/* Header Actions */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-4">
-            <Link href="/trabajos">
+            <Link href={backHref}>
               <button
                 aria-label="Volver"
                 className="w-10 h-10 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-white/20 transition-all active:scale-95"
@@ -123,5 +131,14 @@ export default function TrabajoPage({ params }: TrabajoPageProps) {
         <TaskList jobId={job.id} />
       </main>
     </div>
+  );
+}
+
+export default function TrabajoPage({ params }: TrabajoPageProps) {
+  const { id } = React.use(params);
+  return (
+    <Suspense>
+      <TrabajoDetail id={id} />
+    </Suspense>
   );
 }

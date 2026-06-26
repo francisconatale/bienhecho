@@ -1,6 +1,4 @@
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import { Client, Job, Task } from "@/types";
+import type { Client, Job, Task } from "@/types";
 
 interface PDFData {
   client: Client;
@@ -15,32 +13,76 @@ interface PDFData {
   };
 }
 
-export function generateBudgetPDF({ client, job, tasks, userProfile }: PDFData): void {
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+async function createDocWithInter(): Promise<InstanceType<Awaited<typeof import("jspdf")>["default"]>> {
+  const [{ default: jsPDF }, regular, bold, italic] = await Promise.all([
+    import("jspdf"),
+    fetch("/fonts/Inter-Regular.ttf")
+      .then((r) => r.arrayBuffer())
+      .then(arrayBufferToBase64),
+    fetch("/fonts/Inter-Bold.ttf")
+      .then((r) => r.arrayBuffer())
+      .then(arrayBufferToBase64),
+    fetch("/fonts/Inter-Italic.ttf")
+      .then((r) => r.arrayBuffer())
+      .then(arrayBufferToBase64),
+  ]);
+
   const doc = new jsPDF();
+
+  doc.addFileToVFS("Inter-Regular.ttf", regular);
+  doc.addFileToVFS("Inter-Bold.ttf", bold);
+  doc.addFileToVFS("Inter-Italic.ttf", italic);
+
+  doc.addFont("Inter-Regular.ttf", "Inter", "normal");
+  doc.addFont("Inter-Bold.ttf", "Inter", "bold");
+  doc.addFont("Inter-Italic.ttf", "Inter", "italic");
+
+  return doc;
+}
+
+export async function generateBudgetPDF({
+  client,
+  job,
+  tasks,
+  userProfile,
+}: PDFData): Promise<void> {
+  const [{ default: jsPDF }, autoTable] = await Promise.all([
+    import("jspdf"),
+    import("jspdf-autotable"),
+  ]);
+
+  const doc = await createDocWithInter();
   const pageWidth = doc.internal.pageSize.getWidth();
   const margin = 20;
 
   const primaryColor: [number, number, number] = [37, 99, 235];
   const secondaryColor: [number, number, number] = [100, 116, 139];
 
-  // Header - Company
-  doc.setFont("helvetica", "bold");
+  doc.setFont("Inter", "bold");
   doc.setFontSize(22);
   doc.setTextColor(...primaryColor);
   doc.text(userProfile.company || userProfile.name, margin, 30);
 
-  doc.setFont("helvetica", "normal");
+  doc.setFont("Inter", "normal");
   doc.setFontSize(9);
   doc.setTextColor(...secondaryColor);
   doc.text(userProfile.trade || "Servicios Profesionales", margin, 37);
 
-  // Header - Document title
-  doc.setFont("helvetica", "bold");
+  doc.setFont("Inter", "bold");
   doc.setFontSize(18);
   doc.setTextColor(15, 23, 42);
   doc.text("PRESUPUESTO", pageWidth - margin, 30, { align: "right" });
 
-  doc.setFont("helvetica", "normal");
+  doc.setFont("Inter", "normal");
   doc.setFontSize(9);
   doc.setTextColor(...secondaryColor);
   const dateStr = new Date().toLocaleDateString("es-AR", {
@@ -50,15 +92,13 @@ export function generateBudgetPDF({ client, job, tasks, userProfile }: PDFData):
   });
   doc.text(dateStr, pageWidth - margin, 37, { align: "right" });
 
-  // Divider
   doc.setDrawColor(...primaryColor);
   doc.setLineWidth(0.8);
   doc.line(margin, 42, pageWidth - margin, 42);
 
-  // From / To section
   let y = 55;
 
-  doc.setFont("helvetica", "bold");
+  doc.setFont("Inter", "bold");
   doc.setFontSize(8);
   doc.setTextColor(...secondaryColor);
   doc.text("DE", margin, y);
@@ -66,14 +106,14 @@ export function generateBudgetPDF({ client, job, tasks, userProfile }: PDFData):
   doc.text("PARA", pageWidth / 2 + 10, y);
 
   y += 7;
-  doc.setFont("helvetica", "bold");
+  doc.setFont("Inter", "bold");
   doc.setFontSize(11);
   doc.setTextColor(15, 23, 42);
   doc.text(userProfile.name, margin, y);
   doc.text(client.nombre, pageWidth / 2 + 10, y);
 
   y += 5;
-  doc.setFont("helvetica", "normal");
+  doc.setFont("Inter", "normal");
   doc.setFontSize(9);
   doc.setTextColor(71, 85, 105);
   doc.text(userProfile.address || "Domicilio no especificado", margin, y);
@@ -86,10 +126,9 @@ export function generateBudgetPDF({ client, job, tasks, userProfile }: PDFData):
   }
 
   y += 5;
-  doc.setFont("helvetica", "bold");
+  doc.setFont("Inter", "bold");
   doc.text(`Trabajo: ${job.titulo}`, pageWidth / 2 + 10, y);
 
-  // Tasks table
   y += 15;
 
   const tableData = tasks.map((task) => [
@@ -97,7 +136,7 @@ export function generateBudgetPDF({ client, job, tasks, userProfile }: PDFData):
     `$ ${(task.precio ?? 0).toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
   ]);
 
-  autoTable(doc, {
+  autoTable.default(doc, {
     startY: y,
     margin: { left: margin, right: margin },
     head: [["Descripción", "Precio"]],
@@ -122,11 +161,10 @@ export function generateBudgetPDF({ client, job, tasks, userProfile }: PDFData):
     },
   });
 
-  // Total
   const total = tasks.reduce((acc, t) => acc + (t.precio ?? 0), 0);
-  const finalY = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
+  const finalY = (doc as Parameters<typeof autoTable.default>[0] & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
 
-  doc.setFont("helvetica", "bold");
+  doc.setFont("Inter", "bold");
   doc.setFontSize(13);
   doc.setTextColor(...primaryColor);
   doc.text("TOTAL", pageWidth - margin - 50, finalY);
@@ -137,29 +175,26 @@ export function generateBudgetPDF({ client, job, tasks, userProfile }: PDFData):
     { align: "right" }
   );
 
-  // Notes
   if (job.descripcion) {
     const notesY = finalY + 15;
-    doc.setFont("helvetica", "bold");
+    doc.setFont("Inter", "bold");
     doc.setFontSize(8);
     doc.setTextColor(...secondaryColor);
     doc.text("NOTAS", margin, notesY);
 
-    doc.setFont("helvetica", "italic");
+    doc.setFont("Inter", "italic");
     doc.setFontSize(9);
     doc.setTextColor(100, 116, 139);
     const splitNotes = doc.splitTextToSize(job.descripcion, pageWidth - margin * 2);
     doc.text(splitNotes, margin, notesY + 6);
   }
 
-  // Footer
   const footerY = doc.internal.pageSize.getHeight() - 15;
-  doc.setFont("helvetica", "normal");
+  doc.setFont("Inter", "normal");
   doc.setFontSize(8);
   doc.setTextColor(...secondaryColor);
   doc.text("Generado con Presupuestito", margin, footerY);
 
-  // Download
   const fileName = `presupuesto-${client.nombre.replace(/\s+/g, "-").toLowerCase()}.pdf`;
   doc.save(fileName);
 }
