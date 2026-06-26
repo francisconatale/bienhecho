@@ -20,8 +20,10 @@ export function useBudgetPDF() {
       .filter((t) => t.trabajo_id === jobId && t.precio !== null)
       .sort((a, b) => a.orden - b.orden);
 
-    if (jobTasks.length === 0) {
-      throw new Error("No hay tareas con precio para generar el presupuesto");
+    const jobMateriales = useDataStore.getState().materiales.filter(m => m.trabajo_id === jobId);
+
+    if (jobTasks.length === 0 && jobMateriales.length === 0) {
+      throw new Error("No hay tareas con precio ni materiales para generar el presupuesto");
     }
 
     const userProfile = {
@@ -36,6 +38,7 @@ export function useBudgetPDF() {
       client,
       job,
       tasks: jobTasks,
+      materiales: jobMateriales,
       userProfile,
     });
   };

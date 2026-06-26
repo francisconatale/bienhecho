@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Client, Job, Task, JobStatus, TaskPhoto, Visit, VisitaTarea, VisitStatus } from "@/types";
+import { Client, Job, Task, JobStatus, TaskPhoto, Visit, VisitaTarea, VisitStatus, Material, EntregaParcial, Cobro } from "@/types";
 
 interface DataState {
   clients: Client[];
@@ -8,6 +8,21 @@ interface DataState {
   taskPhotos: TaskPhoto[];
   visits: Visit[];
   visitaTareas: VisitaTarea[];
+  materiales: Material[];
+  entregasParciales: EntregaParcial[];
+  cobros: Cobro[];
+
+  addMaterial: (material: Omit<Material, "id" | "created_at">) => Material;
+  updateMaterial: (id: string, material: Partial<Material>) => void;
+  removeMaterial: (id: string) => void;
+
+  addEntregaParcial: (entrega: Omit<EntregaParcial, "id" | "created_at">) => EntregaParcial;
+  updateEntregaParcial: (id: string, entrega: Partial<EntregaParcial>) => void;
+  removeEntregaParcial: (id: string) => void;
+
+  addCobro: (cobro: Omit<Cobro, "id" | "created_at">) => Cobro;
+  updateCobro: (id: string, cobro: Partial<Cobro>) => void;
+  removeCobro: (id: string) => void;
 
   addClient: (client: Omit<Client, "id" | "created_at">) => Client;
   updateClient: (id: string, client: Partial<Client>) => void;
@@ -76,6 +91,9 @@ export const useDataStore = create<DataState>((set, get) => ({
     },
   ],
   visitaTareas: [],
+  materiales: [],
+  entregasParciales: [],
+  cobros: [],
 
   clients: [
     {
@@ -184,17 +202,45 @@ export const useDataStore = create<DataState>((set, get) => ({
 
   addTask: (taskData) => {
     const newTask: Task = { ...taskData, id: crypto.randomUUID() };
-    set((state) => ({ tasks: [...state.tasks, newTask] }));
+    set((state) => {
+      const newTasks = [...state.tasks, newTask];
+      const jobTasks = newTasks.filter(t => t.trabajo_id === newTask.trabajo_id);
+      const newPresupuesto = jobTasks.reduce((sum, t) => sum + (t.precio || 0), 0);
+      return { 
+        tasks: newTasks,
+        jobs: state.jobs.map(j => j.id === newTask.trabajo_id ? { ...j, presupuesto: newPresupuesto } : j)
+      };
+    });
     return newTask;
   },
   updateTask: (id, taskData) =>
-    set((state) => ({
-      tasks: state.tasks.map((t) => (t.id === id ? { ...t, ...taskData } : t)),
-    })),
+    set((state) => {
+      const newTasks = state.tasks.map((t) => (t.id === id ? { ...t, ...taskData } : t));
+      const updatedTask = newTasks.find(t => t.id === id);
+      if (updatedTask) {
+        const jobTasks = newTasks.filter(t => t.trabajo_id === updatedTask.trabajo_id);
+        const newPresupuesto = jobTasks.reduce((sum, t) => sum + (t.precio || 0), 0);
+        return {
+          tasks: newTasks,
+          jobs: state.jobs.map(j => j.id === updatedTask.trabajo_id ? { ...j, presupuesto: newPresupuesto } : j)
+        };
+      }
+      return { tasks: newTasks };
+    }),
   removeTask: (id) =>
-    set((state) => ({
-      tasks: state.tasks.filter((t) => t.id !== id),
-    })),
+    set((state) => {
+      const taskToRemove = state.tasks.find(t => t.id === id);
+      const newTasks = state.tasks.filter((t) => t.id !== id);
+      if (taskToRemove) {
+        const jobTasks = newTasks.filter(t => t.trabajo_id === taskToRemove.trabajo_id);
+        const newPresupuesto = jobTasks.reduce((sum, t) => sum + (t.precio || 0), 0);
+        return {
+          tasks: newTasks,
+          jobs: state.jobs.map(j => j.id === taskToRemove.trabajo_id ? { ...j, presupuesto: newPresupuesto } : j)
+        };
+      }
+      return { tasks: newTasks };
+    }),
   reorderTasks: (trabajoId, taskIds) =>
     set((state) => ({
       tasks: state.tasks.map((t) => {
@@ -255,5 +301,59 @@ export const useDataStore = create<DataState>((set, get) => ({
       visitaTareas: state.visitaTareas.filter(
         (vt) => vt.visita_id !== visitaId || vt.tarea_id !== tareaId
       ),
+    })),
+
+  addMaterial: (materialData) => {
+    const newMaterial: Material = {
+      ...materialData,
+      id: crypto.randomUUID(),
+      created_at: new Date().toISOString(),
+    };
+    set((state) => ({ materiales: [...state.materiales, newMaterial] }));
+    return newMaterial;
+  },
+  updateMaterial: (id, materialData) =>
+    set((state) => ({
+      materiales: state.materiales.map((m) => (m.id === id ? { ...m, ...materialData } : m)),
+    })),
+  removeMaterial: (id) =>
+    set((state) => ({
+      materiales: state.materiales.filter((m) => m.id !== id),
+    })),
+
+  addEntregaParcial: (entregaData) => {
+    const newEntrega: EntregaParcial = {
+      ...entregaData,
+      id: crypto.randomUUID(),
+      created_at: new Date().toISOString(),
+    };
+    set((state) => ({ entregasParciales: [...state.entregasParciales, newEntrega] }));
+    return newEntrega;
+  },
+  updateEntregaParcial: (id, entregaData) =>
+    set((state) => ({
+      entregasParciales: state.entregasParciales.map((e) => (e.id === id ? { ...e, ...entregaData } : e)),
+    })),
+  removeEntregaParcial: (id) =>
+    set((state) => ({
+      entregasParciales: state.entregasParciales.filter((e) => e.id !== id),
+    })),
+
+  addCobro: (cobroData) => {
+    const newCobro: Cobro = {
+      ...cobroData,
+      id: crypto.randomUUID(),
+      created_at: new Date().toISOString(),
+    };
+    set((state) => ({ cobros: [...state.cobros, newCobro] }));
+    return newCobro;
+  },
+  updateCobro: (id, cobroData) =>
+    set((state) => ({
+      cobros: state.cobros.map((c) => (c.id === id ? { ...c, ...cobroData } : c)),
+    })),
+  removeCobro: (id) =>
+    set((state) => ({
+      cobros: state.cobros.filter((c) => c.id !== id),
     })),
 }));

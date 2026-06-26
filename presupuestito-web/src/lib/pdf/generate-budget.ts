@@ -1,9 +1,10 @@
-import type { Client, Job, Task } from "@/types";
+import type { Client, Job, Task, Material } from "@/types";
 
 interface PDFData {
   client: Client;
   job: Job;
   tasks: Task[];
+  materiales: Material[];
   userProfile: {
     name: string;
     company?: string;
@@ -53,6 +54,7 @@ export async function generateBudgetPDF({
   client,
   job,
   tasks,
+  materiales,
   userProfile,
 }: PDFData): Promise<void> {
   const [{ default: jsPDF }, autoTable] = await Promise.all([
@@ -161,22 +163,63 @@ export async function generateBudgetPDF({
     },
   });
 
-  const total = tasks.reduce((acc, t) => acc + (t.precio ?? 0), 0);
-  const finalY = (doc as Parameters<typeof autoTable.default>[0] & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
+  let currentY = (doc as Parameters<typeof autoTable.default>[0] & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
+
+  if (materiales && materiales.length > 0) {
+    const materialsData = materiales.map((m) => [
+      m.nombre_material,
+      `${m.cantidad}`,
+      `$ ${m.precio_unitario.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
+      `$ ${m.subtotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
+    ]);
+
+    autoTable.default(doc, {
+      startY: currentY,
+      margin: { left: margin, right: margin },
+      head: [["Material", "Cant.", "Precio Unit.", "Subtotal"]],
+      body: materialsData,
+      theme: "grid",
+      headStyles: {
+        fillColor: secondaryColor,
+        textColor: [255, 255, 255],
+        fontStyle: "bold",
+        fontSize: 9,
+      },
+      bodyStyles: {
+        fontSize: 9,
+        textColor: [30, 41, 59],
+      },
+      alternateRowStyles: {
+        fillColor: [248, 250, 252],
+      },
+      columnStyles: {
+        0: { cellWidth: "auto" },
+        1: { cellWidth: 15, halign: "center" },
+        2: { cellWidth: 25, halign: "right" },
+        3: { cellWidth: 35, halign: "right" },
+      },
+    });
+
+    currentY = (doc as Parameters<typeof autoTable.default>[0] & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
+  }
+
+  const totalTasks = tasks.reduce((acc, t) => acc + (t.precio ?? 0), 0);
+  const totalMaterials = (materiales || []).reduce((acc, m) => acc + m.subtotal, 0);
+  const finalTotal = totalTasks + totalMaterials;
 
   doc.setFont("Inter", "bold");
   doc.setFontSize(13);
   doc.setTextColor(...primaryColor);
-  doc.text("TOTAL", pageWidth - margin - 50, finalY);
+  doc.text("TOTAL", pageWidth - margin - 50, currentY);
   doc.text(
-    `$ ${total.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
+    `$ ${finalTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
     pageWidth - margin,
-    finalY,
+    currentY,
     { align: "right" }
   );
 
   if (job.descripcion) {
-    const notesY = finalY + 15;
+    const notesY = currentY + 15;
     doc.setFont("Inter", "bold");
     doc.setFontSize(8);
     doc.setTextColor(...secondaryColor);

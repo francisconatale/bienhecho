@@ -11,7 +11,10 @@ import { JobHeader } from "./components/job-header";
 import { JobStatusSelector } from "./components/job-status";
 import { ProgressBar } from "./components/progress-bar";
 import { TaskList } from "./components/task-list";
+import { useMaterials } from "./hooks/use-materials";
+import { usePayments } from "./hooks/use-payments";
 import { cn } from "@/lib/utils";
+import { Hammer, Wallet } from "lucide-react";
 
 interface TrabajoPageProps {
   params: Promise<{ id: string }>;
@@ -41,6 +44,12 @@ function TrabajoDetail({ id }: { id: string }) {
   const jobTasks = tasks.filter((t) => t.trabajo_id === job.id);
   const totalEstimado = jobTasks.reduce((sum, t) => sum + (t.precio ?? 0), 0);
   const hasTasksWithPrice = jobTasks.some((t) => t.precio !== null);
+  
+  const { totalMateriales, materiales } = useMaterials(job.id);
+  const presupuestoTotal = totalEstimado + totalMateriales;
+  const hasItemsForBudget = hasTasksWithPrice || totalMateriales > 0;
+  
+  const { saldoPendiente } = usePayments(job.id);
 
   const handleDownloadPDF = () => {
     setPdfError(null);
@@ -107,6 +116,48 @@ function TrabajoDetail({ id }: { id: string }) {
             </div>
 
             <JobHeader job={job} client={client} />
+            
+            <div className="grid grid-cols-2 gap-4">
+              <Link href={`/trabajos/${job.id}/materiales`} className="group relative overflow-hidden bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none" />
+                <div className="relative z-10 flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
+                    Materiales
+                  </span>
+                  <Hammer className="w-4 h-4 text-primary opacity-50 group-hover:opacity-100 transition-opacity" />
+                </div>
+                <div className="relative z-10 mt-1">
+                  <span className="text-2xl font-bold tracking-tight text-on-surface group-hover:text-primary transition-colors">
+                    ${totalMateriales.toLocaleString("es-AR")}
+                  </span>
+                  <p className="text-[10px] font-medium text-on-surface-variant/40 mt-1 uppercase tracking-wider">
+                    {materiales.length} ítem{materiales.length !== 1 && 's'}
+                  </p>
+                </div>
+              </Link>
+
+              <Link href={`/trabajos/${job.id}/pagos`} className="group relative overflow-hidden bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none" />
+                <div className="relative z-10 flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
+                    Cuentas a Cobrar
+                  </span>
+                  <Wallet className="w-4 h-4 text-primary opacity-50 group-hover:opacity-100 transition-opacity" />
+                </div>
+                <div className="relative z-10 mt-1">
+                  <span className={cn(
+                    "text-2xl font-bold tracking-tight transition-colors",
+                    saldoPendiente <= 0 ? "text-primary" : "text-on-surface group-hover:text-primary"
+                  )}>
+                    ${Math.max(0, saldoPendiente).toLocaleString("es-AR")}
+                  </span>
+                  <p className="text-[10px] font-medium text-on-surface-variant/40 mt-1 uppercase tracking-wider">
+                    Saldo pendiente
+                  </p>
+                </div>
+              </Link>
+            </div>
+
             <TaskList jobId={job.id} />
           </div>
 
@@ -123,32 +174,32 @@ function TrabajoDetail({ id }: { id: string }) {
                   Total estimado
                 </span>
                 <span className="text-4xl lg:text-5xl font-black text-on-surface tracking-tighter mt-1">
-                  ${totalEstimado.toLocaleString("es-AR")}
+                  ${presupuestoTotal.toLocaleString("es-AR")}
                 </span>
                 <span className="text-[10px] font-bold tracking-[0.1em] text-on-surface-variant/40 uppercase mt-1">
-                  Tareas con precio
+                  Tareas + Materiales
                 </span>
               </div>
 
               <button
                 onClick={handleDownloadPDF}
-                disabled={!hasTasksWithPrice}
+                disabled={!hasItemsForBudget}
                 className={cn(
                   "relative w-full py-4 rounded-[20px] font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group",
-                  hasTasksWithPrice
+                  hasItemsForBudget
                     ? "bg-primary text-white shadow-[0_8px_20px_rgba(61,139,110,0.25)] hover:shadow-[0_16px_40px_rgba(61,139,110,0.4)] hover:scale-[1.02] active:scale-[0.98]"
                     : "bg-on-surface/5 text-on-surface-variant/30 cursor-not-allowed"
                 )}
               >
-                {hasTasksWithPrice && (
+                {hasItemsForBudget && (
                   <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
                 )}
                 <FileDown className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" strokeWidth={2.5} />
                 Generar Presupuesto
               </button>
-              {!hasTasksWithPrice && (
+              {!hasItemsForBudget && (
                 <p className="text-xs font-medium text-on-surface-variant/40 text-center">
-                  Agregá tareas con precio para generar el presupuesto
+                  Agregá tareas o materiales con precio para generar el presupuesto
                 </p>
               )}
               {pdfError && (

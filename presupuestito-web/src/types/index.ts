@@ -64,3 +64,34 @@ export interface TaskPhoto {
   orden: number;
   created_at: string;
 }
+
+export interface Material {
+  id: string;
+  trabajo_id: string;
+  nombre_material: string;
+  cantidad: number;
+  precio_unitario: number;
+  subtotal: number;
+  created_at: string;
+}
+
+export interface EntregaParcial {
+  id: string;
+  trabajo_id: string;
+  numero_entrega: number;
+  concepto?: string;
+  monto_entrega: number;
+  fecha_estimada?: string;
+  created_at: string;
+}
+
+export interface Cobro {
+  id: string;
+  trabajo_id: string;
+  entrega_parcial_id?: string | null;
+  monto_cobrado: number;
+  fecha_cobro: string;
+  forma_pago?: string;
+  notas?: string;
+  created_at: string;
+}
