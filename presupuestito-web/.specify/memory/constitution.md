@@ -1,8 +1,8 @@
 <!--
   Sync Impact Report
-  Version change: N/A → 1.0.0 (initial adoption)
-  Modified principles: N/A (first version)
-  Added sections: All (initial creation)
+  Version change: 1.0.0 → 1.1.0
+  Modified sections: Development Workflow (added dual flow, updated DoD)
+  Added sections: N/A
   Removed sections: N/A
   Templates requiring updates: ✅ plan-template.md (no changes needed)
     ✅ spec-template.md (no changes needed)
@@ -129,12 +129,18 @@ No new runtime dependencies without explicit rationale.
 
 ## Development Workflow
 
-- **Phased delivery**: Follow the 6-phase MVP plan in `03-mvp-tareas.md`.
-  Phases 1-2 (base + trabajo detail) are blocking. Phases 3-6 can
-  be reordered by priority.
-- **Definition of done**: The MVP is complete when the full flow works:
-  create client → create job with tasks → register visit → track progress
-  → generate and export PDF invoice.
+- **Phased delivery**: Follow the 7-phase MVP plan in `03-mvp-tareas.md`.
+  Phases 1-2 (base + trabajo detail) are blocking. Phases 3-7 can
+  be reordered by priority. Phase 3 (visitas) is optional for users
+  who don't need field tracking.
+- **Dual flow**: The app supports two user types:
+  - **Type A (simple)**: create client → create job → add tasks → generate budget PDF → generate invoice → done.
+  - **Type B (full)**: same as Type A plus visitas, agenda, and progress tracking.
+  Visitas are never mandatory. The app MUST work without them.
+- **Definition of done**: The MVP is complete when the simple flow works:
+  create client → create job with tasks → generate budget PDF → generate
+  invoice PDF. The full flow (with visitas) is complete when visitas
+  and progress tracking also work.
 - **Commit discipline**: One logical unit per commit. Message format:
   `type(scope): description` (e.g., `feat(trabajos): add CRUD`, `fix(invoice): correct decimal rounding`).
 - **No feature flags in MVP**: Features are either implemented or not.
@@ -159,4 +165,4 @@ specifications MUST comply with these principles.
 - **Supremacy**: When this constitution conflicts with any other
   project document, this constitution takes precedence.
 
-**Version**: 1.0.0 | **Ratified**: 2026-06-25 | **Last Amended**: 2026-06-25
+**Version**: 1.1.0 | **Ratified**: 2026-06-25 | **Last Amended**: 2026-06-25

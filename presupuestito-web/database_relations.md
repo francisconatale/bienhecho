@@ -5,6 +5,11 @@
 > Todo frontend que consulte o modifique datos DEBE respetar
 > estrictamente lo definido aquí.
 
+> **Estado actual**: Por ahora los datos viven en mocks (Zustand store
+> en memoria). Los types en `src/types/index.ts` DEBEN respetar esta
+> estructura. Cuando se implemente la DB real, las migraciones se
+> basan en este archivo.
+
 ---
 
 ## Tablas y_campos
@@ -156,6 +161,13 @@ VISITA   (N) ──── (N) TAREA  →  a través de VISITA_TAREAS
 - `visitas` agrupadas por semana
 - Datos: fecha, hora_inicio, hora_fin, trabajo título, cliente nombre
 
+### Generación de presupuesto PDF
+- `tareas` del trabajo where `precio IS NOT NULL`, ordenadas por `orden`
+- Líneas: descripción + precio de cada tarea
+- Total: suma de precios
+- Se puede generar desde cualquier estado (`presupuestado` o `en_curso`)
+- No cambia el estado del trabajo
+
 ### Generación de factura
 - `tareas` del trabajo where `precio IS NOT NULL`
 - Líneas: descripción + precio de cada tarea
@@ -165,7 +177,7 @@ VISITA   (N) ──── (N) TAREA  →  a través de VISITA_TAREAS
 
 ---
 
-##flujo de estados
+## Flujo de estados
 
 ```
 presupuestado ──(arrancó / hay visitas)──▶ en_curso
@@ -174,17 +186,55 @@ listo_para_facturar ──(factura generada)──▶ facturado
 facturado ──(cliente pagó)──▶ cobrado
 ```
 
+**Nota**: desde `presupuestado` se puede generar el presupuesto PDF en
+cualquier momento, sin cambiar de estado.
+
 ---
 
-##flujo de creación
+## Flujo simple (solo presupuestar y cobrar)
 
 ```
 1. Crear CLIENTE
-2. Crear TRABAJO (asociado a CLIENTE)
-3. Agregar TAREAS al TRABAJO (con o sin precio)
-4. Agendar VISITAS al TRABAJO
-5. En cada VISITA, marcar TAREAS avanzadas (visita_tareas)
-6. Cuando todas las tareas completadas → estado listo_para_facturar
-7. Generar FACTURA desde el trabajo
-8. Marcar como cobrado cuando el cliente pague
+2. Crear TRABAJO (asociado a CLIENTE, estado: presupuestado)
+3. Agregar TAREAS al TRABAJO (con precio)
+4. Generar PRESUPUESTO PDF → enviar al cliente
+5. Cliente aprueba → cambiar estado a en_curso (o directamente a listo_para_facturar)
+6. Generar FACTURA desde el trabajo
+7. Marcar como cobrado cuando el cliente pague
 ```
+
+**No se usan**: visitas, agenda, tabla `visita_tareas`.
+
+---
+
+## Flujo completo (con seguimiento de campo)
+
+```
+1. Crear CLIENTE
+2. Crear TRABAJO (asociado a CLIENTE, estado: presupuestado)
+3. Agregar TAREAS al TRABAJO (con o sin precio)
+4. Generar PRESUPUESTO PDF → enviar al cliente
+5. Cliente aprueba → cambiar estado a en_curso
+6. Agendar VISITAS al TRABAJO
+7. En cada VISITA, marcar TAREAS avanzadas (visita_tareas)
+8. Cuando todas las tareas completadas → estado listo_para_facturar
+9. Generar FACTURA desde el trabajo
+10. Marcar como cobrado cuando el cliente pague
+```
+
+**Se usan**: todas las tablas y funcionalidades.
+
+---
+
+## Dos tipos de usuario
+
+| Característica | Tipo A (simple) | Tipo B (completo) |
+|----------------|-----------------|-------------------|
+| Presupuesto PDF | Sí | Sí |
+| Factura PDF | Sí | Sí |
+| Visitas | No | Sí |
+| Agenda | No | Sí |
+| Barra de progreso | No | Sí |
+| Tabla `visita_tareas` | No | Sí |
+
+**La app no fuerza ninguno de los dos flujos.** Las visitas son opcionales.

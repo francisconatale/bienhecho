@@ -1,38 +1,57 @@
 export interface Client {
   id: string;
-  name: string;
+  nombre: string;
+  telefono: string;
   email?: string;
-  phone?: string;
-  category?: string;
-  status?: 'Activo' | 'Pendiente' | 'Inactivo';
+  direccion: string;
+  notas?: string;
+  created_at: string;
 }
+
+export type JobStatus =
+  | "presupuestado"
+  | "en_curso"
+  | "listo_para_facturar"
+  | "facturado"
+  | "cobrado";
 
 export interface Job {
   id: string;
-  clientId: string;
-  name: string; // Ej: "Obra Las Heras" o "Arreglo Termotanque"
-  description?: string;
-  status: 'Activo' | 'Completado' | 'Pausado' | 'En Progreso';
-  createdAt: string;
+  cliente_id: string;
+  titulo: string;
+  direccion: string;
+  descripcion?: string;
+  presupuesto: number;
+  estado: JobStatus;
+  fecha_inicio?: string;
+  fecha_fin_estimada?: string;
+  created_at: string;
 }
 
-export interface Concept {
+export interface Task {
   id: string;
-  name: string;
-  description: string;
-  quantity: number;
-  unit: string;
-  price: string;
-  amount: string;
+  trabajo_id: string;
+  descripcion: string;
+  precio: number | null;
+  completada: boolean;
+  orden: number;
 }
 
-export interface Budget {
+export type VisitStatus = "planificada" | "realizada" | "cancelada";
+
+export interface Visit {
   id: string;
-  clientId: string;
-  jobId: string; // Siempre pertenece a un Trabajo
-  name: string; // Título del presupuesto
-  type: string;
-  total: number;
-  date: string;
-  concepts: Concept[];
+  trabajo_id: string;
+  fecha: string;
+  hora_inicio: string;
+  hora_fin?: string;
+  notas?: string;
+  estado: VisitStatus;
+  created_at: string;
+}
+
+export interface VisitaTarea {
+  visita_id: string;
+  tarea_id: string;
+  nota_progreso?: string;
 }

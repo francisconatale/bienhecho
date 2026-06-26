@@ -2,7 +2,7 @@
 
 ## Objetivo del MVP
 
-Una web app funcional que permita gestionar clientes, trabajos, tareas y visitas, y generar una factura básica. Sin diseño elaborado, sin features extras. Solo lo que permite trabajar el día a día.
+Una web app funcional que permita presupuestar, gestionar clientes, trabajos, tareas y visitas, y generar facturas. Sin diseño elaborado, sin features extras. Sirve tanto para quien solo quiere cobrar como para quien necesita trackear cada visita.
 
 ---
 
@@ -48,9 +48,9 @@ Objetivo: la vista de trabajo en detalle funcionando.
 
 ---
 
-## Fase 3 — Visitas
+## Fase 3 — Visitas (opcional para el usuario)
 
-Objetivo: registrar el trabajo de campo.
+Objetivo: registrar el trabajo de campo. **Esta fase es opcional** — si el usuario no necesita tracking, puede saltarla.
 
 - [ ] CRUD de visitas dentro de un trabajo
   - [ ] Agendar visita (fecha, hora inicio, hora fin, notas)
@@ -61,19 +61,34 @@ Objetivo: registrar el trabajo de campo.
 
 ---
 
-## Fase 4 — Dashboard y agenda
+## Fase 4 — Presupuesto PDF
+
+Objetivo: generar un presupuesto para enviar al cliente. **Core del flujo simple.**
+
+- [ ] Pantalla de generación de presupuesto desde un trabajo
+  - [ ] Listar tareas con precio como líneas de presupuesto
+  - [ ] Mostrar subtotal por tarea y total general
+  - [ ] Campo para fecha de validez del presupuesto
+  - [ ] Campo para notas o condiciones
+- [ ] Exportar presupuesto como PDF (usando `react-pdf` o similar)
+- [ ] El presupuesto se genera desde cualquier estado `presupuestado` o `en_curso`
+
+---
+
+## Fase 5 — Dashboard y agenda
 
 Objetivo: tener un punto de entrada útil al abrir la app.
 
 - [ ] Dashboard con:
-  - [ ] Próximas visitas (los próximos 7 días)
+  - [ ] Trabajos pendientes de respuesta (estado `presupuestado`)
+  - [ ] Próximas visitas (los próximos 7 días, si existen)
   - [ ] Trabajos activos (estado `en_curso`)
   - [ ] Trabajos listos para facturar (estado `listo_para_facturar`)
 - [ ] Vista de agenda semanal de visitas
 
 ---
 
-## Fase 5 — Factura
+## Fase 6 — Factura
 
 Objetivo: generar la factura desde la app.
 
@@ -88,7 +103,7 @@ Objetivo: generar la factura desde la app.
 
 ---
 
-## Fase 6 — Pulido
+## Fase 7 — Pulido
 
 Objetivo: que sea agradable de usar en el día a día.
 
@@ -107,19 +122,25 @@ Objetivo: que sea agradable de usar en el día a día.
 |------|-------|----------|-----------|
 | Fase 1 — Base | Alto | Medio | 🔴 Primero |
 | Fase 2 — Detalle trabajo | Alto | Alto | 🔴 Primero |
-| Fase 3 — Visitas | Alto | Medio | 🟠 Segundo |
-| Fase 5 — Factura | Alto | Medio | 🟠 Segundo |
-| Fase 4 — Dashboard | Medio | Bajo | 🟡 Tercero |
-| Fase 6 — Pulido | Medio | Bajo | 🟡 Tercero |
+| Fase 4 — Presupuesto PDF | Alto | Medio | 🟠 Segundo |
+| Fase 6 — Factura | Alto | Medio | 🟠 Segundo |
+| Fase 3 — Visitas | Alto | Medio | 🟡 Tercero (opcional) |
+| Fase 5 — Dashboard | Medio | Bajo | 🟡 Tercero |
+| Fase 7 — Pulido | Medio | Bajo | 🟡 Tercero |
 
 ---
 
 ## Definición de "MVP listo"
 
-El MVP está completo cuando se puede hacer este flujo de punta a punta:
+El MVP está completo cuando se puede hacer ESTE flujo de punta a punta (flujo simple, sin visitas):
 
 1. Crear un cliente nuevo
-2. Crear un trabajo para ese cliente con presupuesto y tareas
-3. Registrar una visita y marcar qué tareas se avanzaron
-4. Ver el progreso del trabajo actualizado
-5. Generar y exportar la factura en PDF
+2. Crear un trabajo para ese cliente con tareas y precios
+3. Generar y exportar el presupuesto en PDF
+4. Generar y exportar la factura en PDF
+
+**Flujo completo** (con visitas) funciona cuando además se puede:
+
+5. Agendar una visita al trabajo
+6. Registrar qué tareas se avanzaron en la visita
+7. Ver el progreso del trabajo actualizado
