@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { ChevronLeft, Save, Pencil, X, Check, CalendarDays, ClipboardList } from "lucide-react";
 import Link from "next/link";
 import { notFound, useSearchParams } from "next/navigation";
 import { useDataStore } from "@/lib/store";
+import { useClickOutside } from "@/hooks/use-click-outside";
 import { Header } from "@/components/layout/header";
 import { TaskPhotos } from "../../components/task-photos";
 import { cn } from "@/lib/utils";
@@ -59,6 +60,17 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
     setPrecio(task.precio !== null ? String(task.precio) : "");
     setIsEditing(false);
   };
+
+  const editRef = useRef<HTMLDivElement>(null);
+  useClickOutside(editRef, () => {
+    if (isEditing) {
+      if (hasChanges) {
+        handleSave();
+      } else {
+        handleCancel();
+      }
+    }
+  });
 
   const leftAction = (
     <Link href={from === "tareas" ? "/tareas" : from && clienteId ? `/trabajos/${id}?from=${from}&clienteId=${clienteId}` : `/trabajos/${id}`}>
@@ -147,7 +159,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
           <div>{rightAction}</div>
         </div>
         {/* Titular Principal / Edición */}
-        <div className="space-y-4">
+        <div ref={editRef} className="space-y-4">
           {!isEditing ? (
             <h1 className="text-4xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter">
               {task.descripcion}

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { User, Calendar, MapPin, DollarSign, Pencil, Check } from "lucide-react";
 import { Job, Client } from "@/types";
 import { useDataStore } from "@/lib/store";
+import { useClickOutside } from "@/hooks/use-click-outside";
 
 interface JobHeaderProps {
   job: Job;
@@ -42,6 +43,13 @@ export function JobHeader({ job, client }: JobHeaderProps) {
     setIsEditing(false);
   };
 
+  const editRef = useRef<HTMLDivElement>(null);
+  useClickOutside(editRef, () => {
+    if (isEditing) {
+      handleSave();
+    }
+  });
+
   return (
     <div className="group relative overflow-hidden bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[28px] p-6 md:p-8 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
       <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none" />
@@ -60,7 +68,7 @@ export function JobHeader({ job, client }: JobHeaderProps) {
         )}
 
         {isEditing ? (
-          <div className="space-y-4 md:space-y-3 relative transition-all">
+          <div ref={editRef} className="space-y-4 md:space-y-3 relative transition-all">
           <div className="space-y-1.5 md:space-y-1 pr-10">
             <input 
               value={titulo}
