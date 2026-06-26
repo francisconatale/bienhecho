@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, Users, Settings, Briefcase } from "lucide-react";
+import { LayoutDashboard, Users, Settings, Briefcase, CheckSquare } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -57,6 +57,12 @@ export function BottomNav() {
         label="Trabajos"
         href="/trabajos"
         active={pathname.startsWith("/trabajos")}
+      />
+      <NavItem
+        icon={<CheckSquare className="w-6 h-6" strokeWidth={2} />}
+        label="Tareas"
+        href="/tareas"
+        active={pathname === "/tareas"}
       />
       <NavItem
         icon={<Settings className="w-6 h-6" strokeWidth={2} />}
