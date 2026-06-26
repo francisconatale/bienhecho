@@ -43,8 +43,11 @@ export function JobHeader({ job, client }: JobHeaderProps) {
   };
 
   return (
-    <div className="group relative space-y-3 md:space-y-2">
-      {!isEditing && (
+    <div className="group relative overflow-hidden bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[28px] p-6 md:p-8 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+      <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none" />
+      
+      <div className="relative z-10 space-y-4 md:space-y-3">
+        {!isEditing && (
         <div className="absolute top-0 right-0 z-10">
           <button
             onClick={() => setIsEditing(true)}
@@ -54,10 +57,10 @@ export function JobHeader({ job, client }: JobHeaderProps) {
             <Pencil className="w-4 h-4" />
           </button>
         </div>
-      )}
+        )}
 
-      {isEditing ? (
-        <div className="space-y-4 md:space-y-3 relative z-10 transition-all">
+        {isEditing ? (
+          <div className="space-y-4 md:space-y-3 relative transition-all">
           <div className="space-y-1.5 md:space-y-1 pr-10">
             <input 
               value={titulo}
@@ -190,10 +193,11 @@ export function JobHeader({ job, client }: JobHeaderProps) {
                   {new Date(job.fecha_fin_estimada).toLocaleDateString("es-AR", { timeZone: "UTC" })}
                 </span>
               </div>
-            )}
-          </div>
-        </>
-      )}
+              )}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
