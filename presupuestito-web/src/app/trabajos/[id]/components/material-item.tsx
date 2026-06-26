@@ -46,15 +46,15 @@ export function MaterialItem({ material, jobId }: MaterialItemProps) {
         <div className="absolute inset-0 bg-gradient-to-r from-white/40 to-transparent dark:from-white/10 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
         <div className="relative z-10 flex-1 min-w-0 pr-8">
-          <p className="text-base font-bold transition-all duration-300 tracking-tight text-on-surface">
+          <p className="text-base font-bold transition-all duration-300 tracking-tight text-on-surface cursor-default select-none">
             {material.nombre_material}
           </p>
           <div className="flex items-center gap-2 mt-1">
-            <p className="text-[11px] font-black tracking-widest text-on-surface-variant/50 uppercase">
+            <p className="text-[11px] font-black tracking-widest text-on-surface-variant/50 uppercase cursor-default select-none">
               {material.cantidad} x ${material.precio_unitario.toLocaleString("es-AR")}
             </p>
-            <span className="text-[11px] text-on-surface-variant/30">•</span>
-            <p className="text-[11px] font-black tracking-widest text-primary uppercase">
+            <span className="text-[11px] text-on-surface-variant/30 cursor-default select-none">•</span>
+            <p className="text-[11px] font-black tracking-widest text-primary uppercase cursor-default select-none">
               Subtotal: ${material.subtotal.toLocaleString("es-AR")}
             </p>
           </div>

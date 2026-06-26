@@ -65,16 +65,16 @@ export function UpcomingVisits() {
                 <CalendarDays className="w-5 h-5" strokeWidth={2} />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-[13px] text-on-surface truncate">
+                <div className="font-semibold text-[13px] text-on-surface truncate cursor-default select-none">
                   {job?.titulo || "—"}
                 </div>
-                <div className="text-[11px] text-on-surface-variant mt-0.5">
+                <div className="text-[11px] text-on-surface-variant mt-0.5 cursor-default select-none">
                   {dayName} • {visit.hora_inicio}
                   {visit.hora_fin ? ` - ${visit.hora_fin}` : ""}
                 </div>
               </div>
               <div className="text-right shrink-0">
-                <div className="text-[11px] font-bold text-on-surface-variant">
+                <div className="text-[11px] font-bold text-on-surface-variant cursor-default select-none">
                   {client?.nombre || "—"}
                 </div>
               </div>

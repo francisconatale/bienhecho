@@ -120,7 +120,7 @@ export default function TareasPage() {
 
               {/* Price */}
               {task.precio !== null && (
-                <span className="text-xs font-bold text-on-surface/50 shrink-0">
+                <span className="text-xs font-bold text-on-surface/50 shrink-0 cursor-default select-none">
                   ${task.precio.toLocaleString("es-AR")}
                 </span>
               )}

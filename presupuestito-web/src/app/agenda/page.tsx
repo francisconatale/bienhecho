@@ -284,13 +284,13 @@ function AgendaPage() {
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="text-xs font-bold text-on-surface-variant/60">
+                              <span className="text-xs font-bold text-on-surface-variant/60 cursor-default select-none">
                                 {visit.hora_inicio}
                                 {visit.hora_fin ? ` - ${visit.hora_fin}` : ""}
                               </span>
                               <span
                                 className={cn(
-                                  "text-[10px] font-bold px-2 py-0.5 rounded-full",
+                                  "text-[10px] font-bold px-2 py-0.5 rounded-full cursor-default select-none",
                                   visit.estado === "planificada" && "bg-accent-dark/10 text-accent-dark",
                                   visit.estado === "realizada" && "bg-success/10 text-success",
                                   visit.estado === "cancelada" && "bg-outline-variant/20 text-on-surface-variant/60"
@@ -300,15 +300,15 @@ function AgendaPage() {
                               </span>
                             </div>
 
-                            <h3 className="text-sm font-bold text-on-surface">
+                            <h3 className="text-sm font-bold text-on-surface cursor-default select-none">
                               {jobInfo.titulo}
                             </h3>
-                            <p className="text-[11px] text-on-surface-variant/60 mt-0.5">
+                            <p className="text-[11px] text-on-surface-variant/60 mt-0.5 cursor-default select-none">
                               {jobInfo.cliente} • {jobInfo.direccion}
                             </p>
 
                             {visit.notas && (
-                              <p className="text-xs text-on-surface-variant mt-2 italic">
+                              <p className="text-xs text-on-surface-variant mt-2 italic cursor-default select-none">
                                 {visit.notas}
                               </p>
                             )}
