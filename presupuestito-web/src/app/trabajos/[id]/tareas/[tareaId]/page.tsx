@@ -5,6 +5,7 @@ import { ChevronLeft, Save, Pencil, X, Check } from "lucide-react";
 import Link from "next/link";
 import { notFound, useSearchParams } from "next/navigation";
 import { useDataStore } from "@/lib/store";
+import { Header } from "@/components/layout/header";
 import { TaskPhotos } from "../../components/task-photos";
 import { cn } from "@/lib/utils";
 
@@ -50,6 +51,48 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
     setIsEditing(false);
   };
 
+  const leftAction = (
+    <Link href={from === "tareas" ? "/tareas" : from && clienteId ? `/trabajos/${id}?from=${from}&clienteId=${clienteId}` : `/trabajos/${id}`}>
+      <button
+        aria-label="Volver"
+        className="w-10 h-10 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-white/20 transition-all active:scale-95"
+      >
+        <ChevronLeft className="w-6 h-6 text-on-surface" />
+      </button>
+    </Link>
+  );
+
+  const rightAction = isEditing ? (
+    <div className="flex items-center gap-2">
+      <button
+        onClick={handleCancel}
+        className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-on-surface/10 text-on-surface-variant transition-all active:scale-95"
+      >
+        <X className="w-5 h-5" />
+      </button>
+      <button
+        onClick={handleSave}
+        disabled={!hasChanges}
+        className={cn(
+          "w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-95",
+          hasChanges
+            ? "bg-primary text-white shadow-md hover:bg-primary-dark"
+            : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
+        )}
+      >
+        <Save className="w-4 h-4" />
+      </button>
+    </div>
+  ) : (
+    <button
+      onClick={() => setIsEditing(true)}
+      className="w-10 h-10 rounded-full flex items-center justify-center bg-on-surface/5 hover:bg-on-surface/10 transition-all active:scale-95"
+      title="Editar tarea"
+    >
+      <Pencil className="w-4 h-4 text-on-surface" />
+    </button>
+  );
+
   return (
     <div className="relative w-full min-h-screen">
       {/* Aurora Background */}
@@ -64,121 +107,81 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
       >
         <div className="absolute top-[-50px] left-[-50px] w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-primary/20 md:bg-primary/15 blur-[100px] md:blur-[140px] rounded-full dark:hidden transition-all duration-700" />
         <div className="absolute top-[0px] right-[-100px] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-primary-container/20 md:bg-primary-container/15 blur-[120px] md:blur-[140px] rounded-full dark:hidden transition-all duration-700" />
+        <div className="hidden dark:block absolute top-[-50px] left-[-50px] w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-primary/25 md:bg-primary/15 blur-[120px] md:blur-[180px] rounded-full transition-all duration-700" />
+        <div className="hidden dark:block absolute top-[50px] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/35 md:bg-primary-container/25 blur-[120px] md:blur-[160px] rounded-full transition-all duration-700" />
       </div>
 
-      <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-16 pb-32 w-full transition-all max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-4">
-            <Link href={from === "tareas" ? "/tareas" : from && clienteId ? `/trabajos/${id}?from=${from}&clienteId=${clienteId}` : `/trabajos/${id}`}>
-              <button
-                aria-label="Volver"
-                className="w-10 h-10 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-white/20 transition-all active:scale-95"
-              >
-                <ChevronLeft className="w-6 h-6 text-on-surface" />
-              </button>
+      <div className="md:hidden">
+        <Header
+          title="Tarea"
+          leftAction={leftAction}
+          rightAction={rightAction}
+          actionContainerClassName="flex items-center shrink-0 w-auto min-w-[40px]"
+        />
+      </div>
+
+      <main className="relative flex-1 px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-12 max-w-4xl mx-auto w-full mt-20 md:mt-0 space-y-6">
+        {/* Desktop Breadcrumb & Actions */}
+        <div className="hidden md:flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
+            <Link 
+              href={from === "tareas" ? "/tareas" : from && clienteId ? `/trabajos/${id}?from=${from}&clienteId=${clienteId}` : `/trabajos/${id}`}
+              className="flex items-center gap-1 hover:text-primary transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Volver a {job.titulo}
             </Link>
-            <div>
-              <h1 className="text-[24px] md:text-[28px] leading-tight font-extrabold text-on-surface tracking-tight">
-                Detalle de Tarea
-              </h1>
-              <p className="text-xs font-medium text-on-surface-variant/50 mt-0.5">
-                {job.titulo}
-              </p>
-            </div>
           </div>
-          {isEditing ? (
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleCancel}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest bg-on-surface/10 text-on-surface-variant hover:bg-on-surface/15 transition-all active:scale-95"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={!hasChanges}
-                className={cn(
-                  "flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95",
-                  hasChanges
-                    ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark"
-                    : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
-                )}
-              >
-                <Save className="w-4 h-4" strokeWidth={2.5} />
-                Guardar
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest bg-on-surface/5 text-on-surface-variant/60 hover:bg-on-surface/10 transition-all active:scale-95"
-            >
-              <Pencil className="w-4 h-4" />
-              Editar
-            </button>
-          )}
+          <div>{rightAction}</div>
         </div>
-
-        {/* Status + Description */}
-        <div className="bg-surface rounded-[32px] p-5 border border-outline-variant/10 shadow-sm">
-          <div className="flex items-center gap-3 mb-4">
-            <button
-              onClick={() =>
-                !isEditing && updateTask(task.id, { completada: !task.completada })
-              }
-              className={cn(
-                "w-8 h-8 rounded-xl flex items-center justify-center transition-all",
-                task.completada
-                  ? "bg-green-500 text-white"
-                  : "bg-amber-500/10 text-amber-500"
-              )}
-              aria-label={task.completada ? "Marcar como pendiente" : "Marcar como completada"}
-            >
-              {task.completada && <Check className="w-4 h-4" strokeWidth={3} />}
-            </button>
-            <span className="text-sm font-bold text-on-surface">
-              {task.completada ? "Completada" : "Pendiente"}
-            </span>
-          </div>
-
+        {/* Titular Principal / Edición */}
+        <div className="space-y-4">
           {!isEditing ? (
-            <p className="text-sm font-medium text-on-surface leading-relaxed">
+            <h1 className="text-2xl md:text-3xl font-black text-on-surface leading-tight tracking-tight">
               {task.descripcion}
-            </p>
+            </h1>
           ) : (
             <textarea
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
-              placeholder="¿Qué se hizo en esta tarea?"
+              placeholder="Descripción de la tarea"
               rows={2}
-              className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl px-4 py-3 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none"
+              className="w-full bg-surface border border-outline-variant/20 rounded-2xl px-4 py-3 text-xl font-black text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none"
+              autoFocus
             />
           )}
-        </div>
 
-        {/* Price */}
-        <div className="bg-surface rounded-[32px] p-5 border border-outline-variant/10 shadow-sm">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 mb-2">
-            Precio
-          </p>
-          {!isEditing ? (
-            <>
-              <p className="text-lg font-black text-on-surface">
-                {task.precio !== null
-                  ? `$${task.precio.toLocaleString("es-AR")}`
-                  : "Sin precio"}
-              </p>
-              {task.precio === null && (
-                <p className="text-[10px] text-on-surface-variant/30 mt-1">
-                  Descriptiva — no va a la factura
-                </p>
+          {/* Metadata Chips (Estado, Precio) */}
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => !isEditing && updateTask(task.id, { completada: !task.completada })}
+              className={cn(
+                "flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all",
+                task.completada
+                  ? "bg-green-500/15 text-green-600 dark:text-green-400"
+                  : "bg-on-surface/5 text-on-surface hover:bg-on-surface/10"
               )}
-            </>
-          ) : (
-            <div className="space-y-2">
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-on-surface-variant/40">
+            >
+              <div
+                className={cn(
+                  "w-4 h-4 rounded-md border flex items-center justify-center shrink-0 transition-all",
+                  task.completada
+                    ? "bg-green-500 border-green-500"
+                    : "border-on-surface-variant/40"
+                )}
+              >
+                {task.completada && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+              </div>
+              {task.completada ? "Completada" : "Pendiente"}
+            </button>
+
+            {!isEditing ? (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-on-surface/5 text-xs font-bold text-on-surface">
+                {task.precio !== null ? `$${task.precio.toLocaleString("es-AR")}` : "Sin precio"}
+              </div>
+            ) : (
+              <div className="relative w-32">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-on-surface-variant/40 pointer-events-none">
                   $
                 </span>
                 <input
@@ -187,43 +190,20 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
                   onChange={(e) => setPrecio(e.target.value)}
                   placeholder="0"
                   min={0}
-                  className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl pl-8 pr-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  className="w-full bg-surface border border-outline-variant/20 rounded-xl pl-6 pr-3 py-1.5 text-xs font-bold text-on-surface outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                 />
               </div>
-              <p className="text-[10px] font-medium text-on-surface-variant/30">
-                Si el precio está vacío, la tarea es descriptiva y no va a la factura
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Notas - collapsed */}
-        <div className="bg-surface rounded-[32px] border border-outline-variant/10 shadow-sm">
-          <button className="w-full flex items-center justify-between p-5">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
-              Notas internas
-            </span>
-            <svg
-              className="w-4 h-4 text-on-surface-variant/30"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
+            )}
+          </div>
         </div>
 
         {/* Fotos - always visible */}
-        <div className="bg-surface rounded-[32px] p-5 border border-outline-variant/10 shadow-sm space-y-3">
-          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
-            Fotos del trabajo
-          </label>
+        <div className="bg-surface rounded-2xl p-4 md:p-5 border border-outline-variant/10 shadow-sm space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-black uppercase tracking-[0.15em] text-on-surface-variant/50">
+              Fotos del trabajo
+            </h3>
+          </div>
           <TaskPhotos tareaId={task.id} />
         </div>
       </main>
