@@ -54,7 +54,7 @@ export function TaskList({ jobId }: TaskListProps) {
         {jobTasks.length > 0 ? (
           jobTasks.map((task) => (
             <div key={task.id} className="px-4 py-2">
-              <TaskItem task={task} />
+              <TaskItem task={task} jobId={jobId} />
             </div>
           ))
         ) : (

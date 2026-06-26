@@ -1,10 +1,11 @@
 import { create } from "zustand";
-import { Client, Job, Task, JobStatus } from "@/types";
+import { Client, Job, Task, JobStatus, TaskPhoto } from "@/types";
 
 interface DataState {
   clients: Client[];
   jobs: Job[];
   tasks: Task[];
+  taskPhotos: TaskPhoto[];
 
   addClient: (client: Omit<Client, "id" | "created_at">) => Client;
   updateClient: (id: string, client: Partial<Client>) => void;
@@ -18,9 +19,16 @@ interface DataState {
   updateTask: (id: string, task: Partial<Task>) => void;
   removeTask: (id: string) => void;
   reorderTasks: (trabajoId: string, taskIds: string[]) => void;
+
+  addTaskPhoto: (photo: Omit<TaskPhoto, "id" | "created_at">) => TaskPhoto;
+  updateTaskPhoto: (id: string, photo: Partial<TaskPhoto>) => void;
+  removeTaskPhoto: (id: string) => void;
+  getTaskPhotos: (tareaId: string) => TaskPhoto[];
 }
 
 export const useDataStore = create<DataState>((set, get) => ({
+  taskPhotos: [],
+
   clients: [
     {
       id: "c1",
@@ -147,4 +155,23 @@ export const useDataStore = create<DataState>((set, get) => ({
         return newIndex !== -1 ? { ...t, orden: newIndex } : t;
       }),
     })),
+
+  addTaskPhoto: (photoData) => {
+    const newPhoto: TaskPhoto = {
+      ...photoData,
+      id: crypto.randomUUID(),
+      created_at: new Date().toISOString(),
+    };
+    set((state) => ({ taskPhotos: [...state.taskPhotos, newPhoto] }));
+    return newPhoto;
+  },
+  updateTaskPhoto: (id, photoData) =>
+    set((state) => ({
+      taskPhotos: state.taskPhotos.map((p) => (p.id === id ? { ...p, ...photoData } : p)),
+    })),
+  removeTaskPhoto: (id) =>
+    set((state) => ({
+      taskPhotos: state.taskPhotos.filter((p) => p.id !== id),
+    })),
+  getTaskPhotos: (tareaId) => get().taskPhotos.filter((p) => p.tarea_id === tareaId),
 }));

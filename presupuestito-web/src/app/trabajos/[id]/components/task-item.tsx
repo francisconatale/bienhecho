@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Pencil, Trash2 } from "lucide-react";
+import { Check, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { Task } from "@/types";
 import { useDataStore } from "@/lib/store";
 import { TaskForm } from "./task-form";
@@ -9,9 +10,10 @@ import { cn } from "@/lib/utils";
 
 interface TaskItemProps {
   task: Task;
+  jobId: string;
 }
 
-export function TaskItem({ task }: TaskItemProps) {
+export function TaskItem({ task, jobId }: TaskItemProps) {
   const { updateTask, removeTask } = useDataStore();
   const [isEditing, setIsEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -56,8 +58,11 @@ export function TaskItem({ task }: TaskItemProps) {
           {task.completada && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
         </button>
 
-        {/* Content */}
-        <div className="flex-1 min-w-0">
+        {/* Content - Link to detail page */}
+        <Link
+          href={`/trabajos/${jobId}/tareas/${task.id}`}
+          className="flex-1 min-w-0"
+        >
           <p
             className={cn(
               "text-sm font-bold transition-all",
@@ -73,16 +78,10 @@ export function TaskItem({ task }: TaskItemProps) {
               ? `$${task.precio.toLocaleString("es-AR")}`
               : "Sin precio"}
           </p>
-        </div>
+        </Link>
 
         {/* Actions */}
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button
-            onClick={() => setIsEditing(true)}
-            className="p-2 rounded-xl hover:bg-on-surface/5 text-on-surface-variant/40 hover:text-on-surface transition-all active:scale-90"
-          >
-            <Pencil className="w-4 h-4" />
-          </button>
           <button
             onClick={() => setConfirmDelete(true)}
             className="p-2 rounded-xl hover:bg-red-500/10 text-on-surface-variant/40 hover:text-red-500 transition-all active:scale-90"

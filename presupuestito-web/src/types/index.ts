@@ -55,3 +55,12 @@ export interface VisitaTarea {
   tarea_id: string;
   nota_progreso?: string;
 }
+
+export interface TaskPhoto {
+  id: string;
+  tarea_id: string;
+  url: string;
+  descripcion: string;
+  orden: number;
+  created_at: string;
+}
