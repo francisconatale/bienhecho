@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ChevronLeft, ArrowRight, Building2, Check, Sparkles } from "lucide-react";
+import { ChevronLeft, ArrowRight, Building2, Check, Sparkles, Calendar, MapPin, DollarSign, FileText } from "lucide-react";
 import Link from "next/link";
 import { useDataStore } from "@/lib/store";
 
@@ -12,6 +12,7 @@ const questions = [
   { id: "direccion", question: "¿Dónde se realiza?", hint: "Dirección del trabajo (opcional)" },
   { id: "presupuesto", question: "¿Cuál es el presupuesto?", hint: "Monto total estimado" },
   { id: "fechas", question: "¿Cuándo arranca y termina?", hint: "Fechas estimadas (opcional)" },
+  { id: "resumen", question: "Revisá los datos antes de crear", hint: "Todo en orden?" },
 ];
 
 function NuevoTrabajoForm() {
@@ -58,37 +59,33 @@ function NuevoTrabajoForm() {
       fecha_inicio: fechaInicio || undefined,
       fecha_fin_estimada: fechaFinEstimada || undefined,
     });
-    if (preselectId) {
-      router.push(`/clientes?clienteId=${clienteId}`);
-    } else {
-      router.push(`/trabajos/${newJob.id}`);
-    }
+    router.push(`/trabajos/${newJob.id}`);
   };
 
   return (
-    <main className="flex-1 pb-32 w-full pt-10 transition-all max-w-2xl mx-auto px-4 md:px-8">
-      <div className="flex items-center gap-4 mb-8">
+    <main className="flex-1 px-4 py-6 pb-28 mt-20 md:px-8 md:py-8 md:pb-12 max-w-xl md:max-w-2xl mx-auto w-full md:mt-0 transition-all">
+      <div className="flex items-center gap-3 mb-5">
         <Link href={preselectId ? `/clientes?clienteId=${clienteId}` : "/"}>
           <button
             aria-label="Volver"
-            className="w-10 h-10 rounded-full bg-surface border border-outline-variant/30 flex items-center justify-center hover:bg-on-surface/5 transition-all active:scale-95"
+            className="w-9 h-9 rounded-xl bg-surface border border-outline-variant/30 flex items-center justify-center hover:bg-on-surface/5 transition-all active:scale-95 cursor-pointer"
           >
-            <ChevronLeft className="w-5 h-5 text-on-surface" />
+            <ChevronLeft className="w-4 h-4 text-on-surface" />
           </button>
         </Link>
         <div>
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-on-surface">
+          <h1 className="text-xl md:text-2xl font-bold tracking-tight text-on-surface">
             Nuevo Trabajo
           </h1>
-          <p className="text-sm text-on-surface-variant/60 font-medium mt-1">
+          <p className="text-sm text-on-surface-variant/60 mt-0.5">
             Respondé paso a paso para crear un nuevo trabajo.
           </p>
         </div>
       </div>
 
-      <div className="bg-surface rounded-[32px] p-6 md:p-8 border border-outline-variant/10 shadow-sm">
+      <div className="bg-surface rounded-[32px] p-5 md:p-6 border border-outline-variant/10 shadow-sm">
         {/* Progress bar */}
-        <div className="flex items-center gap-2 mb-8">
+        <div className="flex items-center gap-1.5 mb-5">
           {questions.map((q, i) => (
             <div
               key={q.id}
@@ -99,42 +96,42 @@ function NuevoTrabajoForm() {
           ))}
         </div>
 
-        <div className="min-h-[280px] flex flex-col">
+        <div className="min-h-[260px] flex flex-col">
           <div className="mb-2">
-            <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/30">
-              Pregunta {currentQ + 1} de {questions.length}
+            <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
+              Paso {currentQ + 1} de {questions.length}
             </span>
           </div>
 
-          <h2 className="text-xl font-black tracking-tight text-on-surface mb-1.5">
+          <h2 className="text-lg font-bold tracking-tight text-on-surface mb-1">
             {question.question}
           </h2>
-          <p className="text-sm text-on-surface-variant/50 font-medium mb-6">
+          <p className="text-sm text-on-surface-variant/50 mb-5">
             {question.hint}
           </p>
 
-          <div className="flex-1">
+          <div className="flex-1 space-y-3">
             {currentQ === 0 && (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {clients.map((c) => (
                   <button
                     key={c.id}
                     onClick={() => setClienteId(c.id)}
-                    className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl border-2 text-left transition-all ${
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all cursor-pointer ${
                       clienteId === c.id
                         ? "border-primary bg-primary/5"
-                        : "border-transparent bg-on-surface/5 hover:bg-on-surface/10"
+                        : "border-outline-variant/20 bg-on-surface/5 hover:bg-on-surface/10"
                     }`}
                   >
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <Building2 className="w-5 h-5 text-primary" />
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <Building2 className="w-4 h-4 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm text-on-surface">{c.nombre}</p>
-                      <p className="text-xs text-on-surface-variant/50">{c.direccion}</p>
+                      <p className="font-semibold text-sm text-on-surface">{c.nombre}</p>
+                      <p className="text-xs text-on-surface-variant/50 truncate">{c.direccion}</p>
                     </div>
                     {clienteId === c.id && (
-                      <Check className="w-5 h-5 text-primary" strokeWidth={3} />
+                      <Check className="w-4 h-4 text-primary shrink-0" strokeWidth={3} />
                     )}
                   </button>
                 ))}
@@ -148,7 +145,7 @@ function NuevoTrabajoForm() {
                   value={titulo}
                   onChange={(e) => setTitulo(e.target.value)}
                   placeholder="Ej: Reforma integral de cocina"
-                  className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl px-5 py-4 text-lg font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  className="input-field"
                   autoFocus
                 />
                 <textarea
@@ -156,7 +153,7 @@ function NuevoTrabajoForm() {
                   onChange={(e) => setDescripcion(e.target.value)}
                   placeholder="Contá un poco de qué se trata (opcional)..."
                   rows={2}
-                  className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl px-5 py-4 text-base font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none"
+                  className="input-field resize-none"
                 />
               </div>
             )}
@@ -167,14 +164,14 @@ function NuevoTrabajoForm() {
                 value={direccion}
                 onChange={(e) => setDireccion(e.target.value)}
                 placeholder="Av. Corrientes 1234"
-                className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl px-5 py-4 text-lg font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                className="input-field"
                 autoFocus
               />
             )}
 
             {currentQ === 3 && (
               <div className="relative">
-                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-lg font-bold text-on-surface-variant/30">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-on-surface-variant/40 pointer-events-none">
                   $
                 </span>
                 <input
@@ -183,48 +180,129 @@ function NuevoTrabajoForm() {
                   onChange={(e) => setPresupuesto(e.target.value)}
                   placeholder="0"
                   min={0}
-                  className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl pl-10 pr-5 py-4 text-lg font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  className="input-field pl-8"
                   autoFocus
                 />
               </div>
             )}
 
             {currentQ === 4 && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40 mb-1.5 block">
                     Fecha de inicio
                   </label>
                   <input
                     type="date"
                     value={fechaInicio}
                     onChange={(e) => setFechaInicio(e.target.value)}
-                    className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl px-5 py-4 text-base font-bold text-on-surface outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                    className="input-field"
                     autoFocus
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40 mb-1.5 block">
                     Fecha fin estimada
                   </label>
                   <input
                     type="date"
                     value={fechaFinEstimada}
                     onChange={(e) => setFechaFinEstimada(e.target.value)}
-                    className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl px-5 py-4 text-base font-bold text-on-surface outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                    className="input-field"
                   />
                 </div>
+              </div>
+            )}
+
+            {currentQ === 5 && (
+              <div className="space-y-3">
+                <div className="bg-primary/5 rounded-xl p-4 border border-primary/10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Building2 className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
+                        Cliente
+                      </p>
+                      <p className="font-semibold text-sm text-on-surface">
+                        {clients.find((c) => c.id === clienteId)?.nombre || "—"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-on-surface/5 rounded-xl p-4">
+                  <div className="flex items-start gap-3">
+                    <FileText className="w-4 h-4 text-on-surface-variant/40 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
+                        Título
+                      </p>
+                      <p className="font-semibold text-sm text-on-surface">{titulo}</p>
+                      {descripcion && (
+                        <p className="text-xs text-on-surface-variant/70 mt-1">{descripcion}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {direccion && (
+                  <div className="bg-on-surface/5 rounded-xl p-4">
+                    <div className="flex items-start gap-3">
+                      <MapPin className="w-4 h-4 text-on-surface-variant/40 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
+                          Dirección
+                        </p>
+                        <p className="font-semibold text-sm text-on-surface">{direccion}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {presupuesto && (
+                  <div className="bg-on-surface/5 rounded-xl p-4">
+                    <div className="flex items-start gap-3">
+                      <DollarSign className="w-4 h-4 text-on-surface-variant/40 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
+                          Presupuesto
+                        </p>
+                        <p className="font-semibold text-sm text-on-surface">
+                          ${Number(presupuesto).toLocaleString("es-AR")}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {(fechaInicio || fechaFinEstimada) && (
+                  <div className="bg-on-surface/5 rounded-xl p-4">
+                    <div className="flex items-start gap-3">
+                      <Calendar className="w-4 h-4 text-on-surface-variant/40 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
+                          Fechas
+                        </p>
+                        <p className="font-semibold text-sm text-on-surface">
+                          {fechaInicio || "—"} {fechaFinEstimada ? `→ ${fechaFinEstimada}` : ""}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
         </div>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between mt-8 pt-6 border-t border-outline-variant/10">
+        <div className="flex items-center justify-between mt-5 pt-4 border-t border-outline-variant/10">
           <button
             onClick={prev}
             disabled={currentQ === 0}
-            className={`text-sm font-bold transition-all ${
+            className={`text-sm font-semibold transition-all cursor-pointer ${
               currentQ === 0
                 ? "text-on-surface-variant/20 cursor-not-allowed"
                 : "text-on-surface-variant hover:text-on-surface"
@@ -237,26 +315,26 @@ function NuevoTrabajoForm() {
             <button
               onClick={next}
               disabled={!canAdvance()}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${
+              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-xs uppercase tracking-widest transition-all cursor-pointer ${
                 canAdvance()
-                  ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark active:scale-95"
+                  ? "bg-primary text-white shadow-sm shadow-primary/20 hover:bg-primary-dark active:scale-95"
                   : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
               }`}
             >
               Siguiente
-              <ArrowRight className="w-4 h-4" strokeWidth={3} />
+              <ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />
             </button>
           ) : (
             <button
               onClick={handleSave}
               disabled={!canSave}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${
+              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-xs uppercase tracking-widest transition-all cursor-pointer ${
                 canSave
-                  ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark active:scale-95"
+                  ? "bg-primary text-white shadow-sm shadow-primary/20 hover:bg-primary-dark active:scale-95"
                   : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
               }`}
             >
-              <Sparkles className="w-4 h-4" strokeWidth={3} />
+              <Sparkles className="w-3.5 h-3.5" strokeWidth={2.5} />
               Crear Trabajo
             </button>
           )}

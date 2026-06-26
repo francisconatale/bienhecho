@@ -167,4 +167,10 @@
   .pt-safe {
     padding-top: env(safe-area-inset-top);
   }
+  .input-field {
+    @apply w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-semibold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all;
+  }
+  textarea.input-field {
+    @apply text-sm;
+  }
 }

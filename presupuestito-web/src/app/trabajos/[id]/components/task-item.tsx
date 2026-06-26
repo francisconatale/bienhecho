@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Check, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Task } from "@/types";
 import { useDataStore } from "@/lib/store";
 import { TaskForm } from "./task-form";
@@ -15,6 +16,9 @@ interface TaskItemProps {
 
 export function TaskItem({ task, jobId }: TaskItemProps) {
   const { updateTask, removeTask } = useDataStore();
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from");
+  const clienteId = searchParams.get("clienteId");
   const [isEditing, setIsEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -60,7 +64,7 @@ export function TaskItem({ task, jobId }: TaskItemProps) {
 
         {/* Content - Link to detail page */}
         <Link
-          href={`/trabajos/${jobId}/tareas/${task.id}?from=trabajo`}
+          href={`/trabajos/${jobId}/tareas/${task.id}?from=${from || "trabajo"}${clienteId ? `&clienteId=${clienteId}` : ""}`}
           className="flex-1 min-w-0"
         >
           <p

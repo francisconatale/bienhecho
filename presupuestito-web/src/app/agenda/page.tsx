@@ -6,16 +6,14 @@ import {
   ChevronRight,
   Plus,
   CalendarDays,
-  Clock,
-  MapPin,
   Trash2,
   Filter,
-  X,
-  Circle,
 } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 import { Modal } from "@/components/ui/modal";
-import { Visit, VisitStatus } from "@/types";
+import { CalendarMonth } from "@/components/ui/calendar";
+import { SelectInput } from "@/components/ui/select-input";
+import { Client, Job, Visit, VisitStatus } from "@/types";
 import { cn } from "@/lib/utils";
 
 const MONTHS = [
@@ -23,35 +21,14 @@ const MONTHS = [
   "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
 ];
 
-const DAYS_OF_WEEK = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-
 const STATUS_OPTIONS: { value: VisitStatus; label: string }[] = [
   { value: "planificada", label: "Planificada" },
   { value: "realizada", label: "Realizada" },
   { value: "cancelada", label: "Cancelada" },
 ];
 
-const STATUS_COLORS: Record<VisitStatus, string> = {
-  planificada: "bg-accent-dark",
-  realizada: "bg-success",
-  cancelada: "bg-outline-variant",
-};
-
-function getDaysInMonth(year: number, month: number) {
-  return new Date(year, month + 1, 0).getDate();
-}
-
-function getFirstDayOfMonth(year: number, month: number) {
-  return new Date(year, month, 1).getDay();
-}
-
 function formatDate(year: number, month: number, day: number) {
   return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-}
-
-function isToday(year: number, month: number, day: number) {
-  const d = new Date();
-  return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
 }
 
 function AgendaPage() {
@@ -71,9 +48,6 @@ function AgendaPage() {
   const [editingVisit, setEditingVisit] = useState<Visit | null>(null);
   const [filterClient, setFilterClient] = useState<string>("");
   const [filterStatus, setFilterStatus] = useState<VisitStatus | "">("");
-
-  const daysInMonth = getDaysInMonth(year, month);
-  const firstDay = getFirstDayOfMonth(year, month);
 
   const selectedDate = selectedDay ? formatDate(year, month, selectedDay) : null;
 
@@ -201,54 +175,20 @@ function AgendaPage() {
               </div>
             </div>
 
-            {/* Day names */}
-            <div className="grid grid-cols-7 px-4 pt-4 pb-2">
-              {DAYS_OF_WEEK.map((d) => (
-                <div
-                  key={d}
-                  className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-wider text-center"
-                >
-                  {d}
-                </div>
-              ))}
-            </div>
-
-            {/* Days grid */}
-            <div className="grid grid-cols-7 px-4 pb-4">
-              {Array.from({ length: firstDay }).map((_, i) => (
-                <div key={`empty-${i}`} className="aspect-square" />
-              ))}
-              {Array.from({ length: daysInMonth }).map((_, i) => {
-                const day = i + 1;
-                const count = visitCountForDay(day);
-                const selected = selectedDay === day;
-                const today = isToday(year, month, day);
-
-                return (
-                  <button
-                    key={day}
-                    onClick={() => setSelectedDay(day)}
-                    className={cn(
-                      "aspect-square rounded-2xl flex flex-col items-center justify-center gap-0.5 transition-all text-[13px] font-semibold relative",
-                      selected
-                        ? "bg-primary text-white shadow-sm shadow-primary/20"
-                        : today
-                        ? "bg-primary/10 text-primary"
-                        : "text-on-surface hover:bg-outline-variant/10"
-                    )}
-                  >
-                    <span>{day}</span>
-                    {count > 0 && (
-                      <div
-                        className={cn(
-                          "w-1.5 h-1.5 rounded-full",
-                          selected ? "bg-white" : "bg-primary"
-                        )}
-                      />
-                    )}
-                  </button>
-                );
-              })}
+            <div className="p-4">
+              <CalendarMonth
+                year={year}
+                month={month}
+                selectedDay={selectedDay}
+                onSelectDay={setSelectedDay}
+                dayBadge={(day, isSelected) => {
+                  const count = visitCountForDay(day);
+                  if (count === 0) return null;
+                  return (
+                    <div className={cn("w-1.5 h-1.5 rounded-full", isSelected ? "bg-white" : "bg-primary")} />
+                  );
+                }}
+              />
             </div>
           </div>
 
@@ -272,18 +212,14 @@ function AgendaPage() {
               )}
             </div>
             <div className="flex flex-wrap gap-2">
-              <select
+              <SelectInput
                 value={filterClient}
-                onChange={(e) => setFilterClient(e.target.value)}
-                className="flex-1 min-w-[120px] bg-grouped-bg-light border border-outline-variant/20 rounded-xl px-3 py-2 text-xs font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20"
-              >
-                <option value="">Todos los clientes</option>
-                {clients.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.nombre}
-                  </option>
-                ))}
-              </select>
+                onValueChange={setFilterClient}
+                options={clients.map((c) => ({ value: c.id, label: c.nombre }))}
+                placeholder="Todos los clientes"
+                size="sm"
+                className="flex-1 min-w-[120px]"
+              />
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as VisitStatus | "")}
@@ -464,8 +400,8 @@ function AgendaPage() {
 }
 
 interface VisitFormProps {
-  jobs: { id: string; cliente_id: string; titulo: string }[];
-  clients: { id: string; nombre: string }[];
+  jobs: Job[];
+  clients: Client[];
   initial?: Visit;
   onSubmit: (data: Omit<Visit, "id" | "created_at">) => void;
   onCancel: () => void;
@@ -478,6 +414,7 @@ function VisitForm({ jobs, clients, initial, onSubmit, onCancel }: VisitFormProp
   const [horaFin, setHoraFin] = useState(initial?.hora_fin || "");
   const [notas, setNotas] = useState(initial?.notas || "");
   const [estado, setEstado] = useState<VisitStatus>(initial?.estado || "planificada");
+  const [showCalendar, setShowCalendar] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
 
   const handleSubmit = () => {
@@ -519,21 +456,15 @@ function VisitForm({ jobs, clients, initial, onSubmit, onCancel }: VisitFormProp
         <label className="block text-xs font-semibold text-on-surface-variant mb-1.5">
           Trabajo
         </label>
-        <select
+        <SelectInput
           value={trabajoId}
-          onChange={(e) => setTrabajoId(e.target.value)}
-          className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-xl px-3.5 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-        >
-          <option value="">Seleccionar trabajo</option>
-          {jobs.map((j) => {
-            const client = clients.find((c) => c.id === j.cliente_id);
-            return (
-              <option key={j.id} value={j.id}>
-                {j.titulo} — {client?.nombre}
-              </option>
-            );
-          })}
-        </select>
+          onValueChange={setTrabajoId}
+          options={jobs.map((j) => ({
+            value: j.id,
+            label: `${j.titulo} — ${clients.find((c) => c.id === j.cliente_id)?.nombre || "—"}`,
+          }))}
+          placeholder="Seleccionar trabajo"
+        />
       </div>
 
       {/* Date */}
@@ -541,12 +472,35 @@ function VisitForm({ jobs, clients, initial, onSubmit, onCancel }: VisitFormProp
         <label className="block text-xs font-semibold text-on-surface-variant mb-1.5">
           Fecha
         </label>
-        <input
-          type="date"
-          value={fecha}
-          onChange={(e) => setFecha(e.target.value)}
-          className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-xl px-3.5 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-        />
+        <button
+          type="button"
+          onClick={() => setShowCalendar(!showCalendar)}
+          className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-xl px-3.5 py-2.5 text-sm text-on-surface text-left focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+        >
+          {fecha
+            ? new Date(fecha + "T12:00").toLocaleDateString("es-AR", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })
+            : "Seleccionar fecha"}
+        </button>
+        {showCalendar && (
+          <div className="mt-2 bg-surface rounded-xl border border-outline-variant/20 shadow-lg p-2">
+            <CalendarMonth
+              year={fecha ? new Date(fecha + "T12:00").getFullYear() : new Date().getFullYear()}
+              month={fecha ? new Date(fecha + "T12:00").getMonth() : new Date().getMonth()}
+              selectedDay={fecha ? new Date(fecha + "T12:00").getDate() : null}
+              onSelectDay={(day) => {
+                const d = fecha ? new Date(fecha + "T12:00") : new Date();
+                d.setDate(day);
+                setFecha(d.toISOString().split("T")[0]);
+                setShowCalendar(false);
+              }}
+            />
+          </div>
+        )}
       </div>
 
       {/* Time range */}

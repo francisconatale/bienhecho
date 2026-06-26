@@ -16,6 +16,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
   const { id, tareaId } = React.use(params);
   const searchParams = useSearchParams();
   const from = searchParams.get("from");
+  const clienteId = searchParams.get("clienteId");
   const { jobs, tasks, updateTask } = useDataStore();
 
   const job = jobs.find((j) => j.id === id);
@@ -69,7 +70,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
         {/* Header */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-4">
-            <Link href={from === "tareas" ? "/tareas" : `/trabajos/${id}`}>
+            <Link href={from === "tareas" ? "/tareas" : from && clienteId ? `/trabajos/${id}?from=${from}&clienteId=${clienteId}` : `/trabajos/${id}`}>
               <button
                 aria-label="Volver"
                 className="w-10 h-10 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-white/20 transition-all active:scale-95"
