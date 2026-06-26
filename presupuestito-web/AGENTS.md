@@ -6,16 +6,28 @@ shell commands, and other important information, read the current plan
 ## Regla: TODO.md
 
 El archivo `TODO.md` en la raíz del proyecto es la lista de tareas e ideas
-del usuario. Cuando el usuario pida "procesar el TODO" o "ver las tareas
-pendientes", leer ese archivo y trabajar sobre los ítems del Backlog.
+del usuario. Cuando el usuario pida "procesar el TODO", "ver las tareas
+pendientes", o "qué falta", leer ese archivo y mostrar el resumen de
+prioridades.
 
 **Formato de ítems:**
 ```
 - [ ] Descripción de la tarea
-- [ ] (Prioridad alta) Descripción urgente
+- [ ] (P1) Descripción urgente
+- [ ] (P2) Descripción importante
+- [ ] (P3) Descripción normal
 ```
 
-Cuando un íterm se complete, moverlo a la sección "Completados" y marcar `[x]`.
+Prioridades: P1 = urgente, P2 = importante, P3 = normal.
+
+**Flujo al mostrar tareas pendientes:**
+1. Leer `TODO.md` desde la raíz del proyecto (`/home/francisco/Software/presupuestito/TODO.md`)
+2. Listar los ítems del Backlog ordenados por prioridad (P1 primero)
+3. Mostrar: cantidad total, cuántas por prioridad
+4. Si el usuario dice "procesar" o "arrancar", empezar por P1
+
+Cuando un íterm se complete, moverlo a la sección "Sprint X - Completado"
+y marcar `[x]`.
 
 **NUNCA** borrar ítems completados sin que el usuario lo pida.
 
@@ -32,3 +44,25 @@ del backend (CRUD, consultas, joins, estados, flujos), DEBES:
 
 **NUNCA** inferir nombres de tablas, campos o relaciones de memoria.
 **SIEMPRE** consultar el archivo.
+
+## Regla: Commit después de cada tarea
+
+Después de completar CADA tarea (sub-tarea de un plan, ítem del TODO,
+o cualquier cambio de código), **SIN EXCEPCIONES**, debés hacer un commit
+git con un mensaje descriptivo del cambio.
+
+**Flujo obligatorio:**
+1. Completar la tarea
+2. `git add` de los archivos modificados
+3. `git commit -m "mensaje descriptivo"`
+4. Recién ahí pasar a la siguiente tarea
+
+**NUNCA** acumular cambios de múltiples tareas en un solo commit.
+**NUNCA** dejar archivos sin commitear al finalizar una tarea.
+
+Formato del mensaje: `<tipo>: <descripción corta>`
+Ejemplos:
+- `feat: crear formulario de nuevo trabajo`
+- `fix: corregir field names en client-list`
+- `refactor: migrar PDF de react-pdf a jspdf`
+- `chore: eliminar código muerto (proyectos, presupuestos)`
