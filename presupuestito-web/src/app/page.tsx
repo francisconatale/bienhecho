@@ -3,7 +3,6 @@
 import { DashboardHero } from "@/app/(dashboard)/components/dashboard-hero";
 import { QuickActions } from "@/app/(dashboard)/components/quick-actions";
 import { RecentActivity } from "@/app/(dashboard)/components/recent-activity";
-import { PendingTasks } from "@/app/(dashboard)/components/pending-tasks";
 
 import { useDataStore } from "@/lib/store";
 import { useEffect, useState } from "react";
@@ -35,7 +34,6 @@ export default function DashboardPage() {
 
       <div className="space-y-6">
         <RecentActivity />
-        <PendingTasks />
       </div>
     </main>
   );

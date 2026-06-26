@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 import { JobStatus } from "@/types";
-import { Circle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -35,7 +34,7 @@ const STATUS_COLORS: Record<JobStatus, string> = {
 };
 
 export default function TrabajosPage() {
-  const { jobs, clients, tasks } = useDataStore();
+  const { jobs, clients } = useDataStore();
   const [search, setSearch] = useState("");
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -82,72 +81,6 @@ export default function TrabajosPage() {
           </button>
         </Link>
       </div>
-
-      {/* Pending Tasks Summary */}
-      {(() => {
-        const pending = tasks
-          .filter((t) => !t.completada)
-          .map((t) => {
-            const job = jobs.find((j) => j.id === t.trabajo_id);
-            const client = job ? clients.find((c) => c.id === job.cliente_id) : null;
-            return { ...t, job, client };
-          })
-          .filter((t) => t.job);
-
-        if (pending.length === 0) return null;
-
-        const totalEstimado = pending.reduce((sum, t) => sum + (t.precio ?? 0), 0);
-
-        return (
-          <div className="bg-surface rounded-[28px] border border-outline-variant/10 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-3 border-b border-outline-variant/10">
-              <div className="flex items-center gap-2">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
-                  Pendientes
-                </h3>
-                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                  {pending.length}
-                </span>
-              </div>
-              {totalEstimado > 0 && (
-                <span className="text-xs font-bold text-on-surface-variant/60">
-                  ${totalEstimado.toLocaleString("es-AR")}
-                </span>
-              )}
-            </div>
-            <div className="divide-y divide-outline-variant/10 max-h-[200px] overflow-y-auto">
-              {pending.slice(0, 5).map((task) => (
-                <Link
-                  key={task.id}
-                  href={`/trabajos/${task.trabajo_id}`}
-                  className="flex items-center gap-3 px-5 py-3 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors group"
-                >
-                  <Circle className="w-4 h-4 text-on-surface-variant/25 shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-on-surface truncate">{task.descripcion}</p>
-                    <p className="text-[11px] text-on-surface-variant/40 truncate">
-                      {task.job?.titulo} • {task.client?.nombre}
-                    </p>
-                  </div>
-                  {task.precio !== null && (
-                    <span className="text-xs font-bold text-on-surface/50 shrink-0">
-                      ${task.precio.toLocaleString("es-AR")}
-                    </span>
-                  )}
-                  <ArrowRight className="w-3.5 h-3.5 text-on-surface-variant/15 group-hover:text-primary transition-all shrink-0" />
-                </Link>
-              ))}
-            </div>
-            {pending.length > 5 && (
-              <div className="px-5 py-2.5 bg-on-surface/[0.02] text-center border-t border-outline-variant/10">
-                <span className="text-[10px] font-black text-primary uppercase tracking-widest">
-                  +{pending.length - 5} más
-                </span>
-              </div>
-            )}
-          </div>
-        );
-      })()}
 
       <div className="space-y-6">
         {/* Search & Filter Bar */}
