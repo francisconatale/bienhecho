@@ -48,47 +48,49 @@ export function TaskItem({ task, jobId }: TaskItemProps) {
 
   return (
     <>
-      <div className="flex items-center gap-3 px-4 py-3 bg-transparent group hover:bg-on-surface/[0.04] transition-colors">
+      <div className="group relative overflow-hidden bg-surface/40 dark:bg-surface/10 backdrop-blur-xl rounded-[20px] p-4 flex items-center gap-4 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.01]">
+        <div className="absolute inset-0 bg-gradient-to-r from-white/40 to-transparent dark:from-white/10 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
         {/* Checkbox */}
         <button
           onClick={handleToggleComplete}
           className={cn(
-            "w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition-all active:scale-90",
+            "relative z-10 w-6 h-6 rounded-[8px] border-[2.5px] flex items-center justify-center shrink-0 transition-all duration-300 active:scale-75",
             task.completada
-              ? "bg-primary border-primary"
-              : "border-outline-variant/30 hover:border-primary/50"
+              ? "bg-primary border-primary shadow-[0_0_12px_rgba(61,139,110,0.4)]"
+              : "border-outline-variant/30 group-hover:border-primary/50 bg-surface/50"
           )}
         >
-          {task.completada && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+          {task.completada && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
         </button>
 
         {/* Content - Link to detail page */}
         <Link
           href={`/trabajos/${jobId}/tareas/${task.id}?from=${from || "trabajo"}${clienteId ? `&clienteId=${clienteId}` : ""}`}
-          className="flex-1 min-w-0"
+          className="relative z-10 flex-1 min-w-0 pr-8"
         >
           <p
             className={cn(
-              "text-sm font-bold transition-all",
+              "text-base font-bold transition-all duration-300 tracking-tight",
               task.completada
-                ? "text-on-surface-variant/40 line-through"
-                : "text-on-surface"
+                ? "text-on-surface-variant/30 line-through decoration-2"
+                : "text-on-surface group-hover:text-primary"
             )}
           >
             {task.descripcion}
           </p>
-          <p className="text-xs font-medium text-on-surface-variant/40 mt-0.5">
+          <p className="text-[11px] font-black tracking-widest text-on-surface-variant/50 mt-1 uppercase">
             {task.precio !== null
               ? `$${task.precio.toLocaleString("es-AR")}`
-              : "Sin precio"}
+              : "Sin precio estimado"}
           </p>
         </Link>
 
         {/* Actions */}
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute right-4 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
           <button
             onClick={() => setConfirmDelete(true)}
-            className="p-2 rounded-xl hover:bg-red-500/10 text-on-surface-variant/40 hover:text-red-500 transition-all active:scale-90"
+            className="p-2 rounded-[12px] bg-red-500/10 text-red-500/70 hover:bg-red-500 hover:text-white transition-all duration-300 hover:shadow-[0_4px_12px_rgba(239,68,68,0.3)] active:scale-90"
           >
             <Trash2 className="w-4 h-4" />
           </button>

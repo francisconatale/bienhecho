@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Trash2, Image, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { createPortal } from "react-dom";
+import { Plus, Trash2, Image as ImageIcon, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { TaskPhoto } from "@/types";
 import { useDataStore } from "@/lib/store";
 import { PhotoUpload } from "./photo-upload";
@@ -131,17 +132,17 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
       )}
 
       {photos.length > 0 ? (
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 mt-2">
           {photos.map((photo, index) => (
             <div
               key={photo.id}
-              className="relative group rounded-xl overflow-hidden bg-on-surface/5 cursor-pointer"
+              className="relative group rounded-2xl overflow-hidden bg-on-surface/5 cursor-pointer shadow-sm hover:shadow-md transition-all duration-300"
               onClick={() => openViewer(index)}
             >
               <img
                 src={photo.url}
                 alt={photo.descripcion || "Foto de tarea"}
-                className="w-full h-24 object-cover"
+                className="w-full h-32 sm:h-40 md:h-48 object-cover transition-transform duration-700 group-hover:scale-105"
               />
               {photo.descripcion && (
                 <p className="px-2 py-1 text-[10px] font-medium text-on-surface-variant/60 truncate">
@@ -163,7 +164,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
       ) : (
         !isUploading && (
           <div className="py-6 text-center border border-dashed border-outline-variant/20 rounded-xl">
-            <Image className="w-8 h-8 mx-auto text-on-surface-variant/20" />
+            <ImageIcon className="w-8 h-8 mx-auto text-on-surface-variant/20" />
             <p className="text-xs font-medium text-on-surface-variant/30 mt-2">
               Sin fotos aún
             </p>
@@ -177,8 +178,8 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
         </p>
       )}
 
-      {confirmDeleteId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      {confirmDeleteId && typeof window !== "undefined" && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="bg-surface rounded-[28px] p-6 mx-4 max-w-sm w-full shadow-2xl space-y-4">
             <h3 className="text-lg font-black text-on-surface">
               Eliminar foto
@@ -201,12 +202,13 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {viewerPhotoIndex !== null && (
+      {viewerPhotoIndex !== null && typeof window !== "undefined" && createPortal(
         <div
-          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
+          className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center"
           onClick={closeViewer}
         >
           <button
@@ -260,7 +262,8 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
               </p>
             </div>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

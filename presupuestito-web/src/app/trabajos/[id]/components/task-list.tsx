@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useDataStore } from "@/lib/store";
-import { ListGroup } from "@/components/ui/list-group";
+
 import { TaskItem } from "./task-item";
 import { TaskForm } from "./task-form";
 
@@ -31,19 +31,21 @@ export function TaskList({ jobId }: TaskListProps) {
   };
 
   return (
-    <ListGroup className="divide-y divide-outline-variant/10">
-      <div className="flex items-center justify-between p-4 md:p-5 border-b border-outline-variant/10">
-        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
-          Tareas
+    <div className="space-y-5 mt-8 relative z-10">
+      <div className="flex items-end justify-between px-2">
+        <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-on-surface-variant/50">
+          Tareas del Trabajo
         </h3>
         <button
           onClick={() => setIsAdding(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-outline-variant/20 hover:bg-on-surface/5 transition-all text-xs font-medium text-on-surface"
+          className="group flex items-center gap-1.5 px-4 py-2 rounded-[14px] border border-outline-variant/20 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 text-[11px] font-bold text-on-surface uppercase tracking-wider active:scale-95"
         >
-          <Plus className="w-4 h-4" strokeWidth={2} />
+          <Plus className="w-4 h-4 text-primary transition-transform group-hover:rotate-90 duration-300" strokeWidth={2.5} />
           Agregar
         </button>
       </div>
+
+      <div className="space-y-3">
         {isAdding && (
           <div className="p-4">
             <TaskForm onSave={handleAdd} onCancel={() => setIsAdding(false)} />
@@ -51,23 +53,28 @@ export function TaskList({ jobId }: TaskListProps) {
         )}
 
         {jobTasks.length > 0 ? (
-          jobTasks.map((task) => (
-            <div key={task.id} className="px-4 py-2">
+          jobTasks.map((task, idx) => (
+            <div 
+              key={task.id} 
+              className="animate-fade-in-up" 
+              style={{ animationDelay: `${idx * 100}ms`, animationFillMode: 'both' }}
+            >
               <TaskItem task={task} jobId={jobId} />
             </div>
           ))
         ) : (
           !isAdding && (
-            <div className="py-16 text-center">
-              <p className="text-sm font-medium text-on-surface-variant/40">
-                Sin tareas aún
+            <div className="py-20 px-6 text-center bg-surface/20 border border-dashed border-outline-variant/20 rounded-[24px] backdrop-blur-sm">
+              <p className="text-sm font-bold text-on-surface-variant/60">
+                Aún no hay tareas definidas
               </p>
-              <p className="text-xs font-medium text-on-surface-variant/25 mt-1">
-                Agregá tareas para calcular el total del trabajo.
+              <p className="text-[11px] font-medium text-on-surface-variant/40 mt-2 tracking-wide uppercase">
+                Agregá tareas para calcular el total del trabajo
               </p>
             </div>
           )
         )}
-    </ListGroup>
+      </div>
+    </div>
   );
 }
