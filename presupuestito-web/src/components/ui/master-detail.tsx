@@ -66,19 +66,21 @@ export function MasterDetail<T>({
   creationHref,
   renderCreationForm,
   emptyState,
-  detailAnimationClass = "animate-page-in",
+  detailAnimationClass = "animate-fade-in-up",
 }: MasterDetailProps<T>) {
   const hasDetail = selectedId || showCreationForm;
 
   const pathname = usePathname();
   const storageKey = `master-detail-expanded-${pathname}`;
 
-  const [isListExpanded, setIsListExpanded] = useState(() => {
+  const [isListExpanded, setIsListExpanded] = useState(false);
+
+  useEffect(() => {
     if (typeof window !== "undefined") {
-      return sessionStorage.getItem(storageKey) === "true";
+      const stored = sessionStorage.getItem(storageKey);
+      if (stored === "true") setIsListExpanded(true);
     }
-    return false;
-  });
+  }, [storageKey]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -101,6 +103,25 @@ export function MasterDetail<T>({
   const selectedItem = selectedId
     ? items.find((i) => getItemId(i) === selectedId) ?? null
     : null;
+
+  const activeContent = showCreationForm && renderCreationForm
+    ? renderCreationForm()
+    : selectedItem
+    ? renderDetail(selectedItem)
+    : null;
+
+  const lastActiveId = useRef<string | null>(selectedId);
+  if (selectedId) lastActiveId.current = selectedId;
+  else if (showCreationForm) lastActiveId.current = "create";
+
+  const prevContentRef = useRef<ReactNode>(null);
+  useEffect(() => {
+    if (activeContent) {
+      prevContentRef.current = activeContent;
+    }
+  }, [activeContent]);
+
+  const contentToRender = activeContent || prevContentRef.current;
 
   return (
     <>
@@ -126,14 +147,14 @@ export function MasterDetail<T>({
         </div>
       )}
 
-      {/* MASTER-DETAIL GRID */}
-      <div className={`flex-1 grid grid-cols-1 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] min-h-0 ${isCollapsed ? "md:grid-cols-[64px_1fr]" : "md:grid-cols-[360px_1fr]"}`}>
+      {/* MASTER-DETAIL WRAPPER */}
+      <div className="flex-1 relative flex min-h-0 overflow-hidden">
 
         {/* LIST PANE */}
         <div
-          className={`${
-            hasDetail ? "hidden md:flex" : "flex"
-          } flex-col border-r border-outline-variant/10 bg-transparent relative z-10 md:bg-surface overflow-hidden`}
+          className={`absolute inset-0 md:relative flex-shrink-0 flex flex-col border-r border-outline-variant/10 bg-transparent md:bg-surface overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] z-10 w-full md:w-[360px] ${
+            hasDetail ? "-translate-x-full md:translate-x-0" : "translate-x-0"
+          } ${isCollapsed ? "md:!w-[64px]" : ""}`}
         >
           {/* SEARCH BAR — always inside the list pane, hidden in rail mode */}
           {!isCollapsed && (
@@ -243,21 +264,36 @@ export function MasterDetail<T>({
 
         {/* DETAIL PANE */}
         <div
-          className={`${
-            hasDetail ? "flex" : "hidden md:flex"
-          } flex-col bg-grouped-bg-light min-w-0 transition-opacity duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] md:opacity-100`}
+          className={`absolute inset-0 md:relative flex-1 flex flex-col bg-grouped-bg-light md:bg-transparent min-w-0 transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] z-20 ${
+            hasDetail ? "translate-x-0" : "translate-x-full md:translate-x-0"
+          } ${hasDetail ? "" : "max-md:pointer-events-none"}`}
         >
-          {showCreationForm && renderCreationForm ? (
-            renderCreationForm()
-          ) : selectedItem ? (
-            <div key={selectedId} className={`flex-1 flex flex-col overflow-y-auto ${detailAnimationClass}`}>
-              {renderDetail(selectedItem)}
+          {/* DESKTOP (Instant Swap) */}
+          <div className="hidden md:flex flex-1 flex-col overflow-y-auto h-full">
+            {hasDetail ? (
+              <div key={selectedId || (showCreationForm ? "create" : "empty")} className="flex-1 flex flex-col overflow-y-auto h-full">
+                {activeContent}
+              </div>
+            ) : (
+              emptyState || emptyDetail
+            )}
+          </div>
+
+          {/* MOBILE (Retain Content for Slide Out) */}
+          <div className="flex md:hidden relative flex-1 flex-col min-h-0 overflow-hidden">
+            <div className="absolute inset-0 flex flex-col z-0">
+              {emptyState || emptyDetail}
             </div>
-          ) : emptyState ? (
-            emptyState
-          ) : (
-            emptyDetail
-          )}
+            <div className={`absolute inset-0 flex flex-col z-10 bg-grouped-bg-light transition-opacity duration-300 ${
+              !hasDetail ? "pointer-events-none" : ""
+            }`}>
+              {contentToRender && (
+                <div key={lastActiveId.current || "empty"} className={`flex-1 flex flex-col overflow-y-auto h-full ${hasDetail ? detailAnimationClass : ""}`}>
+                  {contentToRender}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </>

@@ -51,7 +51,7 @@ export function JobList() {
     }
     // Remove dir if it exists to reset the animation state
     params.delete("dir");
-    window.history.replaceState(null, '', `${pathname}?${params.toString()}`);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   const isBackDirection = searchParams.get("dir") === "back";
@@ -115,13 +115,13 @@ export function JobList() {
           return (
             <button
               onClick={() => handleSelectedIdChange(job.id)}
-              className={`relative group w-full text-left px-4 md:px-5 py-4 transition-all duration-300 cursor-pointer rounded-[24px] md:rounded-none border border-white/20 dark:border-white/5 md:border-0 md:border-b md:border-outline-variant/5 bg-surface/40 dark:bg-surface/20 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none shadow-[0_4px_12px_rgba(0,0,0,0.02)] md:shadow-none hover:-translate-y-0.5 md:hover:translate-y-0 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] md:hover:shadow-none ${
+              className={`relative group w-full text-left px-4 md:px-5 py-4 transition-colors duration-300 transition-transform duration-300 cursor-pointer rounded-[24px] md:rounded-none border border-white/20 dark:border-white/5 md:border-0 md:border-b md:border-outline-variant/5 bg-surface/40 dark:bg-surface/20 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none shadow-[0_4px_12px_rgba(0,0,0,0.02)] md:shadow-none hover:-translate-y-0.5 md:hover:translate-y-0 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] md:hover:shadow-none ${
                 isSelected ? "md:bg-primary/15 dark:md:bg-primary/25 border-primary/30 md:border-b-outline-variant/5" : "md:hover:bg-on-surface/5"
               }`}
             >
               {isSelected && <div className="hidden md:block absolute left-0 top-0 bottom-0 w-1 bg-primary shadow-[0_0_8px_var(--color-primary)]" />}
               <div className="flex items-center gap-3 md:gap-4">
-                <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors duration-300 ${
                   isSelected ? "bg-primary/20 text-primary shadow-inner" : "bg-primary/8 text-primary/60"
                 }`}>
                   <Briefcase className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2} />
@@ -183,20 +183,7 @@ export function JobList() {
         }
         emptyState={
           <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-            <svg
-              width="160"
-              height="160"
-              viewBox="0 0 160 160"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="mb-6 opacity-40"
-            >
-              <rect x="24" y="50" width="112" height="72" rx="12" stroke="currentColor" strokeWidth="2" fill="none" />
-              <rect x="48" y="30" width="64" height="24" rx="8" stroke="currentColor" strokeWidth="2" fill="none" />
-              <path d="M48 78h64M48 92h48M48 106h56" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.2" />
-              <circle cx="118" cy="100" r="20" stroke="currentColor" strokeWidth="2" fill="none" />
-              <path d="M118 93v14M111 100h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
+            <Briefcase className="w-16 h-16 md:w-20 md:h-20 text-on-surface-variant/20 mb-6" strokeWidth={1} />
             <h3 className="text-base md:text-lg font-bold text-on-surface mb-1.5">
               Seleccioná un trabajo
             </h3>
