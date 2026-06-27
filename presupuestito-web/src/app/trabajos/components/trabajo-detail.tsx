@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, FileDown, Hammer, Wallet } from "lucide-react";
 import Link from "next/link";
-import { notFound, useSearchParams } from "next/navigation";
+import { notFound, useSearchParams, useRouter } from "next/navigation";
 import { useDataStore } from "@/lib/store";
 import { useBudgetPDF } from "@/hooks/use-budget-pdf";
 import { JobHeader } from "../[id]/components/job-header";
@@ -13,7 +13,7 @@ import { TaskList } from "../[id]/components/task-list";
 import { useMaterials } from "../[id]/hooks/use-materials";
 import { usePayments } from "../[id]/hooks/use-payments";
 import { cn } from "@/lib/utils";
-import { buildBackHref, buildForwardParams } from "@/lib/nav";
+import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { MobilePageHeader } from "@/components/ui/mobile-page-header";
 
 export function TrabajoDetail({
@@ -47,7 +47,8 @@ export function TrabajoDetail({
   }, [startEditing]);
   useEffect(() => { onEditingChange?.(isHeaderEditing); }, [isHeaderEditing]);
 
-  const backHref = buildBackHref(searchParams);
+  const router = useRouter();
+  const { popHistory, pushHistory } = useNavigationHistory();
   const from = searchParams.get("from");
 
   const job = jobs.find((j) => j.id === id);
@@ -67,8 +68,6 @@ export function TrabajoDetail({
   const hasItemsForBudget = hasTasksWithPrice || totalMateriales > 0;
   
   const { saldoPendiente } = usePayments(job.id);
-
-  const backParams = buildForwardParams(searchParams, job.id);
 
   const handleDownloadPDF = () => {
     setPdfError(null);
@@ -103,7 +102,7 @@ export function TrabajoDetail({
           </div>
 
           <MobilePageHeader
-            backHref={backHref}
+            onBack={() => router.push(popHistory("/trabajos"))}
             isEditing={isHeaderEditing}
             hasChanges={headerHasChanges}
             onEditStart={() => setIsHeaderEditing(true)}
@@ -140,10 +139,10 @@ export function TrabajoDetail({
                     </button>
                   )
                 ) : (
-                  <Link href={backHref} className="flex items-center gap-1 hover:text-primary transition-colors">
+                  <button onClick={() => router.push(popHistory("/trabajos"))} className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer">
                     <ChevronLeft className="w-4 h-4" />
                     Volver a {from === "/clientes" && client ? client.nombre : "Trabajos"}
-                  </Link>
+                  </button>
                 )}
               </div>
             </div>
@@ -151,7 +150,11 @@ export function TrabajoDetail({
             <JobHeader job={job} client={client} isEditing={isHeaderEditing} onEditingChange={setIsHeaderEditing} onHasChanges={setHeaderHasChanges} />
             
             <div className="grid grid-cols-2 gap-4">
-              <Link href={`/trabajos/${job.id}/materiales${backParams}`} className="group relative overflow-hidden bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2">
+              <Link 
+                href={`/trabajos/${job.id}/materiales`} 
+                onClick={() => pushHistory(window.location.pathname + window.location.search)}
+                className="group relative overflow-hidden bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
+              >
                 <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none" />
                 <div className="relative z-10 flex items-center justify-between">
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
@@ -169,7 +172,11 @@ export function TrabajoDetail({
                 </div>
               </Link>
 
-              <Link href={`/trabajos/${job.id}/pagos${backParams}`} className="group relative overflow-hidden bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2">
+              <Link 
+                href={`/trabajos/${job.id}/pagos`} 
+                onClick={() => pushHistory(window.location.pathname + window.location.search)}
+                className="group relative overflow-hidden bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
+              >
                 <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none" />
                 <div className="relative z-10 flex items-center justify-between">
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">

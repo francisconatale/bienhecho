@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Check, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { Task } from "@/types";
 import { useDataStore } from "@/lib/store";
 import { TaskForm } from "./task-form";
@@ -16,9 +16,7 @@ interface TaskItemProps {
 
 export function TaskItem({ task, jobId }: TaskItemProps) {
   const { updateTask, removeTask } = useDataStore();
-  const searchParams = useSearchParams();
-  const from = searchParams.get("from");
-  const clienteId = searchParams.get("clienteId");
+  const { pushHistory } = useNavigationHistory();
   const [isEditing, setIsEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -66,7 +64,8 @@ export function TaskItem({ task, jobId }: TaskItemProps) {
 
         {/* Content - Link to detail page */}
         <Link
-          href={`/trabajos/${jobId}/tareas/${task.id}?from=${from || "/trabajos"}&jobId=${jobId}${clienteId ? `&clienteId=${clienteId}` : ""}`}
+          href={`/trabajos/${jobId}/tareas/${task.id}`}
+          onClick={() => pushHistory(window.location.pathname + window.location.search)}
           className="relative z-10 flex-1 min-w-0 pr-8"
         >
           <p

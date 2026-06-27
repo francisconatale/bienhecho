@@ -50,7 +50,7 @@ export function MaterialList({ jobId }: MaterialListProps) {
               <div 
                 key={material.id} 
                 className="animate-fade-in-up" 
-                style={{ animationDelay: `${idx * 100}ms`, animationFillMode: 'both' }}
+                style={{ animationDelay: `${idx * 75}ms`, animationFillMode: 'both' }}
               >
                 <MaterialItem material={material} jobId={jobId} />
               </div>

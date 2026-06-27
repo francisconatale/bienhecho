@@ -5,7 +5,7 @@ import { Briefcase, Pencil, X, Check } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 import { Job } from "@/types";
 import { usePagination } from "@/hooks/use-pagination";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { TrabajoDetail } from "./trabajo-detail";
 import { JobStatusSelector } from "../[id]/components/job-status";
 import { MobileHeaderActions } from "@/components/ui/mobile-header-actions";
@@ -33,10 +33,29 @@ function getStatusColor(estado: string): string {
 
 export function JobList() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(
     () => searchParams.get("id") || null
   );
+
+  const handleSelectedIdChange = (id: string | null) => {
+    setSelectedId(id);
+    const params = new URLSearchParams(searchParams.toString());
+    if (id) {
+      params.set("id", id);
+    } else {
+      params.delete("id");
+    }
+    // Remove dir if it exists to reset the animation state
+    params.delete("dir");
+    window.history.replaceState(null, '', `${pathname}?${params.toString()}`);
+  };
+
+  const isBackDirection = searchParams.get("dir") === "back";
+
   const [editTargetId, setEditTargetId] = useState<string | null>(null);
   const [isHeaderEditing, setIsHeaderEditing] = useState(false);
   const editingJobIdRef = useRef<string | null>(null);
@@ -56,24 +75,12 @@ export function JobList() {
   const selected = jobs.find((j) => j.id === selectedId) || null;
 
   return (
-    <div className="flex flex-col flex-1 bg-background relative overflow-hidden">
-      {/* Grain / Noise Overlay */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.04] mix-blend-overlay z-[0] dark:opacity-[0.06]" style={{ backgroundImage: "url('https://grainy-gradients.vercel.app/noise.svg')" }} />
-
-      {/* Aurora Background */}
-      <div
-        className="absolute inset-0 pointer-events-none overflow-hidden transition-all duration-1000"
-        style={{ zIndex: 0 }}
-      >
-        <div className="absolute top-[-50px] left-[-50px] w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-primary/20 md:bg-primary/15 blur-[100px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000 animate-pulse" style={{ animationDuration: '8s' }} />
-        <div className="absolute top-[20%] right-[-100px] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-primary-container/20 md:bg-primary-container/15 blur-[120px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000" />
-        <div className="hidden dark:block absolute top-[-50px] left-[-50px] w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-primary/25 md:bg-primary/15 blur-[120px] md:blur-[180px] rounded-full transition-all duration-1000" />
-        <div className="hidden dark:block absolute top-[20%] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/30 md:bg-primary-container/20 blur-[120px] md:blur-[160px] rounded-full transition-all duration-1000" />
-      </div>
+    <div className="flex flex-col flex-1 bg-transparent relative overflow-hidden">
 
       <MasterDetail
+        detailAnimationClass={isBackDirection ? "animate-slide-in-left" : "animate-page-in"}
         selectedId={selectedId}
-        onSelectedChange={setSelectedId}
+        onSelectedChange={handleSelectedIdChange}
         items={filtered}
         getItemId={(j) => j.id}
         search={search}
@@ -88,8 +95,7 @@ export function JobList() {
           return (
             <MobileHeaderActions
               isEditing={isThisEditing}
-              onEditStart={(e) => {
-                e?.stopPropagation();
+              onEditStart={() => {
                 editingJobIdRef.current = job.id;
                 setEditTargetId(job.id);
               }}
@@ -108,7 +114,7 @@ export function JobList() {
           const client = useDataStore.getState().clients.find((c) => c.id === job.cliente_id);
           return (
             <button
-              onClick={() => setSelectedId(job.id)}
+              onClick={() => handleSelectedIdChange(job.id)}
               className={`relative group w-full text-left px-4 md:px-5 py-4 transition-all duration-300 cursor-pointer rounded-[24px] md:rounded-none border border-white/20 dark:border-white/5 md:border-0 md:border-b md:border-outline-variant/5 bg-surface/40 dark:bg-surface/20 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none shadow-[0_4px_12px_rgba(0,0,0,0.02)] md:shadow-none hover:-translate-y-0.5 md:hover:translate-y-0 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] md:hover:shadow-none ${
                 isSelected ? "md:bg-primary/15 dark:md:bg-primary/25 border-primary/30 md:border-b-outline-variant/5" : "md:hover:bg-on-surface/5"
               }`}
@@ -139,7 +145,7 @@ export function JobList() {
         }}
         renderRailItem={(job, isActive) => (
           <button
-            onClick={() => setSelectedId(job.id)}
+            onClick={() => handleSelectedIdChange(job.id)}
             className={`w-10 h-10 rounded-[14px] flex items-center justify-center shrink-0 transition-all duration-200 cursor-pointer active:scale-90 ${
               isActive
                 ? "bg-primary text-white shadow-md shadow-primary/30"
@@ -155,7 +161,7 @@ export function JobList() {
             id={job.id}
             isEmbedded
             onBack={() => {
-              setSelectedId(null);
+              handleSelectedIdChange(null);
               setIsHeaderEditing(false);
               editingJobIdRef.current = null;
             }}

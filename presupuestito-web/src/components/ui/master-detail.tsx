@@ -1,10 +1,11 @@
 "use client";
 
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useState, useEffect, useRef } from "react";
 import { Search, Plus, ChevronsRight, ChevronsLeft, ChevronLeft } from "lucide-react";
 import { UsePaginationResult } from "@/hooks/use-pagination";
 import { PaginationButtons } from "./pagination-buttons";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export interface MasterDetailProps<T> {
   selectedId: string | null;
@@ -39,6 +40,7 @@ export interface MasterDetailProps<T> {
   renderCreationForm?: () => ReactNode;
 
   emptyState?: ReactNode;
+  detailAnimationClass?: string;
 }
 
 export function MasterDetail<T>({
@@ -64,14 +66,33 @@ export function MasterDetail<T>({
   creationHref,
   renderCreationForm,
   emptyState,
+  detailAnimationClass = "animate-page-in",
 }: MasterDetailProps<T>) {
   const hasDetail = selectedId || showCreationForm;
 
-  const [isListExpanded, setIsListExpanded] = useState(false);
+  const pathname = usePathname();
+  const storageKey = `master-detail-expanded-${pathname}`;
+
+  const [isListExpanded, setIsListExpanded] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem(storageKey) === "true";
+    }
+    return false;
+  });
 
   useEffect(() => {
-    if (hasDetail) {
-      setIsListExpanded(false);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(storageKey, String(isListExpanded));
+    }
+  }, [isListExpanded, storageKey]);
+
+  const previousHasDetail = useRef(hasDetail);
+  useEffect(() => {
+    if (previousHasDetail.current !== hasDetail) {
+      if (hasDetail) {
+        setIsListExpanded(false);
+      }
+      previousHasDetail.current = hasDetail;
     }
   }, [hasDetail]);
 
@@ -111,7 +132,7 @@ export function MasterDetail<T>({
         {/* LIST PANE */}
         <div
           className={`${
-            selectedId && !showCreationForm ? "hidden md:flex" : "flex"
+            hasDetail ? "hidden md:flex" : "flex"
           } flex-col border-r border-outline-variant/10 bg-transparent relative z-10 md:bg-surface overflow-hidden`}
         >
           {/* SEARCH BAR — always inside the list pane, hidden in rail mode */}
@@ -229,7 +250,7 @@ export function MasterDetail<T>({
           {showCreationForm && renderCreationForm ? (
             renderCreationForm()
           ) : selectedItem ? (
-            <div key={selectedId} className="flex-1 flex flex-col overflow-y-auto animate-page-in">
+            <div key={selectedId} className={`flex-1 flex flex-col overflow-y-auto ${detailAnimationClass}`}>
               {renderDetail(selectedItem)}
             </div>
           ) : emptyState ? (

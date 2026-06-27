@@ -61,7 +61,7 @@ export function TaskList({ jobId }: TaskListProps) {
             <div 
               key={task.id} 
               className="animate-fade-in-up" 
-              style={{ animationDelay: `${idx * 100}ms`, animationFillMode: 'both' }}
+              style={{ animationDelay: `${idx * 75}ms`, animationFillMode: 'both' }}
             >
               <TaskItem task={task} jobId={jobId} />
             </div>

@@ -2,9 +2,9 @@
 
 import React, { useState, useRef } from "react";
 import { ChevronLeft, Pencil, Check, CalendarDays, ClipboardList } from "lucide-react";
-import Link from "next/link";
-import { notFound, useSearchParams } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { MobilePageHeader } from "@/components/ui/mobile-page-header";
+import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { useDataStore } from "@/lib/store";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { TaskPhotos } from "../../components/task-photos";
@@ -16,7 +16,8 @@ interface TareaDetailPageProps {
 
 export default function TareaDetailPage({ params }: TareaDetailPageProps) {
   const { id, tareaId } = React.use(params);
-  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { popHistory } = useNavigationHistory();
   const { jobs, tasks, updateTask, visits, visitaTareas } = useDataStore();
 
   const job = jobs.find((j) => j.id === id);
@@ -70,34 +71,17 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
     }
   });
 
-  const from = searchParams.get("from");
-  const clienteId = searchParams.get("clienteId");
-  const backHref = `/trabajos?id=${id}${from ? `&from=${from}${clienteId ? `&clienteId=${clienteId}` : ""}` : ""}`;
+  const handleBack = () => {
+    const returnUrl = popHistory(`/trabajos?id=${id}`);
+    router.push(returnUrl);
+  };
 
   return (
-    <div className="relative w-full min-h-screen">
-      {/* Grain / Noise Overlay */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.04] mix-blend-overlay z-[100] dark:opacity-[0.06]" style={{ backgroundImage: "url('https://grainy-gradients.vercel.app/noise.svg')" }} />
-
-      {/* Aurora Background */}
-      <div
-        className="absolute top-0 left-0 right-0 h-[400px] md:h-[1200px] pointer-events-none overflow-hidden transition-all duration-1000"
-        style={{
-          zIndex: -1,
-          WebkitMaskImage:
-            "linear-gradient(to bottom, black 10%, transparent 100%)",
-          maskImage: "linear-gradient(to bottom, black 10%, transparent 100%)",
-        }}
-      >
-        <div className="absolute top-[-50px] left-[-50px] w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-primary/30 md:bg-primary/20 blur-[100px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000 animate-pulse" style={{ animationDuration: '8s' }} />
-        <div className="absolute top-[0px] right-[-100px] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-primary-container/30 md:bg-primary-container/20 blur-[120px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000" />
-        <div className="hidden dark:block absolute top-[-50px] left-[-50px] w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-primary/35 md:bg-primary/25 blur-[120px] md:blur-[180px] rounded-full transition-all duration-1000" />
-        <div className="hidden dark:block absolute top-[50px] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/40 md:bg-primary-container/30 blur-[120px] md:blur-[160px] rounded-full transition-all duration-1000" />
-      </div>
+    <div className="relative w-full min-h-screen animate-slide-in-right bg-transparent">
 
       {/* Mobile: back button + actions */}
       <MobilePageHeader
-        backHref={backHref}
+        onBack={handleBack}
         isEditing={isEditing}
         hasChanges={hasChanges}
         onEditStart={() => setIsEditing(true)}
@@ -109,13 +93,13 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
         {/* Desktop Breadcrumb */}
         <div className="hidden md:flex items-center mb-4">
           <div className="flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
-            <Link
-              href={backHref}
-              className="flex items-center gap-1 hover:text-primary transition-colors"
+            <button
+              onClick={handleBack}
+              className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
               Volver a {job.titulo}
-            </Link>
+            </button>
           </div>
         </div>
         {/* Titular Principal / Edición */}

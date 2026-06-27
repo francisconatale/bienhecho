@@ -10,7 +10,7 @@ interface TrabajoPageProps {
 export default function TrabajoPage({ params }: TrabajoPageProps) {
   const { id } = React.use(params);
   return (
-    <Suspense>
+    <Suspense fallback={<div className="flex-1 min-h-screen bg-transparent" />}>
       <TrabajoDetail id={id} />
     </Suspense>
   );

@@ -11,9 +11,10 @@ interface JobHeaderProps {
   client?: Client;
   isEditing?: boolean;
   onEditingChange?: (editing: boolean) => void;
+  onHasChanges?: (hasChanges: boolean) => void;
 }
 
-export function JobHeader({ job, client, isEditing: externalEditing, onEditingChange }: JobHeaderProps) {
+export function JobHeader({ job, client, isEditing: externalEditing, onEditingChange, onHasChanges }: JobHeaderProps) {
   const { updateJob } = useDataStore();
   const [internalEditing, setInternalEditing] = useState(false);
   const isEditing = externalEditing ?? internalEditing;
@@ -23,6 +24,17 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
   const [direccion, setDireccion] = useState(job.direccion || "");
   const [fechaInicio, setFechaInicio] = useState(job.fecha_inicio || "");
   const [fechaFin, setFechaFin] = useState(job.fecha_fin_estimada || "");
+
+  const hasChanges = 
+    titulo !== job.titulo ||
+    descripcion !== (job.descripcion || "") ||
+    direccion !== (job.direccion || "") ||
+    fechaInicio !== (job.fecha_inicio || "") ||
+    fechaFin !== (job.fecha_fin_estimada || "");
+
+  useEffect(() => {
+    onHasChanges?.(hasChanges);
+  }, [hasChanges, onHasChanges]);
 
   const handleSave = () => {
     updateJob(job.id, {
@@ -146,12 +158,12 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
         <div className="cursor-default select-none">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1.5 md:space-y-1 flex-1">
-              <h2 className="text-2xl md:text-3xl font-bold text-on-surface tracking-tight">
+              <h2 className="text-2xl md:text-3xl font-bold text-on-surface tracking-tight cursor-default select-none">
                 {job.titulo}
               </h2>
               <div className="flex items-center gap-2 text-on-surface-variant/60 font-medium">
                 <User className="w-4 h-4" />
-                <span className="text-sm font-semibold text-on-surface">
+                <span className="text-sm font-semibold text-on-surface cursor-default select-none">
                   {client?.nombre || "Sin cliente"}
                 </span>
               </div>
@@ -166,41 +178,41 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
           </div>
 
           {job.descripcion && (
-            <p className="text-sm text-on-surface-variant/80 font-medium leading-relaxed pt-1">
+            <p className="text-sm text-on-surface-variant/80 font-medium leading-relaxed pt-1 cursor-default select-none">
               {job.descripcion}
             </p>
           )}
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-4">
             {job.direccion && (
-              <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium">
+              <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium cursor-default select-none">
                 <MapPin className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
-                <span className="text-on-surface">{job.direccion}</span>
+                <span className="text-on-surface cursor-default select-none">{job.direccion}</span>
               </div>
             )}
 
-            <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium">
+            <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium cursor-default select-none">
               <DollarSign className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
-              <span className="text-on-surface">
+              <span className="text-on-surface cursor-default select-none">
                 ${job.presupuesto.toLocaleString("es-AR")}
               </span>
             </div>
 
             {job.fecha_inicio && (
-              <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium">
+              <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium cursor-default select-none">
                 <Calendar className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
-                <span className="text-on-surface-variant/50 text-xs uppercase tracking-wider font-bold">Inicio:</span>
-                <span className="text-on-surface">
+                <span className="text-on-surface-variant/50 text-xs uppercase tracking-wider font-bold cursor-default select-none">Inicio:</span>
+                <span className="text-on-surface cursor-default select-none">
                   {new Date(job.fecha_inicio).toLocaleDateString("es-AR", { timeZone: "UTC" })}
                 </span>
               </div>
             )}
 
             {job.fecha_fin_estimada && (
-              <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium">
+              <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium cursor-default select-none">
                 <Calendar className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
-                <span className="text-on-surface-variant/50 text-xs uppercase tracking-wider font-bold">Fin:</span>
-                <span className="text-on-surface">
+                <span className="text-on-surface-variant/50 text-xs uppercase tracking-wider font-bold cursor-default select-none">Fin:</span>
+                <span className="text-on-surface cursor-default select-none">
                   {new Date(job.fecha_fin_estimada).toLocaleDateString("es-AR", { timeZone: "UTC" })}
                 </span>
               </div>

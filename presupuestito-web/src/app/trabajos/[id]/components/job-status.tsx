@@ -36,6 +36,7 @@ const STATUS_COLORS: Record<JobStatus, string> = {
 
 interface JobStatusProps {
   job: Job;
+  variant?: "badge" | "card";
 }
 
 export function JobStatusSelector({ job }: JobStatusProps) {

@@ -19,7 +19,8 @@ import { usePagination } from "@/hooks/use-pagination";
 import { MasterDetail } from "@/components/ui/master-detail";
 import { MobileHeaderActions } from "@/components/ui/mobile-header-actions";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useNavigationHistory } from "@/hooks/use-navigation-history";
 
 function formatCurrency(amount: number): string {
   if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
@@ -56,6 +57,7 @@ function DetailPane({
   setIsEditing: (v: boolean) => void;
 }) {
   const [loadingJobId, setLoadingJobId] = useState<string | null>(null);
+  const { pushHistory } = useNavigationHistory();
   const { jobs } = useDataStore();
   const clientJobs = jobs.filter((j) => j.cliente_id === client.id);
   const total = clientJobs.reduce((a, j) => a + j.presupuesto, 0);
@@ -69,23 +71,7 @@ function DetailPane({
 
   return (
     <div className="flex-1 overflow-y-auto relative w-full min-h-screen">
-      {/* Grain / Noise Overlay */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.04] mix-blend-overlay z-[100] dark:opacity-[0.06]" style={{ backgroundImage: "url('https://grainy-gradients.vercel.app/noise.svg')" }} />
-
-      {/* Aurora Background */}
-      <div
-        className="absolute top-0 left-0 right-0 h-[400px] md:h-[1200px] pointer-events-none overflow-hidden transition-all duration-1000"
-        style={{
-          zIndex: -1,
-          WebkitMaskImage: "linear-gradient(to bottom, black 10%, transparent 100%)",
-          maskImage: "linear-gradient(to bottom, black 10%, transparent 100%)",
-        }}
-      >
-        <div className="absolute top-[-50px] left-[-50px] w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-primary/30 md:bg-primary/20 blur-[100px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000 animate-pulse" style={{ animationDuration: '8s' }} />
-        <div className="absolute top-[0px] right-[-100px] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-primary-container/30 md:bg-primary-container/20 blur-[120px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000" />
-        <div className="hidden dark:block absolute top-[-50px] left-[-50px] w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-primary/35 md:bg-primary/25 blur-[120px] md:blur-[180px] rounded-full transition-all duration-1000" />
-        <div className="hidden dark:block absolute top-[50px] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/40 md:bg-primary-container/30 blur-[120px] md:blur-[160px] rounded-full transition-all duration-1000" />
-      </div>
+      {/* Overlays removed since they are now global in layout.tsx */}
 
       <form onSubmit={onSubmit} className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <div className="group relative overflow-hidden bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[28px] p-6 md:p-8 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
@@ -118,9 +104,9 @@ function DetailPane({
                   </div>
                 ) : (
                   <div className="group relative flex flex-col">
-                    <h2 className="text-3xl font-black text-on-surface tracking-tighter truncate leading-none">{client.nombre}</h2>
-                    <p className="text-sm font-medium text-on-surface-variant truncate mt-1.5">{client.email || "Sin email registrado"}</p>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40 mt-1.5">
+                    <h2 className="text-3xl font-black text-on-surface tracking-tighter truncate leading-none cursor-default select-none">{client.nombre}</h2>
+                    <p className="text-sm font-medium text-on-surface-variant truncate mt-1.5 cursor-default select-none">{client.email || "Sin email registrado"}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40 mt-1.5 cursor-default select-none">
                       Cliente desde {new Date(client.created_at).toLocaleDateString("es-AR", { month: "long", year: "numeric" })}
                     </p>
                   </div>
@@ -233,8 +219,11 @@ function DetailPane({
               {clientJobs.map((job) => (
                 <Link
                   key={job.id}
-                  href={`/trabajos/${job.id}?from=/clientes&clienteId=${client.id}`}
-                  onClick={() => setLoadingJobId(job.id)}
+                  href={`/trabajos/${job.id}`}
+                  onClick={() => {
+                    setLoadingJobId(job.id);
+                    pushHistory(window.location.pathname + window.location.search);
+                  }}
                   className="group flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 md:p-5 bg-surface/40 dark:bg-surface/20 rounded-[20px] border border-white/10 dark:border-white/5 transition-all duration-300 hover:bg-surface/60 hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)] hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer"
                 >
                   <div className="flex items-center gap-4 min-w-0 flex-1">
@@ -275,10 +264,25 @@ function DetailPane({
 
 export function ClientList() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(
     () => searchParams.get("clienteId") || null
   );
+
+  const handleSelectedIdChange = (id: string | null) => {
+    setSelectedId(id);
+    const params = new URLSearchParams(searchParams.toString());
+    if (id) {
+      params.set("clienteId", id);
+    } else {
+      params.delete("clienteId");
+    }
+    window.history.replaceState(null, '', `${pathname}?${params.toString()}`);
+  };
+
   const [showCreationForm, setShowCreationForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const { clients, removeClient } = useDataStore();
@@ -300,29 +304,16 @@ export function ClientList() {
   const handleDelete = (client: Client) => {
     if (window.confirm(`Estas seguro de que queres eliminar a ${client.nombre}?`)) {
       removeClient(client.id);
-      if (selectedId === client.id) setSelectedId(null);
+      if (selectedId === client.id) handleSelectedIdChange(null);
     }
   };
 
   return (
-    <div className="flex flex-col flex-1 bg-background relative overflow-hidden">
-      {/* Grain / Noise Overlay */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.04] mix-blend-overlay z-[0] dark:opacity-[0.06]" style={{ backgroundImage: "url('https://grainy-gradients.vercel.app/noise.svg')" }} />
-
-      {/* Aurora Background */}
-      <div
-        className="absolute inset-0 pointer-events-none overflow-hidden transition-all duration-1000"
-        style={{ zIndex: 0 }}
-      >
-        <div className="absolute top-[-50px] left-[-50px] w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-primary/20 md:bg-primary/15 blur-[100px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000 animate-pulse" style={{ animationDuration: '8s' }} />
-        <div className="absolute top-[20%] right-[-100px] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-primary-container/20 md:bg-primary-container/15 blur-[120px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000" />
-        <div className="hidden dark:block absolute top-[-50px] left-[-50px] w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-primary/25 md:bg-primary/15 blur-[120px] md:blur-[180px] rounded-full transition-all duration-1000" />
-        <div className="hidden dark:block absolute top-[20%] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/30 md:bg-primary-container/20 blur-[120px] md:blur-[160px] rounded-full transition-all duration-1000" />
-      </div>
+    <div className="flex flex-col flex-1 bg-transparent relative overflow-hidden">
 
       <MasterDetail
         selectedId={selectedId}
-        onSelectedChange={(id) => { setSelectedId(id); setShowCreationForm(false); }}
+        onSelectedChange={(id) => { handleSelectedIdChange(id); setShowCreationForm(false); }}
         items={filtered}
         getItemId={(c) => c.id}
         search={search}
@@ -346,7 +337,7 @@ export function ClientList() {
         )}
         pagination={pag}
         showCreationForm={showCreationForm}
-        onToggleCreation={() => { setShowCreationForm(!showCreationForm); setSelectedId(null); }}
+        onToggleCreation={() => { setShowCreationForm(!showCreationForm); handleSelectedIdChange(null); }}
         renderCreationForm={() => (
           <div className="flex-1 overflow-y-auto">
             <div className="px-5 py-3 border-b border-outline-variant/8 bg-surface flex items-center gap-2.5">
@@ -361,7 +352,7 @@ export function ClientList() {
             <div className="p-4 md:p-6">
               <ClientForm onSuccess={(clientId) => {
                 setShowCreationForm(false);
-                setSelectedId(clientId);
+                handleSelectedIdChange(clientId);
               }} />
             </div>
           </div>
@@ -371,7 +362,7 @@ export function ClientList() {
           const totalFacturacion = clientJobs.reduce((acc, j) => acc + j.presupuesto, 0);
           return (
             <button
-              onClick={() => setSelectedId(client.id)}
+              onClick={() => handleSelectedIdChange(client.id)}
               className={`relative group w-full text-left px-4 md:px-5 py-4 transition-all duration-300 cursor-pointer rounded-[24px] md:rounded-none border border-white/20 dark:border-white/5 md:border-0 md:border-b md:border-outline-variant/5 bg-surface/40 dark:bg-surface/20 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none shadow-[0_4px_12px_rgba(0,0,0,0.02)] md:shadow-none hover:-translate-y-0.5 md:hover:translate-y-0 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] md:hover:shadow-none ${
                 isSelected ? "md:bg-primary/15 dark:md:bg-primary/25 border-primary/30 md:border-b-outline-variant/5" : "md:hover:bg-on-surface/5"
               }`}
@@ -401,7 +392,7 @@ export function ClientList() {
         }}
         renderRailItem={(client, isActive) => (
           <button
-            onClick={() => { setSelectedId(client.id); setShowCreationForm(false); }}
+            onClick={() => { handleSelectedIdChange(client.id); setShowCreationForm(false); }}
             className={`w-10 h-10 rounded-[14px] flex items-center justify-center font-bold text-xs shrink-0 transition-all duration-200 cursor-pointer active:scale-90 ${
               isActive
                 ? "bg-primary text-white shadow-md shadow-primary/30"
@@ -416,7 +407,7 @@ export function ClientList() {
           <DetailPane
             client={client}
             onDelete={handleDelete}
-            onBack={() => setSelectedId(null)}
+            onBack={() => handleSelectedIdChange(null)}
             isEditing={isEditing}
             setIsEditing={setIsEditing}
           />
