@@ -28,7 +28,7 @@ export function Header({
   actionContainerClassName = "w-10 flex items-center shrink-0 min-w-[40px]"
 }: HeaderProps) {
   return (
-    <header className="sticky top-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md border-b border-outline-variant/10 px-4 pb-4 pt-safe flex items-end justify-between transition-all min-h-[5rem]">
+    <header className="sticky top-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 border-b border-outline-variant/10 px-4 pb-4 pt-safe flex items-end justify-between transition-all min-h-[5rem]">
       <div className={`${actionContainerClassName} justify-start`}>
         {leftAction || <div className="w-10" />}
       </div>

@@ -36,7 +36,7 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
   return (
     <div className="space-y-6 mt-8 relative z-10">
       {/* Saldo Pendiente Card */}
-      <div className="relative overflow-hidden bg-primary/10 dark:bg-primary/5 backdrop-blur-2xl rounded-[28px] p-6 border border-primary/20 shadow-[0_8px_32px_rgba(61,139,110,0.1)] transition-all duration-500">
+      <div className="relative overflow-hidden bg-primary/10 dark:bg-primary/5 bg-surface/80 rounded-[28px] p-6 border border-primary/20 shadow-[0_8px_32px_rgba(61,139,110,0.1)] transition-all duration-500">
         <div className="relative flex flex-col gap-1 z-10">
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/70">
             Saldo Pendiente
@@ -82,7 +82,7 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
 
           {cobros.length > 0 ? (
             cobros.map((cobro) => (
-              <div key={cobro.id} className="group relative bg-surface/30 dark:bg-surface/10 backdrop-blur-md rounded-[16px] p-3 border border-primary/20 flex items-center gap-3">
+              <div key={cobro.id} className="group relative bg-surface/80 rounded-[16px] p-3 border border-primary/20 flex items-center gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-bold text-on-surface">

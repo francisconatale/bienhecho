@@ -8,7 +8,7 @@ export default function LandingPage() {
     <div className="bg-white text-[#00236F] h-screen overflow-y-auto scroll-snap-type-y mandatory font-body selection:bg-[#D9FF5F] selection:text-black scroll-smooth">
 
       {/* 00. Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b-2 border-[#00236F]/10 px-6 py-4 flex justify-between items-center max-w-[1400px] mx-auto">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 bg-surface/80 border-b-2 border-[#00236F]/10 px-6 py-4 flex justify-between items-center max-w-[1400px] mx-auto">
         <div className="flex items-center gap-2 font-bold tracking-tighter text-xl cursor-default uppercase">
           <div className="w-8 h-8 bg-[#00236F] text-white flex items-center justify-center rounded-sm">
             <Wallet className="w-5 h-5" />
@@ -142,7 +142,7 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-10 md:p-14 space-y-10">
+              <div className="bg-white/5 bg-surface/80 border border-white/10 p-10 md:p-14 space-y-10">
                 <h3 className="text-3xl md:text-5xl font-extrabold tracking-tight uppercase leading-[1]">
                   ¿Seguís haciendo <br /> presupuestos a mano?
                 </h3>

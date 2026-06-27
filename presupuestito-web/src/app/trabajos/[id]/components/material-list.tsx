@@ -71,7 +71,7 @@ export function MaterialList({ jobId }: MaterialListProps) {
           </>
         ) : (
           !isAdding && (
-            <div className="py-12 px-6 text-center bg-surface/20 border border-dashed border-outline-variant/20 rounded-[24px] backdrop-blur-sm">
+            <div className="py-12 px-6 text-center bg-surface/20 border border-dashed border-outline-variant/20 rounded-[24px] bg-surface/80 ">
               <p className="text-sm font-bold text-on-surface-variant/60">
                 Aún no hay materiales definidos
               </p>

@@ -42,7 +42,7 @@ export function MaterialItem({ material, jobId }: MaterialItemProps) {
 
   return (
     <>
-      <div className="group relative overflow-hidden bg-surface/40 dark:bg-surface/10 backdrop-blur-xl rounded-[20px] p-4 flex items-center gap-4 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.01]">
+      <div className="group relative overflow-hidden bg-surface/80 rounded-[20px] p-4 flex items-center gap-4 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.01]">
         <div className="absolute inset-0 bg-gradient-to-r from-white/40 to-transparent dark:from-white/10 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
         <div className="relative z-10 flex-1 min-w-0 pr-8">
@@ -79,7 +79,7 @@ export function MaterialItem({ material, jobId }: MaterialItemProps) {
 
       {/* Delete confirmation */}
       {confirmDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 bg-surface/80 ">
           <div className="bg-surface rounded-[28px] p-6 mx-4 max-w-sm w-full shadow-2xl space-y-4">
             <h3 className="text-lg font-black text-on-surface">
               Eliminar material

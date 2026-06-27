@@ -64,7 +64,7 @@ export function BottomNav() {
         isVisible ? "translate-y-0 opacity-100" : "translate-y-24 opacity-0"
       }`}
     >
-      <nav className="flex justify-between items-center px-4 py-2.5 bg-surface/95 backdrop-blur-3xl border border-outline-variant/20 rounded-full shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]">
+      <nav className="flex justify-between items-center px-4 py-2.5 bg-surface/80 border border-outline-variant/20 rounded-full shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]">
         <NavItem
         icon={<LayoutDashboard className="w-6 h-6" strokeWidth={2} />}
         label="Dashboard"

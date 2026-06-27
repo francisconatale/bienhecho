@@ -54,7 +54,7 @@ export function Sidebar() {
 
   return (
     <aside 
-      className={`hidden md:flex flex-col h-screen sticky top-0 border-r border-outline-variant/10 bg-surface/50 backdrop-blur-xl shrink-0 transition-all duration-300 relative ${isExpanded ? "w-[260px]" : "w-[88px]"}`}
+      className={`hidden md:flex flex-col h-screen sticky top-0 border-r border-outline-variant/10 bg-surface/80 shrink-0 transition-all duration-300 relative ${isExpanded ? "w-[260px]" : "w-[88px]"}`}
     >
       {/* Botón Flotante para Colapsar/Expandir */}
       <button 

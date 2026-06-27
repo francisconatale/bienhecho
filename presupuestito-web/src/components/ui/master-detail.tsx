@@ -158,7 +158,7 @@ export function MasterDetail<T>({
         >
           {/* SEARCH BAR — always inside the list pane, hidden in rail mode */}
           {!isCollapsed && (
-            <div className="px-4 md:px-5 py-3 bg-surface/30 dark:bg-surface/10 backdrop-blur-md md:bg-surface border-b border-outline-variant/10">
+            <div className="px-4 md:px-5 py-3 bg-surface/80 md:bg-surface border-b border-outline-variant/10">
               <div className="flex items-center gap-2.5">
                 <div className="relative flex-1">
                   <Search className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-outline pointer-events-none" strokeWidth={2} />
@@ -222,7 +222,7 @@ export function MasterDetail<T>({
           {/* FULL LIST */}
           {!isCollapsed && (
             <>
-              <div className="flex items-center justify-between px-4 md:px-5 py-2.5 md:py-3 border-b border-outline-variant/6 bg-surface/50 backdrop-blur-xl md:bg-transparent">
+              <div className="flex items-center justify-between px-4 md:px-5 py-2.5 md:py-3 border-b border-outline-variant/6 bg-surface/80 md:bg-transparent">
                 <span className="text-[10px] md:text-xs font-bold text-on-surface-variant uppercase tracking-wider">
                   {pagination.totalItems} {countLabel}
                 </span>

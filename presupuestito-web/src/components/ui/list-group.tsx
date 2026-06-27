@@ -7,7 +7,7 @@ interface ListGroupProps {
 
 export function ListGroup({ children, className = "" }: ListGroupProps) {
   return (
-    <div className={`bg-surface/80 backdrop-blur-3xl rounded-2xl shadow-sm border border-outline-variant/20 overflow-hidden ${className}`}>
+    <div className={`bg-surface/80 rounded-2xl shadow-sm border border-outline-variant/20 overflow-hidden ${className}`}>
       {children}
     </div>
   );

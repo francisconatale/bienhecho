@@ -77,7 +77,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
   };
 
   return (
-    <div className="relative w-full min-h-screen animate-slide-in-right bg-transparent">
+    <div className="relative w-full min-h-screen animate-fade-in-up bg-transparent">
 
       {/* Mobile: back button + actions */}
       <MobilePageHeader
@@ -134,7 +134,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
             <button
               onClick={() => !isEditing && updateTask(task.id, { completada: !task.completada })}
               className={cn(
-                "relative overflow-hidden p-5 rounded-[24px] text-left transition-all duration-500 flex flex-col gap-2 group select-none",
+                "relative overflow-hidden p-5 rounded-[24px] text-left transition-[background-color,border-color,box-shadow] duration-500 flex flex-col gap-2 group select-none",
                 task.completada
                   ? "bg-primary/10 hover:bg-primary/15 border border-primary/20 shadow-inner"
                   : "bg-surface/40 dark:bg-surface/10 hover:bg-surface/60 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-lg"
@@ -148,7 +148,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
               <div className="relative z-10 flex items-center gap-3 mt-1">
                 <div
                   className={cn(
-                    "w-7 h-7 rounded-[10px] border-[2.5px] flex items-center justify-center shrink-0 transition-all duration-300 group-active:scale-75",
+                    "w-7 h-7 rounded-[10px] border-[2.5px] flex items-center justify-center shrink-0 transition-[background-color,border-color,box-shadow] duration-300 group-active:scale-75",
                     task.completada
                       ? "bg-primary border-primary shadow-[0_0_16px_rgba(61,139,110,0.4)]"
                       : "border-outline-variant/30 group-hover:border-primary/50 bg-surface/50"
@@ -203,7 +203,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
 
         {/* Historial de Avance (Visitas) */}
         {taskProgresses.length > 0 && (
-          <div className="relative bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-5 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+          <div className="relative bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-5 transition-shadow duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
             <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none rounded-[28px]" />
             
             <div className="relative z-10 flex items-center justify-between">
@@ -217,7 +217,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
               {taskProgresses.map((progress, idx) => (
                 <div 
                   key={`${progress.visita_id}-${idx}`}
-                  className="group flex flex-col gap-2 p-4 bg-surface/40 dark:bg-surface/20 rounded-[20px] border border-white/10 dark:border-white/5 transition-all duration-300 hover:bg-surface/60"
+                  className="group flex flex-col gap-2 p-4 bg-surface/40 dark:bg-surface/20 rounded-[20px] border border-white/10 dark:border-white/5 transition-colors duration-300 hover:bg-surface/60"
                 >
                   <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">
                     <CalendarDays className="w-3 h-3" />
@@ -235,7 +235,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
         )}
 
         {/* Fotos - always visible */}
-        <div className="relative bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+        <div className="relative bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-shadow duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
           <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none rounded-[28px]" />
           <div className="relative z-10 flex items-center justify-between">
             <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">

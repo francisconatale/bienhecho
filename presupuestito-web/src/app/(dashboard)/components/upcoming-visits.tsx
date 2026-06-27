@@ -46,7 +46,7 @@ export function UpcomingVisits() {
         </Link>
       </div>
 
-      <div className="bg-surface/80 backdrop-blur-3xl rounded-[32px] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] border border-outline-variant/20 overflow-hidden divide-y divide-black/[0.04] dark:divide-white/[0.04]">
+      <div className="bg-surface/80 rounded-[32px] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] border border-outline-variant/20 overflow-hidden divide-y divide-black/[0.04] dark:divide-white/[0.04]">
         {pag.paginatedItems.map((visit) => {
           const job = jobs.find((j) => j.id === visit.trabajo_id);
           const client = job ? clients.find((c) => c.id === job.cliente_id) : null;

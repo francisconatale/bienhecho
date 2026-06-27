@@ -100,7 +100,7 @@ export function JobStatusSelector({ job }: JobStatusProps) {
 
       {/* Backward confirmation modal */}
       {confirmBackward && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 bg-surface/80 ">
           <div className="bg-surface rounded-[28px] p-6 mx-4 max-w-sm w-full shadow-2xl space-y-4">
             <h3 className="text-lg font-black text-on-surface">
               ¿Cambiar estado?

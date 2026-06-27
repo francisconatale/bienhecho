@@ -23,7 +23,7 @@ export default function PagosPage({ params }: PagosPageProps) {
   }
 
   return (
-    <div className="relative w-full min-h-screen animate-slide-in-right bg-transparent">
+    <div className="relative w-full min-h-screen animate-fade-in-up bg-transparent">
 
       {/* Mobile: simple back button */}
       <div className="md:hidden px-4 py-2.5 relative z-10">
