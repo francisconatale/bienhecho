@@ -11,9 +11,10 @@ import { TaskForm } from "./task-form";
 
 interface TaskListProps {
   jobId: string;
+  onSelectTask?: (taskId: string) => void;
 }
 
-export function TaskList({ jobId }: TaskListProps) {
+export function TaskList({ jobId, onSelectTask }: TaskListProps) {
   const { tasks, addTask } = useDataStore();
   const [isAdding, setIsAdding] = useState(false);
 
@@ -63,7 +64,7 @@ export function TaskList({ jobId }: TaskListProps) {
               className="animate-fade-in-up" 
               style={{ animationDelay: `${idx * 75}ms`, animationFillMode: 'both' }}
             >
-              <TaskItem task={task} jobId={jobId} />
+              <TaskItem task={task} jobId={jobId} onSelect={onSelectTask} />
             </div>
           ))
         ) : (

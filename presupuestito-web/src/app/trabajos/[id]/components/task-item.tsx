@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { Check, Trash2 } from "lucide-react";
-import Link from "next/link";
-import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { Task } from "@/types";
 import { useDataStore } from "@/lib/store";
 import { TaskForm } from "./task-form";
@@ -12,11 +10,11 @@ import { cn } from "@/lib/utils";
 interface TaskItemProps {
   task: Task;
   jobId: string;
+  onSelect?: (taskId: string) => void;
 }
 
-export function TaskItem({ task, jobId }: TaskItemProps) {
+export function TaskItem({ task, jobId, onSelect }: TaskItemProps) {
   const { updateTask, removeTask } = useDataStore();
-  const { pushHistory } = useNavigationHistory();
   const [isEditing, setIsEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -62,11 +60,10 @@ export function TaskItem({ task, jobId }: TaskItemProps) {
           {task.completada && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
         </button>
 
-        {/* Content - Link to detail page */}
-        <Link
-          href={`/trabajos/${jobId}/tareas/${task.id}`}
-          onClick={() => pushHistory(window.location.pathname + window.location.search)}
-          className="relative z-10 flex-1 min-w-0 pr-8"
+        {/* Content - click to view detail */}
+        <button
+          onClick={() => onSelect?.(task.id)}
+          className="relative z-10 flex-1 min-w-0 pr-8 text-left cursor-pointer"
         >
           <p
             className={cn(
@@ -83,7 +80,7 @@ export function TaskItem({ task, jobId }: TaskItemProps) {
               ? `$${task.precio.toLocaleString("es-AR")}`
               : "Sin precio estimado"}
           </p>
-        </Link>
+        </button>
 
         {/* Actions */}
         <div className="absolute right-4 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">

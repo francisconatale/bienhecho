@@ -30,9 +30,19 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{
           __html: `
             if ("serviceWorker" in navigator) {
-              window.addEventListener("load", () => {
-                navigator.serviceWorker.register("/serwist/sw.js");
-              });
+              if (location.search.includes("reset-sw")) {
+                window.addEventListener("load", async () => {
+                  const registrations = await navigator.serviceWorker.getRegistrations();
+                  for (const reg of registrations) {
+                    await reg.unregister();
+                  }
+                  location.href = location.pathname + location.hash;
+                });
+              } else {
+                window.addEventListener("load", () => {
+                  navigator.serviceWorker.register("/serwist/sw.js");
+                });
+              }
             }
           `,
         }} />

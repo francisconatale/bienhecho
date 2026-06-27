@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, FileDown, Hammer, Wallet } from "lucide-react";
 import Link from "next/link";
 import { notFound, useSearchParams, useRouter } from "next/navigation";
@@ -15,6 +15,7 @@ import { usePayments } from "../[id]/hooks/use-payments";
 import { cn } from "@/lib/utils";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { MobilePageHeader } from "@/components/ui/mobile-page-header";
+import { TaskDetailPanel } from "../[id]/components/task-detail-panel";
 
 export function TrabajoDetail({
   id,
@@ -37,6 +38,7 @@ export function TrabajoDetail({
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [isHeaderEditing, setIsHeaderEditing] = useState(false);
   const [headerHasChanges, setHeaderHasChanges] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
   useEffect(() => { setIsHeaderEditing(false); }, []);
   useEffect(() => {
@@ -50,6 +52,19 @@ export function TrabajoDetail({
   const router = useRouter();
   const { popHistory, pushHistory } = useNavigationHistory();
   const from = searchParams.get("from");
+
+  const taskParam = searchParams.get("task");
+  const initialTaskHandled = useRef(false);
+  useEffect(() => {
+    if (initialTaskHandled.current) return;
+    if (taskParam && tasks.some((t) => t.id === taskParam && t.trabajo_id === id)) {
+      setSelectedTaskId(taskParam);
+      initialTaskHandled.current = true;
+      const url = new URL(window.location.href);
+      url.searchParams.delete("task");
+      window.history.replaceState({}, "", url.pathname + url.search);
+    }
+  }, [taskParam, tasks, id]);
 
   const job = jobs.find((j) => j.id === id);
 
@@ -79,14 +94,15 @@ export function TrabajoDetail({
     }
   };
 
+  const backLabel = from === "/tareas" ? "Tareas" : from === "/clientes" && client ? client.nombre : "Trabajos";
+  const backDest = from === "/tareas" ? "/tareas" : from === "/clientes" && client?.id ? `/clientes?clienteId=${client.id}` : "/trabajos";
+
   return (
     <div className={cn("relative w-full", isEmbedded ? "min-h-full" : "min-h-screen")}>
-      {!isEmbedded && (
+      {!isEmbedded && !selectedTaskId && (
         <>
-          {/* Grain / Noise Overlay */}
           <div className="fixed inset-0 pointer-events-none opacity-[0.04] mix-blend-overlay z-[100] dark:opacity-[0.06]" style={{ backgroundImage: "url('https://grainy-gradients.vercel.app/noise.svg')" }} />
 
-          {/* Aurora Background */}
           <div
             className="absolute top-0 left-0 right-0 h-[400px] md:h-[1200px] pointer-events-none overflow-hidden transition-all duration-1000"
             style={{
@@ -102,7 +118,7 @@ export function TrabajoDetail({
           </div>
 
           <MobilePageHeader
-            onBack={() => router.push(popHistory("/trabajos"))}
+            onBack={() => router.push(popHistory(backDest))}
             isEditing={isHeaderEditing}
             hasChanges={headerHasChanges}
             onEditStart={() => setIsHeaderEditing(true)}
@@ -114,152 +130,181 @@ export function TrabajoDetail({
         </>
       )}
 
+      {/* Task detail overlay (mobile) */}
+      {selectedTaskId && (
+        <div className="fixed inset-0 z-[60] bg-surface overflow-y-auto md:hidden">
+          <TaskDetailPanel
+            jobId={job.id}
+            taskId={selectedTaskId}
+            onBack={() => setSelectedTaskId(null)}
+          />
+        </div>
+      )}
+
       <main className={cn(
         "relative flex-1 w-full mx-auto",
+        selectedTaskId
+          ? "hidden md:block"
+          : "",
         isEmbedded 
           ? "px-6 py-6 pb-28 md:px-8 max-w-full" 
           : "px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-12 max-w-7xl md:mt-0"
       )}>
         <div className={cn(
           "grid items-start",
+          selectedTaskId
+            ? "grid-cols-1 lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] gap-6 xl:gap-10"
+            : "",
           isEmbedded
             ? "grid-cols-1 xl:grid-cols-1 2xl:grid-cols-[1fr_300px] gap-6"
             : "grid-cols-1 lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] gap-6 xl:gap-10"
         )}>
           {/* Columna Principal */}
           <div className="space-y-4">
-            {/* Desktop Breadcrumb */}
-            <div className="hidden md:flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
-                {isEmbedded ? (
-                  onBack && (
-                    <button onClick={onBack} className="xl:hidden flex items-center gap-1 hover:text-primary transition-colors">
-                      <ChevronLeft className="w-4 h-4" />
-                      Volver
-                    </button>
-                  )
-                ) : (
-                  <button onClick={() => router.push(popHistory("/trabajos"))} className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer">
-                    <ChevronLeft className="w-4 h-4" />
-                    Volver a {from === "/clientes" && client ? client.nombre : "Trabajos"}
-                  </button>
-                )}
-              </div>
-            </div>
+            {selectedTaskId ? (
+              <>
+                <TaskDetailPanel
+                  jobId={job.id}
+                  taskId={selectedTaskId}
+                  onBack={() => setSelectedTaskId(null)}
+                />
+              </>
+            ) : (
+              <>
+                {/* Desktop Breadcrumb */}
+                <div className="hidden md:flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
+                    {isEmbedded ? (
+                      onBack && (
+                        <button onClick={onBack} className="xl:hidden flex items-center gap-1 hover:text-primary transition-colors">
+                          <ChevronLeft className="w-4 h-4" />
+                          Volver
+                        </button>
+                      )
+                    ) : (
+                      <button onClick={() => router.push(popHistory(backDest))} className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer">
+                        <ChevronLeft className="w-4 h-4" />
+                        Volver a {backLabel}
+                      </button>
+                    )}
+                  </div>
+                </div>
 
-            <JobHeader job={job} client={client} isEditing={isHeaderEditing} onEditingChange={setIsHeaderEditing} onHasChanges={setHeaderHasChanges} />
-            
-            <div className="grid grid-cols-2 gap-4">
-              <Link 
-                href={`/trabajos/${job.id}/materiales`} 
-                onClick={() => pushHistory(window.location.pathname + window.location.search)}
-                className="group relative overflow-hidden bg-surface/80 rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
-              >
-                <div className="relative z-10 flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
-                    Materiales
-                  </span>
-                  <Hammer className="w-4 h-4 text-primary opacity-50 group-hover:opacity-100 transition-opacity" />
-                </div>
-                <div className="relative z-10 mt-1">
-                  <span className="text-2xl font-bold tracking-tight text-on-surface group-hover:text-primary transition-colors">
-                    ${totalMateriales.toLocaleString("es-AR")}
-                  </span>
-                  <p className="text-[10px] font-medium text-on-surface-variant/40 mt-1 uppercase tracking-wider">
-                    {materiales.length} ítem{materiales.length !== 1 && 's'}
-                  </p>
-                </div>
-              </Link>
+                <JobHeader job={job} client={client} isEditing={isHeaderEditing} onEditingChange={setIsHeaderEditing} onHasChanges={setHeaderHasChanges} />
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <Link 
+                    href={`/trabajos/${job.id}/materiales${from ? `?from=${from}` : ""}`} 
+                    onClick={() => pushHistory(window.location.pathname + window.location.search)}
+                    className="group relative overflow-hidden bg-surface/80 rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
+                  >
+                    <div className="relative z-10 flex items-center justify-between">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
+                        Materiales
+                      </span>
+                      <Hammer className="w-4 h-4 text-primary opacity-50 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <div className="relative z-10 mt-1">
+                      <span className="text-2xl font-bold tracking-tight text-on-surface group-hover:text-primary transition-colors">
+                        ${totalMateriales.toLocaleString("es-AR")}
+                      </span>
+                      <p className="text-[10px] font-medium text-on-surface-variant/40 mt-1 uppercase tracking-wider">
+                        {materiales.length} ítem{materiales.length !== 1 && 's'}
+                      </p>
+                    </div>
+                  </Link>
 
-              <Link 
-                href={`/trabajos/${job.id}/pagos`} 
-                onClick={() => pushHistory(window.location.pathname + window.location.search)}
-                className="group relative overflow-hidden bg-surface/80 rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
-              >
-                <div className="relative z-10 flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
-                    Cuentas a Cobrar
-                  </span>
-                  <Wallet className="w-4 h-4 text-primary opacity-50 group-hover:opacity-100 transition-opacity" />
+                  <Link 
+                    href={`/trabajos/${job.id}/pagos`} 
+                    onClick={() => pushHistory(window.location.pathname + window.location.search)}
+                    className="group relative overflow-hidden bg-surface/80 rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
+                  >
+                    <div className="relative z-10 flex items-center justify-between">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
+                        Cuentas a Cobrar
+                      </span>
+                      <Wallet className="w-4 h-4 text-primary opacity-50 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <div className="relative z-10 mt-1">
+                      <span className={cn(
+                        "text-2xl font-bold tracking-tight transition-colors",
+                        saldoPendiente <= 0 ? "text-primary" : "text-on-surface group-hover:text-primary"
+                      )}>
+                        ${Math.max(0, saldoPendiente).toLocaleString("es-AR")}
+                      </span>
+                      <p className="text-[10px] font-medium text-on-surface-variant/40 mt-1 uppercase tracking-wider">
+                        Saldo pendiente
+                      </p>
+                    </div>
+                  </Link>
                 </div>
-                <div className="relative z-10 mt-1">
-                  <span className={cn(
-                    "text-2xl font-bold tracking-tight transition-colors",
-                    saldoPendiente <= 0 ? "text-primary" : "text-on-surface group-hover:text-primary"
-                  )}>
-                    ${Math.max(0, saldoPendiente).toLocaleString("es-AR")}
-                  </span>
-                  <p className="text-[10px] font-medium text-on-surface-variant/40 mt-1 uppercase tracking-wider">
-                    Saldo pendiente
-                  </p>
-                </div>
-              </Link>
-            </div>
 
-            <TaskList jobId={job.id} />
+                <TaskList jobId={job.id} onSelectTask={setSelectedTaskId} />
+              </>
+            )}
           </div>
 
           {/* Columna Secundaria (Sidebar Sticky en Desktop) */}
-          <div className={cn("space-y-4", isEmbedded ? "2xl:sticky 2xl:top-8" : "lg:sticky lg:top-32")}>
-            <ProgressBar tasks={jobTasks} />
-            
-            {/* Job Status Card */}
-            <JobStatusSelector job={job} variant="card" />
-            
-            {/* Card de Total + Acciones con Glassmorphism */}
-            <div className="relative overflow-hidden bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+          {!selectedTaskId && (
+            <div className={cn("space-y-4", isEmbedded ? "2xl:sticky 2xl:top-8" : "lg:sticky lg:top-32")}>
+              <ProgressBar tasks={jobTasks} />
               
-              <div className="relative flex flex-col gap-1 z-10">
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
-                  Total estimado
-                </span>
-                <span className="text-4xl lg:text-5xl font-black text-on-surface tracking-tighter mt-1">
-                  ${presupuestoTotal.toLocaleString("es-AR")}
-                </span>
-                <span className="text-[10px] font-bold tracking-[0.1em] text-on-surface-variant/40 uppercase mt-1">
-                  Tareas + Materiales
-                </span>
+              <JobStatusSelector job={job} variant="card" />
+              
+              <div className="relative overflow-hidden bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+                
+                <div className="relative flex flex-col gap-1 z-10">
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
+                    Total estimado
+                  </span>
+                  <span className="text-4xl lg:text-5xl font-black text-on-surface tracking-tighter mt-1">
+                    ${presupuestoTotal.toLocaleString("es-AR")}
+                  </span>
+                  <span className="text-[10px] font-bold tracking-[0.1em] text-on-surface-variant/40 uppercase mt-1">
+                    Tareas + Materiales
+                  </span>
 
-                <div className="flex flex-col gap-0.5 mt-3 pt-3 border-t border-white/10">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-medium text-on-surface-variant/60">Tareas</span>
-                    <span className="text-[11px] font-bold text-on-surface">${totalEstimado.toLocaleString("es-AR")}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-medium text-on-surface-variant/60">Materiales</span>
-                    <span className="text-[11px] font-bold text-on-surface">${totalMateriales.toLocaleString("es-AR")}</span>
+                  <div className="flex flex-col gap-0.5 mt-3 pt-3 border-t border-white/10">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-medium text-on-surface-variant/60">Tareas</span>
+                      <span className="text-[11px] font-bold text-on-surface">${totalEstimado.toLocaleString("es-AR")}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-medium text-on-surface-variant/60">Materiales</span>
+                      <span className="text-[11px] font-bold text-on-surface">${totalMateriales.toLocaleString("es-AR")}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <button
-                onClick={handleDownloadPDF}
-                disabled={!hasItemsForBudget}
-                className={cn(
-                  "relative w-full py-4 rounded-[20px] font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group",
-                  hasItemsForBudget
-                    ? "bg-primary text-white shadow-[0_8px_20px_rgba(61,139,110,0.25)] hover:shadow-[0_16px_40px_rgba(61,139,110,0.4)] hover:scale-[1.02] active:scale-[0.98]"
-                    : "bg-on-surface/5 text-on-surface-variant/30 cursor-not-allowed"
+                <button
+                  onClick={handleDownloadPDF}
+                  disabled={!hasItemsForBudget}
+                  className={cn(
+                    "relative w-full py-4 rounded-[20px] font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group",
+                    hasItemsForBudget
+                      ? "bg-primary text-white shadow-[0_8px_20px_rgba(61,139,110,0.25)] hover:shadow-[0_16px_40px_rgba(61,139,110,0.4)] hover:scale-[1.02] active:scale-[0.98]"
+                      : "bg-on-surface/5 text-on-surface-variant/30 cursor-not-allowed"
+                  )}
+                >
+                  {hasItemsForBudget && (
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
+                  )}
+                  <FileDown className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" strokeWidth={2.5} />
+                  Generar Presupuesto
+                </button>
+                {!hasItemsForBudget && (
+                  <p className="text-xs font-medium text-on-surface-variant/40 text-center">
+                    Agregá tareas o materiales con precio para generar el presupuesto
+                  </p>
                 )}
-              >
-                {hasItemsForBudget && (
-                  <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
+                {pdfError && (
+                  <p className="text-xs font-medium text-red-500 text-center">
+                    {pdfError}
+                  </p>
                 )}
-                <FileDown className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" strokeWidth={2.5} />
-                Generar Presupuesto
-              </button>
-              {!hasItemsForBudget && (
-                <p className="text-xs font-medium text-on-surface-variant/40 text-center">
-                  Agregá tareas o materiales con precio para generar el presupuesto
-                </p>
-              )}
-              {pdfError && (
-                <p className="text-xs font-medium text-red-500 text-center">
-                  {pdfError}
-                </p>
-              )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
     </div>

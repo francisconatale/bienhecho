@@ -1,19 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { ChevronLeft } from "lucide-react";
-import { notFound, useRouter } from "next/navigation";
+import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { useDataStore } from "@/lib/store";
 import { MaterialList } from "../components/material-list";
+import { getBackUrl } from "./navigation";
 
-interface MaterialesPageProps {
-  params: Promise<{ id: string }>;
+interface MaterialesPageInnerProps {
+  id: string;
 }
 
-export default function MaterialesPage({ params }: MaterialesPageProps) {
-  const { id } = React.use(params);
+function MaterialesPageInner({ id }: MaterialesPageInnerProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from");
   const { popHistory } = useNavigationHistory();
   const { jobs } = useDataStore();
   const job = jobs.find((j) => j.id === id);
@@ -22,12 +24,14 @@ export default function MaterialesPage({ params }: MaterialesPageProps) {
     notFound();
   }
 
+  const backUrl = getBackUrl(from, job.id, job.cliente_id);
+
   return (
     <div className="relative w-full min-h-screen animate-fade-in-up bg-transparent">
 
       {/* Mobile: simple back button */}
       <div className="md:hidden px-4 py-2.5 relative z-10">
-        <button onClick={() => router.push(popHistory(`/trabajos?id=${id}`))} className="inline-flex items-center gap-1.5 text-sm text-on-surface-variant font-medium hover:text-on-surface transition-colors active:scale-95 cursor-pointer">
+        <button onClick={() => router.push(popHistory(backUrl))} className="inline-flex items-center gap-1.5 text-sm text-on-surface-variant font-medium hover:text-on-surface transition-colors active:scale-95 cursor-pointer">
           <ChevronLeft className="w-4 h-4" />
           Volver
         </button>
@@ -38,7 +42,7 @@ export default function MaterialesPage({ params }: MaterialesPageProps) {
         <div className="hidden md:flex items-center justify-between mb-4">
           <div className="flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
             <button 
-              onClick={() => router.push(popHistory(`/trabajos?id=${id}`))}
+              onClick={() => router.push(popHistory(backUrl))}
               className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -63,5 +67,14 @@ export default function MaterialesPage({ params }: MaterialesPageProps) {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function MaterialesPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = React.use(params);
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-transparent" />}>
+      <MaterialesPageInner id={id} />
+    </Suspense>
   );
 }

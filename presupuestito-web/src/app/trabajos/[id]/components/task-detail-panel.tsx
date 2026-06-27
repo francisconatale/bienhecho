@@ -2,39 +2,33 @@
 
 import React, { useState, useRef } from "react";
 import { ChevronLeft, Pencil, Check, CalendarDays, ClipboardList } from "lucide-react";
-import { notFound, useRouter } from "next/navigation";
-import { MobilePageHeader } from "@/components/ui/mobile-page-header";
-import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { useDataStore } from "@/lib/store";
 import { useClickOutside } from "@/hooks/use-click-outside";
-import { TaskPhotos } from "../../components/task-photos";
 import { cn } from "@/lib/utils";
+import { MobilePageHeader } from "@/components/ui/mobile-page-header";
+import { TaskPhotos } from "./task-photos";
 
-interface TareaDetailPageProps {
-  params: Promise<{ id: string; tareaId: string }>;
+interface TaskDetailPanelProps {
+  jobId: string;
+  taskId: string;
+  onBack: () => void;
+  backLabel?: string;
 }
 
-export default function TareaDetailPage({ params }: TareaDetailPageProps) {
-  const { id, tareaId } = React.use(params);
-  const router = useRouter();
-  const { popHistory } = useNavigationHistory();
+export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetailPanelProps) {
   const { jobs, tasks, updateTask, visits, visitaTareas } = useDataStore();
 
-  const job = jobs.find((j) => j.id === id);
-  const task = tasks.find((t) => t.id === tareaId && t.trabajo_id === id);
-
-  if (!job || !task) {
-    notFound();
-  }
+  const job = jobs.find((j) => j.id === jobId);
+  const task = tasks.find((t) => t.id === taskId && t.trabajo_id === jobId);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [descripcion, setDescripcion] = useState(task.descripcion);
+  const [descripcion, setDescripcion] = useState(task?.descripcion ?? "");
   const [precio, setPrecio] = useState(
-    task.precio !== null ? String(task.precio) : ""
+    task?.precio !== null && task?.precio !== undefined ? String(task.precio) : ""
   );
 
   const taskProgresses = visitaTareas
-    .filter((vt) => vt.tarea_id === task.id)
+    .filter((vt) => vt.tarea_id === taskId)
     .map((vt) => ({
       ...vt,
       visita: visits.find((v) => v.id === vt.visita_id),
@@ -43,10 +37,11 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
     .sort((a, b) => new Date(b.visita!.fecha).getTime() - new Date(a.visita!.fecha).getTime());
 
   const hasChanges =
-    descripcion !== task.descripcion ||
-    (task.precio !== null ? String(task.precio) : "") !== precio;
+    descripcion !== (task?.descripcion ?? "") ||
+    (task?.precio !== null && task?.precio !== undefined ? String(task.precio) : "") !== precio;
 
   const handleSave = () => {
+    if (!task) return;
     updateTask(task.id, {
       descripcion: descripcion.trim(),
       precio: precio !== "" ? Number(precio) : null,
@@ -55,6 +50,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
   };
 
   const handleCancel = () => {
+    if (!task) return;
     setDescripcion(task.descripcion);
     setPrecio(task.precio !== null ? String(task.precio) : "");
     setIsEditing(false);
@@ -71,38 +67,36 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
     }
   });
 
-  const handleBack = () => {
-    const returnUrl = popHistory(`/trabajos?id=${id}`);
-    router.push(returnUrl);
-  };
+  if (!job || !task) return null;
 
   return (
-    <div className="relative w-full min-h-screen animate-fade-in-up bg-transparent">
+    <>
+      {/* Mobile: header with back */}
+      <div className="md:hidden">
+        <MobilePageHeader
+          onBack={onBack}
+          isEditing={isEditing}
+          hasChanges={hasChanges}
+          onEditStart={() => setIsEditing(true)}
+          onCancel={handleCancel}
+          onSave={handleSave}
+        />
+      </div>
 
-      {/* Mobile: back button + actions */}
-      <MobilePageHeader
-        onBack={handleBack}
-        isEditing={isEditing}
-        hasChanges={hasChanges}
-        onEditStart={() => setIsEditing(true)}
-        onCancel={handleCancel}
-        onSave={handleSave}
-      />
-
-      <main className="relative flex-1 px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-12 max-w-4xl mx-auto w-full md:mt-0 space-y-6">
+      <main className="relative flex-1 px-4 py-6 pb-28 md:px-0 md:py-0 md:pb-0 max-w-4xl mx-auto w-full space-y-6">
         {/* Desktop Breadcrumb */}
         <div className="hidden md:flex items-center mb-4">
           <div className="flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
             <button
-              onClick={handleBack}
+              onClick={onBack}
               className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
-              Volver a {job.titulo}
+              Volver a {backLabel ?? job.titulo}
             </button>
           </div>
         </div>
-        {/* Titular Principal / Edición */}
+
         <div ref={editRef} className="space-y-4">
           {!isEditing ? (
             <div className="group flex items-start justify-between gap-4">
@@ -128,9 +122,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
             />
           )}
 
-          {/* Intent Cards (Metadata Semántica) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
-            {/* Estado Intent Card */}
             <button
               onClick={() => !isEditing && updateTask(task.id, { completada: !task.completada })}
               className={cn(
@@ -140,7 +132,6 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
                   : "bg-surface/40 dark:bg-surface/10 hover:bg-surface/60 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-lg"
               )}
             >
-              
               <span className="relative z-10 text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">
                 Estado Actual
               </span>
@@ -164,16 +155,13 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
               </div>
             </button>
 
-            {/* Price / Tipo Intent Card */}
             <div className="relative overflow-hidden p-5 rounded-[24px] bg-surface dark:bg-surface/10 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] flex flex-col gap-2">
-              
               <span className={cn(
                 "relative z-10 text-[10px] font-black uppercase tracking-[0.25em]",
                 task.precio !== null ? "text-primary/70" : "text-on-surface-variant/50"
               )}>
                 {task.precio !== null ? "Línea Facturable" : "Nota Descriptiva"}
               </span>
-              
               <div className="relative z-10 mt-1">
                 {!isEditing ? (
                   <span className="text-2xl font-bold tracking-tight text-on-surface flex items-center gap-1.5 cursor-default select-none">
@@ -199,20 +187,17 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
           </div>
         </div>
 
-        {/* Historial de Avance (Visitas) */}
         {taskProgresses.length > 0 && (
           <div className="relative bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-5 transition-shadow duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
-            
             <div className="relative z-10 flex items-center justify-between">
               <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
                 Historial de Avance
               </h3>
               <ClipboardList className="w-4 h-4 text-on-surface-variant/40" strokeWidth={2.5} />
             </div>
-
             <div className="relative z-10 space-y-3 cursor-default select-none">
               {taskProgresses.map((progress, idx) => (
-                <div 
+                <div
                   key={`${progress.visita_id}-${idx}`}
                   className="group flex flex-col gap-2 p-4 bg-surface dark:bg-surface/20 rounded-[20px] border border-white/10 dark:border-white/5 transition-colors duration-300 hover:bg-surface/60"
                 >
@@ -231,7 +216,6 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
           </div>
         )}
 
-        {/* Fotos - always visible */}
         <div className="relative bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-shadow duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
           <div className="relative z-10 flex items-center justify-between">
             <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
@@ -243,6 +227,6 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
           </div>
         </div>
       </main>
-    </div>
+    </>
   );
 }

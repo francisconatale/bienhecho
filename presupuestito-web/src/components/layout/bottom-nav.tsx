@@ -81,7 +81,7 @@ export function BottomNav() {
         icon={<Briefcase className="w-6 h-6" strokeWidth={2} />}
         label="Trabajos"
         href="/trabajos"
-        active={pathname.startsWith("/trabajos")}
+        active={pathname.startsWith("/trabajos") && !pathname.includes("/tareas")}
       />
       <NavItem
         icon={<CheckSquare className="w-6 h-6" strokeWidth={2} />}
