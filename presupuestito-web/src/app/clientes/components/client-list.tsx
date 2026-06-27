@@ -49,6 +49,7 @@ function DetailPane({
   onBack: () => void;
 }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [loadingJobId, setLoadingJobId] = useState<string | null>(null);
   const { jobs } = useDataStore();
   const clientJobs = jobs.filter((j) => j.cliente_id === client.id);
   const total = clientJobs.reduce((a, j) => a + j.presupuesto, 0);
@@ -78,12 +79,6 @@ function DetailPane({
         <div className="absolute top-[0px] right-[-100px] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-primary-container/30 md:bg-primary-container/20 blur-[120px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000" />
         <div className="hidden dark:block absolute top-[-50px] left-[-50px] w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-primary/35 md:bg-primary/25 blur-[120px] md:blur-[180px] rounded-full transition-all duration-1000" />
         <div className="hidden dark:block absolute top-[50px] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/40 md:bg-primary-container/30 blur-[120px] md:blur-[160px] rounded-full transition-all duration-1000" />
-      </div>
-
-      <div className="md:hidden px-4 py-2.5 border-b border-outline-variant/10 bg-surface/30 backdrop-blur-xl">
-        <button onClick={onBack} className="flex items-center gap-1.5 text-xs text-primary font-medium cursor-pointer">
-          <ArrowLeft className="w-3.5 h-3.5" /> Volver
-        </button>
       </div>
 
       <form onSubmit={onSubmit} className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
@@ -232,7 +227,8 @@ function DetailPane({
                 <Link
                   key={job.id}
                   href={`/trabajos/${job.id}?from=clientes&clienteId=${client.id}`}
-                  className="group flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 md:p-5 bg-surface/40 dark:bg-surface/20 rounded-[20px] border border-white/10 dark:border-white/5 transition-all duration-300 hover:bg-surface/60 hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)] hover:-translate-y-0.5 cursor-pointer"
+                  onClick={() => setLoadingJobId(job.id)}
+                  className="group flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 md:p-5 bg-surface/40 dark:bg-surface/20 rounded-[20px] border border-white/10 dark:border-white/5 transition-all duration-300 hover:bg-surface/60 hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)] hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer"
                 >
                   <div className="flex items-center gap-4 min-w-0 flex-1">
                     <div className={`w-3 h-3 rounded-full shrink-0 ${getStatusColor(job.estado)} shadow-[0_0_12px_currentColor] opacity-80 group-hover:opacity-100 transition-opacity`} />
@@ -247,8 +243,16 @@ function DetailPane({
                     ) : (
                       <p className="text-sm font-semibold text-on-surface-variant/50">S/P</p>
                     )}
-                    <div className="w-10 h-10 rounded-full bg-on-surface/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all group-hover:bg-primary/10 group-active:scale-95 shrink-0">
-                      <ExternalLink className="w-5 h-5 text-on-surface-variant group-hover:text-primary" />
+                    <div className={`w-10 h-10 rounded-full bg-on-surface/5 flex items-center justify-center transition-all shrink-0 ${
+                      loadingJobId === job.id 
+                        ? "opacity-100 bg-primary/10" 
+                        : "opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-hover:bg-primary/10 group-active:scale-95"
+                    }`}>
+                      {loadingJobId === job.id ? (
+                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <ExternalLink className="w-5 h-5 text-on-surface-variant group-hover:text-primary" />
+                      )}
                     </div>
                   </div>
                 </Link>
@@ -341,18 +345,19 @@ export function ClientList() {
           return (
             <button
               onClick={() => setSelectedId(client.id)}
-              className={`group w-full text-left px-4 md:px-5 py-4 transition-all duration-300 cursor-pointer rounded-[24px] md:rounded-none border border-white/20 dark:border-white/5 md:border-0 md:border-b md:border-outline-variant/5 bg-surface/40 dark:bg-surface/20 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none shadow-[0_4px_12px_rgba(0,0,0,0.02)] md:shadow-none hover:-translate-y-0.5 md:hover:translate-y-0 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] md:hover:shadow-none ${
-                isSelected ? "md:bg-primary/8 border-primary/30 md:border-b-outline-variant/5" : "md:hover:bg-primary/3"
+              className={`relative group w-full text-left px-4 md:px-5 py-4 transition-all duration-300 cursor-pointer rounded-[24px] md:rounded-none border border-white/20 dark:border-white/5 md:border-0 md:border-b md:border-outline-variant/5 bg-surface/40 dark:bg-surface/20 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none shadow-[0_4px_12px_rgba(0,0,0,0.02)] md:shadow-none hover:-translate-y-0.5 md:hover:translate-y-0 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] md:hover:shadow-none ${
+                isSelected ? "md:bg-primary/15 dark:md:bg-primary/25 border-primary/30 md:border-b-outline-variant/5" : "md:hover:bg-on-surface/5"
               }`}
             >
+              {isSelected && <div className="hidden md:block absolute left-0 top-0 bottom-0 w-1 bg-primary shadow-[0_0_8px_var(--color-primary)]" />}
               <div className="flex items-center gap-3 md:gap-4">
                 <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center font-bold text-[11px] md:text-sm shrink-0 transition-all ${
-                  isSelected ? "bg-primary/15 text-primary" : "bg-primary/8 text-primary/60"
+                  isSelected ? "bg-primary/20 text-primary shadow-inner" : "bg-primary/8 text-primary/60"
                 }`}>
                   {client.nombre.charAt(0)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm md:text-base text-on-surface truncate">{client.nombre}</div>
+                  <div className={`font-medium text-sm md:text-base truncate transition-colors ${isSelected ? "text-primary" : "text-on-surface"}`}>{client.nombre}</div>
                   <div className="text-[11px] md:text-sm text-on-surface-variant truncate">{client.email}</div>
                 </div>
                 <div className="text-right shrink-0">
@@ -393,6 +398,34 @@ export function ClientList() {
               <User className="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2 opacity-15" />
               <p className="text-xs md:text-base font-medium">Seleccioná un cliente</p>
             </div>
+          </div>
+        }
+        emptyState={
+          <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+            <svg
+              width="160"
+              height="160"
+              viewBox="0 0 160 160"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="mb-6 opacity-40"
+            >
+              <rect x="20" y="30" width="120" height="100" rx="12" stroke="currentColor" strokeWidth="2" fill="none" />
+              <rect x="30" y="45" width="40" height="6" rx="3" fill="currentColor" opacity="0.3" />
+              <rect x="30" y="58" width="60" height="4" rx="2" fill="currentColor" opacity="0.15" />
+              <rect x="30" y="68" width="50" height="4" rx="2" fill="currentColor" opacity="0.15" />
+              <circle cx="108" cy="88" r="22" stroke="currentColor" strokeWidth="2" fill="none" />
+              <path d="M108 80v16M100 88h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <rect x="30" y="90" width="40" height="6" rx="3" fill="currentColor" opacity="0.3" />
+              <rect x="30" y="103" width="55" height="4" rx="2" fill="currentColor" opacity="0.15" />
+              <rect x="30" y="113" width="35" height="4" rx="2" fill="currentColor" opacity="0.15" />
+            </svg>
+            <h3 className="text-base md:text-lg font-bold text-on-surface mb-1.5">
+              Seleccioná un cliente
+            </h3>
+            <p className="text-xs md:text-sm text-on-surface-variant max-w-[260px] leading-relaxed">
+              Elegí un cliente de la lista o creá uno nuevo para empezar a gestionar sus trabajos.
+            </p>
           </div>
         }
       />
