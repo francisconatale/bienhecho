@@ -103,5 +103,8 @@ No preguntes por estos commits, son automáticos. Solo aplica la regla de pregun
 
 ## Regla: Layout Master-Detail (Desktop vs Mobile)
 Para páginas como Clientes o vistas duales (lista interactiva + detalle):
-- **Desktop:** Conservar la estructura "Master-Detail" tipo app. El panel de la lista debe quedar anclado a la izquierda ocupando toda la altura (usualmente con `grid-cols-[360px_1fr]` y `min-h-0`), sin que el scroll sea de toda la página.
-- **Mobile:** Se debe utilizar obligatoriamente el componente `<PageHeader />` para el título principal, envolviéndolo en un contenedor solo visible en mobile (ej. `<div className="md:hidden"><PageHeader ... /></div>`). No reemplazar el PageHeader por custom bars sin título en la versión móvil.
+- **Desktop:** Conservar la estructura "Master-Detail" tipo app. El panel de la lista debe quedar anclado a la izquierda ocupando toda la altura (usualmente con `grid-cols-[360px_1fr]` y `min-h-0`), sin que el scroll sea de toda la página. La lista en este formato se mantiene contigua (ítems con borde inferior).
+- **Mobile (Raíz de la lista):** 
+  - Se debe utilizar el componente `<PageHeader />` para el título principal, envolviéndolo en un contenedor solo visible en mobile. 
+  - La lista abandona el formato contiguo para usar **separación entre ítems** (ej. `space-y-3`), renderizando cada elemento como una **Card flotante e independiente** con estilo Premium (Aurora + Glassmorphism).
+- **Mobile (Vista de Detalle):** Cuando se selecciona un ítem para visualizar o editar (pasando al Detail Pane), se DEBE **ocultar completamente** el `<PageHeader />` y cualquier barra de búsqueda superior general (`hidden` condicional en mobile). La vista de detalle debe ocupar el 100% de la pantalla (full-screen inmersivo) con un botón de "Volver" dedicado.
