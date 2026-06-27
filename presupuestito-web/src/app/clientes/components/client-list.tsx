@@ -8,6 +8,8 @@ import {
   Trash2,
   Briefcase,
   ExternalLink,
+  X,
+  Save,
 } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 import { Client } from "@/types";
@@ -15,6 +17,7 @@ import { ClientForm } from "./client-form";
 import { useClientForm } from "./use-client-form";
 import { usePagination } from "@/hooks/use-pagination";
 import { MasterDetail } from "@/components/ui/master-detail";
+import { MobileHeaderActions } from "@/components/ui/mobile-header-actions";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -125,7 +128,7 @@ function DetailPane({
               </div>
             </div>
 
-            <div className="flex gap-2 shrink-0 ml-4">
+            <div className="hidden md:flex gap-2 shrink-0 ml-4">
               {isEditing ? (
                 <>
                   <button
@@ -138,6 +141,7 @@ function DetailPane({
                   </button>
                   <button
                     type="submit"
+                    data-client-save
                     disabled={isLoading}
                     className="p-2.5 rounded-xl bg-primary text-white hover:bg-primary-dark transition-all disabled:opacity-50 active:scale-95 flex items-center gap-1.5 shadow-md"
                   >
@@ -329,22 +333,16 @@ export function ClientList() {
         mobileDescription="Gestioná tus clientes."
         detailTitle={(client) => client.nombre}
         detailRightAction={(client) => (
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setIsEditing(true)}
-              className="w-10 h-10 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-primary/20 hover:text-primary transition-all active:scale-95 cursor-pointer text-on-surface"
-              title="Editar"
-            >
-              <Pencil className="w-4 h-4" strokeWidth={2.5} />
-            </button>
-            <button
-              onClick={() => handleDelete(client)}
-              className="w-10 h-10 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-error/20 hover:text-error transition-all active:scale-95 cursor-pointer text-on-surface"
-              title="Eliminar"
-            >
-              <Trash2 className="w-4 h-4" strokeWidth={2.5} />
-            </button>
-          </div>
+          <MobileHeaderActions
+            isEditing={isEditing}
+            hasChanges={isEditing} // Form handles its own disable state via disabled={isLoading} or we can assume always true until hook provides isDirty
+            onEditStart={() => setIsEditing(true)}
+            onCancel={() => setIsEditing(false)}
+            onSave={() => {
+              document.querySelector<HTMLButtonElement>('[data-client-save]')?.click();
+            }}
+            onDelete={() => handleDelete(client)}
+          />
         )}
         pagination={pag}
         showCreationForm={showCreationForm}

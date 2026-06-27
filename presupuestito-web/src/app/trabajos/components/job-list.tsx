@@ -5,10 +5,11 @@ import { Briefcase, Pencil, X, Check } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 import { Job } from "@/types";
 import { usePagination } from "@/hooks/use-pagination";
-import { MasterDetail } from "@/components/ui/master-detail";
 import { useSearchParams } from "next/navigation";
 import { TrabajoDetail } from "./trabajo-detail";
 import { JobStatusSelector } from "../[id]/components/job-status";
+import { MobileHeaderActions } from "@/components/ui/mobile-header-actions";
+import { MasterDetail } from "@/components/ui/master-detail";
 
 function formatCurrency(amount: number): string {
   if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
@@ -84,40 +85,21 @@ export function JobList() {
         detailTitle={(job) => job.titulo}
         detailRightAction={(job) => {
           const isThisEditing = isHeaderEditing && editingJobIdRef.current === job.id;
-          if (isThisEditing) {
-            return (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => {
-                    document.querySelector<HTMLButtonElement>('[data-job-header-cancel]')?.click();
-                  }}
-                  className="w-10 h-10 rounded-full bg-on-surface/5 flex items-center justify-center text-on-surface-variant hover:bg-on-surface/10 transition-all active:scale-95"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => {
-                    document.querySelector<HTMLButtonElement>('[data-job-header-save]')?.click();
-                  }}
-                  className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-md hover:bg-primary-dark transition-all active:scale-95"
-                >
-                  <Check className="w-5 h-5" strokeWidth={3} />
-                </button>
-              </div>
-            );
-          }
           return (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
+            <MobileHeaderActions
+              isEditing={isThisEditing}
+              onEditStart={(e) => {
+                e?.stopPropagation();
                 editingJobIdRef.current = job.id;
                 setEditTargetId(job.id);
               }}
-              className="w-10 h-10 rounded-full bg-on-surface/5 flex items-center justify-center text-on-surface-variant hover:bg-on-surface/10 transition-all active:scale-95"
-              title="Editar trabajo"
-            >
-              <Pencil className="w-4 h-4" />
-            </button>
+              onCancel={() => {
+                document.querySelector<HTMLButtonElement>('[data-job-header-cancel]')?.click();
+              }}
+              onSave={() => {
+                document.querySelector<HTMLButtonElement>('[data-job-header-save]')?.click();
+              }}
+            />
           );
         }}
         pagination={pag}

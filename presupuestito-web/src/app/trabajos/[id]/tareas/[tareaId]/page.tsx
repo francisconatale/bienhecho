@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { ChevronLeft, Save, Pencil, X, Check, CalendarDays, ClipboardList } from "lucide-react";
+import { ChevronLeft, Pencil, Check, CalendarDays, ClipboardList } from "lucide-react";
 import Link from "next/link";
 import { notFound, useSearchParams } from "next/navigation";
+import { MobilePageHeader } from "@/components/ui/mobile-page-header";
 import { useDataStore } from "@/lib/store";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { TaskPhotos } from "../../components/task-photos";
@@ -73,37 +74,6 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
   const clienteId = searchParams.get("clienteId");
   const backHref = `/trabajos?id=${id}${from ? `&from=${from}${clienteId ? `&clienteId=${clienteId}` : ""}` : ""}`;
 
-  const rightAction = isEditing ? (
-    <div className="flex items-center gap-2">
-      <button
-        onClick={handleCancel}
-        className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-on-surface/10 text-on-surface-variant transition-all active:scale-95"
-      >
-        <X className="w-5 h-5" />
-      </button>
-      <button
-        onClick={handleSave}
-        disabled={!hasChanges}
-        className={cn(
-          "w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-95",
-          hasChanges
-            ? "bg-primary text-white shadow-md hover:bg-primary-dark"
-            : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
-        )}
-      >
-        <Save className="w-4 h-4" />
-      </button>
-    </div>
-  ) : (
-    <button
-      onClick={() => setIsEditing(true)}
-      className="w-10 h-10 rounded-full flex items-center justify-center bg-on-surface/5 hover:bg-on-surface/10 transition-all active:scale-95"
-      title="Editar tarea"
-    >
-      <Pencil className="w-4 h-4 text-on-surface" />
-    </button>
-  );
-
   return (
     <div className="relative w-full min-h-screen">
       {/* Grain / Noise Overlay */}
@@ -126,13 +96,14 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
       </div>
 
       {/* Mobile: back button + actions */}
-      <div className="md:hidden px-4 py-2.5 relative z-10 flex items-center justify-between">
-        <Link href={backHref} className="inline-flex items-center gap-1.5 text-sm text-on-surface-variant font-medium hover:text-on-surface transition-colors active:scale-95">
-          <ChevronLeft className="w-4 h-4" />
-          Volver
-        </Link>
-        {rightAction}
-      </div>
+      <MobilePageHeader
+        backHref={backHref}
+        isEditing={isEditing}
+        hasChanges={hasChanges}
+        onEditStart={() => setIsEditing(true)}
+        onCancel={handleCancel}
+        onSave={handleSave}
+      />
 
       <main className="relative flex-1 px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-12 max-w-4xl mx-auto w-full md:mt-0 space-y-6">
         {/* Desktop Breadcrumb */}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, Check, FileDown, Hammer, Wallet, X, Pencil } from "lucide-react";
+import { ChevronLeft, FileDown, Hammer, Wallet } from "lucide-react";
 import Link from "next/link";
 import { notFound, useSearchParams } from "next/navigation";
 import { useDataStore } from "@/lib/store";
@@ -14,6 +14,7 @@ import { useMaterials } from "../[id]/hooks/use-materials";
 import { usePayments } from "../[id]/hooks/use-payments";
 import { cn } from "@/lib/utils";
 import { buildBackHref, buildForwardParams } from "@/lib/nav";
+import { MobilePageHeader } from "@/components/ui/mobile-page-header";
 
 export function TrabajoDetail({
   id,
@@ -35,6 +36,7 @@ export function TrabajoDetail({
   const { downloadPDF } = useBudgetPDF();
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [isHeaderEditing, setIsHeaderEditing] = useState(false);
+  const [headerHasChanges, setHeaderHasChanges] = useState(false);
 
   useEffect(() => { setIsHeaderEditing(false); }, []);
   useEffect(() => {
@@ -100,39 +102,16 @@ export function TrabajoDetail({
             <div className="hidden dark:block absolute top-[50px] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/40 md:bg-primary-container/30 blur-[120px] md:blur-[160px] rounded-full transition-all duration-1000" />
           </div>
 
-          {/* Mobile: back button */}
-          <div className="md:hidden relative z-10 px-4 pt-2.5 pb-6 flex items-center justify-between">
-            <Link href={backHref} className="inline-flex items-center gap-1.5 text-sm text-on-surface-variant font-medium hover:text-on-surface transition-colors active:scale-95">
-              <ChevronLeft className="w-4 h-4" />
-              Volver
-            </Link>
-            {isHeaderEditing ? (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setIsHeaderEditing(false)}
-                  className="w-10 h-10 rounded-full bg-on-surface/5 flex items-center justify-center text-on-surface-variant hover:bg-on-surface/10 transition-all active:scale-95"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => {
-                    document.querySelector<HTMLButtonElement>('[data-job-header-save]')?.click();
-                  }}
-                  className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-md hover:bg-primary-dark transition-all active:scale-95"
-                >
-                  <Check className="w-5 h-5" strokeWidth={3} />
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setIsHeaderEditing(true)}
-                className="w-10 h-10 rounded-full bg-on-surface/5 flex items-center justify-center text-on-surface-variant hover:bg-on-surface/10 transition-all active:scale-95"
-                title="Editar trabajo"
-              >
-                <Pencil className="w-4 h-4" />
-              </button>
-            )}
-          </div>
+          <MobilePageHeader
+            backHref={backHref}
+            isEditing={isHeaderEditing}
+            hasChanges={headerHasChanges}
+            onEditStart={() => setIsHeaderEditing(true)}
+            onCancel={() => setIsHeaderEditing(false)}
+            onSave={() => {
+              document.querySelector<HTMLButtonElement>('[data-job-header-save]')?.click();
+            }}
+          />
         </>
       )}
 
@@ -169,7 +148,7 @@ export function TrabajoDetail({
               </div>
             </div>
 
-            <JobHeader job={job} client={client} isEditing={isHeaderEditing} onEditingChange={setIsHeaderEditing} />
+            <JobHeader job={job} client={client} isEditing={isHeaderEditing} onEditingChange={setIsHeaderEditing} onHasChanges={setHeaderHasChanges} />
             
             <div className="grid grid-cols-2 gap-4">
               <Link href={`/trabajos/${job.id}/materiales${backParams}`} className="group relative overflow-hidden bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2">
