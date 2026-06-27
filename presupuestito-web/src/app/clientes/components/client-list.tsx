@@ -2,23 +2,19 @@
 
 import { useState } from "react";
 import {
-  Search,
-  Plus,
   ArrowLeft,
   User,
   Pencil,
   Trash2,
   Briefcase,
   ExternalLink,
-  Sparkles,
 } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 import { Client } from "@/types";
 import { ClientForm } from "./client-form";
 import { useClientForm } from "./use-client-form";
 import { usePagination } from "@/hooks/use-pagination";
-import { PaginationButtons } from "@/components/ui/pagination-buttons";
-import { PageHeader } from "@/components/ui/page-header";
+import { MasterDetail } from "@/components/ui/master-detail";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -301,9 +297,7 @@ export function ClientList() {
       {/* Aurora Background */}
       <div
         className="absolute inset-0 pointer-events-none overflow-hidden transition-all duration-1000"
-        style={{
-          zIndex: 0,
-        }}
+        style={{ zIndex: 0 }}
       >
         <div className="absolute top-[-50px] left-[-50px] w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-primary/20 md:bg-primary/15 blur-[100px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000 animate-pulse" style={{ animationDuration: '8s' }} />
         <div className="absolute top-[20%] right-[-100px] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-primary-container/20 md:bg-primary-container/15 blur-[120px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000" />
@@ -311,146 +305,97 @@ export function ClientList() {
         <div className="hidden dark:block absolute top-[20%] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/30 md:bg-primary-container/20 blur-[120px] md:blur-[160px] rounded-full transition-all duration-1000" />
       </div>
 
-      {/* Mobile PageHeader */}
-      <div className={`${selectedId || showCreationForm ? "hidden" : "block"} md:hidden pt-8 pb-2 px-4 relative z-10`}>
-        <PageHeader title="Clientes" description="Gestioná tus clientes." />
-      </div>
-
-      {/* HEADER */}
-      <div className={`${selectedId || showCreationForm ? "hidden md:block" : "block"} px-4 md:px-5 py-3 bg-surface/30 dark:bg-surface/10 backdrop-blur-md md:bg-background border-b border-outline-variant/10 relative z-10`}>
-        <div className="flex items-center gap-2.5">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-outline pointer-events-none" strokeWidth={2} />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Filtrar clientes..."
-              className="w-full bg-grouped-bg-light rounded-lg pl-9 md:pl-10 pr-3 py-2 md:py-2.5 text-xs md:text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary/20 border-0"
-            />
+      <MasterDetail
+        selectedId={selectedId}
+        onSelectedChange={(id) => { setSelectedId(id); setShowCreationForm(false); }}
+        items={filtered}
+        getItemId={(c) => c.id}
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder="Filtrar clientes..."
+        countLabel="cliente(s)"
+        mobileTitle="Clientes"
+        mobileDescription="Gestioná tus clientes."
+        pagination={pag}
+        showCreationForm={showCreationForm}
+        onToggleCreation={() => { setShowCreationForm(!showCreationForm); setSelectedId(null); }}
+        renderCreationForm={() => (
+          <div className="flex-1 overflow-y-auto">
+            <div className="px-5 py-3 border-b border-outline-variant/8 bg-surface flex items-center gap-2.5">
+              <button
+                onClick={() => setShowCreationForm(false)}
+                className="w-7 h-7 md:w-9 md:h-9 rounded-lg hover:bg-outline-variant/10 flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 md:w-5 md:h-5 text-on-surface-variant" />
+              </button>
+              <h2 className="text-sm md:text-lg font-bold text-on-surface">Nuevo Cliente</h2>
+            </div>
+            <div className="p-4 md:p-6">
+              <ClientForm onSuccess={() => setShowCreationForm(false)} />
+            </div>
           </div>
+        )}
+        renderItem={(client, isSelected) => {
+          const clientJobs = useDataStore.getState().jobs.filter((j) => j.cliente_id === client.id);
+          const totalFacturacion = clientJobs.reduce((acc, j) => acc + j.presupuesto, 0);
+          return (
+            <button
+              onClick={() => setSelectedId(client.id)}
+              className={`group w-full text-left px-4 md:px-5 py-4 transition-all duration-300 cursor-pointer rounded-[24px] md:rounded-none border border-white/20 dark:border-white/5 md:border-0 md:border-b md:border-outline-variant/5 bg-surface/40 dark:bg-surface/20 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none shadow-[0_4px_12px_rgba(0,0,0,0.02)] md:shadow-none hover:-translate-y-0.5 md:hover:translate-y-0 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] md:hover:shadow-none ${
+                isSelected ? "md:bg-primary/8 border-primary/30 md:border-b-outline-variant/5" : "md:hover:bg-primary/3"
+              }`}
+            >
+              <div className="flex items-center gap-3 md:gap-4">
+                <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center font-bold text-[11px] md:text-sm shrink-0 transition-all ${
+                  isSelected ? "bg-primary/15 text-primary" : "bg-primary/8 text-primary/60"
+                }`}>
+                  {client.nombre.charAt(0)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-sm md:text-base text-on-surface truncate">{client.nombre}</div>
+                  <div className="text-[11px] md:text-sm text-on-surface-variant truncate">{client.email}</div>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="text-[10px] md:text-sm font-bold text-primary">{clientJobs.length}</div>
+                  <div className="text-[9px] md:text-xs text-on-surface-variant tabular-nums">
+                    ${totalFacturacion >= 1000000
+                      ? `${(totalFacturacion / 1000000).toFixed(1)}M`
+                      : `${(totalFacturacion / 1000).toFixed(0)}K`}
+                  </div>
+                </div>
+              </div>
+            </button>
+          );
+        }}
+        renderRailItem={(client, isActive) => (
           <button
-            onClick={() => {
-              setShowCreationForm(!showCreationForm);
-              setSelectedId(null);
-            }}
-            className={`h-8 w-8 md:h-9 md:w-9 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${
-              showCreationForm
-                ? "bg-outline-variant/15 text-on-surface"
-                : "bg-primary text-white hover:bg-primary-dark"
+            onClick={() => { setSelectedId(client.id); setShowCreationForm(false); }}
+            className={`w-10 h-10 rounded-[14px] flex items-center justify-center font-bold text-xs shrink-0 transition-all duration-200 cursor-pointer active:scale-90 ${
+              isActive
+                ? "bg-primary text-white shadow-md shadow-primary/30"
+                : "bg-primary/10 text-primary/70 hover:bg-primary/20"
             }`}
+            title={client.nombre}
           >
-            {showCreationForm ? (
-              <span className="text-lg md:text-xl leading-none">&times;</span>
-            ) : (
-              <Plus className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
-            )}
+            {client.nombre.charAt(0)}
           </button>
-        </div>
-      </div>
-
-      {/* MASTER-DETAIL GRID */}
-      <div className={`flex-1 grid grid-cols-1 min-h-0 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${selectedId || showCreationForm ? "md:grid-cols-[0px_1fr]" : "md:grid-cols-[360px_1fr]"}`}>
-        {/* LIST PANE */}
-        <div
-          className={`${
-            selectedId && !showCreationForm ? "hidden md:flex" : "flex"
-          } flex-col border-r border-outline-variant/10 bg-background md:bg-surface overflow-hidden transition-[opacity] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${(selectedId || showCreationForm) ? "md:opacity-0 md:pointer-events-none" : "md:opacity-100"}`}
-        >
-          <div className="px-4 md:px-5 py-2.5 md:py-3 border-b border-outline-variant/6 bg-surface/50 backdrop-blur-xl md:bg-transparent">
-            <span className="text-[10px] md:text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-              {filtered.length} cliente{filtered.length !== 1 ? "s" : ""}
-            </span>
-          </div>
-          <div className="flex-1 overflow-y-auto px-4 md:px-0 py-4 md:py-0 space-y-3 md:space-y-0">
-            {pag.paginatedItems.length > 0 ? (
-              pag.paginatedItems.map((client) => {
-                const isSelected = selectedId === client.id;
-                const clientJobs = useDataStore.getState().jobs.filter((j) => j.cliente_id === client.id);
-                const totalFacturacion = clientJobs.reduce((acc, j) => acc + j.presupuesto, 0);
-                return (
-                  <button
-                    key={client.id}
-                    onClick={() => setSelectedId(client.id)}
-                    className={`group w-full text-left px-4 md:px-5 py-4 transition-all duration-300 cursor-pointer rounded-[28px] md:rounded-none border border-white/20 dark:border-white/5 md:border-0 md:border-b md:border-outline-variant/5 bg-surface/30 dark:bg-surface/10 md:bg-transparent backdrop-blur-2xl md:backdrop-blur-none shadow-[0_4px_12px_rgba(0,0,0,0.02)] md:shadow-none hover:-translate-y-0.5 md:hover:translate-y-0 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] md:hover:shadow-none ${
-                      isSelected ? "md:bg-primary/8 border-primary/30 md:border-b-outline-variant/5" : "md:hover:bg-primary/3"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 md:gap-4">
-                      <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center font-bold text-[11px] md:text-sm shrink-0 transition-all ${
-                        isSelected ? "bg-primary/15 text-primary" : "bg-primary/8 text-primary/60"
-                      }`}>
-                        {client.nombre.charAt(0)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium text-sm md:text-base text-on-surface truncate">{client.nombre}</div>
-                        <div className="text-[11px] md:text-sm text-on-surface-variant truncate">{client.email}</div>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <div className="text-[10px] md:text-sm font-bold text-primary">{clientJobs.length}</div>
-                        <div className="text-[9px] md:text-xs text-on-surface-variant tabular-nums">
-                          ${totalFacturacion >= 1000000
-                            ? `${(totalFacturacion / 1000000).toFixed(1)}M`
-                            : `${(totalFacturacion / 1000).toFixed(0)}K`}
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })
-            ) : (
-              <div className="py-8 text-center text-on-surface-variant">
-                <p className="text-xs md:text-sm">Sin resultados</p>
-              </div>
-            )}
-          </div>
-          <PaginationButtons
-            currentPage={pag.currentPage}
-            totalPages={pag.totalPages}
-            totalItems={pag.totalItems}
-            pageSize={pag.pageSize}
-            onPageChange={pag.goToPage}
-            className="px-4 md:px-5 pb-4 pt-2 md:pt-0"
+        )}
+        renderDetail={(client) => (
+          <DetailPane
+            client={client}
+            onDelete={handleDelete}
+            onBack={() => setSelectedId(null)}
           />
-        </div>
-
-        {/* DETAIL PANE */}
-        <div
-          className={`${
-            selectedId || showCreationForm ? "flex" : "hidden md:flex"
-          } flex-col bg-grouped-bg-light min-w-0 transition-opacity duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${(selectedId || showCreationForm) ? "md:opacity-100" : "md:opacity-0"}`}
-        >
-          {showCreationForm ? (
-            <div className="flex-1 overflow-y-auto">
-              <div className="px-5 py-3 border-b border-outline-variant/8 bg-surface flex items-center gap-2.5">
-                <button
-                  onClick={() => setShowCreationForm(false)}
-                  className="w-7 h-7 md:w-9 md:h-9 rounded-lg hover:bg-outline-variant/10 flex items-center justify-center transition-colors cursor-pointer"
-                >
-                  <ArrowLeft className="w-3.5 h-3.5 md:w-5 md:h-5 text-on-surface-variant" />
-                </button>
-                <h2 className="text-sm md:text-lg font-bold text-on-surface">Nuevo Cliente</h2>
-              </div>
-              <div className="p-4 md:p-6">
-                <ClientForm onSuccess={() => setShowCreationForm(false)} />
-              </div>
+        )}
+        emptyDetail={
+          <div className="flex-1 flex items-start justify-center pt-16 text-on-surface-variant">
+            <div className="text-center">
+              <User className="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2 opacity-15" />
+              <p className="text-xs md:text-base font-medium">Seleccioná un cliente</p>
             </div>
-          ) : selected ? (
-            <DetailPane
-              client={selected}
-              onDelete={handleDelete}
-              onBack={() => setSelectedId(null)}
-            />
-          ) : (
-            <div className="flex-1 flex items-start justify-center pt-16 text-on-surface-variant">
-              <div className="text-center">
-                <User className="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2 opacity-15" />
-                <p className="text-xs md:text-base font-medium">Seleccioná un cliente</p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+          </div>
+        }
+      />
     </div>
   );
 }
