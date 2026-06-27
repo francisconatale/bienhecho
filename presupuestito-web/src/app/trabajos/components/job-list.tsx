@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, Briefcase } from "lucide-react";
+import { Briefcase } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 import { Job } from "@/types";
 import { usePagination } from "@/hooks/use-pagination";
 import { MasterDetail } from "@/components/ui/master-detail";
 import { useSearchParams } from "next/navigation";
 import { TrabajoDetail } from "./trabajo-detail";
+import { JobStatusSelector } from "../[id]/components/job-status";
 
 function formatCurrency(amount: number): string {
   if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
@@ -77,6 +78,8 @@ export function JobList() {
         countLabel="trabajo(s)"
         mobileTitle="Trabajos"
         mobileDescription="Gestioná tus proyectos."
+        detailTitle={(job) => job.titulo}
+        detailRightAction={(job) => <JobStatusSelector job={job} />}
         pagination={pag}
         creationHref="/trabajos/nuevo"
         renderItem={(job, isSelected) => {

@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
-  ArrowLeft,
   User,
   Pencil,
   Trash2,
@@ -43,12 +42,15 @@ function DetailPane({
   client,
   onDelete,
   onBack,
+  isEditing,
+  setIsEditing,
 }: {
   client: Client;
   onDelete: (c: Client) => void;
   onBack: () => void;
+  isEditing: boolean;
+  setIsEditing: (v: boolean) => void;
 }) {
-  const [isEditing, setIsEditing] = useState(false);
   const [loadingJobId, setLoadingJobId] = useState<string | null>(null);
   const { jobs } = useDataStore();
   const clientJobs = jobs.filter((j) => j.cliente_id === client.id);
@@ -273,7 +275,11 @@ export function ClientList() {
     () => searchParams.get("clienteId") || null
   );
   const [showCreationForm, setShowCreationForm] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const { clients, removeClient } = useDataStore();
+
+  // Reset editing state when selection changes
+  useEffect(() => { setIsEditing(false); }, [selectedId]);
 
   const filtered = clients.filter(
     (c) =>
@@ -320,6 +326,25 @@ export function ClientList() {
         countLabel="cliente(s)"
         mobileTitle="Clientes"
         mobileDescription="Gestioná tus clientes."
+        detailTitle={(client) => client.nombre}
+        detailRightAction={(client) => (
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setIsEditing(true)}
+              className="w-10 h-10 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-primary/20 hover:text-primary transition-all active:scale-95 cursor-pointer text-on-surface"
+              title="Editar"
+            >
+              <Pencil className="w-4 h-4" strokeWidth={2.5} />
+            </button>
+            <button
+              onClick={() => handleDelete(client)}
+              className="w-10 h-10 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-error/20 hover:text-error transition-all active:scale-95 cursor-pointer text-on-surface"
+              title="Eliminar"
+            >
+              <Trash2 className="w-4 h-4" strokeWidth={2.5} />
+            </button>
+          </div>
+        )}
         pagination={pag}
         showCreationForm={showCreationForm}
         onToggleCreation={() => { setShowCreationForm(!showCreationForm); setSelectedId(null); }}
@@ -390,6 +415,8 @@ export function ClientList() {
             client={client}
             onDelete={handleDelete}
             onBack={() => setSelectedId(null)}
+            isEditing={isEditing}
+            setIsEditing={setIsEditing}
           />
         )}
         emptyDetail={

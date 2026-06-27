@@ -1,9 +1,10 @@
 "use client";
 
 import { ReactNode, useState, useEffect } from "react";
-import { Search, Plus, ChevronsRight, ChevronsLeft } from "lucide-react";
+import { Search, Plus, ChevronsRight, ChevronsLeft, ChevronLeft } from "lucide-react";
 import { UsePaginationResult } from "@/hooks/use-pagination";
 import { PaginationButtons } from "./pagination-buttons";
+import { Header } from "@/components/layout/header";
 import Link from "next/link";
 
 export interface MasterDetailProps<T> {
@@ -21,6 +22,11 @@ export interface MasterDetailProps<T> {
 
   mobileTitle: string;
   mobileDescription?: string;
+
+  /** Title shown in the mobile detail Header */
+  detailTitle?: (item: T) => string;
+  /** Right action slot in the mobile detail Header */
+  detailRightAction?: (item: T) => ReactNode;
 
   renderItem: (item: T, isSelected: boolean) => ReactNode;
   renderRailItem: (item: T, isActive: boolean) => ReactNode;
@@ -52,6 +58,8 @@ export function MasterDetail<T>({
   pagination,
   mobileTitle,
   mobileDescription,
+  detailTitle,
+  detailRightAction,
   showCreationForm = false,
   onToggleCreation,
   creationHref,
@@ -59,9 +67,9 @@ export function MasterDetail<T>({
   emptyState,
 }: MasterDetailProps<T>) {
   const hasDetail = selectedId || showCreationForm;
-  
+
   const [isListExpanded, setIsListExpanded] = useState(false);
-  
+
   useEffect(() => {
     if (hasDetail) {
       setIsListExpanded(false);
@@ -69,6 +77,10 @@ export function MasterDetail<T>({
   }, [hasDetail]);
 
   const isCollapsed = hasDetail && !isListExpanded;
+
+  const selectedItem = selectedId
+    ? items.find((i) => getItemId(i) === selectedId) ?? null
+    : null;
 
   return (
     <>
@@ -80,7 +92,27 @@ export function MasterDetail<T>({
         </div>
       </div>
 
-      {/* HEADER */}
+      {/* Mobile Detail Header — shown only on mobile when a detail is selected */}
+      {selectedItem && detailTitle && (
+        <div className="md:hidden relative z-50">
+          <Header
+            title={detailTitle(selectedItem)}
+            leftAction={
+              <button
+                onClick={() => onSelectedChange(null)}
+                aria-label="Volver"
+                className="w-10 h-10 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-white/20 transition-all active:scale-95 cursor-pointer"
+              >
+                <ChevronLeft className="w-6 h-6 text-on-surface" />
+              </button>
+            }
+            rightAction={detailRightAction ? detailRightAction(selectedItem) : undefined}
+            actionContainerClassName="flex items-center shrink-0 w-auto min-w-[40px]"
+          />
+        </div>
+      )}
+
+      {/* SEARCH/FILTER HEADER — hide on mobile when detail is active */}
       <div className={`${hasDetail ? "hidden md:block" : "block"} px-4 md:px-5 py-3 bg-surface/30 dark:bg-surface/10 backdrop-blur-md md:bg-background border-b border-outline-variant/10 relative z-10`}>
         <div className="flex items-center gap-2.5">
           <div className="relative flex-1">
@@ -202,22 +234,9 @@ export function MasterDetail<T>({
         >
           {showCreationForm && renderCreationForm ? (
             renderCreationForm()
-          ) : selectedId ? (
-            <div className="flex-1 flex flex-col">
-              <div className="md:hidden px-5 py-3 border-b border-outline-variant/8 bg-surface flex items-center gap-2.5">
-                <button
-                  onClick={() => onSelectedChange(null)}
-                  className="w-7 h-7 md:w-9 md:h-9 rounded-lg hover:bg-outline-variant/10 flex items-center justify-center transition-colors cursor-pointer"
-                >
-                  <span className="text-on-surface-variant text-lg">&larr;</span>
-                </button>
-                <h2 className="text-sm md:text-lg font-bold text-on-surface">Detalle</h2>
-              </div>
-              <div className="flex-1 overflow-y-auto">
-                {renderDetail(
-                  items.find((i) => getItemId(i) === selectedId) as T
-                )}
-              </div>
+          ) : selectedItem ? (
+            <div className="flex-1 flex flex-col overflow-y-auto">
+              {renderDetail(selectedItem)}
             </div>
           ) : emptyState ? (
             emptyState
