@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { User, Calendar, MapPin, DollarSign, Pencil, Check } from "lucide-react";
 import { Job, Client } from "@/types";
 import { useDataStore } from "@/lib/store";
@@ -9,11 +9,15 @@ import { useClickOutside } from "@/hooks/use-click-outside";
 interface JobHeaderProps {
   job: Job;
   client?: Client;
+  isEditing?: boolean;
+  onEditingChange?: (editing: boolean) => void;
 }
 
-export function JobHeader({ job, client }: JobHeaderProps) {
+export function JobHeader({ job, client, isEditing: externalEditing, onEditingChange }: JobHeaderProps) {
   const { updateJob } = useDataStore();
-  const [isEditing, setIsEditing] = useState(false);
+  const [internalEditing, setInternalEditing] = useState(false);
+  const isEditing = externalEditing ?? internalEditing;
+  const setIsEditing = onEditingChange ?? setInternalEditing;
   const [titulo, setTitulo] = useState(job.titulo);
   const [descripcion, setDescripcion] = useState(job.descripcion || "");
   const [direccion, setDireccion] = useState(job.direccion || "");
@@ -41,8 +45,17 @@ export function JobHeader({ job, client }: JobHeaderProps) {
   };
 
   const editRef = useRef<HTMLDivElement>(null);
-  useClickOutside(editRef, () => {
+  const editJustStarted = useRef(false);
+
+  useEffect(() => {
     if (isEditing) {
+      editJustStarted.current = true;
+      requestAnimationFrame(() => { editJustStarted.current = false; });
+    }
+  }, [isEditing]);
+
+  useClickOutside(editRef, () => {
+    if (isEditing && !editJustStarted.current) {
       handleSave();
     }
   });
@@ -52,21 +65,9 @@ export function JobHeader({ job, client }: JobHeaderProps) {
       <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none" />
       
       <div className="relative z-10 space-y-4 md:space-y-3">
-        {!isEditing && (
-        <div className="absolute top-0 right-0 z-10">
-          <button
-            onClick={() => setIsEditing(true)}
-            className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-primary hover:bg-primary/10 transition-all opacity-100 md:opacity-0 group-hover:opacity-100 active:scale-95"
-            title="Editar información del trabajo"
-          >
-            <Pencil className="w-4 h-4" />
-          </button>
-        </div>
-        )}
-
         {isEditing ? (
           <div ref={editRef} className="space-y-4 md:space-y-3 relative transition-all">
-          <div className="space-y-1.5 md:space-y-1 pr-10">
+          <div className="space-y-1.5 md:space-y-1">
             <input 
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
@@ -131,11 +132,11 @@ export function JobHeader({ job, client }: JobHeaderProps) {
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-2 md:pt-3">
-            <button onClick={handleCancel} className="px-4 py-2 rounded-xl text-xs font-bold bg-on-surface/5 text-on-surface hover:bg-on-surface/10 transition-all">
+          <div className="hidden md:flex justify-end gap-2 pt-2 md:pt-3">
+            <button onClick={handleCancel} data-job-header-cancel className="px-4 py-2 rounded-xl text-xs font-bold bg-on-surface/5 text-on-surface hover:bg-on-surface/10 transition-all">
               Cancelar
             </button>
-            <button onClick={handleSave} disabled={!titulo.trim()} className="px-4 py-2 rounded-xl text-xs font-bold bg-primary text-white hover:bg-primary-dark transition-all disabled:opacity-50 flex items-center gap-1.5">
+            <button onClick={handleSave} data-job-header-save disabled={!titulo.trim()} className="px-4 py-2 rounded-xl text-xs font-bold bg-primary text-white hover:bg-primary-dark transition-all disabled:opacity-50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" strokeWidth={3} />
               Guardar
             </button>
@@ -143,16 +144,25 @@ export function JobHeader({ job, client }: JobHeaderProps) {
         </div>
       ) : (
         <div className="cursor-default select-none">
-          <div className="space-y-1.5 md:space-y-1 pr-10">
-            <h2 className="text-2xl md:text-3xl font-bold text-on-surface tracking-tight">
-              {job.titulo}
-            </h2>
-            <div className="flex items-center gap-2 text-on-surface-variant/60 font-medium">
-              <User className="w-4 h-4" />
-              <span className="text-sm font-semibold text-on-surface">
-                {client?.nombre || "Sin cliente"}
-              </span>
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-1.5 md:space-y-1 flex-1">
+              <h2 className="text-2xl md:text-3xl font-bold text-on-surface tracking-tight">
+                {job.titulo}
+              </h2>
+              <div className="flex items-center gap-2 text-on-surface-variant/60 font-medium">
+                <User className="w-4 h-4" />
+                <span className="text-sm font-semibold text-on-surface">
+                  {client?.nombre || "Sin cliente"}
+                </span>
+              </div>
             </div>
+            <button
+              onClick={() => setIsEditing(true)}
+              className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-primary hover:bg-primary/10 transition-all hidden md:flex opacity-0 group-hover:opacity-100 active:scale-95 shrink-0"
+              title="Editar información del trabajo"
+            >
+              <Pencil className="w-4 h-4" />
+            </button>
           </div>
 
           {job.descripcion && (

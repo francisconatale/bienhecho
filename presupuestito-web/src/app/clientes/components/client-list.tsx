@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import {
+  ArrowLeft,
   User,
   Pencil,
   Trash2,
@@ -228,7 +229,7 @@ function DetailPane({
               {clientJobs.map((job) => (
                 <Link
                   key={job.id}
-                  href={`/trabajos/${job.id}?from=clientes&clienteId=${client.id}`}
+                  href={`/trabajos/${job.id}?from=/clientes&clienteId=${client.id}`}
                   onClick={() => setLoadingJobId(job.id)}
                   className="group flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 md:p-5 bg-surface/40 dark:bg-surface/20 rounded-[20px] border border-white/10 dark:border-white/5 transition-all duration-300 hover:bg-surface/60 hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)] hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer"
                 >
@@ -360,7 +361,10 @@ export function ClientList() {
               <h2 className="text-sm md:text-lg font-bold text-on-surface">Nuevo Cliente</h2>
             </div>
             <div className="p-4 md:p-6">
-              <ClientForm onSuccess={() => setShowCreationForm(false)} />
+              <ClientForm onSuccess={(clientId) => {
+                setShowCreationForm(false);
+                setSelectedId(clientId);
+              }} />
             </div>
           </div>
         )}

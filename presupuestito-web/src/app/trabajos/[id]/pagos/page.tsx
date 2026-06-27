@@ -5,7 +5,6 @@ import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound, useSearchParams } from "next/navigation";
 import { useDataStore } from "@/lib/store";
-import { Header } from "@/components/layout/header";
 import { PaymentsDashboard } from "../components/payments-dashboard";
 
 interface PagosPageProps {
@@ -17,24 +16,13 @@ export default function PagosPage({ params }: PagosPageProps) {
   const searchParams = useSearchParams();
   const from = searchParams.get("from");
   const clienteId = searchParams.get("clienteId");
-  const backHref = `/trabajos/${id}${from ? `?from=${from}${clienteId ? `&clienteId=${clienteId}` : ""}` : ""}`;
+  const backHref = `/trabajos?id=${id}${from ? `&from=${from}${clienteId ? `&clienteId=${clienteId}` : ""}` : ""}`;
   const { jobs } = useDataStore();
   const job = jobs.find((j) => j.id === id);
 
   if (!job) {
     notFound();
   }
-
-  const leftAction = (
-    <Link href={backHref}>
-      <button
-        aria-label="Volver"
-        className="w-10 h-10 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-white/20 transition-all active:scale-95"
-      >
-        <ChevronLeft className="w-6 h-6 text-on-surface" />
-      </button>
-    </Link>
-  );
 
   return (
     <div className="relative w-full min-h-screen">
@@ -57,15 +45,15 @@ export default function PagosPage({ params }: PagosPageProps) {
         <div className="hidden dark:block absolute top-[50px] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/40 md:bg-primary-container/30 blur-[120px] md:blur-[160px] rounded-full transition-all duration-1000" />
       </div>
 
-      <div className="md:hidden">
-        <Header
-          title="Plan de Pagos y Cobros"
-          leftAction={leftAction}
-          actionContainerClassName="flex items-center shrink-0 w-auto min-w-[40px]"
-        />
+      {/* Mobile: simple back button */}
+      <div className="md:hidden px-4 py-2.5 relative z-10">
+        <Link href={backHref} className="inline-flex items-center gap-1.5 text-sm text-on-surface-variant font-medium hover:text-on-surface transition-colors active:scale-95">
+          <ChevronLeft className="w-4 h-4" />
+          Volver
+        </Link>
       </div>
 
-      <main className="relative flex-1 px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-12 max-w-4xl mx-auto w-full mt-20 md:mt-0 space-y-6">
+      <main className="relative flex-1 px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-12 max-w-4xl mx-auto w-full md:mt-0 space-y-6">
         {/* Desktop Breadcrumb */}
         <div className="hidden md:flex items-center justify-between mb-4">
           <div className="flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">

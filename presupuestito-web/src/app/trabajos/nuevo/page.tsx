@@ -65,7 +65,7 @@ function NuevoTrabajoForm() {
   return (
     <main className="flex-1 px-4 py-6 pb-28 mt-20 md:px-8 md:py-8 md:pb-12 max-w-xl md:max-w-2xl mx-auto w-full md:mt-0 transition-all">
       <div className="flex items-center gap-3 mb-5">
-        <Link href={preselectId ? `/clientes?clienteId=${clienteId}` : "/"}>
+        <Link href={preselectId ? `/clientes?clienteId=${preselectId}` : "/trabajos"}>
           <button
             aria-label="Volver"
             className="w-9 h-9 rounded-xl bg-surface border border-outline-variant/30 flex items-center justify-center hover:bg-on-surface/5 transition-all active:scale-95 cursor-pointer"

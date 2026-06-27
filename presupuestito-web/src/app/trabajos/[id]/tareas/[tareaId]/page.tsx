@@ -6,7 +6,6 @@ import Link from "next/link";
 import { notFound, useSearchParams } from "next/navigation";
 import { useDataStore } from "@/lib/store";
 import { useClickOutside } from "@/hooks/use-click-outside";
-import { Header } from "@/components/layout/header";
 import { TaskPhotos } from "../../components/task-photos";
 import { cn } from "@/lib/utils";
 
@@ -17,8 +16,6 @@ interface TareaDetailPageProps {
 export default function TareaDetailPage({ params }: TareaDetailPageProps) {
   const { id, tareaId } = React.use(params);
   const searchParams = useSearchParams();
-  const from = searchParams.get("from");
-  const clienteId = searchParams.get("clienteId");
   const { jobs, tasks, updateTask, visits, visitaTareas } = useDataStore();
 
   const job = jobs.find((j) => j.id === id);
@@ -72,16 +69,9 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
     }
   });
 
-  const leftAction = (
-    <Link href={from === "tareas" ? "/tareas" : from && clienteId ? `/trabajos/${id}?from=${from}&clienteId=${clienteId}` : `/trabajos/${id}`}>
-      <button
-        aria-label="Volver"
-        className="w-10 h-10 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-white/20 transition-all active:scale-95"
-      >
-        <ChevronLeft className="w-6 h-6 text-on-surface" />
-      </button>
-    </Link>
-  );
+  const from = searchParams.get("from");
+  const clienteId = searchParams.get("clienteId");
+  const backHref = `/trabajos?id=${id}${from ? `&from=${from}${clienteId ? `&clienteId=${clienteId}` : ""}` : ""}`;
 
   const rightAction = isEditing ? (
     <div className="flex items-center gap-2">
@@ -135,35 +125,43 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
         <div className="hidden dark:block absolute top-[50px] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/40 md:bg-primary-container/30 blur-[120px] md:blur-[160px] rounded-full transition-all duration-1000" />
       </div>
 
-      <div className="md:hidden">
-        <Header
-          title="Tarea"
-          leftAction={leftAction}
-          rightAction={rightAction}
-          actionContainerClassName="flex items-center shrink-0 w-auto min-w-[40px]"
-        />
+      {/* Mobile: back button + actions */}
+      <div className="md:hidden px-4 py-2.5 relative z-10 flex items-center justify-between">
+        <Link href={backHref} className="inline-flex items-center gap-1.5 text-sm text-on-surface-variant font-medium hover:text-on-surface transition-colors active:scale-95">
+          <ChevronLeft className="w-4 h-4" />
+          Volver
+        </Link>
+        {rightAction}
       </div>
 
-      <main className="relative flex-1 px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-12 max-w-4xl mx-auto w-full mt-20 md:mt-0 space-y-6">
-        {/* Desktop Breadcrumb & Actions */}
-        <div className="hidden md:flex items-center justify-between mb-4">
+      <main className="relative flex-1 px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-12 max-w-4xl mx-auto w-full md:mt-0 space-y-6">
+        {/* Desktop Breadcrumb */}
+        <div className="hidden md:flex items-center mb-4">
           <div className="flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
-            <Link 
-              href={from === "tareas" ? "/tareas" : from && clienteId ? `/trabajos/${id}?from=${from}&clienteId=${clienteId}` : `/trabajos/${id}`}
+            <Link
+              href={backHref}
               className="flex items-center gap-1 hover:text-primary transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
               Volver a {job.titulo}
             </Link>
           </div>
-          <div>{rightAction}</div>
         </div>
         {/* Titular Principal / Edición */}
         <div ref={editRef} className="space-y-4">
           {!isEditing ? (
-            <h1 className="text-4xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter cursor-default select-none">
-              {task.descripcion}
-            </h1>
+            <div className="group flex items-start justify-between gap-4">
+              <h1 className="text-4xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter cursor-default select-none flex-1">
+                {task.descripcion}
+              </h1>
+              <button
+                onClick={() => setIsEditing(true)}
+                className="hidden md:flex p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-primary hover:bg-primary/10 transition-all opacity-0 group-hover:opacity-100 active:scale-95 shrink-0"
+                title="Editar tarea"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+            </div>
           ) : (
             <textarea
               value={descripcion}

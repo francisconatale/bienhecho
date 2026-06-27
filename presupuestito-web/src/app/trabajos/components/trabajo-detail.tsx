@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import { ChevronLeft, FileDown, Hammer, Wallet } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { ChevronLeft, Check, FileDown, Hammer, Wallet, X, Pencil } from "lucide-react";
 import Link from "next/link";
 import { notFound, useSearchParams } from "next/navigation";
 import { useDataStore } from "@/lib/store";
 import { useBudgetPDF } from "@/hooks/use-budget-pdf";
-import { Header } from "@/components/layout/header";
 import { JobHeader } from "../[id]/components/job-header";
 import { JobStatusSelector } from "../[id]/components/job-status";
 import { ProgressBar } from "../[id]/components/progress-bar";
@@ -14,28 +13,40 @@ import { TaskList } from "../[id]/components/task-list";
 import { useMaterials } from "../[id]/hooks/use-materials";
 import { usePayments } from "../[id]/hooks/use-payments";
 import { cn } from "@/lib/utils";
+import { buildBackHref, buildForwardParams } from "@/lib/nav";
 
-export function TrabajoDetail({ 
-  id, 
+export function TrabajoDetail({
+  id,
   isEmbedded = false,
-  onBack
-}: { 
-  id: string; 
+  onBack,
+  startEditing,
+  onEditStarted,
+  onEditingChange,
+}: {
+  id: string;
   isEmbedded?: boolean;
   onBack?: () => void;
+  startEditing?: boolean;
+  onEditStarted?: () => void;
+  onEditingChange?: (editing: boolean) => void;
 }) {
   const searchParams = useSearchParams();
   const { jobs, clients, tasks } = useDataStore();
   const { downloadPDF } = useBudgetPDF();
   const [pdfError, setPdfError] = useState<string | null>(null);
+  const [isHeaderEditing, setIsHeaderEditing] = useState(false);
 
-  const fromClientes = searchParams.get("from") === "clientes";
-  const clienteId = searchParams.get("clienteId");
-  const backHref = fromClientes && clienteId
-    ? `/clientes?clienteId=${clienteId}`
-    : fromClientes
-      ? "/clientes"
-      : "/trabajos";
+  useEffect(() => { setIsHeaderEditing(false); }, []);
+  useEffect(() => {
+    if (startEditing) {
+      setIsHeaderEditing(true);
+      onEditStarted?.();
+    }
+  }, [startEditing]);
+  useEffect(() => { onEditingChange?.(isHeaderEditing); }, [isHeaderEditing]);
+
+  const backHref = buildBackHref(searchParams);
+  const from = searchParams.get("from");
 
   const job = jobs.find((j) => j.id === id);
 
@@ -55,9 +66,7 @@ export function TrabajoDetail({
   
   const { saldoPendiente } = usePayments(job.id);
 
-  const backParams = fromClientes || clienteId
-    ? `?from=clientes${clienteId ? `&clienteId=${clienteId}` : ""}`
-    : "";
+  const backParams = buildForwardParams(searchParams, job.id);
 
   const handleDownloadPDF = () => {
     setPdfError(null);
@@ -91,22 +100,38 @@ export function TrabajoDetail({
             <div className="hidden dark:block absolute top-[50px] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/40 md:bg-primary-container/30 blur-[120px] md:blur-[160px] rounded-full transition-all duration-1000" />
           </div>
 
-          <div className="md:hidden relative z-10">
-            <Header 
-              title="Detalle del Trabajo" 
-              leftAction={
-                <Link href={backHref}>
-                  <button
-                    aria-label="Volver"
-                    className="w-10 h-10 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-white/20 transition-all active:scale-95"
-                  >
-                    <ChevronLeft className="w-6 h-6 text-on-surface" />
-                  </button>
-                </Link>
-              }
-              rightAction={<JobStatusSelector job={job} />}
-              actionContainerClassName="flex items-center shrink-0 w-auto min-w-[40px]"
-            />
+          {/* Mobile: back button */}
+          <div className="md:hidden relative z-10 px-4 pt-2.5 pb-6 flex items-center justify-between">
+            <Link href={backHref} className="inline-flex items-center gap-1.5 text-sm text-on-surface-variant font-medium hover:text-on-surface transition-colors active:scale-95">
+              <ChevronLeft className="w-4 h-4" />
+              Volver
+            </Link>
+            {isHeaderEditing ? (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsHeaderEditing(false)}
+                  className="w-10 h-10 rounded-full bg-on-surface/5 flex items-center justify-center text-on-surface-variant hover:bg-on-surface/10 transition-all active:scale-95"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => {
+                    document.querySelector<HTMLButtonElement>('[data-job-header-save]')?.click();
+                  }}
+                  className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-md hover:bg-primary-dark transition-all active:scale-95"
+                >
+                  <Check className="w-5 h-5" strokeWidth={3} />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsHeaderEditing(true)}
+                className="w-10 h-10 rounded-full bg-on-surface/5 flex items-center justify-center text-on-surface-variant hover:bg-on-surface/10 transition-all active:scale-95"
+                title="Editar trabajo"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </>
       )}
@@ -115,7 +140,7 @@ export function TrabajoDetail({
         "relative flex-1 w-full mx-auto",
         isEmbedded 
           ? "px-6 py-6 pb-28 md:px-8 max-w-full" 
-          : "px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-12 max-w-7xl mt-2 md:mt-0"
+          : "px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-12 max-w-7xl md:mt-0"
       )}>
         <div className={cn(
           "grid items-start",
@@ -125,7 +150,7 @@ export function TrabajoDetail({
         )}>
           {/* Columna Principal */}
           <div className="space-y-4">
-            {/* Desktop Breadcrumb & Status */}
+            {/* Desktop Breadcrumb */}
             <div className="hidden md:flex items-center justify-between mb-4">
               <div className="flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
                 {isEmbedded ? (
@@ -138,14 +163,13 @@ export function TrabajoDetail({
                 ) : (
                   <Link href={backHref} className="flex items-center gap-1 hover:text-primary transition-colors">
                     <ChevronLeft className="w-4 h-4" />
-                    Volver a {fromClientes && client ? client.nombre : "Trabajos"}
+                    Volver a {from === "/clientes" && client ? client.nombre : "Trabajos"}
                   </Link>
                 )}
               </div>
-              <JobStatusSelector job={job} />
             </div>
 
-            <JobHeader job={job} client={client} />
+            <JobHeader job={job} client={client} isEditing={isHeaderEditing} onEditingChange={setIsHeaderEditing} />
             
             <div className="grid grid-cols-2 gap-4">
               <Link href={`/trabajos/${job.id}/materiales${backParams}`} className="group relative overflow-hidden bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2">
@@ -194,6 +218,9 @@ export function TrabajoDetail({
           {/* Columna Secundaria (Sidebar Sticky en Desktop) */}
           <div className={cn("space-y-4", isEmbedded ? "2xl:sticky 2xl:top-8" : "lg:sticky lg:top-32")}>
             <ProgressBar tasks={jobTasks} />
+            
+            {/* Job Status Card */}
+            <JobStatusSelector job={job} variant="card" />
             
             {/* Card de Total + Acciones con Glassmorphism */}
             <div className="relative overflow-hidden bg-surface/30 dark:bg-surface/10 backdrop-blur-2xl rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">

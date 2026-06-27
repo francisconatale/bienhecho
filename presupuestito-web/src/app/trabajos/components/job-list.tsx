@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Briefcase } from "lucide-react";
+import { useState, useRef } from "react";
+import { Briefcase, Pencil, X, Check } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 import { Job } from "@/types";
 import { usePagination } from "@/hooks/use-pagination";
@@ -36,6 +36,9 @@ export function JobList() {
   const [selectedId, setSelectedId] = useState<string | null>(
     () => searchParams.get("id") || null
   );
+  const [editTargetId, setEditTargetId] = useState<string | null>(null);
+  const [isHeaderEditing, setIsHeaderEditing] = useState(false);
+  const editingJobIdRef = useRef<string | null>(null);
 
   const { jobs, clients } = useDataStore();
 
@@ -79,7 +82,44 @@ export function JobList() {
         mobileTitle="Trabajos"
         mobileDescription="Gestioná tus proyectos."
         detailTitle={(job) => job.titulo}
-        detailRightAction={(job) => <JobStatusSelector job={job} />}
+        detailRightAction={(job) => {
+          const isThisEditing = isHeaderEditing && editingJobIdRef.current === job.id;
+          if (isThisEditing) {
+            return (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    document.querySelector<HTMLButtonElement>('[data-job-header-cancel]')?.click();
+                  }}
+                  className="w-10 h-10 rounded-full bg-on-surface/5 flex items-center justify-center text-on-surface-variant hover:bg-on-surface/10 transition-all active:scale-95"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => {
+                    document.querySelector<HTMLButtonElement>('[data-job-header-save]')?.click();
+                  }}
+                  className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-md hover:bg-primary-dark transition-all active:scale-95"
+                >
+                  <Check className="w-5 h-5" strokeWidth={3} />
+                </button>
+              </div>
+            );
+          }
+          return (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                editingJobIdRef.current = job.id;
+                setEditTargetId(job.id);
+              }}
+              className="w-10 h-10 rounded-full bg-on-surface/5 flex items-center justify-center text-on-surface-variant hover:bg-on-surface/10 transition-all active:scale-95"
+              title="Editar trabajo"
+            >
+              <Pencil className="w-4 h-4" />
+            </button>
+          );
+        }}
         pagination={pag}
         creationHref="/trabajos/nuevo"
         renderItem={(job, isSelected) => {
@@ -129,7 +169,21 @@ export function JobList() {
           </button>
         )}
         renderDetail={(job) => (
-          <TrabajoDetail id={job.id} isEmbedded={true} onBack={() => setSelectedId(null)} />
+          <TrabajoDetail
+            id={job.id}
+            isEmbedded
+            onBack={() => {
+              setSelectedId(null);
+              setIsHeaderEditing(false);
+              editingJobIdRef.current = null;
+            }}
+            startEditing={editTargetId === job.id}
+            onEditStarted={() => setEditTargetId(null)}
+            onEditingChange={(editing) => {
+              setIsHeaderEditing(editing);
+              if (!editing) editingJobIdRef.current = null;
+            }}
+          />
         )}
         emptyDetail={
           <div className="flex-1 flex items-start justify-center pt-16 text-on-surface-variant">
