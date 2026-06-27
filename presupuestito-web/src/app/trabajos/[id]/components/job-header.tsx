@@ -74,7 +74,6 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
 
   return (
     <div className="group relative overflow-hidden bg-surface/80 rounded-[28px] p-6 md:p-8 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
-      <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none" />
       
       <div className="relative z-10 space-y-4 md:space-y-3">
         {isEditing ? (

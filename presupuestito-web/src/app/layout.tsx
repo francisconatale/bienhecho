@@ -26,6 +26,16 @@ export default function RootLayout({
         className="bg-grouped-bg-light text-on-background font-body min-h-screen antialiased transition-colors duration-200 flex flex-col"
       >
         <ThemeScript />
+        <link rel="manifest" href="/manifest.webmanifest" />
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            if ("serviceWorker" in navigator) {
+              window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/serwist/sw.js");
+              });
+            }
+          `,
+        }} />
         
         {/* Grain / Noise Overlay (Persistent) */}
         <div className="fixed inset-0 pointer-events-none opacity-[0.04] mix-blend-overlay z-[-1] dark:opacity-[0.06]" style={{ backgroundImage: "url('https://grainy-gradients.vercel.app/noise.svg')" }} />

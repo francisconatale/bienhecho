@@ -140,7 +140,6 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
                   : "bg-surface/40 dark:bg-surface/10 hover:bg-surface/60 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-lg"
               )}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent dark:from-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
               
               <span className="relative z-10 text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">
                 Estado Actual
@@ -166,8 +165,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
             </button>
 
             {/* Price / Tipo Intent Card */}
-            <div className="relative overflow-hidden p-5 rounded-[24px] bg-surface/40 dark:bg-surface/10 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] flex flex-col gap-2">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent dark:from-white/5 pointer-events-none" />
+            <div className="relative overflow-hidden p-5 rounded-[24px] bg-surface dark:bg-surface/10 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] flex flex-col gap-2">
               
               <span className={cn(
                 "relative z-10 text-[10px] font-black uppercase tracking-[0.25em]",
@@ -204,7 +202,6 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
         {/* Historial de Avance (Visitas) */}
         {taskProgresses.length > 0 && (
           <div className="relative bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-5 transition-shadow duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none rounded-[28px]" />
             
             <div className="relative z-10 flex items-center justify-between">
               <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
@@ -217,7 +214,7 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
               {taskProgresses.map((progress, idx) => (
                 <div 
                   key={`${progress.visita_id}-${idx}`}
-                  className="group flex flex-col gap-2 p-4 bg-surface/40 dark:bg-surface/20 rounded-[20px] border border-white/10 dark:border-white/5 transition-colors duration-300 hover:bg-surface/60"
+                  className="group flex flex-col gap-2 p-4 bg-surface dark:bg-surface/20 rounded-[20px] border border-white/10 dark:border-white/5 transition-colors duration-300 hover:bg-surface/60"
                 >
                   <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">
                     <CalendarDays className="w-3 h-3" />
@@ -236,7 +233,6 @@ export default function TareaDetailPage({ params }: TareaDetailPageProps) {
 
         {/* Fotos - always visible */}
         <div className="relative bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-shadow duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none rounded-[28px]" />
           <div className="relative z-10 flex items-center justify-between">
             <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
               Fotos del trabajo

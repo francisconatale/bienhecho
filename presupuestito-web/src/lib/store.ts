@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { Client, Job, Task, JobStatus, TaskPhoto, Visit, VisitaTarea, VisitStatus, Material, Cobro } from "@/types";
 
 interface DataState {
@@ -52,7 +53,9 @@ const mm = String(today.getMonth() + 1).padStart(2, "0");
 const dd = String(today.getDate()).padStart(2, "0");
 const todayStr = `${yyyy}-${mm}-${dd}`;
 
-export const useDataStore = create<DataState>((set, get) => ({
+export const useDataStore = create<DataState>()(
+  persist(
+    (set, get) => ({
   taskPhotos: [],
   visits: [
     {
@@ -332,4 +335,9 @@ export const useDataStore = create<DataState>((set, get) => ({
     set((state) => ({
       cobros: state.cobros.filter((c) => c.id !== id),
     })),
-}));
+  }),
+  {
+    name: "presupuestito-store",
+  },
+),
+);

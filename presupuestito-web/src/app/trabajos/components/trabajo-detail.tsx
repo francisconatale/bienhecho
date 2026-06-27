@@ -155,7 +155,6 @@ export function TrabajoDetail({
                 onClick={() => pushHistory(window.location.pathname + window.location.search)}
                 className="group relative overflow-hidden bg-surface/80 rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none" />
                 <div className="relative z-10 flex items-center justify-between">
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
                     Materiales
@@ -177,7 +176,6 @@ export function TrabajoDetail({
                 onClick={() => pushHistory(window.location.pathname + window.location.search)}
                 className="group relative overflow-hidden bg-surface/80 rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none" />
                 <div className="relative z-10 flex items-center justify-between">
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
                     Cuentas a Cobrar
@@ -210,7 +208,6 @@ export function TrabajoDetail({
             
             {/* Card de Total + Acciones con Glassmorphism */}
             <div className="relative overflow-hidden bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 dark:to-transparent pointer-events-none" />
               
               <div className="relative flex flex-col gap-1 z-10">
                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
