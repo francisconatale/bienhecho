@@ -1,7 +1,7 @@
 <!--
   Sync Impact Report
-  Version change: 1.0.0 → 1.1.0
-  Modified sections: Development Workflow (added dual flow, updated DoD)
+  Version change: 1.1.0 → 1.2.0
+  Modified sections: Principle II (3-state machine replaced 5-state machine)
   Added sections: N/A
   Removed sections: N/A
   Templates requiring updates: ✅ plan-template.md (no changes needed)
@@ -42,8 +42,9 @@ Financial accuracy is non-negotiable.
   of generation. Retroactive price changes MUST NOT alter existing
   invoices.
 - The workflow state machine for `trabajos.estado` MUST be respected:
-  `presupuestado → en_curso → listo_para_facturar → facturado → cobrado`.
-  Backward transitions MUST require explicit user confirmation.
+  `borrador → presupuestado → pagado`. `pagado` is the terminal state.
+  Backward transitions (e.g., from `pagado` back to `presupuestado`) MUST
+  require explicit user confirmation.
 - UUIDs are the primary key type for all tables (per `01-estructura-base-de-datos.md`).
 
 **Rationale**: Incorrect invoices or lost financial data destroy user
@@ -165,4 +166,4 @@ specifications MUST comply with these principles.
 - **Supremacy**: When this constitution conflicts with any other
   project document, this constitution takes precedence.
 
-**Version**: 1.1.0 | **Ratified**: 2026-06-25 | **Last Amended**: 2026-06-25
+**Version**: 1.2.0 | **Ratified**: 2026-06-25 | **Last Amended**: 2026-06-28

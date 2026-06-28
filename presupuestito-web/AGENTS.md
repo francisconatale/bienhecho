@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/005-navegacion-volver/plan.md
+at specs/007-ciclo-vida-presupuesto/plan.md
 <!-- SPECKIT END -->
 
 ## Regla: TODO.md
