@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { z } from "zod";
 import { useDataStore } from "@/lib/store";
 
@@ -42,6 +42,22 @@ export function usePayments(trabajoId: string) {
     return presupuestoTotal - totalCobrado;
   }, [presupuestoTotal, totalCobrado]);
 
+  const checkAndAutoPaid = useCallback(() => {
+    const state = useDataStore.getState();
+    const allCobros = state.cobros.filter((c) => c.trabajo_id === trabajoId);
+    const totalCobrado = allCobros.reduce((sum, c) => sum + c.monto_cobrado, 0);
+    const job = state.jobs.find((j) => j.id === trabajoId);
+    if (job) {
+      const totalMateriales = state.materiales
+        .filter((m) => m.trabajo_id === trabajoId)
+        .reduce((sum, m) => sum + m.subtotal, 0);
+      const presupuestoTotal = (job?.presupuesto || 0) + totalMateriales;
+      if (totalCobrado >= presupuestoTotal && job.estado !== "pagado") {
+        useDataStore.getState().updateJob(trabajoId, { estado: "pagado" });
+      }
+    }
+  }, [trabajoId]);
+
   const addCobro = (data: CobroFormValues) => {
     addCobroStore({
       trabajo_id: trabajoId,
@@ -50,6 +66,7 @@ export function usePayments(trabajoId: string) {
       forma_pago: data.forma_pago,
       notas: data.notas,
     });
+    checkAndAutoPaid();
   };
 
   const updateCobro = (id: string, data: CobroFormValues) => {
@@ -59,10 +76,12 @@ export function usePayments(trabajoId: string) {
       forma_pago: data.forma_pago,
       notas: data.notas,
     });
+    checkAndAutoPaid();
   };
 
   const removeCobro = (id: string) => {
     removeCobroStore(id);
+    checkAndAutoPaid();
   };
 
   return {

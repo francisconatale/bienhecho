@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { User, Calendar, MapPin, DollarSign, Pencil, Check } from "lucide-react";
+import { User, Calendar, MapPin, DollarSign, Pencil, Check, Lock } from "lucide-react";
 import { Job, Client } from "@/types";
 import { useDataStore } from "@/lib/store";
 import { useClickOutside } from "@/hooks/use-click-outside";
@@ -18,7 +18,10 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
   const { updateJob } = useDataStore();
   const [internalEditing, setInternalEditing] = useState(false);
   const isEditing = externalEditing ?? internalEditing;
-  const setIsEditing = onEditingChange ?? setInternalEditing;
+  const setIsEditing = (val: boolean) => {
+    if (val && job.estado === "pagado") return;
+    (onEditingChange ?? setInternalEditing)(val);
+  };
   const [titulo, setTitulo] = useState(job.titulo);
   const [descripcion, setDescripcion] = useState(job.descripcion || "");
   const [direccion, setDireccion] = useState(job.direccion || "");
@@ -155,6 +158,12 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
         </div>
       ) : (
         <div className="cursor-default select-none">
+          {job.estado === "pagado" && (
+            <div className="flex items-center gap-2 mb-4 px-4 py-2.5 rounded-[16px] bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
+              <Lock className="w-3.5 h-3.5 shrink-0" strokeWidth={2.5} />
+              Trabajo finalizado — información en modo solo lectura
+            </div>
+          )}
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1.5 md:space-y-1 flex-1">
               <h2 className="text-2xl md:text-3xl font-bold text-on-surface tracking-tight cursor-default select-none">
@@ -167,13 +176,15 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
                 </span>
               </div>
             </div>
-            <button
-              onClick={() => setIsEditing(true)}
-              className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-primary hover:bg-primary/10 transition-all hidden md:flex opacity-0 group-hover:opacity-100 active:scale-95 shrink-0"
-              title="Editar información del trabajo"
-            >
-              <Pencil className="w-4 h-4" />
-            </button>
+            {job.estado !== "pagado" && (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-primary hover:bg-primary/10 transition-all hidden md:flex opacity-0 group-hover:opacity-100 active:scale-95 shrink-0 cursor-pointer"
+                title="Editar información del trabajo"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
           {job.descripcion && (

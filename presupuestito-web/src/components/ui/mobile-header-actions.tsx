@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 interface MobileHeaderActionsProps {
   isEditing: boolean;
-  onEditStart: () => void;
+  onEditStart?: () => void;
   onCancel: () => void;
   onSave: () => void;
   onDelete?: () => void;
@@ -49,14 +49,16 @@ export function MobileHeaderActions({
 
   return (
     <div className="flex items-center gap-1">
-      <button
-        type="button"
-        onClick={onEditStart}
-        className="w-10 h-10 rounded-full bg-on-surface/5 hover:bg-on-surface/10 flex items-center justify-center transition-all active:scale-95 text-on-surface-variant hover:text-primary cursor-pointer"
-        title="Editar"
-      >
-        <Pencil className="w-4 h-4 text-on-surface" strokeWidth={2.5} />
-      </button>
+      {onEditStart && (
+        <button
+          type="button"
+          onClick={onEditStart}
+          className="w-10 h-10 rounded-full bg-on-surface/5 hover:bg-on-surface/10 flex items-center justify-center transition-all active:scale-95 text-on-surface-variant hover:text-primary cursor-pointer"
+          title="Editar"
+        >
+          <Pencil className="w-4 h-4 text-on-surface" strokeWidth={2.5} />
+        </button>
+      )}
       {onDelete && (
         <button
           type="button"

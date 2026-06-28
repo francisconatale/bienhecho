@@ -127,7 +127,7 @@ export const useDataStore = create<DataState>()(
       titulo: "Edificio Las Heras",
       direccion: "Las Heras 456",
       presupuesto: 1500000,
-      estado: "en_curso",
+      estado: "presupuestado",
       created_at: new Date().toISOString(),
     },
     {
@@ -145,7 +145,7 @@ export const useDataStore = create<DataState>()(
       titulo: "Mantenimiento General",
       direccion: "Av. Rivadavia 890",
       presupuesto: 350000,
-      estado: "listo_para_facturar",
+      estado: "pagado",
       created_at: new Date().toISOString(),
     },
   ],
@@ -181,7 +181,7 @@ export const useDataStore = create<DataState>()(
     const newJob: Job = {
       ...jobData,
       id: crypto.randomUUID(),
-      estado: "presupuestado",
+      estado: "borrador",
       created_at: new Date().toISOString(),
     };
     set((state) => ({ jobs: [newJob, ...state.jobs] }));

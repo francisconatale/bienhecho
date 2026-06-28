@@ -19,13 +19,10 @@ function formatCurrency(amount: number): string {
 
 function getStatusColor(estado: string): string {
   switch (estado) {
-    case "cobrado":
-    case "facturado":
+    case "pagado":
       return "bg-success";
-    case "en_curso":
+    case "presupuestado":
       return "bg-accent-dark";
-    case "listo_para_facturar":
-      return "bg-primary";
     default:
       return "bg-outline";
   }

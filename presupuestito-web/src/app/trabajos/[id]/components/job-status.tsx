@@ -6,31 +6,23 @@ import { useDataStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 const STATUS_ORDER: JobStatus[] = [
+  "borrador",
   "presupuestado",
-  "en_curso",
-  "listo_para_facturar",
-  "facturado",
-  "cobrado",
+  "pagado",
 ];
 
 const STATUS_LABELS: Record<JobStatus, string> = {
+  borrador: "Borrador",
   presupuestado: "Presupuestado",
-  en_curso: "En Curso",
-  listo_para_facturar: "Listo p/ Facturar",
-  facturado: "Facturado",
-  cobrado: "Cobrado",
+  pagado: "Pagado",
 };
 
 const STATUS_COLORS: Record<JobStatus, string> = {
-  presupuestado:
-    "bg-on-surface/10 text-on-surface-variant",
-  en_curso:
-    "bg-primary/10 text-primary",
-  listo_para_facturar:
-    "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-  facturado:
+  borrador:
     "bg-blue-500/10 text-blue-600 dark:text-blue-400",
-  cobrado:
+  presupuestado:
+    "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  pagado:
     "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
 };
 

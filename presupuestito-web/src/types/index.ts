@@ -9,11 +9,9 @@ export interface Client {
 }
 
 export type JobStatus =
+  | "borrador"
   | "presupuestado"
-  | "en_curso"
-  | "listo_para_facturar"
-  | "facturado"
-  | "cobrado";
+  | "pagado";
 
 export interface Job {
   id: string;
