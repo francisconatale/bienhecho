@@ -5,7 +5,7 @@ import { ListItem } from "@/components/ui/list-item";
 import { useDataStore } from "@/lib/store";
 import { usePagination } from "@/hooks/use-pagination";
 import { PaginationButtons } from "@/components/ui/pagination-buttons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 export function RecentActivity() {
   const { clients, jobs } = useDataStore();
@@ -15,8 +15,9 @@ export function RecentActivity() {
     setMounted(true);
   }, []);
 
-  const sortedJobs = [...jobs]
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  const sortedJobs = useMemo(() => {
+    return [...jobs].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  }, [jobs]);
 
   const pag = usePagination(sortedJobs, 5);
 

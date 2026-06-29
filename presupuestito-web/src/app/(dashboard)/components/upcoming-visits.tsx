@@ -4,7 +4,7 @@ import { usePagination } from "@/hooks/use-pagination";
 import { PaginationButtons } from "@/components/ui/pagination-buttons";
 import { CalendarDays, ArrowRight } from "lucide-react";
 import { useDataStore } from "@/lib/store";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 
 export function UpcomingVisits() {
@@ -15,17 +15,19 @@ export function UpcomingVisits() {
     setMounted(true);
   }, []);
 
-  const today = new Date();
-  const sevenDaysFromNow = new Date(today);
-  sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+  const sortedVisits = useMemo(() => {
+    const today = new Date();
+    const sevenDaysFromNow = new Date(today);
+    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
 
-  const sortedVisits = visits
-    .filter((v) => v.estado === "planificada")
-    .filter((v) => {
-      const d = new Date(v.fecha + "T00:00:00");
-      return d >= today && d <= sevenDaysFromNow;
-    })
-    .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora_inicio.localeCompare(b.hora_inicio));
+    return visits
+      .filter((v) => v.estado === "planificada")
+      .filter((v) => {
+        const d = new Date(v.fecha + "T00:00:00");
+        return d >= today && d <= sevenDaysFromNow;
+      })
+      .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora_inicio.localeCompare(b.hora_inicio));
+  }, [visits]);
 
   const pag = usePagination(sortedVisits, 5);
 
