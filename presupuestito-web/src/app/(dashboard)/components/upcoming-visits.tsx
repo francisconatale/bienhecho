@@ -41,7 +41,7 @@ export function UpcomingVisits() {
             Próximas Visitas
           </h2>
         </div>
-        <div className="flex-1 flex flex-col items-center justify-center min-h-[140px] bg-surface/40 backdrop-blur-xl rounded-[24px] border border-outline-variant/10 text-center p-6">
+        <div className="flex-1 flex flex-col items-center justify-center min-h-[140px] bg-surface/40 backdrop-blur-xl rounded-xl border border-outline-variant/10 text-center p-6">
           <CalendarDays className="w-8 h-8 text-on-surface-variant/20 mb-3" aria-hidden="true" />
           <p className="text-sm font-medium text-on-surface-variant/60">No hay visitas planificadas para los próximos 7 días.</p>
         </div>
@@ -64,7 +64,7 @@ export function UpcomingVisits() {
         </Link>
       </div>
 
-      <div className="flex-1 flex flex-col bg-surface/60 backdrop-blur-2xl rounded-[32px] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] border border-outline-variant/20 overflow-hidden">
+      <div className="flex-1 flex flex-col bg-surface/60 backdrop-blur-2xl rounded-xl shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] border border-outline-variant/20 overflow-hidden">
         <div className="flex flex-col divide-y divide-black/[0.04] dark:divide-white/[0.04]">
           {pag.paginatedItems.map((visit) => {
             const job = jobs.find((j) => j.id === visit.trabajo_id);
@@ -80,7 +80,7 @@ export function UpcomingVisits() {
                 key={visit.id}
                 className="flex items-center gap-3 p-4 md:p-5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
               >
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-[14px] md:rounded-[16px] bg-primary/10 flex items-center justify-center text-primary shrink-0 shadow-inner">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 shadow-inner">
                   <CalendarDays className="w-5 h-5" strokeWidth={2} aria-hidden="true" />
                 </div>
               <div className="flex-1 min-w-0">

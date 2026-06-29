@@ -31,7 +31,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
               type="text"
               {...register("nombre")}
               placeholder="Ej. Acme Corp o Juan Pérez"
-              className={`w-full bg-grouped-bg-light bg-surface border ${
+              className={`w-full bg-surface border ${
                 errors.nombre ? "border-red-500" : "border-outline-variant/20"
               } rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20`}
             />
@@ -52,7 +52,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
               type="email"
               {...register("email")}
               placeholder="cliente@ejemplo.com"
-              className={`w-full bg-grouped-bg-light bg-surface border ${
+              className={`w-full bg-surface border ${
                 errors.email ? "border-red-500" : "border-outline-variant/20"
               } rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20`}
             />
@@ -73,7 +73,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
               type="tel"
               {...register("telefono")}
               placeholder="+54 11 ..."
-              className="w-full bg-grouped-bg-light bg-surface border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full bg-surface border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -89,7 +89,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
               type="text"
               {...register("direccion")}
               placeholder="Av. Corrientes 1234"
-              className="w-full bg-grouped-bg-light bg-surface border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full bg-surface border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
         </div>

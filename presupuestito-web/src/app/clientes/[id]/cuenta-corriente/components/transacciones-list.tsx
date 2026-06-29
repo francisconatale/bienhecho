@@ -7,54 +7,66 @@ export function TransaccionesList({ clienteId }: { clienteId: string }) {
   const { transacciones } = useCuentaCorriente(clienteId);
 
   return (
-    <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm">
-      <h3 className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60 mb-6">Historial Detallado</h3>
+    <div className="flex flex-col mt-4">
+      <h3 className="text-[13px] font-bold text-on-surface-variant uppercase tracking-widest mb-3 px-1">Historial Detallado</h3>
 
-      <div className="space-y-3">
-        {transacciones.length > 0 ? (
-          transacciones.map((tx) => (
-            <div
-              key={tx.id}
-              className="flex items-center justify-between gap-4 p-4 md:p-5 bg-surface/40 dark:bg-white/[0.03] rounded-[16px] border border-outline-variant/10 dark:border-white/5 hover:bg-surface/80 dark:hover:bg-white/[0.06] transition-colors group"
-            >
-              <div className="flex items-center gap-4">
-                <div className={cn("w-2 h-2 rounded-full shrink-0 mt-1 self-start", tx.tipo === "cargo" ? "bg-[#EF4444]" : "bg-[#22C55E]")} />
-                <div className="flex flex-col gap-1.5">
-                  <p className="text-[15px] font-bold text-on-surface leading-tight group-hover:text-primary transition-colors">{tx.concepto}</p>
-                  <div className="flex items-center gap-3">
-                    <span className="text-[13px] font-medium text-on-surface-variant/80">
-                      {new Date(tx.fecha + "T00:00:00").toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric" })}
-                    </span>
-                    <span className={cn(
-                      "text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-md",
-                      tx.tipo === "cargo" ? "bg-amber-100 text-amber-700 dark:bg-[#EF4444]/20 dark:text-[#EF4444]" : "bg-[#E8F5E9] text-[#2E7D32] dark:bg-[#22C55E]/20 dark:text-[#81C784]"
-                    )}>
-                      {tx.tipo === "cargo" ? "Cargo" : "Abono"}
-                    </span>
+      <div className="flex flex-col bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm">
+        <div className="hidden md:flex items-center px-4 py-2 border-b border-outline-variant/20 bg-surface-variant/20">
+          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest flex-1">Concepto</div>
+          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-32">Fecha</div>
+          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-32 text-right">Monto</div>
+        </div>
+        
+        <div className="flex flex-col divide-y divide-outline-variant/10">
+          {transacciones.length > 0 ? (
+            transacciones.map((tx) => (
+              <div
+                key={tx.id}
+                className="flex flex-col md:flex-row md:items-center px-4 py-3 hover:bg-primary/5 transition-colors gap-2 md:gap-0 group"
+              >
+                {/* Concept */}
+                <div className="flex-1 min-w-0 pr-4 flex items-center gap-3">
+                  <div className={cn("w-2 h-2 rounded-full shrink-0", tx.tipo === "cargo" ? "bg-[#EF4444]" : "bg-[#22C55E]")} />
+                  <div className="flex flex-col min-w-0">
+                    <p className="text-[14px] font-bold text-on-surface truncate group-hover:text-primary transition-colors">{tx.concepto}</p>
+                    <div className="md:hidden flex items-center gap-2 mt-1">
+                      <span className="text-[12px] text-on-surface-variant">
+                        {new Date(tx.fecha + "T00:00:00").toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric" })}
+                      </span>
+                    </div>
                   </div>
                 </div>
+                
+                {/* Date Column */}
+                <div className="hidden md:flex w-32 shrink-0 items-center">
+                  <span className="text-[13px] font-medium text-on-surface-variant">
+                    {new Date(tx.fecha + "T00:00:00").toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric" })}
+                  </span>
+                </div>
+
+                {/* Amount Column */}
+                <div className="w-full md:w-32 shrink-0 flex flex-col md:text-right pt-2 md:pt-0 border-t border-outline-variant/10 md:border-0">
+                  <span className={cn(
+                    "text-[15px] font-bold tabular-nums block",
+                    tx.tipo === "cargo" ? "text-[#EF4444]" : "text-[#22C55E]"
+                  )}>
+                    {tx.tipo === "cargo" ? "+" : "-"}{formatCurrency(tx.monto)}
+                  </span>
+                  <span className="text-[11px] font-medium text-on-surface-variant/70 mt-0.5 block">
+                    Saldo {formatCurrency(tx.saldo_despues)}
+                  </span>
+                </div>
               </div>
-              <div className="text-right shrink-0">
-                <span className={cn(
-                  "text-lg font-bold tracking-tight block",
-                  tx.tipo === "cargo" ? "text-[#EF4444]" : "text-[#22C55E]"
-                )}>
-                  {tx.tipo === "cargo" ? "+" : "-"}{formatCurrency(tx.monto)}
-                </span>
-                <span className="text-[12px] font-medium text-on-surface-variant/70 mt-1 block">
-                  Saldo {formatCurrency(tx.saldo_despues)}
-                </span>
-              </div>
+            ))
+          ) : (
+            <div className="py-12 flex flex-col items-center justify-center text-center">
+              <p className="text-sm font-semibold text-on-surface-variant mb-1">No hay movimientos registrados</p>
+              <p className="text-xs text-on-surface-variant/60 max-w-sm">
+                Las transacciones aparecerán aquí a medida que agregues trabajos y registres cobros o ajustes manuales.
+              </p>
             </div>
-          ))
-        ) : (
-          <div className="py-12 flex flex-col items-center justify-center text-center">
-            <p className="text-sm font-semibold text-on-surface-variant mb-1">No hay movimientos registrados</p>
-            <p className="text-xs text-on-surface-variant/60 max-w-sm">
-              Las transacciones aparecerán aquí a medida que agregues trabajos y registres cobros o ajustes manuales.
-            </p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

@@ -180,7 +180,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
 
       {confirmDeleteId && typeof window !== "undefined" && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 bg-surface/80 ">
-          <div className="bg-surface rounded-[28px] p-6 mx-4 max-w-sm w-full shadow-2xl space-y-4">
+          <div className="bg-surface/90 dark:bg-surface/70 backdrop-blur-xl rounded-xl p-6 mx-4 max-w-sm w-full shadow-2xl space-y-4 border border-outline-variant/20">
             <h3 className="text-lg font-black text-on-surface">
               Eliminar foto
             </h3>

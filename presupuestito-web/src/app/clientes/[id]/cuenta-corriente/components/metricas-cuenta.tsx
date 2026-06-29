@@ -17,7 +17,7 @@ export function MetricasCuenta({ clienteId }: { clienteId: string }) {
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col gap-1 relative overflow-hidden group">
+        <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-xl p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col gap-1 relative overflow-hidden group">
           <div className="relative z-10 flex flex-col h-full">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60">Balance</span>
@@ -47,7 +47,7 @@ export function MetricasCuenta({ clienteId }: { clienteId: string }) {
           )} />
         </div>
 
-        <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col gap-1">
+        <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-xl p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col gap-1">
           <span className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60">Total Facturado</span>
           <span className="text-[32px] font-bold tracking-tight mt-1 text-on-surface leading-none">
             {formatCurrency(totalCargos)}
@@ -57,7 +57,7 @@ export function MetricasCuenta({ clienteId }: { clienteId: string }) {
           </div>
         </div>
 
-        <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col gap-1">
+        <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-xl p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col gap-1">
           <span className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60">Total Cobrado</span>
           <span className="text-[32px] font-bold tracking-tight mt-1 text-[#22C55E] leading-none">
             {formatCurrency(totalAbonos)}

@@ -83,7 +83,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
         />
       </div>
 
-      <main className="relative flex-1 px-4 py-6 space-y-6 mt-20 pb-24 max-w-4xl mx-auto w-full">
+      <main className="relative flex-1 px-4 pt-28 pb-24 space-y-6 max-w-4xl mx-auto w-full">
         {/* Desktop Breadcrumb */}
         <div className="hidden md:flex items-center mb-4">
           <div className="flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
@@ -126,7 +126,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
             <button
               onClick={() => !isEditing && updateTask(task.id, { completada: !task.completada })}
               className={cn(
-                "relative overflow-hidden p-5 rounded-[24px] text-left transition-[background-color,border-color,box-shadow] duration-500 flex flex-col gap-2 group select-none",
+                "relative overflow-hidden p-5 rounded-xl text-left transition-[background-color,border-color,box-shadow] duration-500 flex flex-col gap-2 group select-none",
                 task.completada
                   ? "bg-primary/10 hover:bg-primary/15 border border-primary/20 shadow-inner"
                   : "bg-surface/40 dark:bg-surface/10 hover:bg-surface/60 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-lg"
@@ -162,7 +162,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
                 updateTask(task.id, { prioridad: next });
               }}
               className={cn(
-                "relative overflow-hidden p-5 rounded-[24px] text-left transition-[background-color,border-color,box-shadow] duration-500 flex flex-col gap-2 group select-none",
+                "relative overflow-hidden p-5 rounded-xl text-left transition-[background-color,border-color,box-shadow] duration-500 flex flex-col gap-2 group select-none",
                 task.prioridad === "alta"
                   ? "bg-orange-500/10 hover:bg-orange-500/15 border border-orange-500/20 shadow-inner"
                   : task.prioridad === "media"
@@ -198,7 +198,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
               </div>
             </button>
 
-            <div className="relative overflow-hidden p-5 rounded-[24px] bg-surface dark:bg-surface/10 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] flex flex-col gap-2">
+            <div className="relative overflow-hidden p-5 rounded-xl bg-surface dark:bg-surface/10 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] flex flex-col gap-2">
               <span className={cn(
                 "relative z-10 text-[10px] font-black uppercase tracking-[0.25em]",
                 task.precio !== null ? "text-primary/70" : "text-on-surface-variant/50"
@@ -231,7 +231,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
         </div>
 
         {taskProgresses.length > 0 && (
-          <div className="relative bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-5 transition-shadow duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+          <div className="relative bg-surface/80 rounded-xl p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-5 transition-shadow duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
             <div className="relative z-10 flex items-center justify-between">
               <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
                 Historial de Avance
@@ -242,7 +242,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
               {taskProgresses.map((progress, idx) => (
                 <div
                   key={`${progress.visita_id}-${idx}`}
-                  className="group flex flex-col gap-2 p-4 bg-surface dark:bg-surface/20 rounded-[20px] border border-white/10 dark:border-white/5 transition-colors duration-300 hover:bg-surface/60"
+                  className="group flex flex-col gap-2 p-4 bg-surface dark:bg-surface/20 rounded-xl border border-white/10 dark:border-white/5 transition-colors duration-300 hover:bg-surface/60"
                 >
                   <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">
                     <CalendarDays className="w-3 h-3" />
@@ -259,7 +259,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
           </div>
         )}
 
-        <div className="relative bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-shadow duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+        <div className="relative bg-surface/80 rounded-xl p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-shadow duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
           <div className="relative z-10 flex items-center justify-between">
             <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
               Fotos del trabajo

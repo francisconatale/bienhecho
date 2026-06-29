@@ -56,7 +56,7 @@ export function TareasList({ groupedTasks, categoryCounts, filter, category, set
     
     if (activeTasks.length === 0) {
       return (
-        <div className="flex flex-col items-center justify-center py-12 px-4 border-2 border-dashed border-outline-variant/10 rounded-[28px]">
+        <div className="flex flex-col items-center justify-center py-12 px-4 border-2 border-dashed border-outline-variant/10 rounded-xl">
           <span className="text-on-surface-variant font-medium">No hay tareas en esta categoría.</span>
         </div>
       );

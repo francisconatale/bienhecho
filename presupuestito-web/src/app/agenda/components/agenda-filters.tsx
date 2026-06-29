@@ -19,7 +19,7 @@ export function AgendaFilters({
   setFilterStatus,
 }: AgendaFiltersProps) {
   return (
-    <div className="mt-4 bg-surface rounded-[32px] border border-outline-variant/10 shadow-sm p-5">
+    <div className="mt-4 bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl border border-outline-variant/20 shadow-sm p-5">
       <div className="flex items-center gap-2 mb-3">
         <Filter className="w-3.5 h-3.5 text-on-surface-variant" strokeWidth={2} />
         <span className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">

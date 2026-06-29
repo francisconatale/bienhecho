@@ -173,8 +173,8 @@ export function TrabajoDetail({
           ? "hidden md:block"
           : "",
         isEmbedded 
-          ? "px-6 py-6 pb-28 md:px-8 max-w-full" 
-          : "px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-12 max-w-7xl md:mt-0"
+          ? "px-4 pt-28 pb-28 md:pt-6 md:px-8 max-w-full" 
+          : "px-4 pt-28 pb-28 md:px-8 md:pt-8 md:pb-12 max-w-7xl md:mt-0"
       )}>
         <div className={cn(
           "grid items-start",
@@ -222,7 +222,7 @@ export function TrabajoDetail({
                   <Link 
                     href={`/trabajos/${job.id}/materiales${from ? `?from=${from}` : ""}`} 
                     onClick={() => pushHistory(window.location.pathname + window.location.search)}
-                    className="group relative overflow-hidden bg-surface rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
+                    className="group relative overflow-hidden bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
                   >
                     <div className="relative z-10 flex items-center justify-between">
                       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
@@ -243,7 +243,7 @@ export function TrabajoDetail({
                   <Link 
                     href={`/trabajos/${job.id}/pagos`} 
                     onClick={() => pushHistory(window.location.pathname + window.location.search)}
-                    className="group relative overflow-hidden bg-surface rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
+                    className="group relative overflow-hidden bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
                   >
                     <div className="relative z-10 flex items-center justify-between">
                       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
@@ -265,7 +265,7 @@ export function TrabajoDetail({
                   </Link>
                 </div>
 
-                <TaskList jobId={job.id} onSelectTask={setSelectedTaskId} />
+
               </>
             )}
           </div>
@@ -275,7 +275,7 @@ export function TrabajoDetail({
             <div className={cn("space-y-4", isEmbedded ? "2xl:sticky 2xl:top-8" : "lg:sticky lg:top-32")}>
               <ProgressBar tasks={jobTasks} />
               
-              <div className="relative overflow-hidden bg-surface rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+              <div className="relative overflow-hidden bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
                 
                 <div className="relative flex flex-col gap-1 z-10">
                   <span className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
@@ -306,7 +306,7 @@ export function TrabajoDetail({
                       onClick={handleDownloadPDF}
                       disabled={!hasItemsForBudget || isGeneratingPdf}
                       className={cn(
-                        "relative w-full py-4 rounded-[20px] font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group",
+                        "relative w-full py-4 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group",
                         hasItemsForBudget
                           ? "bg-primary text-white shadow-[0_8px_20px_rgba(61,139,110,0.25)] hover:shadow-[0_16px_40px_rgba(61,139,110,0.4)] hover:scale-[1.02] active:scale-[0.98]"
                           : "bg-on-surface/5 text-on-surface-variant/30 cursor-not-allowed"
@@ -328,7 +328,7 @@ export function TrabajoDetail({
                   <button
                     onClick={() => { setPdfError(null); downloadPDF(job.id); }}
                     disabled={isGeneratingPdf}
-                    className="relative w-full py-4 rounded-[20px] font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary text-white shadow-[0_8px_20px_rgba(61,139,110,0.25)] hover:shadow-[0_16px_40px_rgba(61,139,110,0.4)] hover:scale-[1.02] active:scale-[0.98]"
+                    className="relative w-full py-4 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary text-white shadow-[0_8px_20px_rgba(61,139,110,0.25)] hover:shadow-[0_16px_40px_rgba(61,139,110,0.4)] hover:scale-[1.02] active:scale-[0.98]"
                   >
                     <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
                     <FileDown className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" strokeWidth={2.5} />
@@ -359,7 +359,7 @@ export function TrabajoDetail({
                       }
                       state.updateJob(job.id, { estado: "pagado" });
                     }}
-                    className="relative w-full py-4 rounded-[20px] font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_8px_20px_rgba(61,139,110,0.15)] active:scale-[0.98]"
+                    className="relative w-full py-4 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_8px_20px_rgba(61,139,110,0.15)] active:scale-[0.98]"
                   >
                     <CheckCircle className="w-4 h-4" strokeWidth={2.5} />
                     Marcar como Pagado
@@ -369,11 +369,17 @@ export function TrabajoDetail({
             </div>
           )}
         </div>
+
+        {!selectedTaskId && (
+          <div className="mt-8">
+            <TaskList jobId={job.id} onSelectTask={setSelectedTaskId} />
+          </div>
+        )}
       </main>
 
       {showPdfDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowPdfDialog(false)}>
-          <div className="bg-surface rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_32px_64px_rgba(0,0,0,0.3)] max-w-sm w-full mx-4 space-y-4" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-surface/90 dark:bg-surface/70 backdrop-blur-xl rounded-xl p-6 border border-white/20 dark:border-white/5 shadow-[0_32px_64px_rgba(0,0,0,0.3)] max-w-sm w-full mx-4 space-y-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold text-on-surface">¿Emitir presupuesto?</h3>
               <button
@@ -389,13 +395,13 @@ export function TrabajoDetail({
             <div className="flex gap-2 pt-2">
               <button
                 onClick={handleGuardarPdf}
-                className="flex-1 px-4 py-3 rounded-[16px] bg-on-surface/5 text-on-surface font-bold text-sm hover:bg-on-surface/10 transition-all active:scale-95 cursor-pointer"
+                className="flex-1 px-4 py-3 rounded-xl bg-on-surface/5 text-on-surface font-bold text-sm hover:bg-on-surface/10 transition-all active:scale-95 cursor-pointer"
               >
                 Solo guardar PDF
               </button>
               <button
                 onClick={handleEmitPresupuesto}
-                className="flex-1 px-4 py-3 rounded-[16px] bg-primary text-white font-bold text-sm hover:bg-primary-dark transition-all active:scale-95 shadow-[0_4px_12px_rgba(61,139,110,0.3)] cursor-pointer"
+                className="flex-1 px-4 py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-dark transition-all active:scale-95 shadow-[0_4px_12px_rgba(61,139,110,0.3)] cursor-pointer"
               >
                 Emitir
               </button>

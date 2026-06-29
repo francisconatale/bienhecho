@@ -6,7 +6,7 @@ export function ShoppingList() {
 
   if (pendingMaterials.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 text-center bg-surface/30 rounded-[28px] border border-outline-variant/10 backdrop-blur-xl">
+      <div className="flex flex-col items-center justify-center p-12 text-center bg-surface/30 rounded-xl border border-outline-variant/10 backdrop-blur-xl">
         <ShoppingCart className="w-12 h-12 text-on-surface-variant/30 mb-4" />
         <h3 className="text-lg font-semibold text-on-surface">
           Nada que comprar

@@ -57,7 +57,7 @@ export default function DashboardPage() {
   // ─── Reusable sub-components ────────────────────────────────────────────────
 
   const ActionsList = () => (
-    <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-[24px] overflow-hidden border border-outline-variant/20 shadow-sm">
+    <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm">
       {[
         { href: "/trabajos/nuevo", icon: <PlusCircle size={17} strokeWidth={2.5} />, label: "Nuevo Trabajo", color: "bg-primary" },
         { href: "/trabajos",       icon: <Briefcase  size={17} strokeWidth={2.5} />, label: "Ver Trabajos",  color: "bg-orange-500" },
@@ -87,7 +87,7 @@ export default function DashboardPage() {
       <div className="space-y-2">
         <h2 className="text-[13px] font-bold text-on-surface-variant uppercase tracking-widest px-1">Avisos</h2>
         {alerts.map((a) => (
-          <div key={a.id} className="flex gap-3 bg-amber-500/8 dark:bg-amber-500/10 border border-amber-500/20 p-4 rounded-[18px]">
+          <div key={a.id} className="flex gap-3 bg-amber-500/8 dark:bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl">
             <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" aria-hidden="true" />
             <p className="text-[14px] font-medium text-on-surface leading-snug">{a.mensaje}</p>
           </div>
@@ -99,35 +99,62 @@ export default function DashboardPage() {
   const ActivityList = () => (
     <div>
       <h2 className="text-[13px] font-bold text-on-surface-variant uppercase tracking-widest mb-3 px-1">Actividad Reciente</h2>
-      <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-[24px] overflow-hidden border border-outline-variant/20 shadow-sm">
-        {pag.paginatedItems.length === 0 ? (
-          <p className="p-6 text-[14px] text-on-surface-variant/60 text-center italic">No hay actividad reciente.</p>
-        ) : (
-          pag.paginatedItems.map((job, i) => {
-            const client = clients.find((c) => c.id === job.cliente_id);
-            return (
-              <Link
-                key={job.id}
-                href={`/trabajos/${job.id}`}
-                className={`flex items-center justify-between p-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors ${i !== pag.paginatedItems.length - 1 ? "border-b border-outline-variant/15" : ""}`}
-              >
-                <div className="flex items-center gap-3 overflow-hidden">
-                  <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0 cursor-default select-none">
-                    {client?.nombre?.charAt(0) || "T"}
+      <div className="flex flex-col bg-surface rounded-lg overflow-hidden border border-outline-variant/10 shadow-sm">
+        <div className="hidden md:flex items-center px-4 py-2 border-b border-outline-variant/20 bg-surface-variant/20">
+          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest flex-1">Trabajo</div>
+          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-40">Cliente</div>
+          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-32 text-right">Importe</div>
+        </div>
+        
+        <div className="flex flex-col divide-y divide-outline-variant/10">
+          {pag.paginatedItems.length === 0 ? (
+            <p className="p-6 text-[14px] text-on-surface-variant/60 text-center italic">No hay actividad reciente.</p>
+          ) : (
+            pag.paginatedItems.map((job) => {
+              const client = clients.find((c) => c.id === job.cliente_id);
+              return (
+                <Link
+                  key={job.id}
+                  href={`/trabajos/${job.id}`}
+                  className="flex flex-col md:flex-row md:items-center px-4 py-3 md:py-4 hover:bg-primary/5 cursor-pointer transition-colors group gap-3 md:gap-0"
+                >
+                  {/* Title */}
+                  <div className="flex-1 min-w-0 pr-4 flex flex-col gap-1">
+                    <div className="text-[15px] font-bold text-on-surface truncate group-hover:text-primary transition-colors">
+                      {job.titulo}
+                    </div>
+                    {/* mobile-only client */}
+                    <div className="md:hidden flex items-center gap-2 text-[12px] text-on-surface-variant">
+                      <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[10px] shrink-0">
+                        {client?.nombre?.charAt(0) || "T"}
+                      </div>
+                      <span className="truncate">{client?.nombre || "Sin cliente"}</span>
+                    </div>
                   </div>
-                  <div className="flex flex-col overflow-hidden">
-                    <span className="text-[15px] font-semibold text-on-surface truncate cursor-default select-none">{job.titulo}</span>
-                    <span className="text-[12px] text-on-surface-variant truncate cursor-default select-none">{client?.nombre || "Sin cliente"}</span>
+
+                  {/* Client Column */}
+                  <div className="hidden md:flex w-40 shrink-0 items-center gap-2 pr-4">
+                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[10px] shrink-0">
+                      {client?.nombre?.charAt(0) || "T"}
+                    </div>
+                    <span className="text-[13px] text-on-surface-variant truncate">{client?.nombre || "Sin cliente"}</span>
                   </div>
-                </div>
-                <div className="flex items-center gap-1.5 shrink-0 ml-3">
-                  <span className="text-[14px] font-semibold text-on-surface cursor-default select-none">${job.presupuesto.toLocaleString()}</span>
-                  <ChevronRight size={16} className="text-on-surface-variant/50" aria-hidden="true" />
-                </div>
-              </Link>
-            );
-          })
-        )}
+
+                  {/* Amount Column */}
+                  <div className="w-full md:w-32 shrink-0 flex items-center justify-between md:justify-end pt-2 md:pt-0 border-t border-outline-variant/10 md:border-0">
+                    <span className="md:hidden text-[11px] text-on-surface-variant uppercase tracking-widest font-bold">Importe</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-base font-bold text-on-surface tabular-nums">
+                        ${job.presupuesto.toLocaleString()}
+                      </span>
+                      <ChevronRight size={16} className="text-on-surface-variant/50 group-hover:text-primary transition-colors" aria-hidden="true" />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })
+          )}
+        </div>
       </div>
       {pag.totalPages > 1 && (
         <div className="flex justify-center items-center gap-4 mt-3">
@@ -149,45 +176,58 @@ export default function DashboardPage() {
           </Link>
         )}
       </div>
-      <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-[24px] overflow-hidden border border-outline-variant/20 shadow-sm">
-        {upcomingVisits.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-8 px-6 text-center">
-            <CalendarDays className="w-7 h-7 text-on-surface-variant/20 mb-2" aria-hidden="true" />
-            <p className="text-[13px] text-on-surface-variant/60 font-medium">Sin visitas en los próximos 7 días</p>
-          </div>
-        ) : (
-          upcomingVisits.map((visit, i) => {
-            const job = jobs.find((j) => j.id === visit.trabajo_id);
-            const client = job ? clients.find((c) => c.id === job.cliente_id) : null;
-            const dayName = new Date(visit.fecha + "T00:00:00").toLocaleDateString("es-AR", { weekday: "short", day: "numeric", month: "short" });
-            return (
-              <div key={visit.id} className={`flex items-center gap-3 p-4 ${i !== upcomingVisits.length - 1 ? "border-b border-outline-variant/15" : ""}`}>
-                <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                  <CalendarDays size={15} aria-hidden="true" />
+      <div className="flex flex-col bg-surface rounded-lg overflow-hidden border border-outline-variant/10 shadow-sm">
+        <div className="hidden md:flex items-center px-4 py-2 border-b border-outline-variant/20 bg-surface-variant/20">
+          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest flex-1">Fecha / Trabajo</div>
+          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-32 text-right">Cliente</div>
+        </div>
+        
+        <div className="flex flex-col divide-y divide-outline-variant/10">
+          {upcomingVisits.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 px-6 text-center">
+              <CalendarDays className="w-7 h-7 text-on-surface-variant/20 mb-2" aria-hidden="true" />
+              <p className="text-[13px] text-on-surface-variant/60 font-medium">Sin visitas en los próximos 7 días</p>
+            </div>
+          ) : (
+            upcomingVisits.map((visit) => {
+              const job = jobs.find((j) => j.id === visit.trabajo_id);
+              const client = job ? clients.find((c) => c.id === job.cliente_id) : null;
+              const dayName = new Date(visit.fecha + "T00:00:00").toLocaleDateString("es-AR", { weekday: "short", day: "numeric", month: "short" });
+              return (
+                <div key={visit.id} className="flex flex-col md:flex-row md:items-center px-4 py-3 hover:bg-primary/5 transition-colors gap-2 md:gap-0">
+                  {/* Info Column */}
+                  <div className="flex-1 min-w-0 pr-4 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                      <CalendarDays size={14} aria-hidden="true" />
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-[14px] font-semibold text-on-surface truncate">{job?.titulo || "—"}</span>
+                      <span className="text-[12px] text-on-surface-variant capitalize">{dayName} · {visit.hora_inicio}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Client Column */}
+                  {client && (
+                    <div className="w-full md:w-32 shrink-0 md:text-right pt-2 md:pt-0 border-t border-outline-variant/10 md:border-0">
+                      <p className="text-[12px] font-medium text-on-surface-variant truncate">{client.nombre}</p>
+                    </div>
+                  )}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[14px] font-semibold text-on-surface truncate cursor-default select-none">{job?.titulo || "—"}</p>
-                  <p className="text-[12px] text-on-surface-variant cursor-default select-none">{dayName} · {visit.hora_inicio}</p>
-                </div>
-                {client && <p className="text-[12px] font-medium text-on-surface-variant shrink-0 cursor-default select-none">{client.nombre}</p>}
-              </div>
-            );
-          })
-        )}
+              );
+            })
+          )}
+        </div>
       </div>
     </div>
   );
 
   const StatCards = ({ row = false }) => (
     <div className={`${row ? "flex gap-4" : "flex gap-3 overflow-x-auto snap-x -mx-4 px-4 pb-1 scrollbar-hide"}`}>
-      <div className={`${row ? "flex-1" : "snap-start shrink-0 w-[200px]"} bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-[22px] border border-outline-variant/20 shadow-sm p-5`}>
-        <p className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">Presupuestos</p>
-        <div className="flex items-end justify-between">
-          <span className="text-[40px] font-bold text-on-surface leading-none">{jobs.length}</span>
-          <span className="text-[12px] font-medium text-on-surface-variant mb-1">Activos</span>
-        </div>
+      <div className={`${row ? "flex-1" : "snap-start shrink-0 w-[200px]"} bg-primary/8 dark:bg-primary/10 backdrop-blur-xl rounded-xl border border-primary/20 shadow-sm p-5`}>
+        <p className="text-[11px] font-bold text-primary/80 uppercase tracking-widest mb-3">Presupuestos</p>
+        <span className="text-[32px] font-bold text-primary leading-none">{jobs.length}</span>
       </div>
-      <div className={`${row ? "flex-1" : "snap-start shrink-0 w-[200px]"} bg-primary/8 dark:bg-primary/10 backdrop-blur-xl rounded-[22px] border border-primary/20 shadow-sm p-5`}>
+      <div className={`${row ? "flex-1" : "snap-start shrink-0 w-[200px]"} bg-primary/8 dark:bg-primary/10 backdrop-blur-xl rounded-xl border border-primary/20 shadow-sm p-5`}>
         <p className="text-[11px] font-bold text-primary/80 uppercase tracking-widest mb-3">Por facturar</p>
         <span className="text-[32px] font-bold text-primary leading-none">
           ${totalToInvoice >= 1000 ? `${(totalToInvoice / 1000).toFixed(0)}k` : totalToInvoice.toLocaleString()}
@@ -222,47 +262,45 @@ export default function DashboardPage() {
       </div>
 
       {/* ── DESKTOP (≥ md) ── */}
-      <div className="hidden md:flex flex-col max-w-5xl mx-auto px-8 lg:px-10 pt-12 pb-16 gap-8">
+      <div className="hidden md:flex flex-col px-10 xl:px-16 pt-12 pb-16 gap-8 w-full max-w-[1400px] mx-auto">
 
-        {/* Header row */}
-        <div className="flex items-end justify-between gap-8">
+        {/* Header row: título a la izquierda + acciones a la derecha */}
+        <div className="flex items-center justify-between gap-6 pt-4">
           <h1 className="text-[48px] lg:text-[56px] font-bold tracking-tight text-on-surface leading-none">
             ¡Hola, {displayName}!
           </h1>
-          {/* Stats inline on desktop */}
-          <StatCards row />
-        </div>
-
-        {/* Actions bar: horizontal on desktop */}
-        <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-[24px] overflow-hidden border border-outline-variant/20 shadow-sm flex divide-x divide-outline-variant/15">
-          {[
-            { href: "/trabajos/nuevo", icon: <PlusCircle size={17} strokeWidth={2.5} />, label: "Nuevo Trabajo", color: "bg-primary" },
-            { href: "/trabajos",       icon: <Briefcase  size={17} strokeWidth={2.5} />, label: "Ver Trabajos",  color: "bg-orange-500" },
-            { href: "/clientes",       icon: <UserPlus   size={17} strokeWidth={2.5} />, label: "Clientes",      color: "bg-blue-500" },
-            { href: "/agenda",         icon: <CalendarDays size={17} strokeWidth={2.5} />, label: "Agenda",     color: "bg-violet-500" },
-          ].map(({ href, icon, label, color }) => (
-            <Link
-              key={href}
-              href={href}
-              className="flex-1 flex items-center gap-3 px-5 py-4 hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-colors"
-            >
-              <div className={`w-8 h-8 rounded-full ${color} flex items-center justify-center text-white shrink-0`} aria-hidden="true">
-                {icon}
-              </div>
-              <span className="text-[15px] font-medium text-on-surface">{label}</span>
-            </Link>
-          ))}
+          {/* Actions bar: horizontal inline con el título */}
+          <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm flex divide-x divide-outline-variant/15 shrink-0">
+            {[
+              { href: "/trabajos/nuevo", icon: <PlusCircle size={17} strokeWidth={2.5} />, label: "Nuevo Trabajo", color: "bg-primary" },
+              { href: "/trabajos",       icon: <Briefcase  size={17} strokeWidth={2.5} />, label: "Ver Trabajos",  color: "bg-orange-500" },
+              { href: "/clientes",       icon: <UserPlus   size={17} strokeWidth={2.5} />, label: "Clientes",      color: "bg-blue-500" },
+              { href: "/agenda",         icon: <CalendarDays size={17} strokeWidth={2.5} />, label: "Agenda",     color: "bg-violet-500" },
+            ].map(({ href, icon, label, color }) => (
+              <Link
+                key={href}
+                href={href}
+                className="flex items-center gap-3 px-5 py-4 hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-colors"
+              >
+                <div className={`w-8 h-8 rounded-full ${color} flex items-center justify-center text-white shrink-0`} aria-hidden="true">
+                  {icon}
+                </div>
+                <span className="text-[15px] font-medium text-on-surface hidden lg:inline">{label}</span>
+              </Link>
+            ))}
+          </div>
         </div>
 
         {/* Two-column grid */}
-        <div className="grid grid-cols-12 gap-6 items-start">
-          {/* Left: alerts + activity */}
-          <div className="col-span-7 lg:col-span-8 flex flex-col gap-6">
+        <div className="grid grid-cols-12 gap-8 items-start">
+          {/* Left: stats + alerts + activity */}
+          <div className="col-span-12 lg:col-span-7 flex flex-col gap-6">
+            <StatCards row />
             <AlertsList />
             <ActivityList />
           </div>
           {/* Right sidebar: visits */}
-          <div className="col-span-5 lg:col-span-4">
+          <div className="col-span-12 lg:col-span-5">
             <VisitsList />
           </div>
         </div>

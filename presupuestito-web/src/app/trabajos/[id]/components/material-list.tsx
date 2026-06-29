@@ -30,35 +30,44 @@ export function MaterialList({ jobId }: MaterialListProps) {
         </h3>
         <button
           onClick={() => setIsAdding(true)}
-          className="group flex items-center gap-1.5 px-4 py-2 rounded-[14px] border border-outline-variant/20 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 text-[11px] font-bold text-on-surface uppercase tracking-wider active:scale-95"
+          className="group flex items-center gap-1.5 px-4 py-2 rounded-xl border border-outline-variant/20 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 text-[11px] font-bold text-on-surface uppercase tracking-wider active:scale-95"
         >
           <Plus className="w-4 h-4 text-primary transition-transform group-hover:rotate-90 duration-300" strokeWidth={2.5} />
           Agregar
         </button>
       </div>
 
-      <div className="space-y-3">
+      <div className="flex flex-col mt-4">
         {isAdding && (
-          <div className="p-4">
+          <div className="mb-4 bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-4 border border-outline-variant/20 shadow-sm">
             <MaterialForm onSave={handleAdd} onCancel={() => setIsAdding(false)} />
           </div>
         )}
 
         {pag.paginatedItems.length > 0 ? (
           <>
-            {pag.paginatedItems.map((material, idx) => (
-              <div 
-                key={material.id} 
-                className="animate-fade-in-up" 
-                style={{ animationDelay: `${idx * 75}ms`, animationFillMode: 'both' }}
-              >
-                <MaterialItem material={material} jobId={jobId} />
+            <div className="flex flex-col bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm">
+              <div className="hidden md:flex items-center px-4 py-2 border-b border-outline-variant/20 bg-surface-variant/20">
+                <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest flex-1">Material</div>
+                <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-32">Cant x Precio</div>
+                <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-32 text-right">Subtotal</div>
+                <div className="w-20"></div>
               </div>
-            ))}
-            <div className="pt-4 flex justify-end px-2 animate-fade-in-up" style={{ animationDelay: `${materiales.length * 100}ms` }}>
-              <div className="bg-primary/10 dark:bg-primary/5 border border-primary/20 rounded-2xl px-6 py-4 flex items-center justify-between gap-8 min-w-[280px]">
-                <span className="text-[11px] font-black uppercase tracking-widest text-primary">Total Materiales</span>
-                <span className="text-lg font-bold text-on-surface">${totalMateriales.toLocaleString("es-AR")}</span>
+
+              <div className="flex flex-col divide-y divide-outline-variant/10">
+                {pag.paginatedItems.map((material, idx) => (
+                  <div 
+                    key={material.id} 
+                    className="animate-fade-in-up" 
+                    style={{ animationDelay: `${idx * 75}ms`, animationFillMode: 'both' }}
+                  >
+                    <MaterialItem material={material} jobId={jobId} />
+                  </div>
+                ))}
+                <div className="px-4 py-3 flex items-center justify-between bg-primary/5 border-t border-primary/20 animate-fade-in-up" style={{ animationDelay: `${materiales.length * 100}ms` }}>
+                  <span className="text-[11px] font-black uppercase tracking-widest text-primary">Total Materiales</span>
+                  <span className="text-[15px] font-bold text-on-surface tabular-nums">${totalMateriales.toLocaleString("es-AR")}</span>
+                </div>
               </div>
             </div>
             <PaginationButtons
@@ -71,7 +80,7 @@ export function MaterialList({ jobId }: MaterialListProps) {
           </>
         ) : (
           !isAdding && (
-            <div className="py-12 px-6 text-center bg-surface border border-dashed border-outline-variant/20 rounded-[24px] bg-surface/80 ">
+            <div className="py-12 px-6 text-center">
               <p className="text-sm font-bold text-on-surface-variant/60">
                 Aún no hay materiales definidos
               </p>

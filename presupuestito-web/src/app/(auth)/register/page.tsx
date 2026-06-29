@@ -41,7 +41,7 @@ export default function RegisterPage() {
         </div>
 
         <form onSubmit={handleRegister} className="space-y-6">
-          <div className="bg-surface dark:bg-[#1C1C1E] rounded-[32px] p-8 border border-outline-variant/20 shadow-xl space-y-6">
+          <div className="bg-surface dark:bg-[#1C1C1E] rounded-xl p-8 border border-outline-variant/20 shadow-xl space-y-6">
             {/* Nombre */}
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#2563EB] ml-1">
@@ -90,7 +90,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={name.length < 2 || !selectedTrade}
-            className="w-full py-5 rounded-[24px] bg-[#2563EB] text-white font-black uppercase tracking-[0.2em] text-xs shadow-2xl shadow-[#2563EB]/30 hover:bg-[#1D4ED8] disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-[0.98] flex items-center justify-center gap-3"
+            className="w-full py-5 rounded-xl bg-[#2563EB] text-white font-black uppercase tracking-[0.2em] text-xs shadow-2xl shadow-[#2563EB]/30 hover:bg-[#1D4ED8] disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-[0.98] flex items-center justify-center gap-3"
           >
             Comenzar ahora
             <ArrowRight className="w-5 h-5" />

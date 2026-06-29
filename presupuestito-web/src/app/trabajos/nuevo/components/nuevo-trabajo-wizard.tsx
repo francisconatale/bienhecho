@@ -16,7 +16,7 @@ export function NuevoTrabajoWizard() {
   const { prev, next, handleSave } = actions;
 
   return (
-    <div className="bg-surface rounded-[32px] p-5 md:p-6 border border-outline-variant/10 shadow-sm">
+    <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-5 md:p-6 border border-outline-variant/20 shadow-sm">
       <WizardProgress currentQ={currentQ} />
 
       <div className="min-h-[260px] flex flex-col">

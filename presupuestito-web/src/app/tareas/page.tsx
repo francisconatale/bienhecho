@@ -78,7 +78,7 @@ export default function TareasPage() {
             {isSpecialized && (
               <button 
                 onClick={() => setCategory("resumen")}
-                className="p-3 rounded-[20px] bg-surface/50 backdrop-blur-xl border border-outline-variant/20 shadow-sm text-on-surface-variant hover:text-on-surface hover:bg-surface transition-all active:scale-95 group"
+                className="p-3 rounded-xl bg-surface/50 backdrop-blur-xl border border-outline-variant/20 shadow-sm text-on-surface-variant hover:text-on-surface hover:bg-surface transition-all active:scale-95 group"
               >
                 <ArrowLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
               </button>
@@ -95,11 +95,11 @@ export default function TareasPage() {
           
           <div className="flex items-center gap-3">
             {!isSpecialized && filter !== "completadas" && (
-              <div className="hidden lg:flex bg-surface/50 backdrop-blur-xl border border-outline-variant/20 p-1.5 rounded-[20px] shadow-sm">
+              <div className="hidden lg:flex bg-surface/50 backdrop-blur-xl border border-outline-variant/20 p-1.5 rounded-xl shadow-sm">
                 <button
                   onClick={() => setViewMode("list")}
                   className={cn(
-                    "px-4 py-2 rounded-[14px] flex items-center gap-2 text-sm font-semibold transition-all",
+                    "px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold transition-all",
                     viewMode === "list"
                       ? "bg-primary/10 text-primary shadow-sm"
                       : "text-on-surface-variant hover:text-on-surface hover:bg-surface"
@@ -111,7 +111,7 @@ export default function TareasPage() {
                 <button
                   onClick={() => setViewMode("board")}
                   className={cn(
-                    "px-4 py-2 rounded-[14px] flex items-center gap-2 text-sm font-semibold transition-all",
+                    "px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold transition-all",
                     viewMode === "board"
                       ? "bg-primary/10 text-primary shadow-sm"
                       : "text-on-surface-variant hover:text-on-surface hover:bg-surface"
@@ -148,7 +148,7 @@ export default function TareasPage() {
                   
                   {/* View mode switch para pantallas medianas (md a lg) */}
                   {filter !== "completadas" && (
-                    <div className="hidden md:flex lg:hidden bg-surface/50 backdrop-blur-xl border border-outline-variant/20 p-1 rounded-[16px] shadow-sm mb-6">
+                    <div className="hidden md:flex lg:hidden bg-surface/50 backdrop-blur-xl border border-outline-variant/20 p-1 rounded-xl shadow-sm mb-6">
                       <button
                         onClick={() => setViewMode("list")}
                         className={cn(

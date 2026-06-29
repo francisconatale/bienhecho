@@ -25,7 +25,7 @@ export function AgendaCalendar({
   visitCountForDay,
 }: AgendaCalendarProps) {
   return (
-    <div className="bg-surface rounded-[32px] border border-outline-variant/10 shadow-sm overflow-hidden">
+    <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl border border-outline-variant/20 shadow-sm overflow-hidden">
       {/* Month nav */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-black/[0.04] dark:border-white/[0.04]">
         <button

@@ -59,6 +59,50 @@ Colores por acción: `bg-primary` (crear), `bg-orange-500` (trabajos), `bg-blue-
 
 ---
 
+## Convención de Headers (Mobile y Navegación)
+
+Para evitar inconsistencias ("a veces fondo blanco, a veces no"), todos los headers deben seguir estrictamente el patrón de navegación de iOS (Apple Clean):
+
+### 1. Pantallas Principales (Root Tabs)
+Aplica a páginas base como Dashboard, Clientes (Lista), Tareas (Resumen general), etc.
+- **Estilo**: Título grande estático (`text-[34px] font-bold`), alineado a la izquierda.
+- **Fondo**: Totalmente transparente. Se debe ver el *Aurora + Noise* de fondo. **Nunca** usar fondos sólidos o glassmorphism envolviendo el título.
+- **Espaciado**: Amplio arriba (`pt-14` en mobile) para respetar la safe-area.
+- **Subtítulos**: Prohibidos en mobile. "Directo al grano".
+
+### 2. Vistas de Detalle y Sub-rutas (Detail Views)
+Aplica a pantallas de segundo nivel como "Ver Cliente", "Tareas de Alta Prioridad", "Formulario de Creación".
+- **Estilo**: Barra de navegación compacta y pegajosa (Sticky Nav Bar).
+- **Comportamiento**: `sticky top-0 z-50` para que quede fija al hacer scroll.
+- **Fondo**: Glassmorphism puro (`bg-surface/70 backdrop-blur-xl border-b border-outline-variant/20`).
+- **Elementos**: Flecha "Atrás" a la izquierda, título compacto (opcional) en el centro, y acciones secundarias (ej. Guardar/Editar) a la derecha.
+
+---
+
+## Convención de Container y Responsive (29/06/2026)
+
+### Container desktop
+- **Max-width**: `max-w-[1400px]` — más amplio que `max-w-6xl` (1152px) para aprovechar pantallas anchas.
+- **Padding responsivo**: `px-4 md:px-8 lg:px-10 xl:px-16` — crece con el breakpoint.
+- **Patrón**: `max-w-[1400px] mx-auto px-4 md:px-8 lg:px-10 xl:px-16`.
+- **Aplica a**: todas las páginas principales (Dashboard, Agenda, etc.).
+
+### Estrategia por resolución
+
+| Rango | Estrategia |
+|---|---|
+| `< md` (mobile) | `px-4` — contenido full-width, sin restricción de ancho. Scroll horizontal para stats. |
+| `md–lg` (tablet) | `px-8` — más respiro, columnas apiladas o 2-col compacta. |
+| `lg–xl` (desktop pequeño) | `px-10` — grid de 2 columnas, sidebar visible. |
+| `≥ xl` (desktop grande / ultrawide) | `px-16` — contenido se expande, sidebar más ancha, headers con acciones inline. |
+
+### Antipatrón evitado
+- ❌ `max-w-5xl` o `max-w-6xl` en desktop: comprime todo al centro, desperdicia espacio en pantallas ≥1440px.
+- ❌ Padding fijo sin responsive: `px-4` en desktop se siente pegado a los bordes.
+- ❌ `max-w-md mx-auto` en desktop: mobile-stretched.
+
+---
+
 ## Dashboard Principal (`/`) — Estilo "Apple Clean" (definido el 29/06/2026)
 
 ### Decisión
@@ -74,15 +118,33 @@ Rediseño completo con inspiración **Apple iOS Settings / Notion** — mobile-f
 - **Lista estilo iOS Settings**: ítems en contenedor `rounded-[24px]` agrupado, separados por `border-outline-variant/15`, con chevrón a la derecha.
 
 **Desktop (≥ md):**
-- Título grande a la izquierda + tarjetas de stats alineadas a la derecha en la misma fila.
-- **Barra de acciones horizontal**: 4 ítems en fila con `divide-x divide-outline-variant/15`, mismo contenedor glassmorphic, sin chevrón.
-- **Grid 12 columnas**: columna principal (8/12) con alertas + actividad. Sidebar (4/12) con próximas visitas.
+- Container `max-w-[1400px]` con padding responsivo.
+- **Header row**: título `text-[48px] lg:text-[56px]` a la izquierda + barra de acciones (solo íconos en `lg`, labels en `xl+`) a la derecha — rellena la fila horizontal.
+- **Grid 12 columnas**: columna principal (7/12) con stats + alertas + actividad. Sidebar (5/12) con próximas visitas.
 - El sidebar siempre renderiza (estado vacío elegante si no hay visitas).
 
 ### Antipatrón evitado
-- ❌ "Mobile-stretched en desktop": no usar `max-w-md mx-auto` en desktop.
 - ❌ Quick Actions redundantes en mobile cuando hay BottomNav.
 - ❌ Sidebar colapsando a `null` cuando no hay datos → siempre mostrar estado vacío.
+
+---
+
+## Página Agenda (`/agenda`) — Calendar + Day Detail (29/06/2026)
+
+### Decisión
+Mismo patrón de container que Dashboard: `max-w-[1400px]` con padding responsivo. Layout de 2 columnas en desktop.
+
+### Características
+
+**Mobile (< lg):**
+- Columnas apiladas verticalmente: Calendario → Filtros → Lista de visitas del día.
+- Padding `px-4` estándar mobile.
+
+**Desktop (≥ lg):**
+- Container `max-w-[1400px] mx-auto px-4 md:px-8 lg:px-10 xl:px-16`.
+- **Izquierda** (`lg:w-[480px]`): Calendario + Filtros.
+- **Derecha** (`flex-1`): Lista de visitas del día seleccionado.
+- El calendario mantiene ancho fijo para consistencia visual.
 
 ---
 

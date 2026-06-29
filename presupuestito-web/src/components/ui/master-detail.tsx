@@ -98,22 +98,51 @@ export function MasterDetail<T>({
   return (
     <>
       {/* Mobile PageHeader — hide when detail is active */}
-      <div className={`${hasDetail ? "hidden" : "block"} md:hidden pt-8 pb-2 px-4 relative z-10`}>
+      <div className={`${hasDetail ? "hidden" : "flex"} md:hidden pt-14 pb-4 px-4 relative z-10 items-center justify-between`}>
         <h1 className="text-[34px] font-bold text-on-surface tracking-tight leading-tight">{mobileTitle}</h1>
-        {mobileDescription && <p className="text-[15px] font-medium text-on-surface-variant mt-1">{mobileDescription}</p>}
+        
+        {/* Mobile creation button */}
+        {creationHref ? (
+          <Link
+            href={creationHref}
+            className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-sm active:scale-95 transition-transform"
+          >
+            <Plus className="w-5 h-5" strokeWidth={2.5} />
+          </Link>
+        ) : onToggleCreation ? (
+          <button
+            onClick={onToggleCreation}
+            className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm active:scale-95 transition-transform ${
+              showCreationForm
+                ? "bg-outline-variant/15 text-on-surface"
+                : "bg-primary text-white"
+            }`}
+          >
+            {showCreationForm ? (
+              <span className="text-xl leading-none">&times;</span>
+            ) : (
+              <Plus className="w-5 h-5" strokeWidth={2.5} />
+            )}
+          </button>
+        ) : null}
       </div>
 
-      {/* Mobile Detail Back Button — shown only on mobile when a detail is selected */}
-      {selectedItem && detailTitle && (
-        <div className="md:hidden px-4 py-2.5 relative z-50 flex items-center justify-between">
+      {/* Mobile Detail Back Button — floating over detail pane */}
+      {hasDetail && (
+        <div className="md:hidden px-4 pt-12 pb-3 absolute top-0 left-0 w-full z-50 flex items-center justify-between bg-transparent pointer-events-none">
           <button
-            onClick={() => onSelectedChange(null)}
-            className="flex items-center gap-1.5 text-sm text-on-surface-variant font-medium cursor-pointer hover:text-on-surface transition-colors active:scale-95"
+            onClick={() => {
+              if (selectedItem) onSelectedChange(null);
+              else if (showCreationForm && onToggleCreation) onToggleCreation();
+            }}
+            className="w-10 h-10 rounded-full bg-surface/50 backdrop-blur-xl border border-outline-variant/20 shadow-sm flex items-center justify-center text-primary cursor-pointer hover:bg-surface transition-colors active:scale-95 pointer-events-auto"
           >
-            <ChevronLeft className="w-4 h-4" />
-            Volver
+            <ChevronLeft className="w-6 h-6 -ml-0.5" strokeWidth={2.5} />
           </button>
-          {detailRightAction && detailRightAction(selectedItem)}
+
+          <div className="flex items-center justify-end pointer-events-auto">
+            {selectedItem && detailRightAction ? detailRightAction(selectedItem) : null}
+          </div>
         </div>
       )}
 
@@ -128,7 +157,7 @@ export function MasterDetail<T>({
         >
           {/* SEARCH BAR — always inside the list pane, hidden in rail mode */}
           {!isCollapsed && (
-            <div className="px-4 md:px-5 py-3 bg-surface/80 md:bg-surface border-b border-outline-variant/10">
+            <div className="px-4 md:px-5 py-3 bg-transparent md:bg-surface md:backdrop-blur-none border-b-0 md:border-b md:border-outline-variant/10 z-20">
               <div className="flex items-center gap-2.5">
                 <div className="relative flex-1">
                   <Search className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-outline pointer-events-none" strokeWidth={2} />
@@ -140,26 +169,27 @@ export function MasterDetail<T>({
                     className="w-full bg-grouped-bg-light rounded-lg pl-9 md:pl-10 pr-3 py-2 md:py-2.5 text-xs md:text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary/20 border-0"
                   />
                 </div>
+                {/* Desktop creation button */}
                 {creationHref ? (
                   <Link
                     href={creationHref}
-                    className="h-8 w-8 md:h-9 md:w-9 rounded-lg bg-primary text-white flex items-center justify-center hover:bg-primary-dark transition-colors cursor-pointer"
+                    className="hidden md:flex h-9 w-9 rounded-lg bg-primary text-white items-center justify-center hover:bg-primary-dark transition-colors cursor-pointer"
                   >
-                    <Plus className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
+                    <Plus className="w-5 h-5" strokeWidth={2.5} />
                   </Link>
                 ) : onToggleCreation ? (
                   <button
                     onClick={onToggleCreation}
-                    className={`h-8 w-8 md:h-9 md:w-9 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${
+                    className={`hidden md:flex h-9 w-9 rounded-lg items-center justify-center transition-colors cursor-pointer ${
                       showCreationForm
                         ? "bg-outline-variant/15 text-on-surface"
                         : "bg-primary text-white hover:bg-primary-dark"
                     }`}
                   >
                     {showCreationForm ? (
-                      <span className="text-lg md:text-xl leading-none">&times;</span>
+                      <span className="text-xl leading-none">&times;</span>
                     ) : (
-                      <Plus className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
+                      <Plus className="w-5 h-5" strokeWidth={2.5} />
                     )}
                   </button>
                 ) : null}
@@ -170,7 +200,7 @@ export function MasterDetail<T>({
           {isCollapsed && (
             <div className="hidden md:flex flex-col items-center py-3 gap-2 h-full w-full">
               <button
-                onClick={() => setIsListExpanded(true)}
+                onClick={() => {}}
                 className="w-9 h-9 rounded-xl bg-on-surface/5 hover:bg-on-surface/10 flex items-center justify-center transition-all active:scale-90 cursor-pointer mb-2 shrink-0"
                 title="Expandir lista"
               >
@@ -192,24 +222,25 @@ export function MasterDetail<T>({
           {/* FULL LIST */}
           {!isCollapsed && (
             <>
-              <div className="flex items-center justify-between px-4 md:px-5 py-2.5 md:py-3 border-b border-outline-variant/6 bg-surface/80 md:bg-transparent">
-                <span className="text-[12px] md:text-sm font-medium text-on-surface-variant/80">
+              <div className="hidden md:flex items-center justify-between px-5 py-3 border-b border-outline-variant/6 bg-transparent">
+                <span className="text-sm font-medium text-on-surface-variant/80">
                   {pagination.totalItems} {countLabel}
                 </span>
               </div>
-              <div className="flex-1 overflow-y-auto py-4 md:py-0">
+              <div className="flex-1 overflow-y-auto py-2 md:py-0">
                 {pagination.paginatedItems.length > 0 ? (
                   <>
-                    {/* Mobile: grouped iOS-style container */}
-                    <div className="md:hidden mx-4 bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-[24px] border border-outline-variant/20 shadow-sm overflow-hidden">
-                      {pagination.paginatedItems.map((item, index) => (
-                        <div
-                          key={getItemId(item)}
-                          className={index !== pagination.paginatedItems.length - 1 ? "border-b border-outline-variant/15" : ""}
-                        >
-                          {renderItem(item, selectedId === getItemId(item))}
+                    {/* Mobile: table style list */}
+                    <div className="md:hidden px-4 pb-20">
+                      <div className="flex flex-col bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm">
+                        <div className="flex flex-col divide-y divide-outline-variant/10">
+                          {pagination.paginatedItems.map((item) => (
+                            <div key={getItemId(item)} className="bg-transparent">
+                              {renderItem(item, selectedId === getItemId(item))}
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      </div>
                     </div>
                     {/* Desktop: plain list */}
                     <div className="hidden md:block">
@@ -226,14 +257,17 @@ export function MasterDetail<T>({
                   </div>
                 )}
                 {/* Pagination inside scroll — always reachable on mobile */}
-                <div className="md:hidden pb-28">
+                <div className="md:hidden pb-28 pt-6 flex flex-col items-center gap-4">
+                  <span className="text-[13px] font-medium text-on-surface-variant/50">
+                    {pagination.totalItems} {countLabel} en total
+                  </span>
                   <PaginationButtons
                     currentPage={pagination.currentPage}
                     totalPages={pagination.totalPages}
                     totalItems={pagination.totalItems}
                     pageSize={pagination.pageSize}
                     onPageChange={pagination.goToPage}
-                    className="px-4 pt-2"
+                    className="px-4"
                   />
                 </div>
               </div>

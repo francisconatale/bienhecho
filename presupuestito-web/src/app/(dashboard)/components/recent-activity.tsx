@@ -29,7 +29,7 @@ export function RecentActivity() {
         </h2>
       </div>
 
-      <div className="flex-1 flex flex-col bg-surface/60 backdrop-blur-2xl rounded-[32px] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] border border-outline-variant/20 overflow-hidden">
+      <div className="flex-1 flex flex-col bg-surface/60 backdrop-blur-2xl rounded-xl shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] border border-outline-variant/20 overflow-hidden">
         <div className="flex flex-col divide-y divide-black/[0.04] dark:divide-white/[0.04]">
           {pag.paginatedItems.length > 0 ? (
             pag.paginatedItems.map((job) => {
@@ -39,7 +39,7 @@ export function RecentActivity() {
                   key={job.id}
                   className="flex items-center gap-3 p-4 md:p-5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
                 >
-                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-[14px] md:rounded-[16px] bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-lg shrink-0 shadow-inner">
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-lg shrink-0 shadow-inner">
                     {client?.nombre.charAt(0) || "T"}
                   </div>
                 <div className="flex-1 min-w-0">

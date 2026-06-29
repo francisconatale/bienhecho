@@ -16,19 +16,21 @@ export function MobilePageHeader({
   ...actionsProps
 }: MobilePageHeaderProps) {
   return (
-    <div className="md:hidden relative z-10 px-4 pt-2.5 pb-6 flex items-center justify-between">
-      {backHref ? (
-        <Link href={backHref} className="inline-flex items-center gap-1.5 text-sm text-on-surface-variant font-medium hover:text-on-surface transition-colors active:scale-95">
-          <ChevronLeft className="w-4 h-4" />
-          {backLabel}
-        </Link>
-      ) : (
-        <button onClick={onBack} className="inline-flex items-center gap-1.5 text-sm text-on-surface-variant font-medium hover:text-on-surface transition-colors active:scale-95 cursor-pointer">
-          <ChevronLeft className="w-4 h-4" />
-          {backLabel}
-        </button>
-      )}
-      <MobileHeaderActions {...actionsProps} />
+    <div className="md:hidden absolute top-0 left-0 w-full z-50 px-4 pt-12 pb-3 flex items-center justify-between bg-transparent pointer-events-none">
+      <div className="pointer-events-auto">
+        {backHref ? (
+          <Link href={backHref} className="w-10 h-10 rounded-full bg-surface/50 backdrop-blur-xl border border-outline-variant/20 shadow-sm flex items-center justify-center text-primary hover:bg-surface transition-colors active:scale-95">
+            <ChevronLeft className="w-6 h-6 -ml-0.5" strokeWidth={2.5} />
+          </Link>
+        ) : (
+          <button onClick={onBack} className="w-10 h-10 rounded-full bg-surface/50 backdrop-blur-xl border border-outline-variant/20 shadow-sm flex items-center justify-center text-primary cursor-pointer hover:bg-surface transition-colors active:scale-95">
+            <ChevronLeft className="w-6 h-6 -ml-0.5" strokeWidth={2.5} />
+          </button>
+        )}
+      </div>
+      <div className="pointer-events-auto">
+        <MobileHeaderActions {...actionsProps} />
+      </div>
     </div>
   );
 }

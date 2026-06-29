@@ -134,7 +134,7 @@ export function JobList() {
         renderRailItem={(job, isActive) => (
           <button
             onClick={() => handleSelectedIdChange(job.id)}
-            className={`w-10 h-10 rounded-[14px] flex items-center justify-center shrink-0 transition-all duration-200 cursor-pointer active:scale-90 ${
+            className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 cursor-pointer active:scale-90 ${
               isActive
                 ? "bg-primary text-white shadow-md shadow-primary/30"
                 : "bg-on-surface/5 text-on-surface-variant hover:bg-on-surface/10"

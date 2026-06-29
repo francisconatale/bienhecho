@@ -20,7 +20,7 @@ export function ClientJobsCard({ clientId }: { clientId: string }) {
   const hasMore = clientJobs.length > 5;
 
   return (
-    <div className="relative bg-surface/40 dark:bg-surface/10 backdrop-blur-2xl rounded-[32px] p-8 md:p-10 border border-white/30 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.12)]">
+    <div className="relative bg-surface/40 dark:bg-surface/10 backdrop-blur-2xl rounded-xl p-8 md:p-10 border border-white/30 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.12)]">
       <div className="flex items-center justify-between mb-8">
         <h3 className="text-xs font-semibold uppercase tracking-widest text-on-surface-variant/60">Trabajos del Cliente</h3>
         <Link

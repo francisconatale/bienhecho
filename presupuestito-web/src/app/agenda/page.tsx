@@ -13,7 +13,7 @@ export default function AgendaPage() {
   const { state, actions } = useAgenda();
 
   return (
-    <main className="flex-1 pb-32 w-full pt-10 transition-all max-w-6xl mx-auto px-4 md:px-8">
+    <main className="flex-1 pb-32 w-full pt-10 transition-all max-w-[1400px] mx-auto px-4 md:px-8 lg:px-10 xl:px-16">
       <PageHeader
         title="Agenda"
         description="Gestioná las visitas a obra."

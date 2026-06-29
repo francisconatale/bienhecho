@@ -15,8 +15,10 @@ export function TareaItem({ task, viewMode = "list", onToggle, onTogglePriority,
 
   return (
     <div className={cn(
-      "bg-surface/30 dark:bg-surface/10 backdrop-blur-xl border border-outline-variant/10 shadow-sm transition-all hover:-translate-y-0.5 group",
-      isBoard ? "flex flex-col gap-3 p-4 rounded-[20px] hover:shadow-md hover:scale-[1.02]" : "flex items-center gap-4 px-6 py-4 rounded-[28px]"
+      "transition-all group",
+      isBoard 
+        ? "bg-surface/30 dark:bg-surface/10 backdrop-blur-xl border border-outline-variant/10 shadow-sm hover:-translate-y-0.5 flex flex-col gap-3 p-4 rounded-xl hover:shadow-md hover:scale-[1.02]" 
+        : "flex items-center gap-4 px-4 py-3 bg-transparent hover:bg-on-surface/5"
     )}>
       {/* Top Row: Checkbox & Title */}
       <div className={cn("flex w-full", isBoard ? "items-start gap-3" : "items-center gap-4 flex-1 min-w-0")}>
@@ -92,7 +94,7 @@ export function TareaItem({ task, viewMode = "list", onToggle, onTogglePriority,
                   ? "text-orange-500 bg-orange-500/10 hover:bg-orange-500/20 opacity-100" 
                   : task.prioridad === "media"
                   ? "text-amber-500 bg-amber-500/10 hover:bg-amber-500/20 opacity-100"
-                  : "text-on-surface-variant/30 hover:text-orange-500 hover:bg-orange-500/10 sm:opacity-0 group-hover:opacity-100"
+                  : "text-on-surface-variant/30 hover:text-orange-500 hover:bg-orange-500/10"
               )}
             >
               <Flame className={cn(isBoard ? "w-4 h-4" : "w-[18px] h-[18px]", task.prioridad === "alta" ? "fill-orange-500" : task.prioridad === "media" ? "fill-amber-500" : "")} />
@@ -102,7 +104,7 @@ export function TareaItem({ task, viewMode = "list", onToggle, onTogglePriority,
               onClick={() => onDelete(task.id)}
               title="Eliminar tarea"
               className={cn(
-                "p-1.5 rounded-full text-on-surface-variant/30 hover:text-red-500 hover:bg-red-500/10 transition-colors sm:opacity-0 group-hover:opacity-100"
+                "p-1.5 rounded-full text-on-surface-variant/30 hover:text-red-500 hover:bg-red-500/10 transition-colors"
               )}
             >
               <Trash2 className={isBoard ? "w-4 h-4" : "w-[18px] h-[18px]"} />

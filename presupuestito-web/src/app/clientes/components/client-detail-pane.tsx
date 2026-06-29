@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Pencil, Trash2, Plus, Phone, MapPin, Mail, Briefcase, FileText, CalendarDays, Hammer, CheckCircle2, DollarSign } from "lucide-react";
+import { Pencil, Trash2, Plus, Phone, MapPin, Mail, CalendarDays, Hammer, CheckCircle2, DollarSign } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 import { Client } from "@/types";
 import { useClientForm } from "./use-client-form";
 import { useCuentaCorriente } from "@/hooks/use-cuenta-corriente";
+
 import { AjusteManualForm } from "./ajuste-manual-form";
 import Link from "next/link";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
@@ -55,12 +56,7 @@ export function ClientDetailPane({
   const { jobs, tasks, materiales, cobros } = useDataStore();
 
   const clientJobs = jobs.filter((j) => j.cliente_id === client.id);
-  const { saldo: deudaTotal, transacciones } = useCuentaCorriente(client.id);
-
-  const totalCargos = transacciones.filter(t => t.tipo === "cargo").reduce((acc, t) => acc + t.monto, 0);
-  const totalAbonos = transacciones.filter(t => t.tipo === "abono").reduce((acc, t) => acc + t.monto, 0);
-  const totalMovimientos = transacciones.length;
-  const totalCobrosCount = transacciones.filter(t => t.tipo === "abono").length;
+  const { saldo: deudaTotal } = useCuentaCorriente(client.id);
 
   const handleSuccess = () => setIsEditing(false);
   const { form, onSubmit, isLoading } = useClientForm(client, handleSuccess);
@@ -70,16 +66,16 @@ export function ClientDetailPane({
     <div className="flex-1 overflow-y-auto relative w-full min-h-screen">
       <AuroraBackground preset="perfil" />
 
-      <form onSubmit={onSubmit} className="relative z-10 px-4 py-6 md:py-8 max-w-[1200px] mx-auto flex flex-col gap-6 pb-32">
+      <form onSubmit={onSubmit} className="relative z-10 px-4 pt-28 pb-6 md:pt-8 md:pb-8 max-w-[1200px] mx-auto flex flex-col gap-6 pb-32">
         
         {/* 1. Header Card */}
-        <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col md:flex-row md:items-start justify-between gap-6">
-          <div className="flex flex-col md:flex-row md:items-start gap-6 w-full">
-            <div className="w-20 h-20 rounded-[16px] bg-[#E8F5E9] text-[#2E7D32] dark:bg-[#2E7D32]/20 dark:text-[#81C784] flex items-center justify-center font-bold text-3xl shrink-0">
+        <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-5 md:p-6 border border-outline-variant/20 shadow-sm flex flex-col md:flex-row md:items-start justify-between gap-6">
+          <div className="flex flex-row items-start gap-4 md:gap-6 w-full">
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-[#E8F5E9] text-[#2E7D32] dark:bg-[#2E7D32]/20 dark:text-[#81C784] flex items-center justify-center font-bold text-3xl shrink-0 mt-0.5">
               {client.nombre.charAt(0)}
             </div>
             
-            <div className="flex-1 min-w-0 flex flex-col gap-2">
+            <div className="flex-1 min-w-0 flex flex-col gap-1 md:gap-2">
               {isEditing ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                   <div className="md:col-span-2 space-y-1">
@@ -102,24 +98,39 @@ export function ClientDetailPane({
                 </div>
               ) : (
                 <>
-                  <h2 className="text-2xl md:text-[28px] font-bold text-on-surface tracking-tight leading-none">{client.nombre}</h2>
-                  <span className="text-[13px] text-on-surface-variant/70">
-                    Cliente desde {new Date(client.created_at).toLocaleDateString("es-AR", { month: "short", year: "numeric" })}
-                  </span>
-                  <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-2">
+                  <h1 className="text-2xl md:text-[28px] font-bold text-on-surface tracking-tight leading-none">{client.nombre}</h1>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span className="text-[13px] text-on-surface-variant/70 cursor-default select-none">
+                      Cliente desde {new Date(client.created_at).toLocaleDateString("es-AR", { month: "short", year: "numeric" })}
+                    </span>
+                    <Link
+                      href={`/clientes/${client.id}/cuenta-corriente`}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full transition-colors",
+                        deudaTotal > 0
+                          ? "bg-[#FEE2E2] text-[#DC2626] hover:bg-[#FECACA] dark:bg-[#DC2626]/20 dark:text-[#FCA5A5] dark:hover:bg-[#DC2626]/30"
+                          : deudaTotal < 0
+                            ? "bg-[#DCFCE7] text-[#16A34A] hover:bg-[#BBF7D0] dark:bg-[#16A34A]/20 dark:text-[#86EFAC] dark:hover:bg-[#16A34A]/30"
+                            : "bg-on-surface/5 text-on-surface-variant hover:bg-on-surface/10"
+                      )}
+                    >
+                      {deudaTotal > 0 ? `Debe ${formatCurrency(Math.abs(deudaTotal))}` : deudaTotal < 0 ? `A favor ${formatCurrency(Math.abs(deudaTotal))}` : "Al día"}
+                    </Link>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-3 md:mt-2">
                     {client.email && (
-                      <span className="flex items-center gap-2 text-[13px] text-on-surface-variant">
-                        <Mail className="w-3.5 h-3.5 opacity-60" /> {client.email}
+                      <span className="flex items-center gap-2 text-[13px] text-on-surface-variant cursor-default select-none">
+                        <Mail className="w-3.5 h-3.5 opacity-60" aria-hidden="true" /> {client.email}
                       </span>
                     )}
                     {client.telefono && (
-                      <span className="flex items-center gap-2 text-[13px] text-on-surface-variant">
-                        <Phone className="w-3.5 h-3.5 opacity-60" /> {client.telefono}
+                      <span className="flex items-center gap-2 text-[13px] text-on-surface-variant cursor-default select-none">
+                        <Phone className="w-3.5 h-3.5 opacity-60" aria-hidden="true" /> {client.telefono}
                       </span>
                     )}
                     {client.direccion && (
-                      <span className="flex items-center gap-2 text-[13px] text-on-surface-variant">
-                        <MapPin className="w-3.5 h-3.5 opacity-60" /> {client.direccion}
+                      <span className="flex items-center gap-2 text-[13px] text-on-surface-variant cursor-default select-none">
+                        <MapPin className="w-3.5 h-3.5 opacity-60" aria-hidden="true" /> {client.direccion}
                       </span>
                     )}
                   </div>
@@ -151,66 +162,28 @@ export function ClientDetailPane({
           </div>
         </div>
 
-        {/* 2. Top Metrics Grid - Simplificado */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col gap-1 relative overflow-hidden group">
-            <div className="relative z-10 flex flex-col h-full">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60">Cuenta Corriente</span>
-              <span className={cn("text-3xl font-bold tracking-tight mt-1", deudaTotal > 0 ? "text-[#EF4444]" : deudaTotal < 0 ? "text-[#22C55E]" : "text-on-surface")}>
-                {formatCurrency(Math.abs(deudaTotal))}
-              </span>
-              <div className="flex items-center gap-2 mt-2 text-[13px] text-on-surface-variant/80">
-                <div className={cn("w-2 h-2 rounded-full", deudaTotal > 0 ? "bg-[#EF4444]" : deudaTotal < 0 ? "bg-[#22C55E]" : "bg-on-surface-variant/40")} />
-                {deudaTotal > 0 ? "Saldo en deuda" : deudaTotal < 0 ? "Saldo a favor" : "Al día"}
-              </div>
-              <div className="mt-6 pt-4 border-t border-outline-variant/10">
-                <Link
-                  href={`/clientes/${client.id}/cuenta-corriente`}
-                  className="flex items-center justify-between text-sm font-bold text-primary group-hover:text-primary-dark transition-colors"
-                >
-                  Ver movimientos de cuenta
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <FileText className="w-4 h-4" />
-                  </div>
-                </Link>
-              </div>
-            </div>
-            
-            {/* Decors */}
-            <div className="absolute -right-12 -bottom-12 w-40 h-40 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-2xl pointer-events-none group-hover:scale-110 transition-transform duration-500" />
-          </div>
-
-          <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col">
-            <h3 className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60 mb-4">Resumen General</h3>
-            <div className="grid grid-cols-2 gap-3 flex-1">
-              <div className="bg-surface/40 dark:bg-white/[0.03] rounded-[16px] p-4 flex flex-col justify-center gap-1 border border-outline-variant/10 dark:border-white/5">
-                <span className="text-xl font-bold text-on-surface">{clientJobs.length}</span>
-                <span className="text-[11px] text-on-surface-variant/70">Trabajos activos</span>
-              </div>
-              <div className="bg-surface/40 dark:bg-white/[0.03] rounded-[16px] p-4 flex flex-col justify-center gap-1 border border-outline-variant/10 dark:border-white/5">
-                <span className="text-xl font-bold text-on-surface">{totalMovimientos}</span>
-                <span className="text-[11px] text-on-surface-variant/70">Movimientos</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* 3. Main Master-Detail Grid */}
         <div className="space-y-6">
           {/* Trabajos Activos */}
-          <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-              <h3 className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60">Trabajos Activos</h3>
-              <Link
-                href={`/trabajos/nuevo?clienteId=${client.id}`}
-                className="flex items-center justify-center gap-2 px-4 py-2 rounded-[12px] border border-outline-variant/30 dark:border-white/10 hover:bg-on-surface/5 transition-colors text-sm font-semibold"
-              >
-                <Briefcase className="w-4 h-4" />
-                Nuevo trabajo
-              </Link>
-            </div>
+          <div className="relative group">
+            <div className="flex flex-col bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm mt-2">
+              <div className="flex flex-row items-center justify-between gap-4 px-4 py-4 border-b border-outline-variant/10 bg-surface/50">
+                <h2 className="text-[13px] font-bold text-on-surface-variant uppercase tracking-widest">Trabajos Activos</h2>
+                <Link
+                  href={`/trabajos/nuevo?clienteId=${client.id}`}
+                  className="text-[13px] font-bold text-primary hover:bg-primary/15 transition-colors flex items-center gap-1.5 bg-primary/10 px-3 py-1.5 rounded-full shrink-0"
+                >
+                  <Plus className="w-3.5 h-3.5" aria-hidden="true" /> Nuevo trabajo
+                </Link>
+              </div>
 
-            <div className="space-y-3">
+              <div className="hidden md:flex items-center px-4 py-2 border-b border-outline-variant/20 bg-surface-variant/20">
+                <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest flex-1">Trabajo</div>
+                <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-48">Estado / Avance</div>
+                <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-32 text-right">Importe</div>
+              </div>
+              
+              <div className="flex flex-col divide-y divide-outline-variant/10">
               {clientJobs.length > 0 ? (
                 clientJobs.map((job) => {
                   const jobTasks = tasks.filter((t) => t.trabajo_id === job.id);
@@ -233,83 +206,71 @@ export function ClientDetailPane({
                          setLoadingJobId(job.id);
                          pushHistory(window.location.pathname + window.location.search);
                       }}
-                      className="group block p-4 md:p-5 bg-surface/40 dark:bg-white/[0.03] rounded-[18px] border border-outline-variant/10 dark:border-white/5 hover:bg-surface/80 dark:hover:bg-white/[0.06] hover:shadow-[0_4px_20px_rgba(0,0,0,0.04)] transition-all duration-300"
+                      className="flex flex-col md:flex-row md:items-center px-4 py-3 md:py-4 hover:bg-primary/5 cursor-pointer transition-colors group gap-3 md:gap-0"
                     >
-                      {/* Top row: Title + Status + Price */}
-                      <div className="flex items-start justify-between gap-3 mb-3">
-                        <div className="flex items-start gap-3 min-w-0">
-                          <div className={cn("w-2.5 h-2.5 rounded-full mt-1.5 shrink-0", getStatusDotColor(job.estado))} />
-                          <div className="flex flex-col gap-1.5 min-w-0">
-                            <p className="text-sm md:text-base font-bold text-on-surface group-hover:text-primary transition-colors leading-tight line-clamp-2">{job.titulo}</p>
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className={cn("text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md", getStatusColor(job.estado))}>
-                                {job.estado.replace(/_/g, " ")}
-                              </span>
-                              {job.direccion && (
-                                <span className="flex items-center gap-1 text-[11px] text-on-surface-variant/60">
-                                  <MapPin className="w-3 h-3" />
-                                  <span className="truncate max-w-[160px]">{job.direccion}</span>
-                                </span>
-                              )}
-                            </div>
-                          </div>
+                      {/* Title & Metadata Column */}
+                      <div className="flex-1 min-w-0 pr-4 flex flex-col gap-1">
+                        <div className="text-[15px] font-bold text-on-surface truncate group-hover:text-primary transition-colors">
+                          {job.titulo}
                         </div>
-                        <div className="text-right shrink-0">
-                          <span className="text-base md:text-lg font-bold tracking-tight text-on-surface">
-                            {job.presupuesto > 0 ? formatCurrency(job.presupuesto) : "S/P"}
+                        <div className="flex items-center gap-3 text-[11px] text-on-surface-variant/70">
+                          <span className="flex items-center gap-1">
+                            <CalendarDays className="w-3 h-3" />
+                            {daysSinceCreation === 0 ? "Hoy" : `Hace ${daysSinceCreation}d`}
                           </span>
+                          {job.direccion && (
+                            <span className="flex items-center gap-1 truncate max-w-[200px]">
+                              <MapPin className="w-3 h-3" />
+                              {job.direccion}
+                            </span>
+                          )}
                         </div>
                       </div>
 
-                      {/* Saldo pendiente para presupuestados */}
-                      {job.estado === "presupuestado" && totalEstimado > 0 && (
-                        <div className="mb-3 flex items-center gap-2 px-3 py-2 bg-amber-50 dark:bg-amber-500/10 rounded-[12px] border border-amber-200/60 dark:border-amber-500/20">
-                          <DollarSign className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                          <span className="text-[12px] font-semibold text-amber-700 dark:text-amber-400">
-                            Falta cobrar {formatCurrency(saldoPendiente)}
+                      {/* Status & Progress Column */}
+                      <div className="w-full md:w-48 shrink-0 flex flex-col gap-1.5 md:pr-4">
+                        <div className="flex items-center gap-2">
+                          <div className={cn("w-2 h-2 rounded-full", getStatusDotColor(job.estado))} />
+                          <span className={cn("text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded", getStatusColor(job.estado))}>
+                            {job.estado.replace(/_/g, " ")}
                           </span>
                         </div>
-                      )}
-
-                      {/* Progress bar */}
-                      {totalTasks > 0 && (
-                        <div className="mb-3">
-                          <div className="h-1.5 bg-on-surface/5 dark:bg-white/[0.06] rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-primary rounded-full transition-all duration-700 ease-out"
-                              style={{ width: `${progress}%` }}
-                            />
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Bottom metadata row */}
-                      <div className="flex items-center gap-4 text-[11px] text-on-surface-variant/60">
                         {totalTasks > 0 && (
-                          <span className="flex items-center gap-1.5">
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            {completedTasks}/{totalTasks} tareas
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-1.5 bg-on-surface/5 dark:bg-white/[0.06] rounded-full overflow-hidden">
+                              <div className="h-full bg-primary rounded-full" style={{ width: `${progress}%` }} />
+                            </div>
+                            <span className="text-[10px] font-medium text-on-surface-variant/70 w-7 text-right">
+                              {progress}%
+                            </span>
+                          </div>
                         )}
-                        {jobMaterials.length > 0 && (
-                          <span className="flex items-center gap-1.5">
-                            <Hammer className="w-3.5 h-3.5" />
-                            {formatCurrency(materialsCost)} en materiales
-                          </span>
-                        )}
-                        <span className="flex items-center gap-1.5 ml-auto">
-                          <CalendarDays className="w-3.5 h-3.5" />
-                          {daysSinceCreation === 0 ? "Hoy" : `Hace ${daysSinceCreation}d`}
+                        <div className="flex items-center gap-2 text-[10px] text-on-surface-variant/60">
+                          {totalTasks > 0 && <span>{completedTasks}/{totalTasks} Tareas</span>}
+                          {jobMaterials.length > 0 && <span>• {jobMaterials.length} Mats</span>}
+                        </div>
+                      </div>
+
+                      {/* Amount Column */}
+                      <div className="w-full md:w-32 shrink-0 flex flex-col md:items-end justify-center pt-2 md:pt-0 border-t border-outline-variant/10 md:border-0">
+                        <span className="text-base font-bold text-on-surface tabular-nums">
+                          {job.presupuesto > 0 ? formatCurrency(job.presupuesto) : "S/P"}
                         </span>
+                        {job.estado === "presupuestado" && totalEstimado > 0 && saldoPendiente > 0 && (
+                          <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 mt-0.5">
+                            Debe {formatCurrency(saldoPendiente)}
+                          </span>
+                        )}
                       </div>
                     </Link>
                   );
                 })
               ) : (
-                <div className="py-8 text-center text-[13px] font-medium text-on-surface-variant/60">
+                <div className="py-8 text-center text-[14px] text-on-surface-variant/60 italic">
                   No hay trabajos activos.
                 </div>
               )}
+              </div>
             </div>
           </div>
         </div>

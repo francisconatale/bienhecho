@@ -34,7 +34,7 @@ export function VisitList({
 
   if (!selectedDate) {
     return (
-      <div className="bg-surface rounded-[32px] border border-outline-variant/10 shadow-sm py-16 text-center">
+      <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl border border-outline-variant/20 shadow-sm py-16 text-center">
         <CalendarDays className="w-12 h-12 text-on-surface-variant/20 mx-auto mb-4" strokeWidth={1.5} />
         <h3 className="text-base font-bold text-on-surface mb-1">Seleccioná un día</h3>
         <p className="text-sm text-on-surface-variant/60">
@@ -45,7 +45,7 @@ export function VisitList({
   }
 
   return (
-    <div className="bg-surface rounded-[32px] border border-outline-variant/10 shadow-sm">
+    <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl border border-outline-variant/20 shadow-sm">
       <div className="px-6 py-4 border-b border-black/[0.04] dark:border-white/[0.04] flex items-center justify-between">
         <h2 className="text-sm font-extrabold text-on-surface tracking-tight">
           {selectedDay} de {MONTHS[month]} {year}

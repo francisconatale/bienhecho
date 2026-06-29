@@ -25,7 +25,7 @@ export function ClientAlerts() {
         <h2 className="text-[10px] md:text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-3 px-1">
           Alertas
         </h2>
-        <div className="flex-1 flex flex-col items-center justify-center min-h-[100px] bg-surface/40 backdrop-blur-xl rounded-[24px] border border-outline-variant/10 text-center p-6">
+        <div className="flex-1 flex flex-col items-center justify-center min-h-[100px] bg-surface/40 backdrop-blur-xl rounded-xl border border-outline-variant/10 text-center p-6">
           <p className="text-sm font-medium text-on-surface-variant/60">Todo al día. No hay alertas.</p>
         </div>
       </section>
@@ -41,7 +41,7 @@ export function ClientAlerts() {
       {alerts.map((alert) => (
         <div
           key={alert.id}
-          className={`flex items-center gap-3 p-3.5 rounded-[20px] bg-surface/60 backdrop-blur-xl shadow-sm transition-all hover:bg-surface/80 border ${
+          className={`flex items-center gap-3 p-3.5 rounded-xl bg-surface/60 backdrop-blur-xl shadow-sm transition-all hover:bg-surface/80 border ${
             alert.tipo === "borrador"
               ? "border-amber-500/20"
               : "border-red-500/20"

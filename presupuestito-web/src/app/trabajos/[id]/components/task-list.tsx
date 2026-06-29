@@ -43,42 +43,52 @@ export function TaskList({ jobId, onSelectTask }: TaskListProps) {
         </h3>
         <button
           onClick={() => setIsAdding(true)}
-          className="group flex items-center gap-1.5 px-4 py-2 rounded-[14px] border border-outline-variant/20 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 text-[11px] font-bold text-on-surface uppercase tracking-wider active:scale-95"
+          className="group flex items-center gap-1.5 px-4 py-2 rounded-xl border border-outline-variant/20 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 text-[11px] font-bold text-on-surface uppercase tracking-wider active:scale-95"
         >
           <Plus className="w-4 h-4 text-primary transition-transform group-hover:rotate-90 duration-300" strokeWidth={2.5} />
           Agregar
         </button>
       </div>
 
-      <div className="space-y-3">
+      <div className="flex flex-col mt-4">
         {isAdding && (
-          <div className="p-4">
+          <div className="mb-4 bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-4 border border-outline-variant/20 shadow-sm">
             <TaskForm onSave={handleAdd} onCancel={() => setIsAdding(false)} />
           </div>
         )}
 
-        {pag.paginatedItems.length > 0 ? (
-          pag.paginatedItems.map((task, idx) => (
-            <div 
-              key={task.id} 
-              className="animate-fade-in-up" 
-              style={{ animationDelay: `${idx * 75}ms`, animationFillMode: 'both' }}
-            >
-              <TaskItem task={task} jobId={jobId} onSelect={onSelectTask} />
-            </div>
-          ))
-        ) : (
-          !isAdding && (
-            <div className="py-20 px-6 text-center bg-surface border border-dashed border-outline-variant/20 rounded-[24px] bg-surface/80 ">
-              <p className="text-sm font-bold text-on-surface-variant/60">
-                Aún no hay tareas definidas
-              </p>
-              <p className="text-[11px] font-medium text-on-surface-variant/40 mt-2 tracking-wide uppercase">
-                Agregá tareas para calcular el total del trabajo
-              </p>
-            </div>
-          )
-        )}
+        <div className="flex flex-col bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm">
+          <div className="hidden md:flex items-center px-4 py-2 border-b border-outline-variant/20 bg-surface-variant/20">
+            <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest flex-1">Descripción</div>
+            <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-32 text-right">Precio</div>
+            <div className="w-10"></div>
+          </div>
+
+          <div className="flex flex-col divide-y divide-outline-variant/10">
+            {pag.paginatedItems.length > 0 ? (
+              pag.paginatedItems.map((task, idx) => (
+                <div 
+                  key={task.id} 
+                  className="animate-fade-in-up" 
+                  style={{ animationDelay: `${idx * 75}ms`, animationFillMode: 'both' }}
+                >
+                  <TaskItem task={task} jobId={jobId} onSelect={onSelectTask} />
+                </div>
+              ))
+            ) : (
+              !isAdding && (
+                <div className="py-12 px-6 text-center">
+                  <p className="text-sm font-bold text-on-surface-variant/60">
+                    Aún no hay tareas definidas
+                  </p>
+                  <p className="text-[11px] font-medium text-on-surface-variant/40 mt-2 tracking-wide uppercase">
+                    Agregá tareas para calcular el total del trabajo
+                  </p>
+                </div>
+              )
+            )}
+          </div>
+        </div>
       </div>
       <PaginationButtons
         currentPage={pag.currentPage}

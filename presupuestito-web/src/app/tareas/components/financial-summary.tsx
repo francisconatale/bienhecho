@@ -22,8 +22,8 @@ export function FinancialSummary() {
   if (totalAFacturar === 0) return null;
 
   return (
-    <div className="flex items-center gap-4 p-4 rounded-[20px] bg-surface/60 backdrop-blur-xl border border-outline-variant/20 shadow-sm transition-all hover:bg-surface/80">
-      <div className="p-3 rounded-[14px] bg-primary/10 text-primary shadow-inner">
+    <div className="flex items-center gap-4 p-4 rounded-xl bg-surface/60 backdrop-blur-xl border border-outline-variant/20 shadow-sm transition-all hover:bg-surface/80">
+      <div className="p-3 rounded-xl bg-primary/10 text-primary shadow-inner">
         <FileText className="w-5 h-5" aria-hidden="true" />
       </div>
       <div className="flex-1">

@@ -23,7 +23,7 @@ function NavItem({ icon, label, href, active }: NavItemProps) {
       href={href}
     >
       <div 
-        className={`${active ? "bg-primary/10 border border-primary/20" : "bg-transparent border border-transparent"} rounded-[16px] p-2.5 transition-all duration-300`}
+        className={`${active ? "bg-primary/10 border border-primary/20" : "bg-transparent border border-transparent"} rounded-xl p-2.5 transition-all duration-300`}
       >
         {icon}
       </div>
