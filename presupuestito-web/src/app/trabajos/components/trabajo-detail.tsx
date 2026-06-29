@@ -137,26 +137,28 @@ export function TrabajoDetail({
 
   return (
     <div className={cn("relative w-full", isEmbedded ? "min-h-full" : "min-h-screen")}>
-      {!isEmbedded && !selectedTaskId && (
+      {!isEmbedded && (
         <>
           <AuroraBackground preset="trabajo" />
 
-          <MobilePageHeader
-            onBack={() => router.push(popHistory(backDest))}
-            isEditing={isHeaderEditing}
-            hasChanges={headerHasChanges}
-            onEditStart={job.estado !== "pagado" ? () => setIsHeaderEditing(true) : undefined}
-            onCancel={() => setIsHeaderEditing(false)}
-            onSave={() => {
-              document.querySelector<HTMLButtonElement>('[data-job-header-save]')?.click();
-            }}
-          />
+          {!selectedTaskId && (
+            <MobilePageHeader
+              onBack={() => router.push(popHistory(backDest))}
+              isEditing={isHeaderEditing}
+              hasChanges={headerHasChanges}
+              onEditStart={job.estado !== "pagado" ? () => setIsHeaderEditing(true) : undefined}
+              onCancel={() => setIsHeaderEditing(false)}
+              onSave={() => {
+                document.querySelector<HTMLButtonElement>('[data-job-header-save]')?.click();
+              }}
+            />
+          )}
         </>
       )}
 
       {/* Task detail overlay (mobile) */}
       {selectedTaskId && (
-        <div className="fixed inset-0 z-[60] bg-surface overflow-y-auto md:hidden">
+        <div className="fixed inset-0 z-[60] bg-transparent overflow-y-auto md:hidden">
           <TaskDetailPanel
             jobId={job.id}
             taskId={selectedTaskId}
@@ -220,7 +222,7 @@ export function TrabajoDetail({
                   <Link 
                     href={`/trabajos/${job.id}/materiales${from ? `?from=${from}` : ""}`} 
                     onClick={() => pushHistory(window.location.pathname + window.location.search)}
-                    className="group relative overflow-hidden bg-surface/80 rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
+                    className="group relative overflow-hidden bg-surface rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
                   >
                     <div className="relative z-10 flex items-center justify-between">
                       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
@@ -241,7 +243,7 @@ export function TrabajoDetail({
                   <Link 
                     href={`/trabajos/${job.id}/pagos`} 
                     onClick={() => pushHistory(window.location.pathname + window.location.search)}
-                    className="group relative overflow-hidden bg-surface/80 rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
+                    className="group relative overflow-hidden bg-surface rounded-[24px] p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
                   >
                     <div className="relative z-10 flex items-center justify-between">
                       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
@@ -273,7 +275,7 @@ export function TrabajoDetail({
             <div className={cn("space-y-4", isEmbedded ? "2xl:sticky 2xl:top-8" : "lg:sticky lg:top-32")}>
               <ProgressBar tasks={jobTasks} />
               
-              <div className="relative overflow-hidden bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+              <div className="relative overflow-hidden bg-surface rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
                 
                 <div className="relative flex flex-col gap-1 z-10">
                   <span className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">

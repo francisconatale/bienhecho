@@ -7,6 +7,7 @@ import { TopNav } from "@/components/layout/top-nav";
 import { AuthRedirect } from "@/components/auth/auth-redirect";
 import { ThemeScript } from "@/components/layout/theme-script";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -28,7 +29,8 @@ export default function RootLayout({
       >
         <ThemeScript />
         <link rel="manifest" href="/manifest.webmanifest" />
-        <script dangerouslySetInnerHTML={{
+        
+        <Script id="service-worker" strategy="afterInteractive" dangerouslySetInnerHTML={{
           __html: `
             if ("serviceWorker" in navigator) {
               if (location.search.includes("reset-sw")) {

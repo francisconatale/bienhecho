@@ -122,7 +122,7 @@ export function AuroraBackground({ preset = "layout", className }: AuroraBackgro
     case "trabajo":
       return (
         <>
-          <NoiseOverlay zIndex="z-[100]" />
+          <NoiseOverlay zIndex="z-[-1]" />
           <div
             className={`absolute top-0 left-0 right-0 h-[400px] md:h-[1200px] pointer-events-none overflow-hidden transition-all duration-1000 ${className ?? ""}`}
             style={{

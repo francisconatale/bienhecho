@@ -70,35 +70,7 @@ export function MasterDetail<T>({
 }: MasterDetailProps<T>) {
   const hasDetail = selectedId || showCreationForm;
 
-  const pathname = usePathname();
-  const storageKey = `master-detail-expanded-${pathname}`;
-
-  const [isListExpanded, setIsListExpanded] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const stored = sessionStorage.getItem(storageKey);
-      if (stored === "true") setIsListExpanded(true);
-    }
-  }, [storageKey]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem(storageKey, String(isListExpanded));
-    }
-  }, [isListExpanded, storageKey]);
-
-  const previousHasDetail = useRef(hasDetail);
-  useEffect(() => {
-    if (previousHasDetail.current !== hasDetail) {
-      if (hasDetail) {
-        setIsListExpanded(false);
-      }
-      previousHasDetail.current = hasDetail;
-    }
-  }, [hasDetail]);
-
-  const isCollapsed = hasDetail && !isListExpanded;
+  const isCollapsed = false;
 
   const selectedItem = selectedId
     ? items.find((i) => getItemId(i) === selectedId) ?? null
@@ -226,15 +198,6 @@ export function MasterDetail<T>({
                 <span className="text-[12px] md:text-sm font-medium text-on-surface-variant/80">
                   {pagination.totalItems} {countLabel}
                 </span>
-                {hasDetail && isListExpanded && (
-                  <button
-                    onClick={() => setIsListExpanded(false)}
-                    className="hidden md:flex items-center justify-center w-8 h-8 rounded-full hover:bg-on-surface/5 text-on-surface-variant transition-colors cursor-pointer active:scale-95"
-                    title="Ocultar lista"
-                  >
-                    <ChevronsLeft className="w-5 h-5" />
-                  </button>
-                )}
               </div>
               <div className="flex-1 overflow-y-auto px-4 md:px-0 py-4 md:py-0 space-y-3 md:space-y-0">
                 {pagination.paginatedItems.length > 0 ? (
@@ -263,7 +226,7 @@ export function MasterDetail<T>({
 
         {/* DETAIL PANE */}
         <div
-          className={`absolute inset-0 md:relative flex-1 flex flex-col bg-grouped-bg-light md:bg-transparent min-w-0 transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] z-20 ${
+          className={`absolute inset-0 md:relative flex-1 flex flex-col bg-transparent min-w-0 transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] z-20 ${
             hasDetail ? "translate-x-0" : "translate-x-full md:translate-x-0"
           } ${hasDetail ? "" : "max-md:pointer-events-none"}`}
         >
@@ -280,9 +243,11 @@ export function MasterDetail<T>({
 
           {/* MOBILE (Retain Content for Slide Out) */}
           <div className="flex md:hidden relative flex-1 flex-col min-h-0 overflow-hidden">
-            <div className="absolute inset-0 flex flex-col z-0">
-              {emptyState || emptyDetail}
-            </div>
+            {!hasDetail && (
+              <div className="absolute inset-0 flex flex-col z-0">
+                {emptyState || emptyDetail}
+              </div>
+            )}
             <div className={`absolute inset-0 flex flex-col z-10 bg-grouped-bg-light transition-opacity duration-300 ${
               !hasDetail ? "pointer-events-none" : ""
             }`}>
