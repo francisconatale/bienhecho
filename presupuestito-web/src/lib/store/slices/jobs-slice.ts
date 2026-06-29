@@ -56,6 +56,23 @@ export const createJobsSlice: DataStateCreator<JobsSlice> = (set, get) => ({
         jobs: state.jobs.filter((j) => j.id !== id),
         tasks: state.tasks.filter((t) => t.trabajo_id !== id),
       };
+      if (job && job.estado === "presupuestado") {
+        result.transacciones = [
+          ...state.transacciones,
+          {
+            id: crypto.randomUUID(),
+            cliente_id: job.cliente_id,
+            tipo: "abono",
+            monto: job.presupuesto,
+            concepto: `Anulación de presupuesto/factura: ${job.titulo}`,
+            fecha: new Date().toISOString().slice(0, 10),
+            referencia_trabajo_id: id,
+            referencia_cobro_id: null,
+            origen: "automático",
+            created_at: new Date().toISOString(),
+          },
+        ];
+      }
       return result;
     });
   },
