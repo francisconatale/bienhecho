@@ -1,7 +1,13 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/007-ciclo-vida-presupuesto/plan.md
+at specs/008-cuenta-corriente-cliente/plan.md
+
+Design artifacts (Phase 1) available at:
+- specs/008-cuenta-corriente-cliente/research.md (Phase 0)
+- specs/008-cuenta-corriente-cliente/data-model.md (Phase 1)
+- specs/008-cuenta-corriente-cliente/contracts/store-interface.md (Phase 1)
+- specs/008-cuenta-corriente-cliente/quickstart.md (Phase 1)
 <!-- SPECKIT END -->
 
 ## Regla: TODO.md
