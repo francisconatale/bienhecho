@@ -85,15 +85,17 @@ export function TareaItem({ task, viewMode = "list", onToggle, onTogglePriority,
           <div className="flex items-center gap-1">
             <button
               onClick={() => onTogglePriority(task.id, task.prioridad)}
-              title={task.prioridad === "alta" ? "Quitar prioridad" : "Marcar como urgente"}
+              title={task.prioridad === "alta" ? "Prioridad Alta" : task.prioridad === "media" ? "Prioridad Media" : "Prioridad Baja"}
               className={cn(
                 "p-1.5 rounded-full transition-all",
                 task.prioridad === "alta" 
                   ? "text-orange-500 bg-orange-500/10 hover:bg-orange-500/20 opacity-100" 
+                  : task.prioridad === "media"
+                  ? "text-amber-500 bg-amber-500/10 hover:bg-amber-500/20 opacity-100"
                   : "text-on-surface-variant/30 hover:text-orange-500 hover:bg-orange-500/10 sm:opacity-0 group-hover:opacity-100"
               )}
             >
-              <Flame className={cn(isBoard ? "w-4 h-4" : "w-[18px] h-[18px]", task.prioridad === "alta" && "fill-orange-500")} />
+              <Flame className={cn(isBoard ? "w-4 h-4" : "w-[18px] h-[18px]", task.prioridad === "alta" ? "fill-orange-500" : task.prioridad === "media" ? "fill-amber-500" : "")} />
             </button>
             
             <button
