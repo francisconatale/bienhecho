@@ -331,6 +331,9 @@
             </ul>
 
             <p><strong>Resumen Financiero:</strong> El Dashboard calcula dinámicamente lo que se puede facturar sumando el campo <code>precio</code> de todas las tareas incompletas que pertenecen a trabajos en estado <code>presupuestado</code>.</p>
+
+            <h3>Paginado Local y Vistas Especializadas</h3>
+            <p>Para mantener el rendimiento y la estética, la vista principal "Resumen" (por defecto) muestra un <strong>límite estricto de 10 tareas pendientes combinadas</strong>. Si el volumen de tareas en una categoría excede las visualizadas en el resumen, el sistema habilita una transición a una <strong>Vista Especializada</strong> (ej. "Solo Tareas Urgentes"). Esta vista renderiza la totalidad de ítems para esa prioridad sin límite, manteniendo el contexto (botón "Volver al resumen") y ocultando filtros ajenos, gestionándose integramente a nivel estado local sin recarga ni cambio de ruta.</p>
         </section>
 
         <section id="flujos">
