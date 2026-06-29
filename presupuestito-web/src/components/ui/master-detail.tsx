@@ -127,7 +127,7 @@ export function MasterDetail<T>({
         >
           {/* SEARCH BAR — always inside the list pane, hidden in rail mode */}
           {!isCollapsed && (
-            <div className="px-4 md:px-5 py-3 bg-transparent md:bg-surface md:backdrop-blur-none border-b-0 md:border-b md:border-outline-variant/10 z-20">
+            <div className="hidden md:block px-5 py-3 bg-surface border-b border-outline-variant/10 z-20">
               <div className="flex items-center gap-2.5">
                 <div className="relative flex-1">
                   <Search className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-outline pointer-events-none" strokeWidth={2} />
@@ -200,32 +200,47 @@ export function MasterDetail<T>({
               <div className="flex-1 overflow-y-auto py-2 md:py-0 overscroll-contain">
                 {/* Mobile PageHeader — inside scroll so it scrolls away */}
                 {!hasDetail && (
-                  <div className="md:hidden flex pt-14 pb-4 px-4 items-center justify-between">
-                    <h1 className="text-[34px] font-bold text-on-surface tracking-tight leading-tight">{mobileTitle}</h1>
-                    {creationHref ? (
-                      <Link
-                        href={creationHref}
-                        className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-sm active:scale-95 transition-transform"
-                      >
-                        <Plus className="w-5 h-5" strokeWidth={2.5} />
-                      </Link>
-                    ) : onToggleCreation ? (
-                      <button
-                        onClick={onToggleCreation}
-                        className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm active:scale-95 transition-transform ${
-                          showCreationForm
-                            ? "bg-outline-variant/15 text-on-surface"
-                            : "bg-primary text-white"
-                        }`}
-                      >
-                        {showCreationForm ? (
-                          <span className="text-xl leading-none">&times;</span>
-                        ) : (
+                  <>
+                    <div className="md:hidden flex pt-14 pb-4 px-4 items-center justify-between">
+                      <h1 className="text-[34px] font-bold text-on-surface tracking-tight leading-tight">{mobileTitle}</h1>
+                      {creationHref ? (
+                        <Link
+                          href={creationHref}
+                          className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-sm active:scale-95 transition-transform"
+                        >
                           <Plus className="w-5 h-5" strokeWidth={2.5} />
-                        )}
-                      </button>
-                    ) : null}
-                  </div>
+                        </Link>
+                      ) : onToggleCreation ? (
+                        <button
+                          onClick={onToggleCreation}
+                          className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm active:scale-95 transition-transform ${
+                            showCreationForm
+                              ? "bg-outline-variant/15 text-on-surface"
+                              : "bg-primary text-white"
+                          }`}
+                        >
+                          {showCreationForm ? (
+                            <span className="text-xl leading-none">&times;</span>
+                          ) : (
+                            <Plus className="w-5 h-5" strokeWidth={2.5} />
+                          )}
+                        </button>
+                      ) : null}
+                    </div>
+                    {/* Mobile Search Bar */}
+                    <div className="md:hidden px-4 pb-4">
+                      <div className="relative flex-1">
+                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-outline pointer-events-none" strokeWidth={2} />
+                        <input
+                          type="text"
+                          value={search}
+                          onChange={(e) => onSearchChange(e.target.value)}
+                          placeholder={searchPlaceholder}
+                          className="w-full bg-surface/70 dark:bg-surface/40 backdrop-blur-xl border border-outline-variant/20 shadow-sm rounded-lg pl-9 pr-3 py-2.5 text-[15px] text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary/20"
+                        />
+                      </div>
+                    </div>
+                  </>
                 )}
                 {pagination.paginatedItems.length > 0 ? (
                   <>

@@ -39,9 +39,9 @@ export function DataTable<T>({
   renderRow,
 }: DataTableProps<T>) {
   return (
-    <div className="bg-surface rounded-lg overflow-hidden border border-outline-variant/10 shadow-sm">
+    <div className="bg-surface/80 dark:bg-surface/50 backdrop-blur-sm rounded-xl overflow-hidden border border-outline-variant/15 shadow-sm">
       {(title || actions) && (
-        <div className="flex items-center justify-between gap-4 px-4 py-4 border-b border-outline-variant/10 bg-surface/50">
+        <div className="flex items-center justify-between gap-4 px-4 py-4 border-b border-outline-variant/10 bg-surface-container-low/50 dark:bg-surface-container-low/30">
           {title && (
             <h2 className="text-[13px] font-bold text-on-surface-variant uppercase tracking-widest">
               {title}

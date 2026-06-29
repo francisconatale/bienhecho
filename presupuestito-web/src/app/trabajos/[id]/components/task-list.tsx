@@ -7,6 +7,7 @@ import { useDataStore } from "@/lib/store";
 import { TaskItem } from "./task-item";
 import { TaskForm } from "./task-form";
 import { DataTable, type Column } from "@/components/ui/data-table";
+import { Modal } from "@/components/ui/modal";
 import type { Task } from "@/types";
 
 interface TaskListProps {
@@ -27,13 +28,15 @@ export function TaskList({ jobId, onSelectTask }: TaskListProps) {
   const visibleTasks = showAll ? jobTasks : jobTasks.slice(0, initialCount);
   const hasMore = !showAll && jobTasks.length > initialCount;
 
-  const handleAdd = (data: { descripcion: string; precio: number | null }) => {
+  const handleAdd = (data: { descripcion: string; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string }) => {
     addTask({
       trabajo_id: jobId,
       descripcion: data.descripcion,
       precio: data.precio,
       completada: false,
       orden: jobTasks.length,
+      prioridad: data.prioridad,
+      fecha_vencimiento: data.fecha_vencimiento,
     });
     setIsAdding(false);
   };
@@ -51,7 +54,7 @@ export function TaskList({ jobId, onSelectTask }: TaskListProps) {
         items={visibleTasks}
         keyExtractor={(t) => t.id}
         title="Tareas del Trabajo"
-        emptyMessage={isAdding ? "" : "Aún no hay tareas definidas"}
+        emptyMessage="Aún no hay tareas definidas"
         actions={
           <button
             onClick={() => setIsAdding(true)}
@@ -60,11 +63,6 @@ export function TaskList({ jobId, onSelectTask }: TaskListProps) {
             <Plus className="w-3.5 h-3.5" aria-hidden="true" /> Agregar
           </button>
         }
-        topContent={isAdding && (
-          <div className="bg-surface/50 p-4 border-b border-outline-variant/10">
-            <TaskForm onSave={handleAdd} onCancel={() => setIsAdding(false)} />
-          </div>
-        )}
         renderRow={(task) => (
           <TaskItem task={task} jobId={jobId} onSelect={onSelectTask} />
         )}
@@ -80,6 +78,10 @@ export function TaskList({ jobId, onSelectTask }: TaskListProps) {
           </div>
         ) : undefined}
       />
+
+      <Modal isOpen={isAdding} onClose={() => setIsAdding(false)} title="Nueva tarea">
+        <TaskForm onSave={handleAdd} onCancel={() => setIsAdding(false)} />
+      </Modal>
     </div>
   );
 }

@@ -24,13 +24,13 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 bg-surface/80 p-4 sm:p-6 transition-opacity">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4 sm:p-6 transition-opacity">
       <div 
         className="fixed inset-0" 
         onClick={onClose} 
         aria-hidden="true"
       />
-      <div className="relative w-full max-w-lg max-h-[90vh] sm:max-h-[85vh] bg-surface rounded-3xl shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg max-h-[90vh] sm:max-h-[85vh] bg-surface/90 dark:bg-surface/80 backdrop-blur-xl rounded-3xl shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-200 border border-outline-variant/15">
         
         {/* Header más limpio sin borde sólido */}
         <div className="flex items-center justify-between px-5 sm:px-6 pt-6 pb-2 shrink-0">

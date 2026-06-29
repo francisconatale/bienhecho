@@ -102,24 +102,9 @@ export function ClientDetailPane({
               ) : (
                 <>
                   <h1 className="text-2xl md:text-[28px] font-bold text-on-surface tracking-tight leading-none">{client.nombre}</h1>
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <span className="text-[13px] text-on-surface-variant/70 cursor-default select-none">
-                      Cliente desde {new Date(client.created_at).toLocaleDateString("es-AR", { month: "short", year: "numeric" })}
-                    </span>
-                    <Link
-                      href={`/clientes/${client.id}/cuenta-corriente`}
-                      className={cn(
-                        "inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full transition-colors",
-                        deudaTotal > 0
-                          ? "bg-[#FEE2E2] text-[#DC2626] hover:bg-[#FECACA] dark:bg-[#DC2626]/20 dark:text-[#FCA5A5] dark:hover:bg-[#DC2626]/30"
-                          : deudaTotal < 0
-                            ? "bg-[#DCFCE7] text-[#16A34A] hover:bg-[#BBF7D0] dark:bg-[#16A34A]/20 dark:text-[#86EFAC] dark:hover:bg-[#16A34A]/30"
-                            : "bg-on-surface/5 text-on-surface-variant hover:bg-on-surface/10"
-                      )}
-                    >
-                      {deudaTotal > 0 ? `Debe ${formatCurrency(Math.abs(deudaTotal))}` : deudaTotal < 0 ? `A favor ${formatCurrency(Math.abs(deudaTotal))}` : "Al día"}
-                    </Link>
-                  </div>
+                  <span className="text-[13px] text-on-surface-variant/70 cursor-default select-none">
+                    Cliente desde {new Date(client.created_at).toLocaleDateString("es-AR", { month: "short", year: "numeric" })}
+                  </span>
                   <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-3 md:mt-2">
                     {client.email && (
                       <span className="flex items-center gap-2 text-[13px] text-on-surface-variant cursor-default select-none">
@@ -165,6 +150,51 @@ export function ClientDetailPane({
           </div>
         </div>
 
+        {/* 2. Cuenta Corriente Card */}
+        <Link
+          href={`/clientes/${client.id}/cuenta-corriente`}
+          className={cn(
+            "block rounded-xl p-4 md:p-5 border shadow-sm transition-all active:scale-[0.98]",
+            deudaTotal > 0
+              ? "bg-[#FEF2F2] dark:bg-[#DC2626]/10 border-[#FECACA] dark:border-[#DC2626]/20"
+              : deudaTotal < 0
+                ? "bg-[#F0FDF4] dark:bg-[#16A34A]/10 border-[#BBF7D0] dark:border-[#16A34A]/20"
+                : "bg-surface/60 dark:bg-surface/40 border-outline-variant/15"
+          )}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/50">Cuenta Corriente</span>
+              <span className={cn(
+                "text-[22px] md:text-2xl font-bold tabular-nums",
+                deudaTotal > 0
+                  ? "text-[#DC2626] dark:text-[#FCA5A5]"
+                  : deudaTotal < 0
+                    ? "text-[#16A34A] dark:text-[#86EFAC]"
+                    : "text-on-surface"
+              )}>
+                {deudaTotal === 0 ? "$0" : `${deudaTotal > 0 ? "-" : ""}${formatCurrency(Math.abs(deudaTotal))}`}
+              </span>
+            </div>
+            <div className={cn(
+              "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
+              deudaTotal > 0
+                ? "bg-[#DC2626]/10 text-[#DC2626] dark:bg-[#DC2626]/20 dark:text-[#FCA5A5]"
+                : deudaTotal < 0
+                  ? "bg-[#16A34A]/10 text-[#16A34A] dark:bg-[#16A34A]/20 dark:text-[#86EFAC]"
+                  : "bg-on-surface/5 text-on-surface-variant"
+            )}>
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="5" width="20" height="14" rx="2" />
+                <line x1="2" y1="10" x2="22" y2="10" />
+              </svg>
+            </div>
+          </div>
+          <span className="text-[11px] text-on-surface-variant/60 mt-2 block">
+            {deudaTotal > 0 ? "El cliente te debe plata" : deudaTotal < 0 ? "Le debés plata al cliente" : "Todo al día"}
+          </span>
+        </Link>
+
         <div className="space-y-6">
           {(() => {
             const jobColumns: Column<Job>[] = [
@@ -195,18 +225,17 @@ export function ClientDetailPane({
                 },
               },
               {
-                label: "Estado / Avance",
-                className: "w-48",
+                label: "Estado",
+                className: "md:w-40",
                 render: (job) => {
                   const jobTasks = tasks.filter((t) => t.trabajo_id === job.id);
                   const completedTasks = jobTasks.filter((t) => t.completada).length;
                   const totalTasks = jobTasks.length;
                   const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-                  const jobMaterials = materiales.filter((m) => m.trabajo_id === job.id);
                   return (
                     <div className="flex flex-col gap-1.5">
                       <div className="flex items-center gap-2">
-                        <div className={cn("w-2 h-2 rounded-full", getStatusDotColor(job.estado))} />
+                        <div className={cn("w-2 h-2 rounded-full shrink-0", getStatusDotColor(job.estado))} />
                         <span className={cn("text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded", getStatusColor(job.estado))}>
                           {job.estado.replace(/_/g, " ")}
                         </span>
@@ -219,17 +248,13 @@ export function ClientDetailPane({
                           <span className="text-[10px] font-medium text-on-surface-variant/70 w-7 text-right">{progress}%</span>
                         </div>
                       )}
-                      <div className="flex items-center gap-2 text-[10px] text-on-surface-variant/60">
-                        {totalTasks > 0 && <span>{completedTasks}/{totalTasks} Tareas</span>}
-                        {jobMaterials.length > 0 && <span>• {jobMaterials.length} Mats</span>}
-                      </div>
                     </div>
                   );
                 },
               },
               {
                 label: "Importe",
-                className: "w-32 text-right",
+                className: "md:w-32 text-right",
                 headerClassName: "text-right",
                 render: (job) => {
                   const jobTasks = tasks.filter((t) => t.trabajo_id === job.id);

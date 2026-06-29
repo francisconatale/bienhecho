@@ -1,11 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Trash2 } from "lucide-react";
+import { Check, Trash2, Pencil } from "lucide-react";
 import { Task } from "@/types";
 import { useDataStore } from "@/lib/store";
 import { TaskForm } from "./task-form";
+import { Modal } from "@/components/ui/modal";
 import { cn } from "@/lib/utils";
+
+const PRIORITY_BADGE: Record<string, string> = {
+  alta: "bg-red-500/10 text-red-600 dark:bg-red-500/20 dark:text-red-400",
+  media: "bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400",
+  baja: "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary",
+};
 
 interface TaskItemProps {
   task: Task;
@@ -22,7 +29,7 @@ export function TaskItem({ task, jobId, onSelect }: TaskItemProps) {
     updateTask(task.id, { completada: !task.completada });
   };
 
-  const handleSave = (data: { descripcion: string; precio: number | null }) => {
+  const handleSave = (data: { descripcion: string; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string }) => {
     updateTask(task.id, data);
     setIsEditing(false);
   };
@@ -31,16 +38,6 @@ export function TaskItem({ task, jobId, onSelect }: TaskItemProps) {
     removeTask(task.id);
     setConfirmDelete(false);
   };
-
-  if (isEditing) {
-    return (
-      <TaskForm
-        initialData={{ descripcion: task.descripcion, precio: task.precio }}
-        onSave={handleSave}
-        onCancel={() => setIsEditing(false)}
-      />
-    );
-  }
 
   return (
     <>
@@ -65,16 +62,23 @@ export function TaskItem({ task, jobId, onSelect }: TaskItemProps) {
             onClick={() => onSelect?.(task.id)}
             className="flex-1 text-left cursor-pointer min-w-0"
           >
-            <p
-              className={cn(
-                "text-[14px] font-bold transition-all duration-300 truncate",
-                task.completada
-                  ? "text-on-surface-variant/40 line-through"
-                  : "text-on-surface group-hover:text-primary"
+            <div className="flex items-center gap-2">
+              <p
+                className={cn(
+                  "text-[14px] font-bold transition-all duration-300 truncate",
+                  task.completada
+                    ? "text-on-surface-variant/40 line-through"
+                    : "text-on-surface group-hover:text-primary"
+                )}
+              >
+                {task.descripcion}
+              </p>
+              {task.prioridad && (
+                <span className={cn("text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0", PRIORITY_BADGE[task.prioridad])}>
+                  {task.prioridad}
+                </span>
               )}
-            >
-              {task.descripcion}
-            </p>
+            </div>
             <div className="md:hidden mt-0.5">
               <span className="text-[12px] font-medium text-on-surface-variant">
                 {task.precio !== null ? `$${task.precio.toLocaleString("es-AR")}` : "Sin precio"}
@@ -93,6 +97,12 @@ export function TaskItem({ task, jobId, onSelect }: TaskItemProps) {
         {/* Actions */}
         <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
           <button
+            onClick={() => setIsEditing(true)}
+            className="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 hover:shadow-sm active:scale-90"
+          >
+            <Pencil className="w-4 h-4" />
+          </button>
+          <button
             onClick={() => setConfirmDelete(true)}
             className="p-1.5 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 hover:shadow-sm active:scale-90"
           >
@@ -101,33 +111,35 @@ export function TaskItem({ task, jobId, onSelect }: TaskItemProps) {
         </div>
       </div>
 
+      {/* Edit modal */}
+      <Modal isOpen={isEditing} onClose={() => setIsEditing(false)} title="Editar tarea">
+        <TaskForm
+          initialData={{ descripcion: task.descripcion, precio: task.precio, prioridad: task.prioridad, fecha_vencimiento: task.fecha_vencimiento }}
+          onSave={handleSave}
+          onCancel={() => setIsEditing(false)}
+        />
+      </Modal>
+
       {/* Delete confirmation */}
-      {confirmDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 bg-surface/80 ">
-          <div className="bg-surface/90 dark:bg-surface/70 backdrop-blur-xl rounded-xl p-6 mx-4 max-w-sm w-full shadow-2xl space-y-4 border border-outline-variant/20">
-            <h3 className="text-lg font-black text-on-surface">
-              Eliminar tarea
-            </h3>
-            <p className="text-sm text-on-surface-variant/70 font-medium">
-              ¿Estás seguro de eliminar &quot;{task.descripcion}&quot;? Esta acción no se puede deshacer.
-            </p>
-            <div className="flex gap-3 pt-2">
-              <button
-                onClick={() => setConfirmDelete(false)}
-                className="flex-1 py-3 rounded-xl bg-on-surface/5 text-on-surface font-black text-xs uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleDelete}
-                className="flex-1 py-3 rounded-xl bg-red-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all active:scale-95"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
+      <Modal isOpen={confirmDelete} onClose={() => setConfirmDelete(false)} title="Eliminar tarea">
+        <p className="text-sm text-on-surface-variant/70 font-medium">
+          ¿Estás seguro de eliminar &quot;{task.descripcion}&quot;? Esta acción no se puede deshacer.
+        </p>
+        <div className="flex gap-3 pt-4">
+          <button
+            onClick={() => setConfirmDelete(false)}
+            className="flex-1 py-3 rounded-xl bg-on-surface/5 text-on-surface font-black text-xs uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleDelete}
+            className="flex-1 py-3 rounded-xl bg-red-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all active:scale-95"
+          >
+            Eliminar
+          </button>
         </div>
-      )}
+      </Modal>
     </>
   );
 }

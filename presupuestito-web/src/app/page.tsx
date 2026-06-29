@@ -122,7 +122,7 @@ export default function DashboardPage() {
     },
     {
       label: "Cliente",
-      className: "hidden md:table-cell w-40",
+      className: "hidden md:table-cell md:w-40",
       render: (job) => {
         const client = clients.find((c) => c.id === job.cliente_id);
         return (
@@ -137,15 +137,17 @@ export default function DashboardPage() {
     },
     {
       label: "Importe",
-      className: "w-32 text-right",
+      className: "md:w-32 text-right",
       headerClassName: "text-right",
       render: (job) => (
-        <div className="flex items-center justify-end gap-2">
-          <span className="md:hidden text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Importe</span>
-          <span className="text-[15px] font-bold text-on-surface tabular-nums">
-            ${job.presupuesto.toLocaleString()}
-          </span>
-          <ChevronRight size={16} className="text-on-surface-variant/50 group-hover:text-primary transition-colors" aria-hidden="true" />
+        <div className="flex flex-col items-end gap-0.5">
+          <span className="md:hidden text-[9px] font-bold text-on-surface-variant/40 uppercase tracking-widest">Importe</span>
+          <div className="flex items-center gap-2">
+            <span className="text-[15px] font-bold text-on-surface tabular-nums">
+              ${job.presupuesto.toLocaleString()}
+            </span>
+            <ChevronRight size={16} className="text-on-surface-variant/50 group-hover:text-primary transition-colors" aria-hidden="true" />
+          </div>
         </div>
       ),
     },
