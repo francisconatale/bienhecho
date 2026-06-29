@@ -114,3 +114,13 @@ Para páginas como Clientes o vistas duales (lista interactiva + detalle):
   - Se debe utilizar el componente `<PageHeader />` para el título principal, envolviéndolo en un contenedor solo visible en mobile. 
   - La lista abandona el formato contiguo para usar **separación entre ítems** (ej. `space-y-3`), renderizando cada elemento como una **Card flotante e independiente** con estilo Premium (Aurora + Glassmorphism).
 - **Mobile (Vista de Detalle):** Cuando se selecciona un ítem para visualizar o editar (pasando al Detail Pane), se DEBE **ocultar completamente** el `<PageHeader />` y cualquier barra de búsqueda superior general (`hidden` condicional en mobile). La vista de detalle debe ocupar el 100% de la pantalla (full-screen inmersivo) con un botón de "Volver" dedicado.
+
+## Regla: Documentación Post-Implement (.specify)
+Al finalizar la etapa `implement` del flujo `.specify` (es decir, en el post-implement), **es estrictamente obligatorio** agregar la documentación de los cambios realizados al archivo principal de documentación (`/home/francisco/Software/presupuestito/index.html`). 
+Debes actualizar las secciones relevantes (base de datos, arquitectura, flujos o definiciones) antes de dar por terminada la tarea para asegurar que el HTML de referencia nunca quede desactualizado con respecto al código.
+
+## Regla: Subtablas para Enumerados (Enums) en Documentación
+Al documentar modelos de datos o bases de datos (tanto en `database_relations.md` como en `index.html`), **SIEMPRE** que un campo represente un conjunto de valores limitados (enumerado, estado, tipo, prioridad, etc.), debes:
+1. Declarar su tipo como `enum` (ej. `<span class="badge badge-type">enum</span>`) en lugar de usar tipos genéricos como `string`.
+2. Crear inmediatamente debajo de la tabla principal una **subtabla dedicada** (ej. `<h4>Enum: Nombre del Campo</h4>`) detallando en columnas cada valor posible y su descripción semántica de negocio.
+Nunca documentes los valores de un enumerado simplemente como un texto o lista suelta si no es el formato preexistente; haz siempre la subtabla.

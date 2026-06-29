@@ -83,7 +83,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
         />
       </div>
 
-      <main className="relative flex-1 px-4 py-6 pb-28 md:px-0 md:py-0 md:pb-0 max-w-4xl mx-auto w-full space-y-6">
+      <main className="relative flex-1 px-4 py-6 space-y-6 mt-20 pb-24 max-w-4xl mx-auto w-full">
         {/* Desktop Breadcrumb */}
         <div className="hidden md:flex items-center mb-4">
           <div className="flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
