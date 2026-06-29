@@ -87,6 +87,14 @@ El proyecto grande. Cada trabajo pertenece a un cliente y tiene presupuesto prop
 - El `orden` determina el orden en la factura
 - Desde la lista operativa se puede alternar la `prioridad` (urgente/alta) y eliminar tareas de forma rápida (in-place).
 
+### Enum: Prioridad
+
+| Valor | Descripción |
+|-------|-------------|
+| `alta` | Urgente. Tareas que deben resolverse hoy. |
+| `media` | Próximo. Tareas agendadas en la cola de trabajo. |
+| `baja` | Sin apuro. Mantenimiento o detalles menores. |
+
 ---
 
 ### `visitas`

@@ -303,11 +303,11 @@
 
         <!-- DASHBOARD Y FLUJOS -->
         <section id="dashboard">
-            <h2>Dashboard Operativo (Gestión de Tareas)</h2>
-            <p>El Centro de Operaciones organiza las tareas, materiales y finanzas del prestador mediante un layout responsivo:</p>
+            <h2>Tablero de Tareas (Operaciones)</h2>
+            <p>La sección <code>/tareas</code> se reestructuró para enfocarse puramente en la gestión operativa (Kanban/Lista), eliminando distracciones financieras o de materiales:</p>
             <ul>
-                <li><strong>Desktop (Dashboard View):</strong> Layout <em>Master-Detail</em> tipo Bento Grid. Muestra simultáneamente la lista principal de tareas y un panel lateral con Alertas, Resumen Financiero y Lista de Compras, integrándose con una estética "Glassmorphism" y fondos inmersivos (Aurora + Noise).</li>
-                <li><strong>Mobile (Tabbed View):</strong> Optimizado para pantallas pequeñas mediante pestañas ("Tareas" y "Compras") para focalizar la acción y mantener áreas táctiles amplias.</li>
+                <li><strong>Vista Dedicada (Full-Width):</strong> El tablero ahora ocupa todo el ancho de la pantalla (`max-w-7xl`), ofreciendo espacio amplio para arrastrar y soltar tareas sin paneles laterales que interfieran.</li>
+                <li><strong>Alertas en el Home:</strong> Los resúmenes financieros ("Plata a facturar") y las alertas de cliente ("Presupuesto pendiente") se movieron a la pantalla principal (`/`), que es su lugar natural como panel de control global.</li>
             </ul>
             
             <h3>Jerarquía y Acciones Rápidas</h3>
