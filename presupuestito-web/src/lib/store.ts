@@ -127,7 +127,7 @@ export const useDataStore = create<DataState>()(
       titulo: "Edificio Las Heras",
       direccion: "Las Heras 456",
       presupuesto: 1500000,
-      estado: "presupuestado",
+      estado: "borrador",
       created_at: new Date().toISOString(),
     },
     {

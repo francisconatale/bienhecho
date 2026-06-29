@@ -14,7 +14,7 @@ export type CobroFormValues = z.infer<typeof cobroSchema>;
 export function usePayments(trabajoId: string) {
   const storeCobros = useDataStore((state) => state.cobros);
   const storeMateriales = useDataStore((state) => state.materiales);
-  const job = useDataStore((state) => state.jobs.find((j) => j.id === trabajoId));
+  const storeTasks = useDataStore((state) => state.tasks);
 
   const addCobroStore = useDataStore((state) => state.addCobro);
   const updateCobroStore = useDataStore((state) => state.updateCobro);
@@ -28,11 +28,19 @@ export function usePayments(trabajoId: string) {
     return storeMateriales.filter((m) => m.trabajo_id === trabajoId);
   }, [storeMateriales, trabajoId]);
 
+  const tasks = useMemo(() => {
+    return storeTasks.filter((t) => t.trabajo_id === trabajoId);
+  }, [storeTasks, trabajoId]);
+
   const totalMateriales = useMemo(() => {
     return materiales.reduce((sum, m) => sum + m.subtotal, 0);
   }, [materiales]);
 
-  const presupuestoTotal = (job?.presupuesto || 0) + totalMateriales;
+  const totalTareas = useMemo(() => {
+    return tasks.reduce((sum, t) => sum + (t.precio || 0), 0);
+  }, [tasks]);
+
+  const presupuestoTotal = totalTareas + totalMateriales;
 
   const totalCobrado = useMemo(() => {
     return cobros.reduce((sum, c) => sum + c.monto_cobrado, 0);
@@ -46,15 +54,15 @@ export function usePayments(trabajoId: string) {
     const state = useDataStore.getState();
     const allCobros = state.cobros.filter((c) => c.trabajo_id === trabajoId);
     const totalCobrado = allCobros.reduce((sum, c) => sum + c.monto_cobrado, 0);
+    const allTasks = state.tasks.filter((t) => t.trabajo_id === trabajoId);
+    const totalTareas = allTasks.reduce((sum, t) => sum + (t.precio || 0), 0);
+    const allMateriales = state.materiales
+      .filter((m) => m.trabajo_id === trabajoId)
+      .reduce((sum, m) => sum + m.subtotal, 0);
+    const presupuestoTotal = totalTareas + allMateriales;
     const job = state.jobs.find((j) => j.id === trabajoId);
-    if (job) {
-      const totalMateriales = state.materiales
-        .filter((m) => m.trabajo_id === trabajoId)
-        .reduce((sum, m) => sum + m.subtotal, 0);
-      const presupuestoTotal = (job?.presupuesto || 0) + totalMateriales;
-      if (totalCobrado >= presupuestoTotal && job.estado !== "pagado") {
-        useDataStore.getState().updateJob(trabajoId, { estado: "pagado" });
-      }
+    if (totalCobrado >= presupuestoTotal && job && job.estado !== "pagado") {
+      useDataStore.getState().updateJob(trabajoId, { estado: "pagado" });
     }
   }, [trabajoId]);
 

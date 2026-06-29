@@ -123,8 +123,16 @@ export function ClientList() {
           </div>
         )}
         renderItem={(client, isSelected) => {
+          const allCobros = useDataStore.getState().cobros;
           const clientJobs = useDataStore.getState().jobs.filter((j) => j.cliente_id === client.id);
-          const totalFacturacion = clientJobs.reduce((acc, j) => acc + j.presupuesto, 0);
+          const saldoPendiente = clientJobs
+            .filter((j) => j.estado === "presupuestado")
+            .reduce((acc, j) => {
+              const cobrado = allCobros
+                .filter((c) => c.trabajo_id === j.id)
+                .reduce((s, c) => s + c.monto_cobrado, 0);
+              return acc + Math.max(0, j.presupuesto - cobrado);
+            }, 0);
           return (
             <button
               onClick={() => handleSelectedIdChange(client.id)}
@@ -144,9 +152,22 @@ export function ClientList() {
                   <div className="text-[11px] md:text-sm text-on-surface-variant truncate">{client.email}</div>
                 </div>
                 <div className="text-right shrink-0">
-                  <div className="text-[10px] md:text-sm font-bold text-primary">{clientJobs.length}</div>
-                  <div className="text-[9px] md:text-xs text-on-surface-variant tabular-nums">
-                    {formatCurrency(totalFacturacion)}
+                  {clientJobs.filter(j => j.estado === "presupuestado").length > 0 && (
+                    <div className="flex flex-col items-end gap-0.5">
+                      <span className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 leading-none">PRESUPUESTADO</span>
+                      <span className="text-[10px] md:text-sm font-bold text-on-surface leading-none">
+                        {formatCurrency(clientJobs.filter(j => j.estado === "presupuestado").reduce((a, j) => a + j.presupuesto, 0))}
+                      </span>
+                      {saldoPendiente > 0 && (
+                        <span className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] text-amber-600 dark:text-amber-400 mt-1.5 leading-none">ADEUDA</span>
+                      )}
+                      {saldoPendiente > 0 && (
+                        <span className="text-[10px] md:text-sm font-bold text-amber-600 dark:text-amber-400 leading-none">{formatCurrency(saldoPendiente)}</span>
+                      )}
+                    </div>
+                  )}
+                  <div className="text-[9px] md:text-xs text-on-surface-variant tabular-nums mt-1">
+                    {clientJobs.length} trabajo{clientJobs.length !== 1 ? "s" : ""}
                   </div>
                 </div>
               </div>

@@ -5,17 +5,16 @@ import { Client } from "@/types";
 import { useClientForm } from "./use-client-form";
 import Link from "next/link";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
-import { formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 
 export function getStatusColor(estado: string): string {
   switch (estado) {
-    case "cobrado":
-    case "facturado":
+    case "pagado":
       return "bg-success";
-    case "en_curso":
-      return "bg-accent-dark";
-    case "listo_para_facturar":
-      return "bg-primary";
+    case "presupuestado":
+      return "bg-amber-500";
+    case "borrador":
+      return "bg-blue-500";
     default:
       return "bg-outline";
   }
@@ -36,9 +35,16 @@ export function ClientDetailPane({
 }) {
   const [loadingJobId, setLoadingJobId] = useState<string | null>(null);
   const { pushHistory } = useNavigationHistory();
-  const { jobs } = useDataStore();
+  const { jobs, cobros: allCobros } = useDataStore();
   const clientJobs = jobs.filter((j) => j.cliente_id === client.id);
-  const total = clientJobs.reduce((a, j) => a + j.presupuesto, 0);
+  const deudaTotal = clientJobs
+    .filter((j) => j.estado === "presupuestado")
+    .reduce((acc, j) => {
+      const cobrado = allCobros
+        .filter((c) => c.trabajo_id === j.id)
+        .reduce((s, c) => s + c.monto_cobrado, 0);
+      return acc + Math.max(0, j.presupuesto - cobrado);
+    }, 0);
 
   const handleSuccess = () => setIsEditing(false);
   const { form, onSubmit, isLoading } = useClientForm(client, handleSuccess);
@@ -170,8 +176,8 @@ export function ClientDetailPane({
             </div>
 
             <div className="flex flex-col gap-1.5 cursor-default select-none">
-              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">Presupuestado</span>
-              <span className="text-lg font-black tracking-tight text-primary leading-none mt-auto">{formatCurrency(total)}</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">Deuda</span>
+              <span className={cn("text-lg font-black tracking-tight leading-none mt-auto", deudaTotal > 0 ? "text-amber-600 dark:text-amber-400" : "text-primary")}>{formatCurrency(deudaTotal)}</span>
             </div>
           </div>
         </div>

@@ -44,18 +44,16 @@ El proyecto grande. Cada trabajo pertenece a un cliente y tiene presupuesto prop
 | `titulo` | string | no | Nombre descriptivo del trabajo |
 | `direccion` | string | no | Dirección donde se realiza (puede diferir del cliente) |
 | `descripcion` | text | sí | Notas generales del trabajo |
-| `presupuesto` | decimal | no | Monto total presupuestado |
+| `presupuesto` | decimal | no | Suma automática de precios de tareas (no influye en cobro final) |
 | `estado` | string | no | Estado actual del trabajo |
 | `fecha_inicio` | date | sí | Fecha de inicio real o estimada |
 | `fecha_fin_estimada` | date | sí | Fecha estimada de finalización |
 | `created_at` | timestamp | no | Fecha de creación |
 
 **Estados posibles** (`estado`):
-- `presupuestado` — Se cargó pero aún no arrancó
-- `en_curso` — Hay visitas realizadas o se arrancó
-- `listo_para_facturar` — Todas las tareas completadas
-- `facturado` — Se generó la factura
-- `cobrado` — El cliente pagó
+- `borrador` — Trabajo creado, aún no se emitió presupuesto
+- `presupuestado` — Presupuesto emitido, pendiente de cobro
+- `pagado` — Total cobrado, trabajo finalizado (solo lectura)
 
 **Relaciones salientes:**
 - Un trabajo tiene N tareas (`tareas.trabajo_id → trabajos.id`)
@@ -176,8 +174,7 @@ VISITA   (N) ──── (N) TAREA                      →  a través de VISIT
 
 ### Dashboard
 - Próximas visitas: `visitas` where `estado = 'planificada'` AND `fecha` en próximos 7 días
-- Trabajos activos: `trabajos` where `estado = 'en_curso'`
-- Trabajos listos para facturar: `trabajos` where `estado = 'listo_para_facturar'`
+- Trabajos activos: `trabajos` where `estado = 'presupuestado'`
 - Datos necesarios: trabajo título, cliente nombre, fecha de visita, presupuesto
 
 ### Lista de clientes
@@ -186,7 +183,7 @@ VISITA   (N) ──── (N) TAREA                      →  a través de VISIT
 - Total histórico facturado (futuro, sumatoria de facturas)
 
 ### Vista de trabajo (pantalla principal)
-- **Header**: título, cliente (nombre), dirección, presupuesto, estado, fechas
+- **Header**: título, cliente (nombre), dirección, estado, fechas
 - **Barra de progreso**: porcentaje de `tareas` con `completada = true` / total tareas
 - **Lista de tareas**: todas las `tareas` del trabajo, con checkbox y precio
 - **Lista de visitas**: todas las `visitas` del trabajo, realizadas y planificadas
@@ -195,7 +192,7 @@ VISITA   (N) ──── (N) TAREA                      →  a través de VISIT
 - **Notas**: campo `descripcion` del trabajo (editable inline)
 - **Total estimado**: suma de `tareas.precio` where precio IS NOT NULL
 - **Total materiales**: suma de `materiales.subtotal`
-- **Saldo pendiente**: `(trabajos.presupuesto + SUM(materiales.subtotal)) - SUM(cobros.monto_cobrado)`
+- **Saldo pendiente**: `SUM(tareas.precio WHERE precio IS NOT NULL) + SUM(materiales.subtotal) - SUM(cobros.monto_cobrado)`
 
 ### Agenda / calendario
 - `visitas` agrupadas por semana
@@ -205,19 +202,12 @@ VISITA   (N) ──── (N) TAREA                      →  a través de VISIT
 - `tareas` del trabajo where `precio IS NOT NULL`, ordenadas por `orden`
 - Líneas: descripción + precio de cada tarea
 - Total: suma de precios
-- Se puede generar desde cualquier estado (`presupuestado` o `en_curso`)
-- No cambia el estado del trabajo
-
-### Generación de factura
-- `tareas` del trabajo where `precio IS NOT NULL`
-- Líneas: descripción + precio de cada tarea
-- Total: suma de precios
-- Estados para generar: trabajo debe estar en `listo_para_facturar`
-- Al generar: cambio estado a `facturado`
+- Desde `borrador`: muestra diálogo "Emitir" (pasa a presupuestado) o "Solo guardar PDF" (sigue borrador)
+- Desde `presupuestado` o `pagado`: botón "Ver PDF" que regenera y descarga directamente sin diálogo
 
 ### Cuentas a cobrar (por trabajo)
 - **Cobros registrados**: `cobros` del trabajo, con fecha y forma de pago
-- **Saldo pendiente**: `(trabajos.presupuesto + SUM(materiales.subtotal)) - SUM(cobros.monto_cobrado)`
+- **Saldo pendiente**: `SUM(tareas.precio WHERE precio IS NOT NULL) + SUM(materiales.subtotal) - SUM(cobros.monto_cobrado)`
 
 ### Materiales (por trabajo)
 - Todos los `materiales` del trabajo
@@ -228,14 +218,15 @@ VISITA   (N) ──── (N) TAREA                      →  a través de VISIT
 ## Flujo de estados
 
 ```
-presupuestado ──(arrancó / hay visitas)──▶ en_curso
-en_curso ──(todas las tareas completadas)──▶ listo_para_facturar
-listo_para_facturar ──(factura generada)──▶ facturado
-facturado ──(cliente pagó)──▶ cobrado
+borrador ──(emitir presupuesto)──▶ presupuestado
+presupuestado ──(cobro registrado / marcar pagado)──▶ pagado
 ```
 
-**Nota**: desde `presupuestado` se puede generar el presupuesto PDF en
-cualquier momento, sin cambiar de estado.
+**Reglas:**
+- `pagado` es terminal: no se puede modificar el trabajo ni generar presupuesto sin advertencia
+- Desde `borrador` se puede generar PDF y guardarlo sin emitir (sigue en borrador)
+- Desde `presupuestado` y `pagado` se puede ver/descargar el PDF ("Ver PDF")
+- Al marcar "Pagado" manualmente se registra automáticamente un cobro por el saldo restante
 
 ---
 
@@ -243,13 +234,12 @@ cualquier momento, sin cambiar de estado.
 
 ```
 1. Crear CLIENTE
-2. Crear TRABAJO (asociado a CLIENTE, estado: presupuestado)
+2. Crear TRABAJO (asociado a CLIENTE, estado: borrador)
 3. Agregar TAREAS al TRABAJO (con precio)
-4. Generar PRESUPUESTO PDF → enviar al cliente
-5. Cliente aprueba → cambiar estado a en_curso (o directamente a listo_para_facturar)
-6. Generar FACTURA desde el trabajo
-7. (Opcional) Registrar cobros
-8. Marcar como cobrado cuando el cliente pague
+4. Generar PRESUPUESTO PDF → diálogo: "Emitir" (pasa a presupuestado) o "Solo guardar PDF"
+5. Enviar presupuesto al cliente
+6. Cliente aprueba → registrar COBROS o "Marcar como Pagado"
+7. Si SUM(cobros) >= total → auto-pasa a pagado
 ```
 
 **No se usan**: visitas, agenda, tabla `visita_tareas`.
@@ -260,17 +250,14 @@ cualquier momento, sin cambiar de estado.
 
 ```
  1. Crear CLIENTE
- 2. Crear TRABAJO (asociado a CLIENTE, estado: presupuestado)
+ 2. Crear TRABAJO (asociado a CLIENTE, estado: borrador)
  3. Agregar TAREAS al TRABAJO (con o sin precio)
- 4. Generar PRESUPUESTO PDF → enviar al cliente
- 5. Cliente aprueba → cambiar estado a en_curso
- 6. Agendar VISITAS al TRABAJO
- 7. En cada VISITA, marcar TAREAS avanzadas (visita_tareas)
- 8. (Opcional) Registrar MATERIALES utilizados
- 9. Cuando todas las tareas completadas → estado listo_para_facturar
-10. Generar FACTURA desde el trabajo
-11. Registrar COBROS
-12. Marcar como cobrado cuando el cliente pague
+ 4. Generar PRESUPUESTO PDF → emitir (pasa a presupuestado)
+ 5. Agendar VISITAS al TRABAJO
+ 6. En cada VISITA, marcar TAREAS avanzadas (visita_tareas)
+ 7. (Opcional) Registrar MATERIALES utilizados
+ 8. Registrar COBROS o "Marcar como Pagado"
+ 9. Si SUM(cobros) >= total → auto-pasa a pagado
 ```
 
 **Se usan**: todas las tablas y funcionalidades.
@@ -282,7 +269,6 @@ cualquier momento, sin cambiar de estado.
 | Característica | Tipo A (simple) | Tipo B (completo) |
 |----------------|-----------------|-------------------|
 | Presupuesto PDF | Sí | Sí |
-| Factura PDF | Sí | Sí |
 | Visitas | No | Sí |
 | Agenda | No | Sí |
 | Barra de progreso | No | Sí |

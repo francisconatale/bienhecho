@@ -1,19 +1,17 @@
 "use client";
 
-import { FileText, Wallet } from "lucide-react";
+import { FileText } from "lucide-react";
 import { useUserStore } from "@/lib/user-store";
 import { useEffect, useState } from "react";
 
 interface DashboardHeroProps {
   name?: string;
   activeBudgets?: number;
-  totalPending?: string;
 }
 
 export function DashboardHero({
   name,
   activeBudgets = 12,
-  totalPending = "$4,500",
 }: DashboardHeroProps) {
   const user = useUserStore((state) => state.user);
   const [mounted, setMounted] = useState(false);
@@ -54,7 +52,7 @@ export function DashboardHero({
           </div>
 
           {/* Grid de Stats */}
-          <div className="grid grid-cols-2 gap-4 md:gap-6 md:w-[500px] shrink-0">
+          <div className="grid grid-cols-1 gap-4 md:gap-6 md:w-[250px] shrink-0">
             <div className="bg-surface/80 rounded-[32px] p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] border border-outline-variant/20 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)] transition-all hover:bg-surface-bright/80 dark:hover:bg-surface/80">
               <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4 md:mb-6">
                 <FileText className="w-6 h-6 md:w-7 md:h-7 text-primary" strokeWidth={2} />
@@ -63,18 +61,6 @@ export function DashboardHero({
                 <p className="text-on-surface dark:text-white text-[32px] md:text-[40px] font-bold tracking-tight leading-none mb-2 md:mb-3">{activeBudgets}</p>
                 <p className="text-on-surface-variant dark:text-on-surface-variant text-[13px] md:text-[14px] font-semibold tracking-wide">
                   Presupuestos
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-surface/80 rounded-[32px] p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] border border-outline-variant/20 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)] transition-all hover:bg-surface-bright/80 dark:hover:bg-surface/80">
-              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4 md:mb-6">
-                <Wallet className="w-6 h-6 md:w-7 md:h-7 text-primary" strokeWidth={2} />
-              </div>
-              <div>
-                <p className="text-on-surface dark:text-white text-[32px] md:text-[40px] font-bold tracking-tight leading-none mb-2 md:mb-3">{totalPending}</p>
-                <p className="text-on-surface-variant dark:text-on-surface-variant text-[13px] md:text-[14px] font-semibold tracking-wide">
-                  Por Cobrar
                 </p>
               </div>
             </div>

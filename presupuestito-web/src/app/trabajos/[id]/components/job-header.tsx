@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { User, Calendar, MapPin, DollarSign, Pencil, Check, Lock } from "lucide-react";
+import { User, Calendar, MapPin, Pencil, Check } from "lucide-react";
 import { Job, Client } from "@/types";
 import { useDataStore } from "@/lib/store";
 import { useClickOutside } from "@/hooks/use-click-outside";
+import { cn } from "@/lib/utils";
 
 interface JobHeaderProps {
   job: Job;
@@ -116,13 +117,6 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
               />
             </div>
 
-            <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium cursor-default select-none" title="El presupuesto se calcula sumando las tareas">
-              <DollarSign className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
-              <span className="text-on-surface/50">
-                ${job.presupuesto.toLocaleString("es-AR")}
-              </span>
-            </div>
-
             <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium">
               <Calendar className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
               <span className="text-on-surface-variant/50 text-xs uppercase tracking-wider font-bold">Inicio:</span>
@@ -158,12 +152,6 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
         </div>
       ) : (
         <div className="cursor-default select-none">
-          {job.estado === "pagado" && (
-            <div className="flex items-center gap-2 mb-4 px-4 py-2.5 rounded-[16px] bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
-              <Lock className="w-3.5 h-3.5 shrink-0" strokeWidth={2.5} />
-              Trabajo finalizado — información en modo solo lectura
-            </div>
-          )}
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1.5 md:space-y-1 flex-1">
               <h2 className="text-2xl md:text-3xl font-bold text-on-surface tracking-tight cursor-default select-none">
@@ -201,12 +189,16 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
               </div>
             )}
 
-            <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium cursor-default select-none">
-              <DollarSign className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
-              <span className="text-on-surface cursor-default select-none">
-                ${job.presupuesto.toLocaleString("es-AR")}
-              </span>
-            </div>
+            <span className={cn(
+              "text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest select-none",
+              job.estado === "borrador" && "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+              job.estado === "presupuestado" && "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+              job.estado === "pagado" && "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+            )}>
+              {job.estado === "borrador" && "Borrador"}
+              {job.estado === "presupuestado" && "Presupuestado"}
+              {job.estado === "pagado" && "Pagado"}
+            </span>
 
             {job.fecha_inicio && (
               <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium cursor-default select-none">

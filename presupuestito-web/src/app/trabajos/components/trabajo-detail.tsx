@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ChevronLeft, FileDown, Hammer, Wallet, Check, CheckCircle, X } from "lucide-react";
+import { ChevronLeft, FileDown, Hammer, Wallet, CheckCircle, X } from "lucide-react";
 import Link from "next/link";
 import { notFound, useSearchParams, useRouter } from "next/navigation";
 import { useDataStore } from "@/lib/store";
 import { useBudgetPDF } from "@/hooks/use-budget-pdf";
 import { JobHeader } from "../[id]/components/job-header";
-import { JobStatusSelector } from "../[id]/components/job-status";
+
 import { ProgressBar } from "../[id]/components/progress-bar";
 import { TaskList } from "../[id]/components/task-list";
 import { useMaterials } from "../[id]/hooks/use-materials";
@@ -86,25 +86,36 @@ export function TrabajoDetail({
   
   const { saldoPendiente } = usePayments(job.id);
 
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+
   const handleDownloadPDF = () => {
     setPdfError(null);
+    setShowPdfDialog(true);
+  };
+
+  const doGeneratePDF = useCallback((emitir: boolean) => {
+    setIsGeneratingPdf(true);
+    setShowPdfDialog(false);
     try {
       downloadPDF(job.id);
-      setShowPdfDialog(true);
+      if (emitir) {
+        useDataStore.getState().updateJob(job.id, { estado: "presupuestado" });
+      }
     } catch (error) {
       console.error("Failed to generate PDF:", error);
       setPdfError(error instanceof Error ? error.message : "Error al generar el PDF");
+    } finally {
+      setIsGeneratingPdf(false);
     }
-  };
+  }, [job.id, downloadPDF]);
 
   const handleEmitPresupuesto = useCallback(() => {
-    useDataStore.getState().updateJob(job.id, { estado: "presupuestado" });
-    setShowPdfDialog(false);
-  }, [job.id]);
+    doGeneratePDF(true);
+  }, [doGeneratePDF]);
 
   const handleGuardarPdf = useCallback(() => {
-    setShowPdfDialog(false);
-  }, []);
+    doGeneratePDF(false);
+  }, [doGeneratePDF]);
 
   const backLabel = from === "/tareas" ? "Tareas" : from === "/clientes" && client ? client.nombre : "Trabajos";
   const backDest = from === "/tareas" ? "/tareas" : from === "/clientes" && client?.id ? `/clientes?clienteId=${client.id}` : "/trabajos";
@@ -261,8 +272,6 @@ export function TrabajoDetail({
             <div className={cn("space-y-4", isEmbedded ? "2xl:sticky 2xl:top-8" : "lg:sticky lg:top-32")}>
               <ProgressBar tasks={jobTasks} />
               
-              <JobStatusSelector job={job} variant="card" />
-              
               <div className="relative overflow-hidden bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
                 
                 <div className="relative flex flex-col gap-1 z-10">
@@ -288,31 +297,40 @@ export function TrabajoDetail({
                   </div>
                 </div>
 
-                <button
-                  onClick={handleDownloadPDF}
-                  disabled={!hasItemsForBudget || job.estado === "pagado"}
-                  className={cn(
-                    "relative w-full py-4 rounded-[20px] font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group",
-                    hasItemsForBudget && job.estado !== "pagado"
-                      ? "bg-primary text-white shadow-[0_8px_20px_rgba(61,139,110,0.25)] hover:shadow-[0_16px_40px_rgba(61,139,110,0.4)] hover:scale-[1.02] active:scale-[0.98]"
-                      : "bg-on-surface/5 text-on-surface-variant/30 cursor-not-allowed"
-                  )}
-                >
-                  {hasItemsForBudget && job.estado !== "pagado" && (
+                {job.estado === "borrador" ? (
+                  <>
+                    <button
+                      onClick={handleDownloadPDF}
+                      disabled={!hasItemsForBudget || isGeneratingPdf}
+                      className={cn(
+                        "relative w-full py-4 rounded-[20px] font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group",
+                        hasItemsForBudget
+                          ? "bg-primary text-white shadow-[0_8px_20px_rgba(61,139,110,0.25)] hover:shadow-[0_16px_40px_rgba(61,139,110,0.4)] hover:scale-[1.02] active:scale-[0.98]"
+                          : "bg-on-surface/5 text-on-surface-variant/30 cursor-not-allowed"
+                      )}
+                    >
+                      {hasItemsForBudget && (
+                        <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
+                      )}
+                      <FileDown className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" strokeWidth={2.5} />
+                      Generar Presupuesto
+                    </button>
+                    {!hasItemsForBudget && (
+                      <p className="text-xs font-medium text-on-surface-variant/40 text-center">
+                        Agregá tareas o materiales con precio para generar el presupuesto
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <button
+                    onClick={() => { setPdfError(null); downloadPDF(job.id); }}
+                    disabled={isGeneratingPdf}
+                    className="relative w-full py-4 rounded-[20px] font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary text-white shadow-[0_8px_20px_rgba(61,139,110,0.25)] hover:shadow-[0_16px_40px_rgba(61,139,110,0.4)] hover:scale-[1.02] active:scale-[0.98]"
+                  >
                     <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
-                  )}
-                  <FileDown className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" strokeWidth={2.5} />
-                  Generar Presupuesto
-                </button>
-                {!hasItemsForBudget && (
-                  <p className="text-xs font-medium text-on-surface-variant/40 text-center">
-                    Agregá tareas o materiales con precio para generar el presupuesto
-                  </p>
-                )}
-                {job.estado === "pagado" && (
-                  <p className="text-xs font-medium text-primary/60 text-center">
-                    Trabajo finalizado — no se puede generar otro presupuesto
-                  </p>
+                    <FileDown className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" strokeWidth={2.5} />
+                    Ver PDF
+                  </button>
                 )}
                 {pdfError && (
                   <p className="text-xs font-medium text-red-500 text-center">
@@ -322,7 +340,22 @@ export function TrabajoDetail({
 
                 {job.estado !== "pagado" && (
                   <button
-                    onClick={() => useDataStore.getState().updateJob(job.id, { estado: "pagado" })}
+                    onClick={() => {
+                      const state = useDataStore.getState();
+                      const cobros = state.cobros.filter((c) => c.trabajo_id === job.id);
+                      const totalCobrado = cobros.reduce((s, c) => s + c.monto_cobrado, 0);
+                      const restante = Math.max(0, presupuestoTotal - totalCobrado);
+                      if (restante > 0) {
+                        state.addCobro({
+                          trabajo_id: job.id,
+                          monto_cobrado: restante,
+                          fecha_cobro: new Date().toISOString().slice(0, 10),
+                          forma_pago: "transferencia",
+                          notas: "Pagado manualmente",
+                        });
+                      }
+                      state.updateJob(job.id, { estado: "pagado" });
+                    }}
                     className="relative w-full py-4 rounded-[20px] font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_8px_20px_rgba(61,139,110,0.15)] active:scale-[0.98]"
                   >
                     <CheckCircle className="w-4 h-4" strokeWidth={2.5} />
@@ -336,19 +369,19 @@ export function TrabajoDetail({
       </main>
 
       {showPdfDialog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={handleGuardarPdf}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowPdfDialog(false)}>
           <div className="bg-surface rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_32px_64px_rgba(0,0,0,0.3)] max-w-sm w-full mx-4 space-y-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold text-on-surface">¿Emitir presupuesto?</h3>
               <button
-                onClick={handleGuardarPdf}
+                onClick={() => setShowPdfDialog(false)}
                 className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-on-surface/10 text-on-surface-variant transition-all cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
             <p className="text-sm text-on-surface-variant/70 leading-relaxed">
-              El PDF se generó correctamente. ¿Querés emitir el presupuesto formalmente o solo guardar el PDF?
+              Vas a generar el PDF del presupuesto para este trabajo. ¿Querés emitirlo formalmente o solo guardar el PDF?
             </p>
             <div className="flex gap-2 pt-2">
               <button
