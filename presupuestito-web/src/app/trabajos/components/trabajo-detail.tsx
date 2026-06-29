@@ -281,7 +281,7 @@ export function TrabajoDetail({
                   <span className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
                     Total estimado
                   </span>
-                  <span className="text-4xl lg:text-5xl font-black text-on-surface tracking-tighter mt-1">
+                  <span className="text-3xl lg:text-4xl font-black text-on-surface tracking-tighter mt-1">
                     ${presupuestoTotal.toLocaleString("es-AR")}
                   </span>
                   <span className="text-[10px] font-bold tracking-[0.1em] text-on-surface-variant/40 uppercase mt-1">

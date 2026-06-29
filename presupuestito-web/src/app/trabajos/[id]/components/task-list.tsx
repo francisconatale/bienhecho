@@ -4,8 +4,6 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 
-import { usePagination } from "@/hooks/use-pagination";
-import { PaginationButtons } from "@/components/ui/pagination-buttons";
 import { TaskItem } from "./task-item";
 import { TaskForm } from "./task-form";
 
@@ -17,12 +15,15 @@ interface TaskListProps {
 export function TaskList({ jobId, onSelectTask }: TaskListProps) {
   const { tasks, addTask } = useDataStore();
   const [isAdding, setIsAdding] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   const jobTasks = tasks
     .filter((t) => t.trabajo_id === jobId)
     .sort((a, b) => a.orden - b.orden);
 
-  const pag = usePagination(jobTasks, 5);
+  const initialCount = 5;
+  const visibleTasks = showAll ? jobTasks : jobTasks.slice(0, initialCount);
+  const hasMore = !showAll && jobTasks.length > initialCount;
 
   const handleAdd = (data: { descripcion: string; precio: number | null }) => {
     addTask({
@@ -36,37 +37,37 @@ export function TaskList({ jobId, onSelectTask }: TaskListProps) {
   };
 
   return (
-    <div className="space-y-5 mt-8 relative z-10">
-      <div className="flex items-end justify-between px-2">
-        <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-on-surface-variant/50">
-          Tareas del Trabajo
-        </h3>
-        <button
-          onClick={() => setIsAdding(true)}
-          className="group flex items-center gap-1.5 px-4 py-2 rounded-xl border border-outline-variant/20 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 text-[11px] font-bold text-on-surface uppercase tracking-wider active:scale-95"
-        >
-          <Plus className="w-4 h-4 text-primary transition-transform group-hover:rotate-90 duration-300" strokeWidth={2.5} />
-          Agregar
-        </button>
-      </div>
+    <div className="mt-8 relative z-10">
+      <div className="flex flex-col bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm">
+        
+        {/* Table Header with Title & Action */}
+        <div className="flex items-center justify-between gap-4 px-4 py-4 border-b border-outline-variant/10 bg-surface/50">
+          <h3 className="text-[13px] font-bold text-on-surface-variant uppercase tracking-widest">
+            Tareas del Trabajo
+          </h3>
+          <button
+            onClick={() => setIsAdding(true)}
+            className="group flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 hover:bg-primary/15 transition-colors text-[13px] font-bold text-primary shrink-0"
+          >
+            <Plus className="w-3.5 h-3.5" aria-hidden="true" /> Agregar
+          </button>
+        </div>
 
-      <div className="flex flex-col mt-4">
         {isAdding && (
-          <div className="mb-4 bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-4 border border-outline-variant/20 shadow-sm">
+          <div className="bg-surface/50 p-4 border-b border-outline-variant/10">
             <TaskForm onSave={handleAdd} onCancel={() => setIsAdding(false)} />
           </div>
         )}
 
-        <div className="flex flex-col bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm">
-          <div className="hidden md:flex items-center px-4 py-2 border-b border-outline-variant/20 bg-surface-variant/20">
+        <div className="hidden md:flex items-center px-4 py-2 border-b border-outline-variant/20 bg-surface-variant/20">
             <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest flex-1">Descripción</div>
             <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-32 text-right">Precio</div>
             <div className="w-10"></div>
           </div>
 
           <div className="flex flex-col divide-y divide-outline-variant/10">
-            {pag.paginatedItems.length > 0 ? (
-              pag.paginatedItems.map((task, idx) => (
+            {visibleTasks.length > 0 ? (
+              visibleTasks.map((task, idx) => (
                 <div 
                   key={task.id} 
                   className="animate-fade-in-up" 
@@ -88,15 +89,20 @@ export function TaskList({ jobId, onSelectTask }: TaskListProps) {
               )
             )}
           </div>
+          {hasMore && (
+            <div className="pt-3 pb-3 flex justify-center border-t border-outline-variant/10 bg-surface/30">
+              <button 
+                onClick={() => setShowAll(true)}
+                className="group flex items-center gap-2 px-4 py-2 rounded-full hover:bg-surface-variant/30 text-xs font-semibold text-on-surface-variant hover:text-primary transition-all active:scale-95"
+              >
+                <span>Mostrar {jobTasks.length - initialCount} tareas más</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-y-1 transition-transform">
+                  <path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
-      </div>
-      <PaginationButtons
-        currentPage={pag.currentPage}
-        totalPages={pag.totalPages}
-        totalItems={pag.totalItems}
-        pageSize={pag.pageSize}
-        onPageChange={pag.goToPage}
-      />
     </div>
   );
 }
