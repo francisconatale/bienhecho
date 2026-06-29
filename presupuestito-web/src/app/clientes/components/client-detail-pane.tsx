@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { Pencil, Trash2, Plus, Phone, MapPin, Mail, CalendarDays, Hammer, CheckCircle2, DollarSign } from "lucide-react";
+import { Pencil, Trash2, Plus, Phone, MapPin, Mail, CalendarDays } from "lucide-react";
 import { useDataStore } from "@/lib/store";
-import { Client } from "@/types";
+import { Client, Job } from "@/types";
 import { useClientForm } from "./use-client-form";
 import { useCuentaCorriente } from "@/hooks/use-cuenta-corriente";
 
 import { AjusteManualForm } from "./ajuste-manual-form";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { cn, formatCurrency } from "@/lib/utils";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import { DataTable, type Column } from "@/components/ui/data-table";
 
 export function getStatusColor(estado: string): string {
   switch (estado) {
@@ -52,6 +54,7 @@ export function ClientDetailPane({
 }) {
   const [loadingJobId, setLoadingJobId] = useState<string | null>(null);
   const [showAjuste, setShowAjuste] = useState(false);
+  const router = useRouter();
   const { pushHistory } = useNavigationHistory();
   const { jobs, tasks, materiales, cobros } = useDataStore();
 
@@ -162,117 +165,118 @@ export function ClientDetailPane({
           </div>
         </div>
 
-        {/* 3. Main Master-Detail Grid */}
         <div className="space-y-6">
-          {/* Trabajos Activos */}
-          <div className="relative group">
-            <div className="flex flex-col bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm mt-2">
-              <div className="flex flex-row items-center justify-between gap-4 px-4 py-4 border-b border-outline-variant/10 bg-surface/50">
-                <h2 className="text-[13px] font-bold text-on-surface-variant uppercase tracking-widest">Trabajos Activos</h2>
-                <Link
-                  href={`/trabajos/nuevo?clienteId=${client.id}`}
-                  className="text-[13px] font-bold text-primary hover:bg-primary/15 transition-colors flex items-center gap-1.5 bg-primary/10 px-3 py-1.5 rounded-full shrink-0"
-                >
-                  <Plus className="w-3.5 h-3.5" aria-hidden="true" /> Nuevo trabajo
-                </Link>
-              </div>
-
-              <div className="hidden md:flex items-center px-4 py-2 border-b border-outline-variant/20 bg-surface-variant/20">
-                <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest flex-1">Trabajo</div>
-                <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-48">Estado / Avance</div>
-                <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-32 text-right">Importe</div>
-              </div>
-              
-              <div className="flex flex-col divide-y divide-outline-variant/10">
-              {clientJobs.length > 0 ? (
-                clientJobs.map((job) => {
+          {(() => {
+            const jobColumns: Column<Job>[] = [
+              {
+                label: "Trabajo",
+                render: (job) => {
+                  const jobTasks = tasks.filter((t) => t.trabajo_id === job.id);
+                  const daysSinceCreation = Math.floor((Date.now() - new Date(job.created_at).getTime()) / (1000 * 60 * 60 * 24));
+                  return (
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[15px] font-bold text-on-surface truncate group-hover:text-primary transition-colors">
+                        {job.titulo}
+                      </span>
+                      <span className="flex items-center gap-3 text-[11px] text-on-surface-variant/70">
+                        <span className="flex items-center gap-1">
+                          <CalendarDays className="w-3 h-3" />
+                          {daysSinceCreation === 0 ? "Hoy" : `Hace ${daysSinceCreation}d`}
+                        </span>
+                        {job.direccion && (
+                          <span className="flex items-center gap-1 truncate max-w-[200px]">
+                            <MapPin className="w-3 h-3" />
+                            {job.direccion}
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  );
+                },
+              },
+              {
+                label: "Estado / Avance",
+                className: "w-48",
+                render: (job) => {
                   const jobTasks = tasks.filter((t) => t.trabajo_id === job.id);
                   const completedTasks = jobTasks.filter((t) => t.completada).length;
                   const totalTasks = jobTasks.length;
+                  const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+                  const jobMaterials = materiales.filter((m) => m.trabajo_id === job.id);
+                  return (
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center gap-2">
+                        <div className={cn("w-2 h-2 rounded-full", getStatusDotColor(job.estado))} />
+                        <span className={cn("text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded", getStatusColor(job.estado))}>
+                          {job.estado.replace(/_/g, " ")}
+                        </span>
+                      </div>
+                      {totalTasks > 0 && (
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 h-1.5 bg-on-surface/5 dark:bg-white/[0.06] rounded-full overflow-hidden">
+                            <div className="h-full bg-primary rounded-full" style={{ width: `${progress}%` }} />
+                          </div>
+                          <span className="text-[10px] font-medium text-on-surface-variant/70 w-7 text-right">{progress}%</span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2 text-[10px] text-on-surface-variant/60">
+                        {totalTasks > 0 && <span>{completedTasks}/{totalTasks} Tareas</span>}
+                        {jobMaterials.length > 0 && <span>• {jobMaterials.length} Mats</span>}
+                      </div>
+                    </div>
+                  );
+                },
+              },
+              {
+                label: "Importe",
+                className: "w-32 text-right",
+                headerClassName: "text-right",
+                render: (job) => {
+                  const jobTasks = tasks.filter((t) => t.trabajo_id === job.id);
                   const jobMaterials = materiales.filter((m) => m.trabajo_id === job.id);
                   const materialsCost = jobMaterials.reduce((sum, m) => sum + m.subtotal, 0);
-                  const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-                  const daysSinceCreation = Math.floor((Date.now() - new Date(job.created_at).getTime()) / (1000 * 60 * 60 * 24));
-
                   const totalEstimado = jobTasks.reduce((sum, t) => sum + (t.precio ?? 0), 0) + materialsCost;
                   const totalCobrado = cobros.filter((c) => c.trabajo_id === job.id).reduce((s, c) => s + c.monto_cobrado, 0);
                   const saldoPendiente = Math.max(0, totalEstimado - totalCobrado);
-
                   return (
-                    <Link
-                      key={job.id}
-                      href={`/trabajos/${job.id}`}
-                      onClick={() => {
-                         setLoadingJobId(job.id);
-                         pushHistory(window.location.pathname + window.location.search);
-                      }}
-                      className="flex flex-col md:flex-row md:items-center px-4 py-3 md:py-4 hover:bg-primary/5 cursor-pointer transition-colors group gap-3 md:gap-0"
-                    >
-                      {/* Title & Metadata Column */}
-                      <div className="flex-1 min-w-0 pr-4 flex flex-col gap-1">
-                        <div className="text-[15px] font-bold text-on-surface truncate group-hover:text-primary transition-colors">
-                          {job.titulo}
-                        </div>
-                        <div className="flex items-center gap-3 text-[11px] text-on-surface-variant/70">
-                          <span className="flex items-center gap-1">
-                            <CalendarDays className="w-3 h-3" />
-                            {daysSinceCreation === 0 ? "Hoy" : `Hace ${daysSinceCreation}d`}
-                          </span>
-                          {job.direccion && (
-                            <span className="flex items-center gap-1 truncate max-w-[200px]">
-                              <MapPin className="w-3 h-3" />
-                              {job.direccion}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Status & Progress Column */}
-                      <div className="w-full md:w-48 shrink-0 flex flex-col gap-1.5 md:pr-4">
-                        <div className="flex items-center gap-2">
-                          <div className={cn("w-2 h-2 rounded-full", getStatusDotColor(job.estado))} />
-                          <span className={cn("text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded", getStatusColor(job.estado))}>
-                            {job.estado.replace(/_/g, " ")}
-                          </span>
-                        </div>
-                        {totalTasks > 0 && (
-                          <div className="flex items-center gap-2">
-                            <div className="flex-1 h-1.5 bg-on-surface/5 dark:bg-white/[0.06] rounded-full overflow-hidden">
-                              <div className="h-full bg-primary rounded-full" style={{ width: `${progress}%` }} />
-                            </div>
-                            <span className="text-[10px] font-medium text-on-surface-variant/70 w-7 text-right">
-                              {progress}%
-                            </span>
-                          </div>
-                        )}
-                        <div className="flex items-center gap-2 text-[10px] text-on-surface-variant/60">
-                          {totalTasks > 0 && <span>{completedTasks}/{totalTasks} Tareas</span>}
-                          {jobMaterials.length > 0 && <span>• {jobMaterials.length} Mats</span>}
-                        </div>
-                      </div>
-
-                      {/* Amount Column */}
-                      <div className="w-full md:w-32 shrink-0 flex flex-col md:items-end justify-center pt-2 md:pt-0 border-t border-outline-variant/10 md:border-0">
-                        <span className="text-base font-bold text-on-surface tabular-nums">
-                          {job.presupuesto > 0 ? formatCurrency(job.presupuesto) : "S/P"}
+                    <div className="flex flex-col items-end justify-center">
+                      <span className="text-base font-bold text-on-surface tabular-nums">
+                        {job.presupuesto > 0 ? formatCurrency(job.presupuesto) : "S/P"}
+                      </span>
+                      {job.estado === "presupuestado" && totalEstimado > 0 && saldoPendiente > 0 && (
+                        <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 mt-0.5">
+                          Debe {formatCurrency(saldoPendiente)}
                         </span>
-                        {job.estado === "presupuestado" && totalEstimado > 0 && saldoPendiente > 0 && (
-                          <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 mt-0.5">
-                            Debe {formatCurrency(saldoPendiente)}
-                          </span>
-                        )}
-                      </div>
-                    </Link>
+                      )}
+                    </div>
                   );
-                })
-              ) : (
-                <div className="py-8 text-center text-[14px] text-on-surface-variant/60 italic">
-                  No hay trabajos activos.
-                </div>
-              )}
-              </div>
-            </div>
-          </div>
+                },
+              },
+            ];
+
+            return (
+              <DataTable
+                columns={jobColumns}
+                items={clientJobs}
+                keyExtractor={(job) => job.id}
+                onRowClick={(job) => {
+                  setLoadingJobId(job.id);
+                  pushHistory(window.location.pathname + window.location.search);
+                  router.push(`/trabajos/${job.id}`);
+                }}
+                title="Trabajos Activos"
+                emptyMessage="No hay trabajos activos."
+                actions={
+                  <Link
+                    href={`/trabajos/nuevo?clienteId=${client.id}`}
+                    className="text-[13px] font-bold text-primary hover:bg-primary/15 transition-colors flex items-center gap-1.5 bg-primary/10 px-3 py-1.5 rounded-full shrink-0"
+                  >
+                    <Plus className="w-3.5 h-3.5" aria-hidden="true" /> Nuevo trabajo
+                  </Link>
+                }
+              />
+            );
+          })()}
         </div>
       </form>
     </div>

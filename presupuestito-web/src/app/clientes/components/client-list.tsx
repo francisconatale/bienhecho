@@ -60,7 +60,7 @@ export function ClientList() {
             <div className="hidden md:flex px-5 py-3 border-b border-outline-variant/8 bg-surface items-center gap-2.5">
               <h2 className="text-lg font-bold text-on-surface">Nuevo Cliente</h2>
             </div>
-            <div className="p-4 pt-28 md:p-6 md:pt-6">
+            <div className="p-4 pt-4 md:p-6 md:pt-6">
               <ClientForm onSuccess={handleCreationSuccess} />
             </div>
           </div>

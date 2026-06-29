@@ -136,7 +136,7 @@ export function TrabajoDetail({
   const backDest = from === "/tareas" ? "/tareas" : from === "/clientes" && client?.id ? `/clientes?clienteId=${client.id}` : "/trabajos";
 
   return (
-    <div className={cn("relative w-full", isEmbedded ? "min-h-full" : "min-h-screen")}>
+    <div className={cn("relative w-full", isEmbedded ? "" : "min-h-screen")}>
       {!isEmbedded && (
         <>
           <AuroraBackground preset="trabajo" />

@@ -19,11 +19,11 @@ function NavItem({ icon, label, href, active }: NavItemProps) {
 
   return (
     <Link
-      className={`flex flex-col items-center justify-center p-2 transition-all ${activeClasses}`}
+      className={`flex flex-col items-center justify-center transition-all ${activeClasses}`}
       href={href}
     >
-      <div 
-        className={`${active ? "bg-primary/10 border border-primary/20" : "bg-transparent border border-transparent"} rounded-xl p-2.5 transition-all duration-300`}
+      <div
+        className={`${active ? "bg-primary/10 border border-primary/20" : "bg-transparent border border-transparent"} rounded-xl p-2 transition-all duration-300`}
       >
         {icon}
       </div>
@@ -59,44 +59,44 @@ export function BottomNav() {
   }
 
   return (
-    <div 
-      className={`fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-sm z-50 transition-all duration-300 ease-in-out md:hidden ${
+    <div
+      className={`fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm z-50 transition-all duration-300 ease-in-out md:hidden ${
         isVisible ? "translate-y-0 opacity-100" : "translate-y-24 opacity-0"
       }`}
     >
-      <nav className="flex justify-between items-center px-4 py-2.5 bg-surface border border-outline-variant/20 rounded-full shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]">
+      <nav className="flex justify-between items-center px-2 py-1.5 bg-surface/95 backdrop-blur-xl border border-outline-variant/20 rounded-full shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]">
         <NavItem
-        icon={<LayoutDashboard className="w-6 h-6" strokeWidth={2} />}
+        icon={<LayoutDashboard className="w-5 h-5" strokeWidth={2} />}
         label="Dashboard"
         href="/"
         active={pathname === "/"}
       />
       <NavItem
-        icon={<Users className="w-6 h-6" strokeWidth={2} />}
+        icon={<Users className="w-5 h-5" strokeWidth={2} />}
         label="Clientes"
         href="/clientes"
         active={pathname.startsWith("/clientes")}
       />
       <NavItem
-        icon={<Briefcase className="w-6 h-6" strokeWidth={2} />}
+        icon={<Briefcase className="w-5 h-5" strokeWidth={2} />}
         label="Trabajos"
         href="/trabajos"
         active={pathname.startsWith("/trabajos") && !pathname.includes("/tareas")}
       />
       <NavItem
-        icon={<CheckSquare className="w-6 h-6" strokeWidth={2} />}
+        icon={<CheckSquare className="w-5 h-5" strokeWidth={2} />}
         label="Tareas"
         href="/tareas"
         active={pathname.startsWith("/tareas") || pathname.includes("/tareas/")}
       />
       <NavItem
-        icon={<Calendar className="w-6 h-6" strokeWidth={2} />}
+        icon={<Calendar className="w-5 h-5" strokeWidth={2} />}
         label="Agenda"
         href="/agenda"
         active={pathname.startsWith("/agenda")}
       />
       <NavItem
-        icon={<Settings className="w-6 h-6" strokeWidth={2} />}
+        icon={<Settings className="w-5 h-5" strokeWidth={2} />}
         label="Ajustes"
         href="/ajustes"
         active={pathname.startsWith("/ajustes")}

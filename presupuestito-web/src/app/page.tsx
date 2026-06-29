@@ -4,8 +4,11 @@ import { useDataStore } from "@/lib/store";
 import { useUserStore } from "@/lib/user-store";
 import { useClientAlerts } from "@/app/tareas/hooks/use-client-alerts";
 import { usePagination } from "@/hooks/use-pagination";
+import { DataTable, type Column } from "@/components/ui/data-table";
 import { useEffect, useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import type { Job } from "@/types";
 import {
   PlusCircle,
   Briefcase,
@@ -20,6 +23,7 @@ export default function DashboardPage() {
   const user = useUserStore((state) => state.user);
   const { alerts } = useClientAlerts();
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -96,74 +100,67 @@ export default function DashboardPage() {
     );
   };
 
+  const activityColumns: Column<Job>[] = [
+    {
+      label: "Trabajo",
+      render: (job) => {
+        const client = clients.find((c) => c.id === job.cliente_id);
+        return (
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[14px] font-bold text-on-surface truncate group-hover:text-primary transition-colors">
+              {job.titulo}
+            </span>
+            <span className="md:hidden flex items-center gap-2 text-[11px] text-on-surface-variant">
+              <span className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[9px] shrink-0">
+                {client?.nombre?.charAt(0) || "T"}
+              </span>
+              <span className="truncate">{client?.nombre || "Sin cliente"}</span>
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      label: "Cliente",
+      className: "hidden md:table-cell w-40",
+      render: (job) => {
+        const client = clients.find((c) => c.id === job.cliente_id);
+        return (
+          <div className="flex items-center gap-2">
+            <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[10px] shrink-0">
+              {client?.nombre?.charAt(0) || "T"}
+            </span>
+            <span className="text-[13px] text-on-surface-variant truncate">{client?.nombre || "Sin cliente"}</span>
+          </div>
+        );
+      },
+    },
+    {
+      label: "Importe",
+      className: "w-32 text-right",
+      headerClassName: "text-right",
+      render: (job) => (
+        <div className="flex items-center justify-end gap-2">
+          <span className="md:hidden text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Importe</span>
+          <span className="text-[15px] font-bold text-on-surface tabular-nums">
+            ${job.presupuesto.toLocaleString()}
+          </span>
+          <ChevronRight size={16} className="text-on-surface-variant/50 group-hover:text-primary transition-colors" aria-hidden="true" />
+        </div>
+      ),
+    },
+  ];
+
   const ActivityList = () => (
-    <div>
-      <h2 className="text-[12px] font-bold text-on-surface-variant uppercase tracking-widest mb-2 px-1">Actividad Reciente</h2>
-      <div className="flex flex-col bg-surface rounded-lg overflow-hidden border border-outline-variant/10 shadow-sm">
-        <div className="hidden md:flex items-center px-4 py-2 border-b border-outline-variant/20 bg-surface-variant/20">
-          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest flex-1">Trabajo</div>
-          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-40">Cliente</div>
-          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-32 text-right">Importe</div>
-        </div>
-
-        <div className="flex flex-col divide-y divide-outline-variant/10">
-          {pag.paginatedItems.length === 0 ? (
-            <p className="p-5 text-[13px] text-on-surface-variant/60 text-center italic">No hay actividad reciente.</p>
-          ) : (
-            pag.paginatedItems.map((job) => {
-              const client = clients.find((c) => c.id === job.cliente_id);
-              return (
-                <Link
-                  key={job.id}
-                  href={`/trabajos/${job.id}`}
-                  className="flex flex-col md:flex-row md:items-center px-4 py-2.5 md:py-3 hover:bg-primary/5 cursor-pointer transition-colors group gap-2 md:gap-0"
-                >
-                  {/* Title */}
-                  <div className="flex-1 min-w-0 pr-4 flex flex-col gap-0.5">
-                    <div className="text-[14px] font-bold text-on-surface truncate group-hover:text-primary transition-colors">
-                      {job.titulo}
-                    </div>
-                    {/* mobile-only client */}
-                    <div className="md:hidden flex items-center gap-2 text-[11px] text-on-surface-variant">
-                      <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[9px] shrink-0">
-                        {client?.nombre?.charAt(0) || "T"}
-                      </div>
-                      <span className="truncate">{client?.nombre || "Sin cliente"}</span>
-                    </div>
-                  </div>
-
-                  {/* Client Column */}
-                  <div className="hidden md:flex w-40 shrink-0 items-center gap-2 pr-4">
-                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[10px] shrink-0">
-                      {client?.nombre?.charAt(0) || "T"}
-                    </div>
-                    <span className="text-[13px] text-on-surface-variant truncate">{client?.nombre || "Sin cliente"}</span>
-                  </div>
-
-                  {/* Amount Column */}
-                  <div className="w-full md:w-32 shrink-0 flex items-center justify-between md:justify-end pt-2 md:pt-0 border-t border-outline-variant/10 md:border-0">
-                    <span className="md:hidden text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Importe</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[15px] font-bold text-on-surface tabular-nums">
-                        ${job.presupuesto.toLocaleString()}
-                      </span>
-                      <ChevronRight size={16} className="text-on-surface-variant/50 group-hover:text-primary transition-colors" aria-hidden="true" />
-                    </div>
-                  </div>
-                </Link>
-              );
-            })
-          )}
-        </div>
-      </div>
-      {pag.totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 mt-2">
-          <button onClick={() => pag.goToPage(pag.currentPage - 1)} disabled={pag.currentPage === 1} className="text-[12px] font-semibold text-primary disabled:text-on-surface-variant/30 transition-colors">Anterior</button>
-          <span className="text-[12px] text-on-surface-variant">{pag.currentPage} / {pag.totalPages}</span>
-          <button onClick={() => pag.goToPage(pag.currentPage + 1)} disabled={pag.currentPage === pag.totalPages} className="text-[12px] font-semibold text-primary disabled:text-on-surface-variant/30 transition-colors">Siguiente</button>
-        </div>
-      )}
-    </div>
+    <DataTable
+      columns={activityColumns}
+      items={pag.paginatedItems}
+      keyExtractor={(job) => job.id}
+      onRowClick={(job) => router.push(`/trabajos/${job.id}`)}
+      pagination={pag}
+      title="Actividad Reciente"
+      emptyMessage="No hay actividad reciente."
+    />
   );
 
   const VisitsList = () => (

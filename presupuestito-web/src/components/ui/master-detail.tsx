@@ -97,36 +97,6 @@ export function MasterDetail<T>({
 
   return (
     <>
-      {/* Mobile PageHeader — hide when detail is active */}
-      <div className={`${hasDetail ? "hidden" : "flex"} md:hidden pt-14 pb-4 px-4 relative z-10 items-center justify-between`}>
-        <h1 className="text-[34px] font-bold text-on-surface tracking-tight leading-tight">{mobileTitle}</h1>
-        
-        {/* Mobile creation button */}
-        {creationHref ? (
-          <Link
-            href={creationHref}
-            className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-sm active:scale-95 transition-transform"
-          >
-            <Plus className="w-5 h-5" strokeWidth={2.5} />
-          </Link>
-        ) : onToggleCreation ? (
-          <button
-            onClick={onToggleCreation}
-            className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm active:scale-95 transition-transform ${
-              showCreationForm
-                ? "bg-outline-variant/15 text-on-surface"
-                : "bg-primary text-white"
-            }`}
-          >
-            {showCreationForm ? (
-              <span className="text-xl leading-none">&times;</span>
-            ) : (
-              <Plus className="w-5 h-5" strokeWidth={2.5} />
-            )}
-          </button>
-        ) : null}
-      </div>
-
       {/* Mobile Detail Back Button — floating over detail pane */}
       {hasDetail && (
         <div className="md:hidden px-4 pt-12 pb-3 absolute top-0 left-0 w-full z-50 flex items-center justify-between bg-transparent pointer-events-none">
@@ -227,7 +197,36 @@ export function MasterDetail<T>({
                   {pagination.totalItems} {countLabel}
                 </span>
               </div>
-              <div className="flex-1 overflow-y-auto py-2 md:py-0">
+              <div className="flex-1 overflow-y-auto py-2 md:py-0 overscroll-contain">
+                {/* Mobile PageHeader — inside scroll so it scrolls away */}
+                {!hasDetail && (
+                  <div className="md:hidden flex pt-14 pb-4 px-4 items-center justify-between">
+                    <h1 className="text-[34px] font-bold text-on-surface tracking-tight leading-tight">{mobileTitle}</h1>
+                    {creationHref ? (
+                      <Link
+                        href={creationHref}
+                        className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-sm active:scale-95 transition-transform"
+                      >
+                        <Plus className="w-5 h-5" strokeWidth={2.5} />
+                      </Link>
+                    ) : onToggleCreation ? (
+                      <button
+                        onClick={onToggleCreation}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm active:scale-95 transition-transform ${
+                          showCreationForm
+                            ? "bg-outline-variant/15 text-on-surface"
+                            : "bg-primary text-white"
+                        }`}
+                      >
+                        {showCreationForm ? (
+                          <span className="text-xl leading-none">&times;</span>
+                        ) : (
+                          <Plus className="w-5 h-5" strokeWidth={2.5} />
+                        )}
+                      </button>
+                    ) : null}
+                  </div>
+                )}
                 {pagination.paginatedItems.length > 0 ? (
                   <>
                     {/* Mobile: table style list */}
@@ -304,7 +303,7 @@ export function MasterDetail<T>({
           </div>
 
           {/* MOBILE (Retain Content for Slide Out) */}
-          <div className="flex md:hidden relative flex-1 flex-col min-h-0 overflow-hidden">
+          <div className="flex md:hidden relative flex-1 flex-col min-h-0">
             {!hasDetail && (
               <div className="absolute inset-0 flex flex-col z-0">
                 {emptyState || emptyDetail}
@@ -314,7 +313,7 @@ export function MasterDetail<T>({
               !hasDetail ? "pointer-events-none" : ""
             }`}>
               {contentToRender && (
-                <div key={lastActiveId.current || "empty"} className={`flex-1 flex flex-col overflow-y-auto h-full ${hasDetail ? detailAnimationClass : ""}`}>
+                <div key={lastActiveId.current || "empty"} className={`flex-1 flex flex-col overflow-y-auto h-full overscroll-contain ${hasDetail ? detailAnimationClass : ""}`}>
                   {contentToRender}
                 </div>
               )}
