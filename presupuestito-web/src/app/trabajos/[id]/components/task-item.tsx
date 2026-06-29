@@ -8,6 +8,7 @@ import { tasksService } from "@/services";
 import { TaskForm } from "./task-form";
 import { Modal } from "@/components/ui/modal";
 import { cn } from "@/lib/utils";
+import { useConfirm } from "@/hooks/use-confirm";
 
 const PRIORITY_BADGE: Record<string, string> = {
   alta: "bg-red-500/10 text-red-600 dark:bg-red-500/20 dark:text-red-400",
@@ -25,7 +26,7 @@ interface TaskItemProps {
 export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [ConfirmDialog, confirm] = useConfirm();
 
   const updateTaskMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => tasksService.update(id, data),
@@ -46,9 +47,16 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
     setIsEditing(false);
   };
 
-  const handleDelete = async () => {
-    await removeTaskMutation.mutateAsync(task.id);
-    setConfirmDelete(false);
+  const handleDelete = () => {
+    confirm({
+      title: "Eliminar tarea",
+      description: `¿Estás seguro de eliminar "${task.descripcion}"? Esta acción no se puede deshacer.`,
+      confirmText: "Eliminar",
+      variant: "danger",
+      action: async () => {
+        await removeTaskMutation.mutateAsync(task.id);
+      }
+    });
   };
 
   return (
@@ -116,7 +124,7 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
               <Pencil className="w-4 h-4" />
             </button>
             <button
-              onClick={() => setConfirmDelete(true)}
+              onClick={handleDelete}
               className="p-1.5 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 hover:shadow-sm active:scale-90"
             >
               <Trash2 className="w-4 h-4" />
@@ -131,29 +139,11 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
           initialData={{ descripcion: task.descripcion, precio: task.precio, prioridad: task.prioridad, fecha_vencimiento: task.fecha_vencimiento }}
           onSave={handleSave}
           onCancel={() => setIsEditing(false)}
+          isSaving={updateTaskMutation.isPending}
         />
       </Modal>
 
-      {/* Delete confirmation */}
-      <Modal isOpen={confirmDelete} onClose={() => setConfirmDelete(false)} title="Eliminar tarea">
-        <p className="text-sm text-on-surface-variant/70 font-medium">
-          ¿Estás seguro de eliminar &quot;{task.descripcion}&quot;? Esta acción no se puede deshacer.
-        </p>
-        <div className="flex gap-3 pt-4">
-          <button
-            onClick={() => setConfirmDelete(false)}
-            className="flex-1 py-3 rounded-xl bg-on-surface/5 text-on-surface font-black text-xs uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={handleDelete}
-            className="flex-1 py-3 rounded-xl bg-red-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all active:scale-95"
-          >
-            Eliminar
-          </button>
-        </div>
-      </Modal>
+      <ConfirmDialog />
     </>
   );
 }

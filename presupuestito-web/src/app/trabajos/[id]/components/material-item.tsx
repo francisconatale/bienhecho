@@ -5,6 +5,7 @@ import { Edit2, Trash2 } from "lucide-react";
 import { Material } from "@/types";
 import { useMaterials } from "../hooks/use-materials";
 import { MaterialForm } from "./material-form";
+import { useConfirm } from "@/hooks/use-confirm";
 
 interface MaterialItemProps {
   material: Material;
@@ -14,7 +15,7 @@ interface MaterialItemProps {
 export function MaterialItem({ material, jobId }: MaterialItemProps) {
   const { updateMaterial, removeMaterial } = useMaterials(jobId);
   const [isEditing, setIsEditing] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [ConfirmDialog, confirm] = useConfirm();
 
   const handleSave = (data: any) => {
     updateMaterial(material.id, data);
@@ -22,8 +23,15 @@ export function MaterialItem({ material, jobId }: MaterialItemProps) {
   };
 
   const handleDelete = () => {
-    removeMaterial(material.id);
-    setConfirmDelete(false);
+    confirm({
+      title: "Eliminar material",
+      description: `¿Estás seguro de eliminar "${material.nombre_material}"? Esta acción no se puede deshacer.`,
+      confirmText: "Eliminar",
+      variant: "danger",
+      action: async () => {
+        await removeMaterial(material.id);
+      }
+    });
   };
 
   if (isEditing) {
@@ -84,7 +92,7 @@ export function MaterialItem({ material, jobId }: MaterialItemProps) {
             <Edit2 className="w-4 h-4" />
           </button>
           <button
-            onClick={() => setConfirmDelete(true)}
+            onClick={handleDelete}
             className="p-1.5 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 active:scale-90"
           >
             <Trash2 className="w-4 h-4" />
@@ -92,33 +100,7 @@ export function MaterialItem({ material, jobId }: MaterialItemProps) {
         </div>
       </div>
 
-      {/* Delete confirmation */}
-      {confirmDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 bg-surface/80 ">
-          <div className="bg-surface/90 dark:bg-surface/70 backdrop-blur-xl rounded-xl p-6 mx-4 max-w-sm w-full shadow-2xl space-y-4 border border-outline-variant/20">
-            <h3 className="text-lg font-black text-on-surface">
-              Eliminar material
-            </h3>
-            <p className="text-sm text-on-surface-variant/70 font-medium">
-              ¿Estás seguro de eliminar &quot;{material.nombre_material}&quot;? Esta acción no se puede deshacer.
-            </p>
-            <div className="flex gap-3 pt-2">
-              <button
-                onClick={() => setConfirmDelete(false)}
-                className="flex-1 py-3 rounded-xl bg-on-surface/5 text-on-surface font-black text-xs uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleDelete}
-                className="flex-1 py-3 rounded-xl bg-red-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all active:scale-95"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog />
     </>
   );
 }

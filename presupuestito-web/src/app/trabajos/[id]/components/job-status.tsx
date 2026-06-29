@@ -5,6 +5,7 @@ import { JobStatus, Job } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { jobsService } from "@/services";
 import { cn } from "@/lib/utils";
+import { useConfirm } from "@/hooks/use-confirm";
 
 const STATUS_ORDER: JobStatus[] = [
   "borrador",
@@ -40,7 +41,7 @@ export function JobStatusSelector({ job }: JobStatusProps) {
   });
 
   const [isOpen, setIsOpen] = useState(false);
-  const [confirmBackward, setConfirmBackward] = useState<JobStatus | null>(null);
+  const [ConfirmDialog, confirm] = useConfirm();
 
   const currentIndex = STATUS_ORDER.indexOf(job.estado);
 
@@ -48,20 +49,20 @@ export function JobStatusSelector({ job }: JobStatusProps) {
     const newIndex = STATUS_ORDER.indexOf(newStatus);
 
     if (newIndex < currentIndex) {
-      setConfirmBackward(newStatus);
+      confirm({
+        title: "¿Cambiar estado?",
+        description: `Vas a volver de "${STATUS_LABELS[job.estado]}" a "${STATUS_LABELS[newStatus]}". ¿Estás seguro?`,
+        confirmText: "Confirmar",
+        action: async () => {
+          await updateJobMutation.mutateAsync({ id: job.id, data: { estado: newStatus } });
+          setIsOpen(false);
+        }
+      });
       return;
     }
 
     await updateJobMutation.mutateAsync({ id: job.id, data: { estado: newStatus } });
     setIsOpen(false);
-  };
-
-  const confirmBackwardChange = async () => {
-    if (confirmBackward) {
-      await updateJobMutation.mutateAsync({ id: job.id, data: { estado: confirmBackward } });
-      setConfirmBackward(null);
-      setIsOpen(false);
-    }
   };
 
   return (
@@ -96,34 +97,7 @@ export function JobStatusSelector({ job }: JobStatusProps) {
         </div>
       )}
 
-      {/* Backward confirmation modal */}
-      {confirmBackward && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 bg-surface/80 ">
-          <div className="bg-surface/90 dark:bg-surface/70 backdrop-blur-xl rounded-xl p-6 mx-4 max-w-sm w-full shadow-2xl space-y-4 border border-outline-variant/20">
-            <h3 className="text-lg font-black text-on-surface">
-              ¿Cambiar estado?
-            </h3>
-            <p className="text-sm text-on-surface-variant/70 font-medium">
-              Vas a volver de &quot;{STATUS_LABELS[job.estado]}&quot; a &quot;
-              {STATUS_LABELS[confirmBackward]}&quot;. ¿Estás seguro?
-            </p>
-            <div className="flex gap-3 pt-2">
-              <button
-                onClick={() => setConfirmBackward(null)}
-                className="flex-1 py-3 rounded-2xl bg-on-surface/5 text-on-surface font-black text-xs uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={confirmBackwardChange}
-                className="flex-1 py-3 rounded-2xl bg-primary text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all active:scale-95"
-              >
-                Confirmar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog />
     </div>
   );
 }

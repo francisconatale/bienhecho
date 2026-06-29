@@ -182,6 +182,7 @@ export default function TareasPage() {
                 onToggle={toggleTask}
                 onTogglePriority={togglePriority}
                 onDelete={deleteTask}
+                pag={pag as any}
               />
             </div>
           </div>

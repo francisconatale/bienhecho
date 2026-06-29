@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, CheckCircle } from "lucide-react";
 
 interface TaskFormProps {
   initialData?: { descripcion: string; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string };
-  onSave: (data: { descripcion: string; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string }) => void;
+  onSave: (data: { descripcion: string; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string }) => Promise<void> | void;
   onCancel: () => void;
+  isSaving?: boolean;
 }
 
 const PRIORIDADES = [
@@ -16,7 +17,7 @@ const PRIORIDADES = [
   { value: "baja" as const, label: "Sin apuro", sublabel: "cuando puedas", color: "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary border-primary/20" },
 ];
 
-export function TaskForm({ initialData, onSave, onCancel }: TaskFormProps) {
+export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: TaskFormProps) {
   const [descripcion, setDescripcion] = useState(initialData?.descripcion ?? "");
   const [precio, setPrecio] = useState(
     initialData?.precio !== null && initialData?.precio !== undefined
@@ -25,17 +26,25 @@ export function TaskForm({ initialData, onSave, onCancel }: TaskFormProps) {
   );
   const [prioridad, setPrioridad] = useState<"alta" | "media" | "baja" | undefined>(initialData?.prioridad);
   const [fechaVencimiento, setFechaVencimiento] = useState(initialData?.fecha_vencimiento ?? "");
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const canSave = descripcion.trim() !== "";
 
-  const handleSave = () => {
-    if (!canSave) return;
-    onSave({
-      descripcion: descripcion.trim(),
-      precio: precio !== "" ? Number(precio) : null,
-      prioridad,
-      fecha_vencimiento: fechaVencimiento || undefined,
-    });
+  const handleSave = async () => {
+    if (!canSave || isSaving) return;
+    try {
+      await onSave({
+        descripcion: descripcion.trim(),
+        precio: precio !== "" ? Number(precio) : null,
+        prioridad,
+        fecha_vencimiento: fechaVencimiento || undefined,
+      });
+      if (!initialData) {
+        setShowConfirm(true);
+      }
+    } catch {
+      // error toast handled by parent
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -48,6 +57,26 @@ export function TaskForm({ initialData, onSave, onCancel }: TaskFormProps) {
     }
   };
 
+  if (showConfirm) {
+    return (
+      <div className="flex flex-col items-center gap-4 py-8">
+        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+          <CheckCircle className="w-9 h-9 text-primary" strokeWidth={1.5} />
+        </div>
+        <div className="text-center">
+          <p className="text-sm font-black text-on-surface">Tarea creada</p>
+          <p className="text-xs font-medium text-on-surface-variant/60 mt-1">con éxito</p>
+        </div>
+        <button
+          onClick={onCancel}
+          className="mt-2 px-8 py-2.5 rounded-xl bg-primary text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all active:scale-95"
+        >
+          Listo
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="space-y-1.5">
@@ -59,6 +88,7 @@ export function TaskForm({ initialData, onSave, onCancel }: TaskFormProps) {
           onKeyDown={handleKeyDown}
           placeholder="Ej: Instalar artefacto de luz..."
           autoFocus
+          maxLength={300}
           className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
         />
       </div>
@@ -115,21 +145,30 @@ export function TaskForm({ initialData, onSave, onCancel }: TaskFormProps) {
       <div className="flex gap-2 pt-1">
         <button
           onClick={onCancel}
-          className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95"
+          disabled={isSaving}
+          className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Cancelar
         </button>
         <button
           onClick={handleSave}
-          disabled={!canSave}
+          disabled={!canSave || isSaving}
           className={cn(
-            "flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95",
+            "flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2",
             canSave
               ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark"
-              : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
+              : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed",
+            isSaving && "opacity-70 cursor-not-allowed"
           )}
         >
-          {initialData ? "Guardar" : "Agregar"}
+          {isSaving ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              {initialData ? "Guardando..." : "Agregando..."}
+            </>
+          ) : (
+            initialData ? "Guardar" : "Agregar"
+          )}
         </button>
       </div>
     </div>

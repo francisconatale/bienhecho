@@ -95,30 +95,26 @@ export function useClients() {
 
 ## Composición de Páginas
 
-Cada página **siempre** sigue esta estructura:
+Cada página debe estructurarse de forma declarativa:
 
 ```tsx
 // app/mi-ruta/page.tsx
-import { Header } from "@/components/layout/header";
 import { MiContent } from "./components/mi-content";
 
 export default function MiPage() {
   return (
-    <>
-      <Header title="Mi Título" />
-      <main className="flex-1 px-4 py-6 space-y-6 mt-20 pb-24 max-w-3xl mx-auto w-full">
+    <div className="relative w-full min-h-screen">
+      <main className="relative flex-1 px-4 py-6 space-y-6 pb-24 max-w-7xl mx-auto w-full">
         <MiContent />
       </main>
-    </>
+    </div>
   );
 }
 ```
 
 ### Reglas de composición:
-- El `<main>` **siempre** tiene: `flex-1 px-4 py-6 space-y-6 mt-20 pb-24 max-w-3xl mx-auto w-full`.
-- `mt-20` para el Header fijo y `pb-24` para el BottomNav fijo (que reside en el `RootLayout`).
-- Invocar el componente `Header` directamente en la página.
-- Metadatos en el `page.tsx` de cada ruta.
+- Usar un contenedor principal `<main>` que permita contenido flexible y defina el espacio de abajo (`pb-24`) para evitar solapamiento con la navegación inferior.
+- Metadatos siempre en el `page.tsx` de cada ruta.
 
 ---
 

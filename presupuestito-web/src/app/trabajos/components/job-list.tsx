@@ -5,7 +5,7 @@ import { Briefcase, Pencil, X, Check } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { jobsService, clientsService } from "@/services";
 import { Job } from "@/types";
-import { usePagination } from "@/hooks/use-pagination";
+import { useServerPagination } from "@/hooks/use-server-pagination";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { TrabajoDetail } from "./trabajo-detail";
 import { JobStatusSelector } from "../[id]/components/job-status";
@@ -49,22 +49,43 @@ export function JobList() {
   const [isHeaderEditing, setIsHeaderEditing] = useState(false);
   const editingJobIdRef = useRef<string | null>(null);
 
-  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+
+  const { data } = useQuery({ 
+    queryKey: ["jobs", "paginated", page, pageSize, search], 
+    queryFn: () => jobsService.getPaginated(page, pageSize, search) 
+  });
+
+  const jobs = data?.data || [];
+  const total = data?.total || 0;
+
+  // We can still fetch all clients if other components need it, but job.clientes will have the name
   const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
 
-  const filtered = useMemo(() => jobs.filter((j) => {
-    const client = clients.find(c => c.id === j.cliente_id);
-    return (
-      j.titulo.toLowerCase().includes(search.toLowerCase()) ||
-      (client && client.nombre.toLowerCase().includes(search.toLowerCase())) ||
-      false
-    );
-  }), [jobs, clients, search]);
+  const serverPag = useServerPagination(total, pageSize);
 
-  const pag = usePagination(filtered, 10);
+  // Since we already made useServerPagination:
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const isFirstPage = page === 1;
+  const isLastPage = page >= totalPages;
+
+  const pag = {
+    paginatedItems: jobs as any[],
+    currentPage: page,
+    totalPages,
+    totalItems: total,
+    pageSize,
+    isFirstPage,
+    isLastPage,
+    goToPage: (p: number) => setPage(Math.max(1, Math.min(p, totalPages))),
+    nextPage: () => !isLastPage && setPage(p => p + 1),
+    prevPage: () => !isFirstPage && setPage(p => p - 1),
+    setPageSize: () => {},
+  };
   
   useEffect(() => {
-    pag.goToPage(1);
+    setPage(1);
   }, [search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const selected = jobs.find((j) => j.id === selectedId) || null;
@@ -76,7 +97,7 @@ export function JobList() {
         detailAnimationClass={isBackDirection ? "animate-slide-in-left" : "animate-page-in"}
         selectedId={selectedId}
         onSelectedChange={handleSelectedIdChange}
-        items={filtered}
+        items={jobs}
         getItemId={(j) => j.id}
         search={search}
         onSearchChange={setSearch}
@@ -100,13 +121,16 @@ export function JobList() {
               onSave={() => {
                 document.querySelector<HTMLButtonElement>('[data-job-header-save]')?.click();
               }}
+              onDelete={job.estado === "borrador" ? () => {
+                document.dispatchEvent(new CustomEvent('delete-job', { detail: job.id }));
+              } : undefined}
             />
           );
         }}
-        pagination={pag}
+        pagination={pag as any}
         creationHref="/trabajos/nuevo"
-        renderItem={(job, isSelected) => {
-          const client = clients.find((c) => c.id === job.cliente_id);
+        renderItem={(job: any, isSelected) => {
+          const clientName = job.clientes?.nombre || clients.find((c) => c.id === job.cliente_id)?.nombre || "Sin cliente";
           return (
             <button
               onClick={() => handleSelectedIdChange(job.id)}
@@ -123,7 +147,7 @@ export function JobList() {
                 </div>
                 <div className="flex-1 min-w-0 flex flex-col items-start">
                   <div className={`font-medium text-sm md:text-base truncate transition-colors ${isSelected ? "text-primary" : "text-on-surface"}`}>{job.titulo}</div>
-                  <div className="text-[11px] md:text-sm text-on-surface-variant truncate mb-1">{client?.nombre || "Sin cliente"}</div>
+                  <div className="text-[11px] md:text-sm text-on-surface-variant truncate mb-1">{clientName}</div>
                   <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] md:text-[11px] font-medium bg-on-surface/5 text-on-surface-variant/70 capitalize">
                     {job.estado.replace(/_/g, " ")}
                   </span>

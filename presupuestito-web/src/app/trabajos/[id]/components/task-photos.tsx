@@ -7,11 +7,9 @@ import { TaskPhoto } from "@/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { PhotoUpload } from "./photo-upload";
 import { cn } from "@/lib/utils";
-import {
-  getPhotosByTarea,
-  addPhoto,
-  deletePhoto,
-} from "@/lib/photo-storage";
+import { taskPhotosService } from "@/services";
+import { toast } from "sonner";
+import { useConfirm } from "@/hooks/use-confirm";
 
 interface TaskPhotosProps {
   tareaId: string;
@@ -23,45 +21,57 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
   const queryClient = useQueryClient();
   const { data: photos = [], isLoading } = useQuery({
     queryKey: ["taskPhotos", tareaId],
-    queryFn: () => getPhotosByTarea(tareaId),
+    queryFn: () => taskPhotosService.getByTaskId(tareaId),
   });
 
-  const [isUploading, setIsUploading] = useState(false);
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [showUploadForm, setShowUploadForm] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [viewerPhotoIndex, setViewerPhotoIndex] = useState<number | null>(null);
-
-  const addPhotoMutation = useMutation({
-    mutationFn: addPhoto,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["taskPhotos", tareaId] }),
-  });
-
-  const deletePhotoMutation = useMutation({
-    mutationFn: deletePhoto,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["taskPhotos", tareaId] }),
-  });
+  const [ConfirmDialog, confirm] = useConfirm();
 
   const handleSave = async (photoData: {
     tareaId: string;
-    url: string;
+    file: File;
     descripcion: string;
     orden: number;
   }) => {
-    const newPhoto: TaskPhoto = {
-      id: crypto.randomUUID(),
-      tarea_id: photoData.tareaId,
-      url: photoData.url,
-      descripcion: photoData.descripcion,
-      orden: photos.length,
-      created_at: new Date().toISOString(),
-    };
+    setIsSaving(true);
+    try {
+      const publicUrl = await taskPhotosService.uploadFile(photoData.file);
 
-    await addPhotoMutation.mutateAsync(newPhoto);
-    setIsUploading(false);
+      await taskPhotosService.create({
+        tarea_id: photoData.tareaId,
+        url: publicUrl,
+        descripcion: photoData.descripcion,
+        orden: photos.length,
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["taskPhotos", tareaId] });
+    } catch (e) {
+      console.error("Error saving photo:", e);
+      toast.error("Error al guardar foto");
+      throw e;
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleDelete = async (id: string) => {
-    await deletePhotoMutation.mutateAsync(id);
-    setConfirmDeleteId(null);
+  const handleDelete = (id: string) => {
+    confirm({
+      title: "Eliminar foto",
+      description: "¿Estás seguro de eliminar esta foto? Esta acción no se puede deshacer.",
+      confirmText: "Eliminar",
+      variant: "danger",
+      action: async () => {
+        try {
+          const photo = photos.find(p => p.id === id);
+          await taskPhotosService.delete(id, photo?.url);
+          queryClient.invalidateQueries({ queryKey: ["taskPhotos", tareaId] });
+        } catch (e) {
+          console.error("Error deleting photo:", e);
+        }
+      }
+    });
   };
 
   const openViewer = (index: number) => setViewerPhotoIndex(index);
@@ -106,7 +116,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
         </span>
         {photos.length < MAX_PHOTOS && (
           <button
-            onClick={() => setIsUploading(true)}
+            onClick={() => setShowUploadForm(true)}
             className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-primary/20 transition-all active:scale-95"
           >
             <Plus className="w-3 h-3" strokeWidth={3} />
@@ -115,11 +125,12 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
         )}
       </div>
 
-      {isUploading && (
+      {showUploadForm && (
         <PhotoUpload
           tareaId={tareaId}
           onSave={handleSave}
-          onCancel={() => setIsUploading(false)}
+          onCancel={() => setShowUploadForm(false)}
+          isSaving={isSaving}
         />
       )}
 
@@ -144,7 +155,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setConfirmDeleteId(photo.id);
+                  handleDelete(photo.id);
                 }}
                 className="absolute top-1 right-1 p-1.5 bg-black/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
               >
@@ -154,7 +165,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
           ))}
         </div>
       ) : (
-        !isUploading && (
+        !showUploadForm && (
           <div className="py-6 text-center border border-dashed border-outline-variant/20 rounded-xl">
             <ImageIcon className="w-8 h-8 mx-auto text-on-surface-variant/20" />
             <p className="text-xs font-medium text-on-surface-variant/30 mt-2">
@@ -164,38 +175,10 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
         )
       )}
 
-      {photos.length >= MAX_PHOTOS && !isUploading && (
+      {photos.length >= MAX_PHOTOS && !showUploadForm && (
         <p className="text-[10px] font-medium text-on-surface-variant/40 text-center">
           Límite máximo de fotos alcanzado
         </p>
-      )}
-
-      {confirmDeleteId && typeof window !== "undefined" && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 bg-surface/80 ">
-          <div className="bg-surface/90 dark:bg-surface/70 backdrop-blur-xl rounded-xl p-6 mx-4 max-w-sm w-full shadow-2xl space-y-4 border border-outline-variant/20">
-            <h3 className="text-lg font-black text-on-surface">
-              Eliminar foto
-            </h3>
-            <p className="text-sm text-on-surface-variant/70 font-medium">
-              ¿Estás seguro de eliminar esta foto? Esta acción no se puede deshacer.
-            </p>
-            <div className="flex gap-3 pt-2">
-              <button
-                onClick={() => setConfirmDeleteId(null)}
-                className="flex-1 py-3 rounded-2xl bg-on-surface/5 text-on-surface font-black text-xs uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={() => handleDelete(confirmDeleteId)}
-                className="flex-1 py-3 rounded-2xl bg-red-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all active:scale-95"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>,
-        document.body
       )}
 
       {viewerPhotoIndex !== null && typeof window !== "undefined" && createPortal(
@@ -257,6 +240,8 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
         </div>,
         document.body
       )}
+
+      <ConfirmDialog />
     </div>
   );
 }

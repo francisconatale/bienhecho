@@ -33,3 +33,11 @@ export type TaskPhoto = z.infer<typeof TaskPhotoSchema>;
 export type Material = z.infer<typeof MaterialSchema>;
 export type Cobro = z.infer<typeof CobroSchema>;
 export type TransaccionCuentaCorriente = z.infer<typeof TransaccionCuentaCorrienteSchema>;
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}

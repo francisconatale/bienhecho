@@ -2,7 +2,6 @@ import { TareasEmpty } from "./tareas-empty";
 import { PriorityTaskGroup } from "./priority-task-group";
 import { TareaItem } from "./tarea-item";
 import type { FilterType, CategoryType } from "../hooks/use-tareas";
-import { usePagination } from "@/hooks/use-pagination";
 import { PaginationButtons } from "@/components/ui/pagination-buttons";
 
 interface TareasListProps {
@@ -24,17 +23,13 @@ interface TareasListProps {
   onTogglePriority: (taskId: string, currentPriority: string | null) => void;
   onDelete: (taskId: string) => void;
   viewMode?: "list" | "board";
+  pag: any;
 }
 
-export function TareasList({ groupedTasks, categoryCounts, filter, category, setCategory, viewMode = "list", onToggle, onTogglePriority, onDelete }: TareasListProps) {
+export function TareasList({ groupedTasks, categoryCounts, filter, category, setCategory, viewMode = "list", onToggle, onTogglePriority, onDelete, pag }: TareasListProps) {
   const { alta, media, baja, completadas } = groupedTasks;
   const isResumen = category === "resumen";
   const activeTasks = category === "alta" ? alta : category === "media" ? media : baja;
-  const pag = usePagination(activeTasks, 12);
-
-  if (!isResumen && pag.currentPage > 1 && activeTasks.length > 0 && pag.paginatedItems.length === 0) {
-     pag.goToPage(1);
-  }
 
   if (filter === "completadas") {
     if (completadas.length === 0) return <TareasEmpty filter={filter} />;

@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { clientsService } from "@/services";
-import { usePagination } from "@/hooks/use-pagination";
+import { useServerPagination } from "@/hooks/use-server-pagination";
 import { Client } from "@/types";
 import { useConfirm } from "@/hooks/use-confirm";
 
@@ -20,10 +20,53 @@ export function useClients() {
   const [showCreationForm, setShowCreationForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const { data: clients = [], isLoading } = useQuery({
-    queryKey: ["clients"],
-    queryFn: clientsService.getAll,
+  // We use useServerPagination just to manage the page state locally
+  // We initialize with 0 totalItems, and update it when data arrives
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["clients", "paginated", page, pageSize, search],
+    queryFn: () => clientsService.getPaginated(page, pageSize, search),
   });
+
+  const clients = data?.data || [];
+  const total = data?.total || 0;
+
+  const pag = useServerPagination(total, pageSize);
+  
+  // Sync internal page state with the hook
+  useEffect(() => {
+    pag.goToPage(page);
+  }, [page]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // But we want to override pag's goToPage to also update our query state
+  const goToPage = (p: number) => {
+    setPage(p);
+    pag.goToPage(p);
+  };
+  
+  const nextPage = () => {
+    if (!pag.isLastPage) {
+      setPage(p => p + 1);
+      pag.nextPage();
+    }
+  };
+
+  const prevPage = () => {
+    if (!pag.isFirstPage) {
+      setPage(p => p - 1);
+      pag.prevPage();
+    }
+  };
+
+  const serverPag = {
+    ...pag,
+    goToPage,
+    nextPage,
+    prevPage,
+    paginatedItems: clients, // Attach the data here so the UI still works the same way!
+  };
 
   const deleteMutation = useMutation({
     mutationFn: clientsService.delete,
@@ -46,34 +89,25 @@ export function useClients() {
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  const filtered = useMemo(() => clients.filter(
-    (c) =>
-      c.nombre.toLowerCase().includes(search.toLowerCase()) ||
-      c.email?.toLowerCase().includes(search.toLowerCase()) ||
-      false
-  ), [clients, search]);
-
-  const pag = usePagination(filtered, 10);
-
   useEffect(() => {
-    pag.goToPage(1);
+    goToPage(1);
   }, [search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const selected = clients.find((c) => c.id === selectedId) || null;
 
   const [ConfirmDialog, confirm] = useConfirm();
 
-  const handleDelete = async (client: Client) => {
-    const ok = await confirm({
+  const handleDelete = (client: Client) => {
+    confirm({
       title: "Eliminar Cliente",
       description: `¿Estás seguro de que querés eliminar a ${client.nombre}? Esta acción no se puede deshacer y podría afectar los trabajos asociados.`,
       confirmText: "Eliminar",
       variant: "danger",
+      action: async () => {
+        await deleteMutation.mutateAsync(client.id);
+        if (selectedId === client.id) handleSelectedIdChange(null);
+      }
     });
-    if (ok) {
-      deleteMutation.mutate(client.id);
-      if (selectedId === client.id) handleSelectedIdChange(null);
-    }
   };
 
   const handleToggleCreation = () => {
@@ -98,8 +132,8 @@ export function useClients() {
     setShowCreationForm,
     isEditing,
     setIsEditing,
-    filtered,
-    pag,
+    filtered: clients, // UI might still be mapping over `filtered`. We just provide current page's clients.
+    pag: serverPag,
     selected,
     handleDelete,
     handleToggleCreation,

@@ -1,25 +1,37 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { jobsService, clientsService } from "@/services";
-import { usePagination } from "@/hooks/use-pagination";
+import { jobsService } from "@/services";
+import { useServerPagination } from "@/hooks/use-server-pagination";
 import { PaginationButtons } from "@/components/ui/pagination-buttons";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 
 export function RecentActivity() {
-  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-  const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
+
+  const { data } = useQuery({
+    queryKey: ["jobs", "paginated", page, pageSize, ""],
+    queryFn: () => jobsService.getPaginated(page, pageSize, ""),
+  });
+
+  const jobs = data?.data || [];
+  const total = data?.total || 0;
+
+  const serverPag = useServerPagination(total, pageSize);
+  useEffect(() => { serverPag.goToPage(page); }, [page]);
+
+  const pag = {
+    ...serverPag,
+    goToPage: (p: number) => { setPage(p); serverPag.goToPage(p); },
+    paginatedItems: jobs as any[],
+  };
+
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const sortedJobs = useMemo(() => {
-    return [...jobs].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-  }, [jobs]);
-
-  const pag = usePagination(sortedJobs, 5);
 
   if (!mounted) return null;
 
@@ -35,18 +47,18 @@ export function RecentActivity() {
         <div className="flex flex-col divide-y divide-black/[0.04] dark:divide-white/[0.04]">
           {pag.paginatedItems.length > 0 ? (
             pag.paginatedItems.map((job) => {
-              const client = clients.find((c) => c.id === job.cliente_id);
+              const clientName = job.clientes?.nombre || "Sin cliente";
               return (
                 <div
                   key={job.id}
                   className="flex items-center gap-3 p-4 md:p-5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
                 >
                   <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-lg shrink-0 shadow-inner">
-                    {client?.nombre.charAt(0) || "T"}
+                    {clientName.charAt(0) || "T"}
                   </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-xs md:text-sm text-on-surface truncate">{job.titulo}</div>
-                  <div className="text-[10px] md:text-xs text-on-surface-variant truncate">{client?.nombre || "Sin cliente"} • {new Date(job.created_at).toLocaleDateString()}</div>
+                  <div className="text-[10px] md:text-xs text-on-surface-variant truncate">{clientName} • {new Date(job.created_at).toLocaleDateString()}</div>
                 </div>
                 <span className="font-semibold text-xs md:text-sm text-on-surface shrink-0">
                   ${job.presupuesto.toLocaleString()}

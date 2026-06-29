@@ -62,10 +62,9 @@ export function TaskList({ jobId, isJobPaid, onSelectTask }: TaskListProps) {
         prioridad: data.prioridad,
         fecha_vencimiento: data.fecha_vencimiento,
       });
-      toast.success("Tarea agregada");
-      setIsAdding(false);
     } catch (error) {
       toast.error("Error al agregar tarea");
+      throw error;
     }
   };
 
@@ -110,7 +109,7 @@ export function TaskList({ jobId, isJobPaid, onSelectTask }: TaskListProps) {
       />
 
       <Modal isOpen={isAdding} onClose={() => setIsAdding(false)} title="Nueva tarea">
-        <TaskForm onSave={handleAdd} onCancel={() => setIsAdding(false)} />
+        <TaskForm onSave={handleAdd} onCancel={() => setIsAdding(false)} isSaving={createTaskMutation.isPending} />
       </Modal>
     </div>
   );

@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ChevronLeft, FileDown, Hammer, Wallet, CheckCircle, X } from "lucide-react";
+import { ChevronLeft, FileDown, Hammer, Wallet, CheckCircle, X, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { notFound, useSearchParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { jobsService, clientsService, tasksService, cobrosService } from "@/services";
 import { useBudgetPDF } from "@/hooks/use-budget-pdf";
+import { jobsService, clientsService, tasksService, cobrosService } from "@/services";
 import { JobHeader } from "../[id]/components/job-header";
+import { useConfirm } from "@/hooks/use-confirm";
+import { toast } from "sonner";
 
 import { ProgressBar } from "../[id]/components/progress-bar";
 import { TaskList } from "../[id]/components/task-list";
@@ -70,6 +72,8 @@ export function TrabajoDetail({
   }, [startEditing]);
   useEffect(() => { onEditingChange?.(isHeaderEditing); }, [isHeaderEditing]);
 
+
+
   const router = useRouter();
   const { popHistory, pushHistory } = useNavigationHistory();
   const from = searchParams.get("from");
@@ -87,7 +91,81 @@ export function TrabajoDetail({
     }
   }, [taskParam, tasks, id]);
 
+  const { totalMateriales, materiales } = useMaterials(id);
+  const { saldoPendiente } = usePayments(id);
+  const [generatingAction, setGeneratingAction] = useState<"guardar" | "emitir" | null>(null);
+  const [ConfirmDialog, confirm] = useConfirm();
+
+  const handleDownloadPDF = () => {
+    setPdfError(null);
+    setShowPdfDialog(true);
+  };
+
   const job = jobs.find((j) => j.id === id);
+
+  const handleDeleteJob = useCallback(() => {
+    if (!job) return;
+    confirm({
+      title: "Eliminar Trabajo",
+      description: `¿Estás seguro de que querés eliminar el trabajo "${job.titulo}"? Esta acción no se puede deshacer.`,
+      confirmText: "Eliminar",
+      variant: "danger",
+      action: async () => {
+        await jobsService.delete(job.id);
+        queryClient.invalidateQueries({ queryKey: ["jobs"] });
+        toast.success("Trabajo eliminado correctamente");
+        if (isEmbedded && onBack) {
+          onBack();
+        } else {
+          router.push("/trabajos");
+        }
+      }
+    });
+  }, [confirm, job, queryClient, router, isEmbedded, onBack]);
+
+  useEffect(() => {
+    const handleEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      if (customEvent.detail === id) {
+        handleDeleteJob();
+      }
+    };
+    document.addEventListener("delete-job", handleEvent);
+    return () => document.removeEventListener("delete-job", handleEvent);
+  }, [id, handleDeleteJob]);
+
+  const doGeneratePDF = useCallback(async (emitir: boolean) => {
+    setGeneratingAction(emitir ? "emitir" : "guardar");
+    const currentJob = jobs.find((j) => j.id === id);
+    if (!currentJob) {
+      setGeneratingAction(null);
+      return;
+    }
+    try {
+      downloadPDF(currentJob.id);
+      if (emitir && currentJob.estado !== "presupuestado") {
+        await updateJobMutation.mutateAsync({
+          id: currentJob.id,
+          data: { estado: "presupuestado" },
+        });
+      }
+      setShowPdfDialog(false);
+    } catch (error) {
+      console.error("Failed to generate PDF:", error);
+      setPdfError(error instanceof Error ? error.message : "Error al generar el PDF");
+      setShowPdfDialog(false);
+    } finally {
+      setGeneratingAction(null);
+    }
+  }, [id, downloadPDF, updateJobMutation, jobs]);
+
+  const handleEmitPresupuesto = useCallback(() => {
+    doGeneratePDF(true);
+  }, [doGeneratePDF]);
+
+  const handleGuardarPdf = useCallback(() => {
+    doGeneratePDF(false);
+  }, [doGeneratePDF]);
 
   if (!job) {
     if (isLoadingJobs) {
@@ -106,46 +184,8 @@ export function TrabajoDetail({
   const totalEstimado = jobTasks.reduce((sum, t) => sum + (t.precio ?? 0), 0);
   const hasTasksWithPrice = jobTasks.some((t) => t.precio !== null);
   
-  const { totalMateriales, materiales } = useMaterials(job.id);
   const presupuestoTotal = totalEstimado + totalMateriales;
   const hasItemsForBudget = hasTasksWithPrice || totalMateriales > 0;
-  
-  const { saldoPendiente } = usePayments(job.id);
-
-  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
-
-  const handleDownloadPDF = () => {
-    setPdfError(null);
-    setShowPdfDialog(true);
-  };
-
-  const doGeneratePDF = useCallback(async (emitir: boolean) => {
-    setIsGeneratingPdf(true);
-    setShowPdfDialog(false);
-    try {
-      downloadPDF(job.id);
-      if (emitir && job.estado !== "presupuestado") {
-        await updateJobMutation.mutateAsync({
-          id: job.id,
-          data: { estado: "presupuestado" },
-        });
-        // The PostgreSQL trigger 'emitir_transaccion_presupuesto' will automatically create the transaction
-      }
-    } catch (error) {
-      console.error("Failed to generate PDF:", error);
-      setPdfError(error instanceof Error ? error.message : "Error al generar el PDF");
-    } finally {
-      setIsGeneratingPdf(false);
-    }
-  }, [job.id, job.estado, downloadPDF, updateJobMutation]);
-
-  const handleEmitPresupuesto = useCallback(() => {
-    doGeneratePDF(true);
-  }, [doGeneratePDF]);
-
-  const handleGuardarPdf = useCallback(() => {
-    doGeneratePDF(false);
-  }, [doGeneratePDF]);
 
   const backLabel = from === "/tareas" ? "Tareas" : from === "/clientes" && client ? client.nombre : "Trabajos";
   const backDest = from === "/tareas" ? "/tareas" : from === "/clientes" && client?.id ? `/clientes?clienteId=${client.id}` : "/trabajos";
@@ -319,7 +359,7 @@ export function TrabajoDetail({
                   <>
                     <button
                       onClick={handleDownloadPDF}
-                      disabled={!hasItemsForBudget || isGeneratingPdf}
+                      disabled={!hasItemsForBudget || generatingAction !== null}
                       className={cn(
                         "relative w-full py-3 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group",
                         hasItemsForBudget
@@ -342,7 +382,7 @@ export function TrabajoDetail({
                 ) : (
                   <button
                     onClick={() => { setPdfError(null); downloadPDF(job.id); }}
-                    disabled={isGeneratingPdf}
+                    disabled={generatingAction !== null}
                     className="relative w-full py-3 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary text-white shadow-[0_8px_20px_rgba(61,139,110,0.25)] hover:shadow-[0_16px_40px_rgba(61,139,110,0.4)] hover:scale-[1.02] active:scale-[0.98]"
                   >
                     <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
@@ -409,20 +449,25 @@ export function TrabajoDetail({
             <div className="flex gap-2 pt-2">
               <button
                 onClick={handleGuardarPdf}
-                className="flex-1 px-4 py-3 rounded-xl bg-on-surface/5 text-on-surface font-bold text-sm hover:bg-on-surface/10 transition-all active:scale-95 cursor-pointer"
+                disabled={generatingAction !== null}
+                className="flex-1 px-4 py-3 rounded-xl bg-on-surface/5 text-on-surface font-bold text-sm hover:bg-on-surface/10 transition-all active:scale-95 cursor-pointer flex justify-center items-center gap-2 disabled:opacity-50"
               >
+                {generatingAction === "guardar" && <Loader2 className="w-4 h-4 animate-spin" />}
                 Solo guardar PDF
               </button>
               <button
                 onClick={handleEmitPresupuesto}
-                className="flex-1 px-4 py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-dark transition-all active:scale-95 shadow-[0_4px_12px_rgba(61,139,110,0.3)] cursor-pointer"
+                disabled={generatingAction !== null}
+                className="flex-1 px-4 py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-dark transition-all active:scale-95 shadow-[0_4px_12px_rgba(61,139,110,0.3)] cursor-pointer flex justify-center items-center gap-2 disabled:opacity-70"
               >
+                {generatingAction === "emitir" && <Loader2 className="w-4 h-4 animate-spin" />}
                 Emitir
               </button>
             </div>
           </div>
         </div>
       )}
+      <ConfirmDialog />
     </div>
   );
 }

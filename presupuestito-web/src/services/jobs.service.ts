@@ -11,6 +11,35 @@ export const jobsService = {
     return data as Job[];
   },
 
+  getPaginated: async (
+    page: number = 1,
+    pageSize: number = 10,
+    search?: string
+  ): Promise<{ data: (Job & { clientes: { nombre: string } | null })[]; total: number }> => {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("No authenticated user");
+
+    let query = supabase
+      .from("trabajos")
+      .select("*, clientes(nombre)", { count: "exact" })
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (search) {
+      // Supabase JS allows filtering by joined table columns if they are referenced
+      query = query.or(`titulo.ilike.%${search}%,clientes.nombre.ilike.%${search}%`);
+    }
+
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    const { data, error, count } = await query.range(from, to);
+
+    if (error) throw new Error(error.message);
+    return { data: data as any[], total: count || 0 };
+  },
+
   getById: async (id: string): Promise<Job> => {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();

@@ -29,18 +29,25 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["transactions"] }),
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleConfirm = async () => {
-    await createMutation.mutateAsync({
-      cliente_id: clienteId,
-      tipo,
-      monto: Number(monto),
-      concepto: concepto.trim(),
-      fecha: new Date().toISOString().slice(0, 10),
-      referencia_trabajo_id: null,
-      referencia_cobro_id: null,
-      origen: "manual",
-    });
-    onClose();
+    setIsSubmitting(true);
+    try {
+      await createMutation.mutateAsync({
+        cliente_id: clienteId,
+        tipo,
+        monto: Number(monto),
+        concepto: concepto.trim(),
+        fecha: new Date().toISOString().slice(0, 10),
+        referencia_trabajo_id: null,
+        referencia_cobro_id: null,
+        origen: "manual",
+      });
+      onClose();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -66,7 +73,8 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
           </span>
           <button
             onClick={() => setShowConfirm(false)}
-            className="p-1 rounded-lg hover:bg-on-surface/5 text-on-surface-variant/40 transition-all cursor-pointer"
+            disabled={isSubmitting}
+            className="p-1 rounded-lg hover:bg-on-surface/5 text-on-surface-variant/40 transition-all cursor-pointer disabled:opacity-50"
           >
             <X className="w-4 h-4" />
           </button>
@@ -82,14 +90,17 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
         <div className="flex gap-2 pt-1">
           <button
             onClick={() => setShowConfirm(false)}
-            className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95 cursor-pointer"
+            disabled={isSubmitting}
+            className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95 cursor-pointer disabled:opacity-50"
           >
             Cancelar
           </button>
           <button
             onClick={handleConfirm}
-            className="flex-1 py-2.5 rounded-xl bg-amber-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-amber-700 transition-all active:scale-95 shadow-md cursor-pointer"
+            disabled={isSubmitting}
+            className="flex-1 py-2.5 rounded-xl bg-amber-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-amber-700 transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
           >
+            {isSubmitting && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
             Confirmar
           </button>
         </div>

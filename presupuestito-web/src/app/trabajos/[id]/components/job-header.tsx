@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { User, Calendar, MapPin, Pencil, Check } from "lucide-react";
+import { User, Calendar, MapPin, Pencil, Check, Trash2 } from "lucide-react";
 import { Job, Client } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { jobsService } from "@/services";
@@ -173,15 +173,26 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
                 </span>
               </div>
             </div>
-            {job.estado !== "pagado" && (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-primary hover:bg-primary/10 transition-all hidden md:flex opacity-0 group-hover:opacity-100 active:scale-95 shrink-0 cursor-pointer"
-                title="Editar información del trabajo"
-              >
-                <Pencil className="w-4 h-4" />
-              </button>
-            )}
+            <div className="flex items-center gap-2">
+              {job.estado !== "pagado" && (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-primary hover:bg-primary/10 transition-all hidden md:flex opacity-0 group-hover:opacity-100 active:scale-95 shrink-0 cursor-pointer"
+                  title="Editar información del trabajo"
+                >
+                  <Pencil className="w-4 h-4" />
+                </button>
+              )}
+              {job.estado === "borrador" && (
+                <button
+                  onClick={() => document.dispatchEvent(new CustomEvent('delete-job', { detail: job.id }))}
+                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-red-500 hover:bg-red-500/10 transition-all hidden md:flex opacity-0 group-hover:opacity-100 active:scale-95 shrink-0 cursor-pointer"
+                  title="Eliminar trabajo"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
+            </div>
           </div>
 
           {job.descripcion && (

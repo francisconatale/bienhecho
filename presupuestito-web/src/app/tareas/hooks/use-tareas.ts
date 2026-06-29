@@ -1,72 +1,102 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { jobsService, clientsService, tasksService } from "@/services";
+import { tasksService } from "@/services";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
+import { useServerPagination } from "@/hooks/use-server-pagination";
+
 export type FilterType = "pendientes" | "completadas";
 export type CategoryType = "resumen" | "alta" | "media" | "baja";
 
 export function useTareas() {
   const queryClient = useQueryClient();
 
-  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
-  const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
+  const [filter, setFilter] = useState<FilterType>("pendientes");
+  const [category, setCategory] = useState<CategoryType>("resumen");
+
+  const [page, setPage] = useState(1);
+  const pageSize = 12;
+
+  // 1. Fetch counts
+  const { data: counts, isLoading: isLoadingCounts } = useQuery({
+    queryKey: ["tasks", "counts"],
+    queryFn: tasksService.getCounts,
+  });
+
+  // 2. Fetch resumen if needed
+  const { data: resumen, isLoading: isLoadingResumen } = useQuery({
+    queryKey: ["tasks", "resumen"],
+    queryFn: tasksService.getResumen,
+    enabled: category === "resumen" && filter === "pendientes",
+  });
+
+  // 3. Fetch paginated category if needed
+  const { data: paginated, isLoading: isLoadingPaginated } = useQuery({
+    queryKey: ["tasks", "paginated", filter, category, page, pageSize],
+    queryFn: () => tasksService.getPaginated(page, pageSize, filter, category !== "resumen" ? category : undefined),
+    enabled: category !== "resumen" || filter === "completadas",
+  });
+
+  const isLoading = isLoadingCounts || isLoadingResumen || isLoadingPaginated;
 
   const updateTaskMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => tasksService.update(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      // Invalidate dashboard counts/stats where used
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+    },
   });
 
   const removeTaskMutation = useMutation({
     mutationFn: tasksService.delete,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+    },
   });
 
-  const [filter, setFilter] = useState<FilterType>("pendientes");
-  const [category, setCategory] = useState<CategoryType>("resumen");
+  const pendingCount = counts?.pendingCount || 0;
+  const completedCount = counts?.completedCount || 0;
+  const categoryCounts = counts?.categoryCounts || { alta: 0, media: 0, baja: 0 };
 
-  const { groupedTasks, categoryCounts, pendingCount, completedCount } = useMemo(() => {
-    const allTasks = tasks
-      .map((t) => {
-        const job = jobs.find((j) => j.id === t.trabajo_id);
-        const client = job ? clients.find((c) => c.id === job.cliente_id) : null;
-        return { ...t, job, client };
-      })
-      .filter((t) => t.job);
-
-    const allPending = allTasks.filter((t) => !t.completada);
-    const allCompleted = allTasks.filter((t) => t.completada);
-
-    const pendingAlta = allPending.filter((t) => t.prioridad === "alta");
-    const pendingMedia = allPending.filter((t) => t.prioridad === "media");
-    const pendingBaja = allPending.filter((t) => !t.prioridad || t.prioridad === "baja");
-
-    let alta = pendingAlta;
-    let media = pendingMedia;
-    let baja = pendingBaja;
-
-    if (filter === "pendientes") {
-      if (category === "resumen") {
-        alta = pendingAlta.slice(0, 5);
-        media = pendingMedia.slice(0, 5);
-        baja = pendingBaja.slice(0, 5);
-      } else if (category === "alta") {
-        media = []; baja = [];
-      } else if (category === "media") {
-        alta = []; baja = [];
-      } else if (category === "baja") {
-        alta = []; media = [];
-      }
+  // Grouped tasks matching the old format so UI doesn't break
+  const groupedTasks = useMemo(() => {
+    if (filter === "completadas") {
+      return { alta: [], media: [], baja: [], completadas: paginated?.data || [] };
     }
-
+    if (category === "resumen") {
+      return {
+        alta: resumen?.alta || [],
+        media: resumen?.media || [],
+        baja: resumen?.baja || [],
+        completadas: [],
+      };
+    }
+    // Specific category
     return {
-      groupedTasks: { alta, media, baja, completadas: allCompleted },
-      categoryCounts: { alta: pendingAlta.length, media: pendingMedia.length, baja: pendingBaja.length },
-      pendingCount: allPending.length,
-      completedCount: allCompleted.length,
+      alta: category === "alta" ? (paginated?.data || []) : [],
+      media: category === "media" ? (paginated?.data || []) : [],
+      baja: category === "baja" ? (paginated?.data || []) : [],
+      completadas: [],
     };
-  }, [tasks, jobs, clients, filter, category]);
+  }, [filter, category, resumen, paginated]);
+
+  // Server pagination hook
+  const totalForCurrentView = filter === "completadas" ? completedCount : (category !== "resumen" ? categoryCounts[category] : 0);
+  const serverPag = useServerPagination(totalForCurrentView, pageSize);
+  
+  useEffect(() => { serverPag.goToPage(page); }, [page]);
+  useEffect(() => { setPage(1); }, [filter, category]);
+
+  const pag = {
+    ...serverPag,
+    goToPage: (p: number) => { setPage(p); serverPag.goToPage(p); },
+    nextPage: () => { if (!serverPag.isLastPage) { setPage(p => p + 1); serverPag.nextPage(); } },
+    prevPage: () => { if (!serverPag.isFirstPage) { setPage(p => p - 1); serverPag.prevPage(); } },
+    // UI expects paginatedItems to just exist, we attach the current list depending on the view
+    paginatedItems: filter === "completadas" ? groupedTasks.completadas : groupedTasks[category as keyof typeof groupedTasks] || [],
+  };
 
   const [ConfirmDialog, confirm] = useConfirm();
 
@@ -80,28 +110,34 @@ export function useTareas() {
   };
 
   const deleteTask = async (taskId: string) => {
-    const taskObj = tasks.find(t => t.id === taskId);
+    // Look for the task in our current datasets to verify its job state
+    let taskObj = null;
+    const allArrays = [groupedTasks.alta, groupedTasks.media, groupedTasks.baja, groupedTasks.completadas];
+    for (const arr of allArrays) {
+      taskObj = arr.find((t: any) => t.id === taskId);
+      if (taskObj) break;
+    }
+
     if (taskObj) {
-      const jobObj = jobs.find(j => j.id === taskObj.trabajo_id);
-      if (jobObj?.estado === "pagado") {
+      if (taskObj.job?.estado === "pagado") {
         toast.error("No se puede eliminar una tarea de un trabajo pagado");
         return;
       }
     }
 
-    const ok = await confirm({
+    confirm({
       title: "Eliminar Tarea",
       description: "¿Estás seguro de eliminar esta tarea? Esta acción no se puede deshacer.",
       confirmText: "Eliminar",
       variant: "danger",
+      action: async () => {
+        await removeTaskMutation.mutateAsync(taskId);
+      }
     });
-    if (ok) {
-      await removeTaskMutation.mutateAsync(taskId);
-    }
   };
 
   return {
-    isLoading: isLoadingJobs || isLoadingClients || isLoadingTasks,
+    isLoading,
     filter,
     setFilter,
     category,
@@ -114,5 +150,6 @@ export function useTareas() {
     groupedTasks,
     categoryCounts,
     ConfirmDialog,
+    pag, // Exporting pag to be used directly by the list
   };
 }

@@ -1,5 +1,5 @@
 import { Modal } from "./modal";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -10,6 +10,7 @@ interface ConfirmModalProps {
   confirmText?: string;
   cancelText?: string;
   variant?: "danger" | "warning" | "primary";
+  isLoading?: boolean;
 }
 
 export function ConfirmModal({
@@ -21,6 +22,7 @@ export function ConfirmModal({
   confirmText = "Confirmar",
   cancelText = "Cancelar",
   variant = "danger",
+  isLoading = false,
 }: ConfirmModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
@@ -44,16 +46,19 @@ export function ConfirmModal({
       <div className="flex gap-3 mt-6">
         <button
           onClick={onClose}
-          className="flex-1 px-4 py-3 rounded-xl font-bold text-sm text-on-surface-variant bg-surface-variant/30 hover:bg-surface-variant/50 transition-colors"
+          disabled={isLoading}
+          className="flex-1 px-4 py-3 rounded-xl font-bold text-sm text-on-surface-variant bg-surface-variant/30 hover:bg-surface-variant/50 transition-colors disabled:opacity-50"
         >
           {cancelText}
         </button>
         <button
           onClick={() => {
-            onConfirm();
-            onClose();
+            if (!isLoading) {
+              onConfirm();
+            }
           }}
-          className={`flex-1 px-4 py-3 rounded-xl font-bold text-sm text-white transition-colors shadow-lg ${
+          disabled={isLoading}
+          className={`flex-1 px-4 py-3 rounded-xl font-bold text-sm text-white transition-colors shadow-lg flex items-center justify-center gap-2 disabled:opacity-70 ${
             variant === "danger"
               ? "bg-red-500 hover:bg-red-600 shadow-red-500/20"
               : variant === "warning"
@@ -61,6 +66,7 @@ export function ConfirmModal({
               : "bg-primary hover:bg-primary-dark shadow-primary/20"
           }`}
         >
+          {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
           {confirmText}
         </button>
       </div>

@@ -7,11 +7,13 @@ interface ConfirmOptions {
   confirmText?: string;
   cancelText?: string;
   variant?: "danger" | "warning" | "primary";
+  action?: () => Promise<void> | void;
 }
 
 export function useConfirm() {
   const [promise, setPromise] = useState<{ resolve: (value: boolean) => void } | null>(null);
   const [options, setOptions] = useState<ConfirmOptions | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const confirm = (opts: ConfirmOptions) => {
     return new Promise<boolean>((resolve) => {
@@ -28,11 +30,25 @@ export function useConfirm() {
     }
   };
 
-  const handleConfirm = () => {
-    if (promise) {
-      promise.resolve(true);
-      setPromise(null);
-      setOptions(null);
+  const handleConfirm = async () => {
+    if (options?.action) {
+      setIsLoading(true);
+      try {
+        await options.action();
+      } finally {
+        setIsLoading(false);
+        if (promise) {
+          promise.resolve(true);
+          setPromise(null);
+          setOptions(null);
+        }
+      }
+    } else {
+      if (promise) {
+        promise.resolve(true);
+        setPromise(null);
+        setOptions(null);
+      }
     }
   };
 
@@ -48,6 +64,7 @@ export function useConfirm() {
         confirmText={options.confirmText}
         cancelText={options.cancelText}
         variant={options.variant}
+        isLoading={isLoading}
       />
     );
   };

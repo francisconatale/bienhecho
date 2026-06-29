@@ -115,17 +115,17 @@ export function useAgenda() {
 
   const [ConfirmDialog, confirm] = useConfirm();
 
-  const handleDelete = async (id: string) => {
-    const ok = await confirm({
+  const handleDelete = (id: string) => {
+    confirm({
       title: "Eliminar Visita",
       description: "¿Estás seguro de que querés eliminar esta visita de la agenda?",
       confirmText: "Eliminar",
       variant: "danger",
+      action: async () => {
+        await removeVisitMutation.mutateAsync(id);
+        toast.success("Visita eliminada");
+      }
     });
-    if (ok) {
-      await removeVisitMutation.mutateAsync(id);
-      toast.success("Visita eliminada");
-    }
   };
 
   const handleStatusToggle = async (visit: Visit) => {
