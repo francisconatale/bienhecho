@@ -4,7 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
-import { useDataStore } from "@/lib/store";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { clientsService } from "@/services";
 import { Client } from "@/types";
 import { useEffect } from "react";
 
@@ -22,7 +23,18 @@ export function useClientForm(
   onSuccess?: (clientId: string) => void
 ) {
   const router = useRouter();
-  const { addClient, updateClient } = useDataStore();
+  const queryClient = useQueryClient();
+
+  const createMutation = useMutation({
+    mutationFn: clientsService.create,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["clients"] }),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Client> }) =>
+      clientsService.update(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["clients"] }),
+  });
 
   const form = useForm<ClientFormValues>({
     resolver: zodResolver(clientSchema),
@@ -43,13 +55,16 @@ export function useClientForm(
     });
   }, [initialClient, form]);
 
-  const onSubmit = (data: ClientFormValues) => {
+  const onSubmit = async (data: ClientFormValues) => {
     if (initialClient) {
-      updateClient(initialClient.id, {
-        nombre: data.nombre,
-        email: data.email || undefined,
-        telefono: data.telefono || undefined,
-        direccion: data.direccion || undefined,
+      await updateMutation.mutateAsync({
+        id: initialClient.id,
+        data: {
+          nombre: data.nombre,
+          email: data.email || null,
+          telefono: data.telefono || null,
+          direccion: data.direccion || "",
+        },
       });
 
       if (onSuccess) {
@@ -58,11 +73,11 @@ export function useClientForm(
         router.push("/clientes");
       }
     } else {
-      const newClient = addClient({
+      const newClient = await createMutation.mutateAsync({
         nombre: data.nombre,
-        email: data.email || undefined,
-        telefono: data.telefono || undefined,
-        direccion: data.direccion || undefined,
+        email: data.email || null,
+        telefono: data.telefono || null,
+        direccion: data.direccion || "",
       });
 
       if (onSuccess) {
@@ -76,6 +91,6 @@ export function useClientForm(
   return {
     form,
     onSubmit: form.handleSubmit(onSubmit),
-    isLoading: form.formState.isSubmitting,
+    isLoading: form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending,
   };
 }

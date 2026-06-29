@@ -1,4 +1,5 @@
-import { useDataStore } from "@/lib/store";
+import { useQuery } from "@tanstack/react-query";
+import { jobsService } from "@/services";
 import { Client } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 import { useCuentaCorriente } from "@/hooks/use-cuenta-corriente";
@@ -10,7 +11,8 @@ export interface ClientItemProps {
 }
 
 export function ClientItem({ client, isSelected, onSelect }: ClientItemProps) {
-  const clientJobs = useDataStore.getState().jobs.filter((j) => j.cliente_id === client.id);
+  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const clientJobs = jobs.filter((j) => j.cliente_id === client.id);
   const { saldo } = useCuentaCorriente(client.id);
 
   return (

@@ -1,11 +1,26 @@
 import { useState, useMemo } from "react";
-import { useDataStore } from "@/lib/store";
-
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { jobsService, clientsService, tasksService } from "@/services";
 export type FilterType = "pendientes" | "completadas";
 export type CategoryType = "resumen" | "alta" | "media" | "baja";
 
 export function useTareas() {
-  const { jobs, clients, tasks, updateTask, removeTask } = useDataStore();
+  const queryClient = useQueryClient();
+
+  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
+  const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
+
+  const updateTaskMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => tasksService.update(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+
+  const removeTaskMutation = useMutation({
+    mutationFn: tasksService.delete,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+
   const [filter, setFilter] = useState<FilterType>("pendientes");
   const [category, setCategory] = useState<CategoryType>("resumen");
 
@@ -51,23 +66,23 @@ export function useTareas() {
     };
   }, [tasks, jobs, clients, filter, category]);
 
-  const toggleTask = (taskId: string, current: boolean) => {
-    updateTask(taskId, { completada: !current });
+  const toggleTask = async (taskId: string, current: boolean) => {
+    await updateTaskMutation.mutateAsync({ id: taskId, data: { completada: !current } });
   };
 
-  const togglePriority = (taskId: string, currentPriority: string | null) => {
+  const togglePriority = async (taskId: string, currentPriority: string | null) => {
     const next = currentPriority === "alta" ? "baja" : currentPriority === "media" ? "alta" : "media";
-    updateTask(taskId, { prioridad: next });
+    await updateTaskMutation.mutateAsync({ id: taskId, data: { prioridad: next } });
   };
 
-  const deleteTask = (taskId: string) => {
+  const deleteTask = async (taskId: string) => {
     if (window.confirm("¿Estás seguro de eliminar esta tarea?")) {
-      removeTask(taskId);
+      await removeTaskMutation.mutateAsync(taskId);
     }
   };
 
   return {
-    isLoading: false,
+    isLoading: isLoadingJobs || isLoadingClients || isLoadingTasks,
     filter,
     setFilter,
     category,

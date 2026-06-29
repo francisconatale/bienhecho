@@ -1,8 +1,8 @@
-import { useDataStore } from "@/lib/store";
-
+import { useQuery } from "@tanstack/react-query";
+import { jobsService, tasksService } from "@/services";
 export function useFinancialSummary() {
-  const tasks = useDataStore((state) => state.tasks);
-  const jobs = useDataStore((state) => state.jobs);
+  const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
+  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
 
   const totalAFacturar = tasks
     .filter((task) => {
@@ -15,5 +15,5 @@ export function useFinancialSummary() {
     })
     .reduce((sum, task) => sum + (task.precio || 0), 0);
 
-  return { totalAFacturar };
+  return { totalAFacturar, isLoading: isLoadingTasks || isLoadingJobs };
 }

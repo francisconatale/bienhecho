@@ -1,4 +1,5 @@
-import { useDataStore } from "@/lib/store";
+import { useQuery } from "@tanstack/react-query";
+import { tasksService, jobsService, clientsService, visitsService } from "@/services";
 import { Task, Job, Visit } from "@/types";
 
 export interface AgendaSuggestion {
@@ -10,7 +11,10 @@ export interface AgendaSuggestion {
 }
 
 export function useSmartScheduling() {
-  const { tasks, jobs, clients, visits } = useDataStore();
+  const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
+  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
+  const { data: visits = [], isLoading: isLoadingVisits } = useQuery({ queryKey: ["visits"], queryFn: visitsService.getAll });
 
   const getSuggestions = (): AgendaSuggestion[] => {
     // 1. Filter critical tasks that are incomplete
@@ -71,5 +75,6 @@ export function useSmartScheduling() {
 
   return {
     suggestions: getSuggestions(),
+    isLoading: isLoadingTasks || isLoadingJobs || isLoadingClients || isLoadingVisits,
   };
 }

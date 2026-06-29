@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { CalendarMonth } from "@/components/ui/calendar";
+import { CalendarMonth, CalendarStrip } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { MONTHS } from "../hooks/use-agenda";
 
@@ -8,10 +8,12 @@ interface AgendaCalendarProps {
   month: number;
   selectedDay: number | null;
   onSelectDay: (day: number | null) => void;
+  onSelectDate: (y: number, m: number, d: number) => void;
   onPrevMonth: () => void;
   onNextMonth: () => void;
   onGoToday: () => void;
   visitCountForDay: (day: number) => number;
+  visitCountForDate: (y: number, m: number, d: number) => number;
 }
 
 export function AgendaCalendar({
@@ -19,10 +21,12 @@ export function AgendaCalendar({
   month,
   selectedDay,
   onSelectDay,
+  onSelectDate,
   onPrevMonth,
   onNextMonth,
   onGoToday,
   visitCountForDay,
+  visitCountForDate,
 }: AgendaCalendarProps) {
   return (
     <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl border border-outline-variant/20 shadow-sm overflow-hidden">
@@ -54,19 +58,40 @@ export function AgendaCalendar({
       </div>
 
       <div className="p-4">
-        <CalendarMonth
-          year={year}
-          month={month}
-          selectedDay={selectedDay}
-          onSelectDay={onSelectDay}
-          dayBadge={(day, isSelected) => {
-            const count = visitCountForDay(day);
-            if (count === 0) return null;
-            return (
-              <div className={cn("w-1.5 h-1.5 rounded-full", isSelected ? "bg-white" : "bg-primary")} />
-            );
-          }}
-        />
+        {/* Desktop View */}
+        <div className="hidden md:block">
+          <CalendarMonth
+            year={year}
+            month={month}
+            selectedDay={selectedDay}
+            onSelectDay={onSelectDay}
+            dayBadge={(day, isSelected) => {
+              const count = visitCountForDay(day);
+              if (count === 0) return null;
+              return (
+                <div className={cn("w-1.5 h-1.5 rounded-full", isSelected ? "bg-white" : "bg-primary")} />
+              );
+            }}
+          />
+        </div>
+        {/* Mobile View */}
+        <div className="md:hidden">
+          <CalendarStrip
+            year={year}
+            month={month}
+            selectedDay={selectedDay}
+            onSelectDay={onSelectDate}
+            dayBadge={(day, isSelected, y, m) => {
+              const count = y !== undefined && m !== undefined 
+                ? visitCountForDate(y, m, day) 
+                : visitCountForDay(day);
+              if (count === 0) return null;
+              return (
+                <div className={cn("w-1.5 h-1.5 rounded-full", isSelected ? "bg-white" : "bg-primary")} />
+              );
+            }}
+          />
+        </div>
       </div>
     </div>
   );

@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import Link from "next/link";
-import { ProfilePicture } from "./components/profile-picture";
-import { ProfileForm } from "./components/profile-form";
-import { SecondaryActions } from "./components/secondary-actions";
-import { DangerZone } from "./components/danger-zone";
+import { ProfileLayout } from "./components/profile-layout";
 
 export const metadata: Metadata = {
   title: "Presupuestito - Editar Perfil",
@@ -16,7 +13,7 @@ export default function EditarPerfilPage() {
     <div className="relative w-full min-h-screen">
       <AuroraBackground preset="perfil" />
 
-      <main className="relative flex-1 px-5 pt-14 pb-32 max-w-3xl mx-auto w-full space-y-8">
+      <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-14 pb-32 max-w-7xl mx-auto w-full space-y-8">
         {/* Header Actions */}
         <div className="flex items-center justify-between">
           <Link
@@ -29,17 +26,15 @@ export default function EditarPerfilPage() {
             Editar Perfil
           </h1>
           <button
-            type="button"
+            type="submit"
+            form="profile-form"
             className="text-primary font-bold hover:text-primary-dark transition-colors pb-1 text-[15px] select-none"
           >
             Guardar
           </button>
         </div>
 
-        <ProfilePicture />
-        <ProfileForm />
-        <SecondaryActions />
-        <DangerZone />
+        <ProfileLayout />
       </main>
     </div>
   );

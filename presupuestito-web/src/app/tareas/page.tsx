@@ -7,7 +7,6 @@ import { TareasFilter } from "./components/tareas-filter";
 import { TareasList } from "./components/tareas-list";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { ArrowLeft, LayoutList, LayoutGrid } from "lucide-react";
-import { useDataStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 export default function TareasPage() {

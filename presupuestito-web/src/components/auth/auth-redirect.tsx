@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useUserStore } from "@/lib/user-store";
+import { useAuth } from "@/contexts/auth-context";
 
 export function AuthRedirect({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const isRegistered = useUserStore((state) => state.isRegistered);
+  const { user, loading } = useAuth();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -15,18 +15,28 @@ export function AuthRedirect({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!isMounted) return;
+    if (!isMounted || loading) return;
 
-    const publicPaths = ["/register", "/landing"];
+    const publicPaths = ["/register", "/login", "/landing"];
     const isPublicPath = publicPaths.includes(pathname);
 
-    if (!isRegistered && !isPublicPath) {
-      router.replace("/register");
+    if (!user && !isPublicPath) {
+      router.replace("/login");
     }
-  }, [isRegistered, pathname, isMounted, router]);
+  }, [user, loading, pathname, isMounted, router]);
 
-  // Prevent flash of content if not registered
-  if (isMounted && !isRegistered && !["/register", "/landing"].includes(pathname)) {
+  // Show loading state while checking auth
+  if (!isMounted || loading) {
+    return (
+      <div className="min-h-screen bg-grouped-bg-light dark:bg-black flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-[#2563EB] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // Redirect to login if not authenticated (except public paths)
+  const publicPaths = ["/register", "/login", "/landing"];
+  if (!user && !publicPaths.includes(pathname)) {
     return (
       <div className="min-h-screen bg-grouped-bg-light dark:bg-black flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-[#2563EB] border-t-transparent rounded-full animate-spin" />

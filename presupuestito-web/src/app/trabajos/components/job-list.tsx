@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import { Briefcase, Pencil, X, Check } from "lucide-react";
-import { useDataStore } from "@/lib/store";
+import { useQuery } from "@tanstack/react-query";
+import { jobsService, clientsService } from "@/services";
 import { Job } from "@/types";
 import { usePagination } from "@/hooks/use-pagination";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
@@ -10,7 +11,6 @@ import { TrabajoDetail } from "./trabajo-detail";
 import { JobStatusSelector } from "../[id]/components/job-status";
 import { MobileHeaderActions } from "@/components/ui/mobile-header-actions";
 import { MasterDetail } from "@/components/ui/master-detail";
-import { useEffect } from "react";
 
 function formatCurrency(amount: number): string {
   if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
@@ -49,7 +49,8 @@ export function JobList() {
   const [isHeaderEditing, setIsHeaderEditing] = useState(false);
   const editingJobIdRef = useRef<string | null>(null);
 
-  const { jobs, clients } = useDataStore();
+  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
 
   const filtered = useMemo(() => jobs.filter((j) => {
     const client = clients.find(c => c.id === j.cliente_id);
@@ -105,7 +106,7 @@ export function JobList() {
         pagination={pag}
         creationHref="/trabajos/nuevo"
         renderItem={(job, isSelected) => {
-          const client = useDataStore.getState().clients.find((c) => c.id === job.cliente_id);
+          const client = clients.find((c) => c.id === job.cliente_id);
           return (
             <button
               onClick={() => handleSelectedIdChange(job.id)}

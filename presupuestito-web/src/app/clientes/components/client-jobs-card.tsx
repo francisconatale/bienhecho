@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ExternalLink, ArrowRight } from "lucide-react";
-import { useDataStore } from "@/lib/store";
+import { useQuery } from "@tanstack/react-query";
+import { jobsService } from "@/services";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { cn, formatCurrency } from "@/lib/utils";
 import { getStatusColor } from "./client-detail-pane"; // We'll keep it there to avoid circular dependencies if used elsewhere
@@ -9,7 +10,7 @@ import { getStatusColor } from "./client-detail-pane"; // We'll keep it there to
 export function ClientJobsCard({ clientId }: { clientId: string }) {
   const [loadingJobId, setLoadingJobId] = useState<string | null>(null);
   const { pushHistory } = useNavigationHistory();
-  const { jobs } = useDataStore();
+  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
   
   const clientJobs = jobs.filter((j) => j.cliente_id === clientId);
   

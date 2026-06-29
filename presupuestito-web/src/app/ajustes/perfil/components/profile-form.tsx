@@ -1,43 +1,105 @@
 "use client";
 
-import { useUserStore } from "@/lib/user-store";
-import { FormField } from "./form-field";
+import { useProfile } from "@/hooks/use-profile";
+import { useAuth } from "@/contexts/auth-context";
+import { profileService } from "@/services/profile.service";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 export function ProfileForm() {
-  const user = useUserStore((state) => state.user);
-  const displayName = user?.name || "Juan Pérez";
+  const { profile, isLoading } = useProfile();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const [isSaving, setIsSaving] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const nombre = formData.get("nombre") as string;
+      const rubro = formData.get("rubro") as string;
+      // We don't save phone right now since it's not in the perfiles table based on 001_create_perfiles.sql
+      await profileService.upsert({ nombre, rubro });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+      alert("¡Perfil guardado con éxito!");
+    },
+    onError: (err) => {
+      console.error(err);
+      alert("Error al guardar el perfil.");
+    },
+    onSettled: () => {
+      setIsSaving(false);
+    }
+  });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSaving(true);
+    const formData = new FormData(e.currentTarget);
+    mutation.mutate(formData);
+  };
+
+  const displayName = profile?.nombre || user?.user_metadata?.full_name || "Prestador de Servicios";
+  const email = user?.email || "";
+
+  if (isLoading) {
+    return (
+      <section className="animate-pulse space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="h-[72px] bg-surface-variant/20 rounded-xl" />
+          <div className="h-[72px] bg-surface-variant/20 rounded-xl" />
+          <div className="h-[72px] bg-surface-variant/20 rounded-xl" />
+          <div className="h-[72px] bg-surface-variant/20 rounded-xl" />
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section>
-      <div className="bg-surface rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden">
-        <FormField
-          label="Nombre"
-          id="full_name"
-          type="text"
-          defaultValue={displayName}
-        />
-        <FormField
-          label="Correo"
-          id="email"
-          type="email"
-          defaultValue="juan@empresa.com"
-        />
-        <FormField
-          label="Teléfono"
-          id="phone"
-          type="tel"
-          placeholder="Opcional"
-        />
-        <FormField
-          label="Empresa"
-          id="company"
-          type="text"
-          placeholder="Nombre de empresa"
-        />
+    <form id="profile-form" onSubmit={handleSubmit}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-semibold text-on-surface mb-2">Nombre</label>
+          <input 
+            type="text" 
+            name="nombre"
+            defaultValue={displayName} 
+            required
+            className="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/20 focus:outline-none" 
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-on-surface mb-2">Correo</label>
+          <input 
+            type="email" 
+            defaultValue={email} 
+            disabled
+            className="w-full bg-surface-container/50 border border-outline-variant/20 rounded-xl px-4 py-3 text-on-surface-variant cursor-not-allowed focus:outline-none" 
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-on-surface mb-2">Teléfono</label>
+          <input 
+            type="tel" 
+            name="telefono"
+            placeholder="Opcional" 
+            className="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/20 focus:outline-none" 
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-on-surface mb-2">Rubro</label>
+          <input 
+            type="text" 
+            name="rubro"
+            defaultValue={profile?.rubro || ""} 
+            placeholder="Tu rubro de trabajo" 
+            className="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/20 focus:outline-none" 
+          />
+        </div>
       </div>
-      <p className="mt-2 px-4 text-[11px] text-on-surface-variant/60 font-medium tracking-tight">
-        Estos detalles serán visibles en los presupuestos que generes.
+      <p className="mt-4 text-sm text-on-surface-variant/80 font-medium">
+        Estos detalles serán visibles en los presupuestos que generes. {isSaving && <span className="text-primary animate-pulse ml-2">Guardando...</span>}
       </p>
-    </section>
+    </form>
   );
 }

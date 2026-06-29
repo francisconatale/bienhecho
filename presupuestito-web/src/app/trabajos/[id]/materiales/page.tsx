@@ -4,7 +4,8 @@ import React, { Suspense } from "react";
 import { ChevronLeft } from "lucide-react";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
-import { useDataStore } from "@/lib/store";
+import { useQuery } from "@tanstack/react-query";
+import { jobsService } from "@/services";
 import { MaterialList } from "../components/material-list";
 import { getBackUrl } from "./navigation";
 
@@ -17,7 +18,7 @@ function MaterialesPageInner({ id }: MaterialesPageInnerProps) {
   const searchParams = useSearchParams();
   const from = searchParams.get("from");
   const { popHistory } = useNavigationHistory();
-  const { jobs } = useDataStore();
+  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
   const job = jobs.find((j) => j.id === id);
 
   if (!job) {

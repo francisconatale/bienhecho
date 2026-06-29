@@ -1,8 +1,18 @@
+"use client";
+
 import Link from "next/link";
 import { CircleUserRound, ChevronRight } from "lucide-react";
 import { SectionLabel } from "./section-label";
+import { useProfile } from "@/hooks/use-profile";
+import { useAuth } from "@/contexts/auth-context";
 
 export function AccountSection() {
+  const { profile } = useProfile();
+  const { user } = useAuth();
+
+  const displayName = profile?.nombre || "Prestador de Servicios";
+  const email = user?.email || "Mi Empresa";
+
   return (
     <section>
       <SectionLabel label="Cuenta" />
@@ -15,9 +25,9 @@ export function AccountSection() {
             <CircleUserRound className="w-8 h-8" strokeWidth={1.5} />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-on-surface">Juan Pérez</h4>
+            <h4 className="font-semibold text-on-surface">{displayName}</h4>
             <p className="text-xs text-on-surface-variant truncate">
-              juan@empresa.com
+              {email}
             </p>
           </div>
           <ChevronRight

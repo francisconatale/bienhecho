@@ -3,12 +3,20 @@ import { useSmartScheduling, AgendaSuggestion } from "../hooks/use-smart-schedul
 import { VisitForm } from "./visit-form";
 import { Modal } from "@/components/ui/modal";
 import { useState } from "react";
-import { useDataStore } from "@/lib/store";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { jobsService, clientsService, visitsService } from "@/services";
 
 export function SmartSuggestions() {
+  const queryClient = useQueryClient();
   const { suggestions } = useSmartScheduling();
-  const { jobs, clients, addVisit } = useDataStore();
+  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
   const [selectedSuggestion, setSelectedSuggestion] = useState<AgendaSuggestion | null>(null);
+
+  const addVisitMutation = useMutation({
+    mutationFn: visitsService.create,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["visits"] }),
+  });
 
   if (suggestions.length === 0) return null;
 
@@ -72,8 +80,8 @@ export function SmartSuggestions() {
               notas: `Tareas críticas pendientes:\n${selectedSuggestion.criticalTasks.map(t => `- ${t.descripcion}`).join("\n")}`,
               created_at: ""
             }}
-            onSubmit={(data) => {
-              addVisit(data);
+            onSubmit={async (data) => {
+              await addVisitMutation.mutateAsync(data);
               setSelectedSuggestion(null);
             }}
             onCancel={() => setSelectedSuggestion(null)}

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useDataStore } from "@/lib/store";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { visitsService, jobsService, clientsService } from "@/services";
 import { Visit, VisitStatus } from "@/types";
 
 export const MONTHS = [
@@ -18,14 +19,25 @@ export function formatDate(year: number, month: number, day: number) {
 }
 
 export function useAgenda() {
-  const {
-    visits,
-    jobs,
-    clients,
-    addVisit,
-    updateVisit,
-    removeVisit,
-  } = useDataStore();
+  const queryClient = useQueryClient();
+  const { data: visits = [], isLoading: isLoadingVisits } = useQuery({ queryKey: ["visits"], queryFn: visitsService.getAll });
+  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
+
+  const addVisitMutation = useMutation({
+    mutationFn: visitsService.create,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["visits"] }),
+  });
+
+  const updateVisitMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => visitsService.update(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["visits"] }),
+  });
+
+  const removeVisitMutation = useMutation({
+    mutationFn: visitsService.delete,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["visits"] }),
+  });
 
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
@@ -83,6 +95,11 @@ export function useAgenda() {
     return visits.filter((v) => v.fecha === date).length;
   };
 
+  const visitCountForDate = (y: number, m: number, d: number) => {
+    const date = formatDate(y, m, d);
+    return visits.filter((v) => v.fecha === date).length;
+  };
+
   const getJobInfo = (trabajoId: string) => {
     const job = jobs.find((j) => j.id === trabajoId);
     if (!job) return { titulo: "—", cliente: "—", direccion: "" };
@@ -94,19 +111,31 @@ export function useAgenda() {
     };
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm("¿Eliminar esta visita?")) {
-      removeVisit(id);
+      await removeVisitMutation.mutateAsync(id);
     }
   };
 
-  const handleStatusToggle = (visit: Visit) => {
+  const handleStatusToggle = async (visit: Visit) => {
     const next: Record<VisitStatus, VisitStatus> = {
       planificada: "realizada",
       realizada: "cancelada",
       cancelada: "planificada",
     };
-    updateVisit(visit.id, { estado: next[visit.estado] });
+    await updateVisitMutation.mutateAsync({ id: visit.id, data: { estado: next[visit.estado] } });
+  };
+
+  const addVisit = async (data: Omit<Visit, "id" | "created_at">) => {
+    return await addVisitMutation.mutateAsync(data);
+  };
+
+  const updateVisit = async (id: string, data: Partial<Visit>) => {
+    await updateVisitMutation.mutateAsync({ id, data });
+  };
+
+  const removeVisit = async (id: string) => {
+    await removeVisitMutation.mutateAsync(id);
   };
 
   return {
@@ -135,12 +164,19 @@ export function useAgenda() {
       nextMonth,
       goToday,
       visitCountForDay,
+      visitCountForDate,
       getJobInfo,
       handleDelete,
       handleStatusToggle,
       addVisit,
       updateVisit,
       removeVisit,
+      selectDate: (y: number, m: number, d: number) => {
+        setYear(y);
+        setMonth(m);
+        setSelectedDay(d);
+      },
     },
+    isLoading: isLoadingVisits || isLoadingJobs || isLoadingClients,
   };
 }

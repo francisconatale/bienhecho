@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Check, Trash2, Pencil } from "lucide-react";
 import { Task } from "@/types";
-import { useDataStore } from "@/lib/store";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { tasksService } from "@/services";
 import { TaskForm } from "./task-form";
 import { Modal } from "@/components/ui/modal";
 import { cn } from "@/lib/utils";
@@ -21,21 +22,31 @@ interface TaskItemProps {
 }
 
 export function TaskItem({ task, jobId, onSelect }: TaskItemProps) {
-  const { updateTask, removeTask } = useDataStore();
+  const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  const handleToggleComplete = () => {
-    updateTask(task.id, { completada: !task.completada });
+  const updateTaskMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => tasksService.update(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+
+  const removeTaskMutation = useMutation({
+    mutationFn: tasksService.delete,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+
+  const handleToggleComplete = async () => {
+    await updateTaskMutation.mutateAsync({ id: task.id, data: { completada: !task.completada } });
   };
 
-  const handleSave = (data: { descripcion: string; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string }) => {
-    updateTask(task.id, data);
+  const handleSave = async (data: { descripcion: string; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string }) => {
+    await updateTaskMutation.mutateAsync({ id: task.id, data });
     setIsEditing(false);
   };
 
-  const handleDelete = () => {
-    removeTask(task.id);
+  const handleDelete = async () => {
+    await removeTaskMutation.mutateAsync(task.id);
     setConfirmDelete(false);
   };
 
@@ -43,7 +54,7 @@ export function TaskItem({ task, jobId, onSelect }: TaskItemProps) {
     <>
       <div className="group relative flex flex-col md:flex-row md:items-center px-4 py-3 hover:bg-primary/5 transition-colors gap-3 md:gap-0">
         
-        <div className="flex-1 min-w-0 pr-4 flex items-center gap-3">
+        <div className="flex-1 min-w-0 pr-14 md:pr-4 flex items-center gap-3">
           {/* Checkbox */}
           <button
             onClick={handleToggleComplete}
@@ -88,7 +99,7 @@ export function TaskItem({ task, jobId, onSelect }: TaskItemProps) {
         </div>
 
         {/* Amount (Desktop) */}
-        <div className="hidden md:flex w-32 shrink-0 items-center justify-end pr-4">
+        <div className="hidden md:flex w-32 shrink-0 items-center justify-end pr-4 group-hover:opacity-0 transition-opacity">
           <span className={cn("text-[14px] font-semibold tabular-nums", task.completada ? "text-on-surface-variant/40" : "text-on-surface")}>
             {task.precio !== null ? `$${task.precio.toLocaleString("es-AR")}` : "—"}
           </span>

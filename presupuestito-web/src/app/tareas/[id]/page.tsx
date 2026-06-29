@@ -2,7 +2,8 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { useDataStore } from "@/lib/store";
+import { useQuery } from "@tanstack/react-query";
+import { tasksService } from "@/services";
 import { TaskDetailPanel } from "@/app/trabajos/[id]/components/task-detail-panel";
 
 interface TareaPageProps {
@@ -12,7 +13,7 @@ interface TareaPageProps {
 export default function TareaPage({ params }: TareaPageProps) {
   const { id } = React.use(params);
   const router = useRouter();
-  const { tasks } = useDataStore();
+  const { data: tasks = [] } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
   const task = tasks.find((t) => t.id === id);
 
   if (!task) return null;

@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { z } from "zod";
-import { useDataStore } from "@/lib/store";
-
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { materialsService } from "@/services";
+import { Material } from "@/types";
 export const materialSchema = z.object({
   nombre_material: z.string().min(1, "El nombre es obligatorio"),
   cantidad: z.coerce.number().min(0.01, "La cantidad debe ser mayor a 0"),
@@ -11,22 +12,36 @@ export const materialSchema = z.object({
 export type MaterialFormValues = z.infer<typeof materialSchema>;
 
 export function useMaterials(trabajoId: string) {
-  const storeMateriales = useDataStore((state) => state.materiales);
-  const addMaterialStore = useDataStore((state) => state.addMaterial);
-  const updateMaterialStore = useDataStore((state) => state.updateMaterial);
-  const removeMaterialStore = useDataStore((state) => state.removeMaterial);
+  const queryClient = useQueryClient();
 
-  const materiales = useMemo(() => {
-    return storeMateriales.filter((m) => m.trabajo_id === trabajoId);
-  }, [storeMateriales, trabajoId]);
+  const { data: materiales = [], isLoading } = useQuery({
+    queryKey: ["materials", trabajoId],
+    queryFn: () => materialsService.getByJobId(trabajoId),
+  });
 
   const totalMateriales = useMemo(() => {
     return materiales.reduce((sum, m) => sum + m.subtotal, 0);
   }, [materiales]);
 
-  const addMaterial = (data: MaterialFormValues) => {
+  const addMutation = useMutation({
+    mutationFn: materialsService.create,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["materials", trabajoId] }),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Material> }) =>
+      materialsService.update(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["materials", trabajoId] }),
+  });
+
+  const removeMutation = useMutation({
+    mutationFn: materialsService.delete,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["materials", trabajoId] }),
+  });
+
+  const addMaterial = async (data: MaterialFormValues) => {
     const subtotal = data.cantidad * data.precio_unitario;
-    addMaterialStore({
+    await addMutation.mutateAsync({
       trabajo_id: trabajoId,
       nombre_material: data.nombre_material,
       cantidad: data.cantidad,
@@ -36,18 +51,21 @@ export function useMaterials(trabajoId: string) {
     });
   };
 
-  const updateMaterial = (id: string, data: MaterialFormValues) => {
+  const updateMaterial = async (id: string, data: MaterialFormValues) => {
     const subtotal = data.cantidad * data.precio_unitario;
-    updateMaterialStore(id, {
-      nombre_material: data.nombre_material,
-      cantidad: data.cantidad,
-      precio_unitario: data.precio_unitario,
-      subtotal,
+    await updateMutation.mutateAsync({
+      id,
+      data: {
+        nombre_material: data.nombre_material,
+        cantidad: data.cantidad,
+        precio_unitario: data.precio_unitario,
+        subtotal,
+      },
     });
   };
 
-  const removeMaterial = (id: string) => {
-    removeMaterialStore(id);
+  const removeMaterial = async (id: string) => {
+    await removeMutation.mutateAsync(id);
   };
 
   return {
@@ -56,5 +74,6 @@ export function useMaterials(trabajoId: string) {
     addMaterial,
     updateMaterial,
     removeMaterial,
+    isLoading,
   };
 }

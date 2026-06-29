@@ -1,6 +1,8 @@
-import { useMemo, useCallback } from "react";
+import { useMemo } from "react";
 import { z } from "zod";
-import { useDataStore } from "@/lib/store";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { cobrosService, materialsService, jobsService } from "@/services";
+import { Cobro } from "@/types";
 
 export const cobroSchema = z.object({
   monto_cobrado: z.coerce.number().min(0.01, "El monto debe ser mayor a 0"),
@@ -12,35 +14,28 @@ export const cobroSchema = z.object({
 export type CobroFormValues = z.infer<typeof cobroSchema>;
 
 export function usePayments(trabajoId: string) {
-  const storeCobros = useDataStore((state) => state.cobros);
-  const storeMateriales = useDataStore((state) => state.materiales);
-  const storeTasks = useDataStore((state) => state.tasks);
+  const queryClient = useQueryClient();
 
-  const addCobroStore = useDataStore((state) => state.addCobro);
-  const updateCobroStore = useDataStore((state) => state.updateCobro);
-  const removeCobroStore = useDataStore((state) => state.removeCobro);
+  const { data: cobros = [], isLoading: isLoadingCobros } = useQuery({
+    queryKey: ["cobros", trabajoId],
+    queryFn: () => cobrosService.getByJobId(trabajoId),
+  });
 
-  const cobros = useMemo(() => {
-    return storeCobros.filter((c) => c.trabajo_id === trabajoId);
-  }, [storeCobros, trabajoId]);
+  const { data: materiales = [], isLoading: isLoadingMaterials } = useQuery({
+    queryKey: ["materials", trabajoId],
+    queryFn: () => materialsService.getByJobId(trabajoId),
+  });
 
-  const materiales = useMemo(() => {
-    return storeMateriales.filter((m) => m.trabajo_id === trabajoId);
-  }, [storeMateriales, trabajoId]);
-
-  const tasks = useMemo(() => {
-    return storeTasks.filter((t) => t.trabajo_id === trabajoId);
-  }, [storeTasks, trabajoId]);
+  const { data: job, isLoading: isLoadingJob } = useQuery({
+    queryKey: ["jobs", trabajoId],
+    queryFn: () => jobsService.getById(trabajoId),
+  });
 
   const totalMateriales = useMemo(() => {
     return materiales.reduce((sum, m) => sum + m.subtotal, 0);
   }, [materiales]);
 
-  const totalTareas = useMemo(() => {
-    return tasks.reduce((sum, t) => sum + (t.precio || 0), 0);
-  }, [tasks]);
-
-  const presupuestoTotal = totalTareas + totalMateriales;
+  const presupuestoTotal = (job?.presupuesto || 0) + totalMateriales;
 
   const totalCobrado = useMemo(() => {
     return cobros.reduce((sum, c) => sum + c.monto_cobrado, 0);
@@ -50,64 +45,58 @@ export function usePayments(trabajoId: string) {
     return presupuestoTotal - totalCobrado;
   }, [presupuestoTotal, totalCobrado]);
 
-  const checkAndAutoPaid = useCallback(() => {
-    const state = useDataStore.getState();
-    const allCobros = state.cobros.filter((c) => c.trabajo_id === trabajoId);
-    const totalCobrado = allCobros.reduce((sum, c) => sum + c.monto_cobrado, 0);
-    const allTasks = state.tasks.filter((t) => t.trabajo_id === trabajoId);
-    const totalTareas = allTasks.reduce((sum, t) => sum + (t.precio || 0), 0);
-    const allMateriales = state.materiales
-      .filter((m) => m.trabajo_id === trabajoId)
-      .reduce((sum, m) => sum + m.subtotal, 0);
-    const presupuestoTotal = totalTareas + allMateriales;
-    const job = state.jobs.find((j) => j.id === trabajoId);
-    if (totalCobrado >= presupuestoTotal && job && job.estado !== "pagado") {
-      useDataStore.getState().updateJob(trabajoId, { estado: "pagado" });
-    }
-  }, [trabajoId]);
+  const addMutation = useMutation({
+    mutationFn: cobrosService.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cobros", trabajoId] });
+      queryClient.invalidateQueries({ queryKey: ["jobs", trabajoId] }); // invalidate job to reflect state change if any
+      queryClient.invalidateQueries({ queryKey: ["transacciones"] });
+    },
+  });
 
-  const addCobro = (data: CobroFormValues) => {
-    addCobroStore({
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Cobro> }) =>
+      cobrosService.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cobros", trabajoId] });
+      queryClient.invalidateQueries({ queryKey: ["jobs", trabajoId] });
+      queryClient.invalidateQueries({ queryKey: ["transacciones"] });
+    },
+  });
+
+  const removeMutation = useMutation({
+    mutationFn: cobrosService.delete,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cobros", trabajoId] });
+      queryClient.invalidateQueries({ queryKey: ["jobs", trabajoId] });
+      queryClient.invalidateQueries({ queryKey: ["transacciones"] });
+    },
+  });
+
+  const addCobro = async (data: CobroFormValues) => {
+    await addMutation.mutateAsync({
       trabajo_id: trabajoId,
       monto_cobrado: data.monto_cobrado,
       fecha_cobro: data.fecha_cobro,
       forma_pago: data.forma_pago,
       notas: data.notas,
     });
-    checkAndAutoPaid();
   };
 
-  const updateCobro = (id: string, data: CobroFormValues) => {
-    const store = useDataStore.getState();
-    const oldCobro = store.cobros.find((c) => c.id === id);
-    updateCobroStore(id, {
-      monto_cobrado: data.monto_cobrado,
-      fecha_cobro: data.fecha_cobro,
-      forma_pago: data.forma_pago,
-      notas: data.notas,
+  const updateCobro = async (id: string, data: CobroFormValues) => {
+    await updateMutation.mutateAsync({
+      id,
+      data: {
+        monto_cobrado: data.monto_cobrado,
+        fecha_cobro: data.fecha_cobro,
+        forma_pago: data.forma_pago,
+        notas: data.notas,
+      },
     });
-    if (oldCobro && oldCobro.monto_cobrado !== data.monto_cobrado) {
-      const delta = data.monto_cobrado - oldCobro.monto_cobrado;
-      const job = store.jobs.find((j) => j.id === trabajoId);
-      if (job) {
-        store.addTransaccion({
-          cliente_id: job.cliente_id,
-          tipo: delta > 0 ? "abono" : "cargo",
-          monto: Math.abs(delta),
-          concepto: `Ajuste por modificación de cobro (${delta > 0 ? "+" : ""}${delta.toLocaleString("es-AR")})`,
-          fecha: new Date().toISOString().slice(0, 10),
-          referencia_trabajo_id: trabajoId,
-          referencia_cobro_id: id,
-          origen: "automático",
-        });
-      }
-    }
-    checkAndAutoPaid();
   };
 
-  const removeCobro = (id: string) => {
-    removeCobroStore(id);
-    checkAndAutoPaid();
+  const removeCobro = async (id: string) => {
+    await removeMutation.mutateAsync(id);
   };
 
   return {
@@ -118,5 +107,6 @@ export function usePayments(trabajoId: string) {
     addCobro,
     updateCobro,
     removeCobro,
+    isLoading: isLoadingCobros || isLoadingMaterials || isLoadingJob,
   };
 }

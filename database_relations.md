@@ -5,10 +5,9 @@
 > Todo frontend que consulte o modifique datos DEBE respetar
 > estrictamente lo definido aquí.
 
-> **Estado actual**: Por ahora los datos viven en mocks (Zustand store
-> en memoria). Los types en `src/types/index.ts` DEBEN respetar esta
-> estructura. Cuando se implemente la DB real, las migraciones se
-> basan en este archivo.
+> **Estado actual**: La app usa Supabase (PostgreSQL) con autenticación
+> y Row Level Security (RLS). Cada tabla tiene `user_id` para
+> single-tenancy. Migraciones en `supabase/migrations/`.
 
 ---
 
@@ -21,8 +20,9 @@ Base de todo el sistema. Datos de contacto del cliente.
 | Campo | Tipo | Nullable | Descripción |
 |-------|------|----------|-------------|
 | `id` | uuid PK | no | Identificador único |
+| `user_id` | uuid FK | no | Usuario propietario (`→ auth.users.id`) |
 | `nombre` | string | no | Nombre completo o razón social |
-| `telefono` | string | no | Teléfono de contacto |
+| `telefono` | string | sí | Teléfono de contacto |
 | `email` | string | sí | Email (opcional) |
 | `direccion` | string | no | Dirección principal |
 | `notas` | text | sí | Notas libres sobre el cliente |

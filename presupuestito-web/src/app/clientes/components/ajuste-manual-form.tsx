@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useDataStore } from "@/lib/store";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { transaccionesService } from "@/services";
 interface AjusteManualFormProps {
   clienteId: string;
   onClose: () => void;
@@ -23,9 +23,14 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
     setShowConfirm(true);
   };
 
-  const handleConfirm = () => {
-    const store = useDataStore.getState();
-    store.addTransaccion({
+  const queryClient = useQueryClient();
+  const createMutation = useMutation({
+    mutationFn: transaccionesService.create,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+  });
+
+  const handleConfirm = async () => {
+    await createMutation.mutateAsync({
       cliente_id: clienteId,
       tipo,
       monto: Number(monto),

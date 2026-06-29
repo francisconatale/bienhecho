@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useDataStore } from "@/lib/store";
-
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { clientsService, jobsService } from "@/services";
 export const questions = [
   { id: "cliente", question: "¿Para qué cliente es este trabajo?", hint: "Seleccioná un cliente existente" },
   { id: "titulo", question: "¿Cómo se llama el trabajo?", hint: "Dale un nombre descriptivo" },
@@ -14,7 +14,17 @@ export const questions = [
 export function useNuevoTrabajo() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { clients, addJob } = useDataStore();
+  const queryClient = useQueryClient();
+
+  const { data: clients = [], isLoading: isLoadingClients } = useQuery({
+    queryKey: ["clients"],
+    queryFn: clientsService.getAll,
+  });
+
+  const createMutation = useMutation({
+    mutationFn: jobsService.create,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["jobs"] }),
+  });
 
   const preselectId = searchParams.get("clienteId");
   const [currentQ, setCurrentQ] = useState(preselectId ? 1 : 0);
@@ -44,9 +54,9 @@ export function useNuevoTrabajo() {
     if (currentQ > 0) setCurrentQ((q) => q - 1);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!canSave) return;
-    const newJob = addJob({
+    const newJob = await createMutation.mutateAsync({
       cliente_id: clienteId,
       titulo: titulo.trim(),
       direccion: direccion.trim(),
@@ -74,6 +84,7 @@ export function useNuevoTrabajo() {
       canSave,
       canAdvance,
       clients,
+      isLoading: isLoadingClients || createMutation.isPending,
     },
     actions: {
       setClienteId,

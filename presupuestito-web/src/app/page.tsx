@@ -1,7 +1,8 @@
 "use client";
 
-import { useDataStore } from "@/lib/store";
-import { useUserStore } from "@/lib/user-store";
+import { useQuery } from "@tanstack/react-query";
+import { jobsService, clientsService, visitsService } from "@/services";
+import { useProfile } from "@/hooks/use-profile";
 import { useClientAlerts } from "@/app/tareas/hooks/use-client-alerts";
 import { usePagination } from "@/hooks/use-pagination";
 import { DataTable, type Column } from "@/components/ui/data-table";
@@ -19,8 +20,10 @@ import {
 } from "lucide-react";
 
 export default function DashboardPage() {
-  const { jobs, clients, visits } = useDataStore();
-  const user = useUserStore((state) => state.user);
+  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
+  const { data: visits = [] } = useQuery({ queryKey: ["visits"], queryFn: visitsService.getAll });
+  const { profile } = useProfile();
   const { alerts } = useClientAlerts();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
@@ -29,7 +32,7 @@ export default function DashboardPage() {
     setMounted(true);
   }, []);
 
-  const displayName = mounted ? (user?.name || "Francisco") : "Francisco";
+  const displayName = mounted ? (profile?.nombre || "Francisco") : "Francisco";
 
   const sortedJobs = useMemo(
     () => [...jobs].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),

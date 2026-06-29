@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { Plus, Trash2, Image as ImageIcon, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { TaskPhoto } from "@/types";
-import { useDataStore } from "@/lib/store";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { PhotoUpload } from "./photo-upload";
 import { cn } from "@/lib/utils";
 import {
@@ -20,31 +20,25 @@ interface TaskPhotosProps {
 const MAX_PHOTOS = 20;
 
 export function TaskPhotos({ tareaId }: TaskPhotosProps) {
-  const { taskPhotos, addTaskPhoto, removeTaskPhoto } = useDataStore();
+  const queryClient = useQueryClient();
+  const { data: photos = [], isLoading } = useQuery({
+    queryKey: ["taskPhotos", tareaId],
+    queryFn: () => getPhotosByTarea(tareaId),
+  });
+
   const [isUploading, setIsUploading] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [viewerPhotoIndex, setViewerPhotoIndex] = useState<number | null>(null);
 
-  const photos = taskPhotos.filter((p) => p.tarea_id === tareaId);
+  const addPhotoMutation = useMutation({
+    mutationFn: addPhoto,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["taskPhotos", tareaId] }),
+  });
 
-  useEffect(() => {
-    const loadPhotos = async () => {
-      try {
-        const storedPhotos = await getPhotosByTarea(tareaId);
-        storedPhotos.forEach((photo) => {
-          if (!taskPhotos.find((p) => p.id === photo.id)) {
-            addTaskPhoto(photo);
-          }
-        });
-      } catch (error) {
-        console.error("Error loading photos:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadPhotos();
-  }, [tareaId]);
+  const deletePhotoMutation = useMutation({
+    mutationFn: deletePhoto,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["taskPhotos", tareaId] }),
+  });
 
   const handleSave = async (photoData: {
     tareaId: string;
@@ -61,14 +55,12 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
       created_at: new Date().toISOString(),
     };
 
-    await addPhoto(newPhoto);
-    addTaskPhoto(newPhoto);
+    await addPhotoMutation.mutateAsync(newPhoto);
     setIsUploading(false);
   };
 
   const handleDelete = async (id: string) => {
-    await deletePhoto(id);
-    removeTaskPhoto(id);
+    await deletePhotoMutation.mutateAsync(id);
     setConfirmDeleteId(null);
   };
 

@@ -58,9 +58,8 @@ export default function AgendaPage() {
           />
         </div>
 
-        {/* Right Column: Suggestions + Visits grouped by status */}
-        <div className="flex-1 min-w-0 flex flex-col gap-6">
-          <SmartSuggestions />
+        {/* Right Column: Visits grouped by status */}
+        <div className="flex-1 min-w-0">
           <VisitList
             selectedDate={state.selectedDate}
             selectedDay={state.selectedDay}
@@ -74,6 +73,11 @@ export default function AgendaPage() {
             setShowNewModal={actions.setShowNewModal}
           />
         </div>
+      </div>
+
+      {/* Suggestions — full width below layout */}
+      <div className="mt-6">
+        <SmartSuggestions />
       </div>
 
       {/* Modals */}

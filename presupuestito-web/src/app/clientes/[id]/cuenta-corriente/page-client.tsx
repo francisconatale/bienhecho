@@ -4,7 +4,8 @@ import React from "react";
 import { ChevronLeft } from "lucide-react";
 import { notFound, useRouter } from "next/navigation";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
-import { useDataStore } from "@/lib/store";
+import { useQuery } from "@tanstack/react-query";
+import { clientsService } from "@/services";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { MetricasCuenta } from "./components/metricas-cuenta";
 import { TransaccionesList } from "./components/transacciones-list";
@@ -12,7 +13,7 @@ import { TransaccionesList } from "./components/transacciones-list";
 export function CuentaCorrientePageClient({ id }: { id: string }) {
   const router = useRouter();
   const { popHistory } = useNavigationHistory();
-  const { clients } = useDataStore();
+  const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
   const client = clients.find((c) => c.id === id);
 
   if (!client) {

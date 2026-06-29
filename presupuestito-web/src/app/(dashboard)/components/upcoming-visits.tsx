@@ -3,12 +3,15 @@
 import { usePagination } from "@/hooks/use-pagination";
 import { PaginationButtons } from "@/components/ui/pagination-buttons";
 import { CalendarDays, ArrowRight } from "lucide-react";
-import { useDataStore } from "@/lib/store";
+import { useQuery } from "@tanstack/react-query";
+import { visitsService, jobsService, clientsService } from "@/services";
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 
 export function UpcomingVisits() {
-  const { visits, jobs, clients } = useDataStore();
+  const { data: visits = [] } = useQuery({ queryKey: ["visits"], queryFn: visitsService.getAll });
+  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

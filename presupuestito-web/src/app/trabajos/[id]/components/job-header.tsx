@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { User, Calendar, MapPin, Pencil, Check } from "lucide-react";
 import { Job, Client } from "@/types";
-import { useDataStore } from "@/lib/store";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { jobsService } from "@/services";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +17,12 @@ interface JobHeaderProps {
 }
 
 export function JobHeader({ job, client, isEditing: externalEditing, onEditingChange, onHasChanges }: JobHeaderProps) {
-  const { updateJob } = useDataStore();
+  const queryClient = useQueryClient();
+  const updateJobMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => jobsService.update(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["jobs"] }),
+  });
+
   const [internalEditing, setInternalEditing] = useState(false);
   const isEditing = externalEditing ?? internalEditing;
   const setIsEditing = (val: boolean) => {
@@ -40,13 +46,16 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
     onHasChanges?.(hasChanges);
   }, [hasChanges, onHasChanges]);
 
-  const handleSave = () => {
-    updateJob(job.id, {
-      titulo: titulo.trim(),
-      descripcion: descripcion.trim() || undefined,
-      direccion: direccion.trim() || undefined,
-      fecha_inicio: fechaInicio || undefined,
-      fecha_fin_estimada: fechaFin || undefined,
+  const handleSave = async () => {
+    await updateJobMutation.mutateAsync({
+      id: job.id,
+      data: {
+        titulo: titulo.trim(),
+        descripcion: descripcion.trim() || undefined,
+        direccion: direccion.trim() || undefined,
+        fecha_inicio: fechaInicio || undefined,
+        fecha_fin_estimada: fechaFin || undefined,
+      }
     });
     setIsEditing(false);
   };

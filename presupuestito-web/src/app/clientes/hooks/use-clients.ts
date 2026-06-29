@@ -1,10 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { useDataStore } from "@/lib/store";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { clientsService } from "@/services";
 import { usePagination } from "@/hooks/use-pagination";
 import { Client } from "@/types";
 
 export function useClients() {
+  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -16,7 +18,18 @@ export function useClients() {
 
   const [showCreationForm, setShowCreationForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const { clients, removeClient } = useDataStore();
+
+  const { data: clients = [], isLoading } = useQuery({
+    queryKey: ["clients"],
+    queryFn: clientsService.getAll,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: clientsService.delete,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
+    },
+  });
 
   // Reset editing state when selection changes
   useEffect(() => { setIsEditing(false); }, [selectedId]);
@@ -49,7 +62,7 @@ export function useClients() {
 
   const handleDelete = (client: Client) => {
     if (window.confirm(`Estas seguro de que queres eliminar a ${client.nombre}?`)) {
-      removeClient(client.id);
+      deleteMutation.mutate(client.id);
       if (selectedId === client.id) handleSelectedIdChange(null);
     }
   };
@@ -82,5 +95,6 @@ export function useClients() {
     handleDelete,
     handleToggleCreation,
     handleCreationSuccess,
+    isLoading,
   };
 }

@@ -1,12 +1,14 @@
 "use client";
 
-import { useDataStore } from "@/lib/store";
+import { useQuery } from "@tanstack/react-query";
+import { jobsService, clientsService } from "@/services";
 import { usePagination } from "@/hooks/use-pagination";
 import { PaginationButtons } from "@/components/ui/pagination-buttons";
 import { useState, useEffect, useMemo } from "react";
 
 export function RecentActivity() {
-  const { clients, jobs } = useDataStore();
+  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

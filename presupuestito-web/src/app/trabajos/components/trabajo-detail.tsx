@@ -4,7 +4,8 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { ChevronLeft, FileDown, Hammer, Wallet, CheckCircle, X } from "lucide-react";
 import Link from "next/link";
 import { notFound, useSearchParams, useRouter } from "next/navigation";
-import { useDataStore } from "@/lib/store";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { jobsService, clientsService, tasksService, cobrosService } from "@/services";
 import { useBudgetPDF } from "@/hooks/use-budget-pdf";
 import { JobHeader } from "../[id]/components/job-header";
 
@@ -34,7 +35,24 @@ export function TrabajoDetail({
   onEditingChange?: (editing: boolean) => void;
 }) {
   const searchParams = useSearchParams();
-  const { jobs, clients, tasks } = useDataStore();
+  const queryClient = useQueryClient();
+  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
+  const { data: tasks = [] } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
+  const { data: cobros = [] } = useQuery({ queryKey: ["cobros", id], queryFn: () => cobrosService.getByJobId(id) });
+
+  const updateJobMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => jobsService.update(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["jobs"] }),
+  });
+
+  const addCobroMutation = useMutation({
+    mutationFn: cobrosService.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cobros", id] });
+      queryClient.invalidateQueries({ queryKey: ["jobs"] });
+    },
+  });
   const { downloadPDF } = useBudgetPDF();
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [isHeaderEditing, setIsHeaderEditing] = useState(false);
@@ -94,27 +112,17 @@ export function TrabajoDetail({
     setShowPdfDialog(true);
   };
 
-  const doGeneratePDF = useCallback((emitir: boolean) => {
+  const doGeneratePDF = useCallback(async (emitir: boolean) => {
     setIsGeneratingPdf(true);
     setShowPdfDialog(false);
     try {
       downloadPDF(job.id);
-      if (emitir) {
-        const store = useDataStore.getState();
-        const currentJob = store.jobs.find((j) => j.id === job.id);
-        store.updateJob(job.id, { estado: "presupuestado" });
-        if (currentJob && currentJob.estado !== "presupuestado") {
-          store.addTransaccion({
-            cliente_id: currentJob.cliente_id,
-            tipo: "cargo",
-            monto: currentJob.presupuesto,
-            concepto: `Emisión de presupuesto/factura: ${currentJob.titulo}`,
-            fecha: new Date().toISOString().slice(0, 10),
-            referencia_trabajo_id: job.id,
-            referencia_cobro_id: null,
-            origen: "automático",
-          });
-        }
+      if (emitir && job.estado !== "presupuestado") {
+        await updateJobMutation.mutateAsync({
+          id: job.id,
+          data: { estado: "presupuestado" },
+        });
+        // The PostgreSQL trigger 'emitir_transaccion_presupuesto' will automatically create the transaction
       }
     } catch (error) {
       console.error("Failed to generate PDF:", error);
@@ -122,7 +130,7 @@ export function TrabajoDetail({
     } finally {
       setIsGeneratingPdf(false);
     }
-  }, [job.id, downloadPDF]);
+  }, [job.id, job.estado, downloadPDF, updateJobMutation]);
 
   const handleEmitPresupuesto = useCallback(() => {
     doGeneratePDF(true);
@@ -343,13 +351,11 @@ export function TrabajoDetail({
 
                 {job.estado === "presupuestado" && (
                   <button
-                    onClick={() => {
-                      const state = useDataStore.getState();
-                      const cobros = state.cobros.filter((c) => c.trabajo_id === job.id);
+                    onClick={async () => {
                       const totalCobrado = cobros.reduce((s, c) => s + c.monto_cobrado, 0);
                       const restante = Math.max(0, presupuestoTotal - totalCobrado);
                       if (restante > 0) {
-                        state.addCobro({
+                        await addCobroMutation.mutateAsync({
                           trabajo_id: job.id,
                           monto_cobrado: restante,
                           fecha_cobro: new Date().toISOString().slice(0, 10),
@@ -357,7 +363,8 @@ export function TrabajoDetail({
                           notas: "Pagado manualmente",
                         });
                       }
-                      state.updateJob(job.id, { estado: "pagado" });
+                      // update job state is handled via trigger, but we can do it explicitly just in case
+                      await updateJobMutation.mutateAsync({ id: job.id, data: { estado: "pagado" } });
                     }}
                     className="relative w-full py-3 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_8px_20px_rgba(61,139,110,0.15)] active:scale-[0.98]"
                   >

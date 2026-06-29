@@ -16,16 +16,20 @@ export default function AjustesPage() {
       <AuroraBackground preset="ajustes" />
 
       <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-16 pb-32 w-full transition-all">
-        <div className="mb-8 pl-1">
+        <div className="max-w-7xl mx-auto mb-8 pl-1">
           <h1 className="text-[38px] leading-tight font-extrabold text-on-surface tracking-tight">
             Ajustes
           </h1>
         </div>
-        <div className="space-y-6">
-          <AccountSection />
-          <SubscriptionSection />
-          <PreferencesSection />
-          <AccountActionsSection />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl mx-auto items-start">
+          <div className="lg:col-span-8 flex flex-col space-y-6">
+            <AccountSection />
+            <PreferencesSection />
+          </div>
+          <div className="lg:col-span-4 flex flex-col space-y-6">
+            <SubscriptionSection />
+            <AccountActionsSection />
+          </div>
         </div>
       </main>
     </div>

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Plus, ChevronDown } from "lucide-react";
-import { useDataStore } from "@/lib/store";
-
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { tasksService } from "@/services";
 import { TaskItem } from "./task-item";
 import { TaskForm } from "./task-form";
 import { DataTable, type Column } from "@/components/ui/data-table";
@@ -16,20 +16,41 @@ interface TaskListProps {
 }
 
 export function TaskList({ jobId, onSelectTask }: TaskListProps) {
-  const { tasks, addTask } = useDataStore();
+  const queryClient = useQueryClient();
+  const { data: tasks = [] } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
+  const createTaskMutation = useMutation({
+    mutationFn: tasksService.create,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+  });
   const [isAdding, setIsAdding] = useState(false);
   const [showAll, setShowAll] = useState(false);
 
+  const getPriorityScore = (prioridad?: "alta" | "media" | "baja") => {
+    switch (prioridad) {
+      case "alta": return 3;
+      case "media": return 2;
+      case "baja": return 1;
+      default: return 0;
+    }
+  };
+
   const jobTasks = tasks
     .filter((t) => t.trabajo_id === jobId)
-    .sort((a, b) => a.orden - b.orden);
+    .sort((a, b) => {
+      const scoreA = getPriorityScore(a.prioridad);
+      const scoreB = getPriorityScore(b.prioridad);
+      if (scoreA !== scoreB) {
+        return scoreB - scoreA;
+      }
+      return a.orden - b.orden;
+    });
 
   const initialCount = 5;
   const visibleTasks = showAll ? jobTasks : jobTasks.slice(0, initialCount);
   const hasMore = !showAll && jobTasks.length > initialCount;
 
-  const handleAdd = (data: { descripcion: string; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string }) => {
-    addTask({
+  const handleAdd = async (data: { descripcion: string; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string }) => {
+    await createTaskMutation.mutateAsync({
       trabajo_id: jobId,
       descripcion: data.descripcion,
       precio: data.precio,

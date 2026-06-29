@@ -1,10 +1,10 @@
 "use client";
 
-import { useUserStore } from "@/lib/user-store";
+import { useProfile } from "@/hooks/use-profile";
 
 export function ProfilePicture() {
-  const user = useUserStore((state) => state.user);
-  const displayName = user?.name || "Juan Pérez";
+  const { profile } = useProfile();
+  const displayName = profile?.nombre || "Prestador de Servicios";
 
   return (
     <section className="flex flex-col items-center">

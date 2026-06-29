@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { JobStatus, Job } from "@/types";
-import { useDataStore } from "@/lib/store";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { jobsService } from "@/services";
 import { cn } from "@/lib/utils";
 
 const STATUS_ORDER: JobStatus[] = [
@@ -32,13 +33,18 @@ interface JobStatusProps {
 }
 
 export function JobStatusSelector({ job }: JobStatusProps) {
-  const { updateJob } = useDataStore();
+  const queryClient = useQueryClient();
+  const updateJobMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => jobsService.update(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["jobs"] }),
+  });
+
   const [isOpen, setIsOpen] = useState(false);
   const [confirmBackward, setConfirmBackward] = useState<JobStatus | null>(null);
 
   const currentIndex = STATUS_ORDER.indexOf(job.estado);
 
-  const handleStatusChange = (newStatus: JobStatus) => {
+  const handleStatusChange = async (newStatus: JobStatus) => {
     const newIndex = STATUS_ORDER.indexOf(newStatus);
 
     if (newIndex < currentIndex) {
@@ -46,13 +52,13 @@ export function JobStatusSelector({ job }: JobStatusProps) {
       return;
     }
 
-    updateJob(job.id, { estado: newStatus });
+    await updateJobMutation.mutateAsync({ id: job.id, data: { estado: newStatus } });
     setIsOpen(false);
   };
 
-  const confirmBackwardChange = () => {
+  const confirmBackwardChange = async () => {
     if (confirmBackward) {
-      updateJob(job.id, { estado: confirmBackward });
+      await updateJobMutation.mutateAsync({ id: job.id, data: { estado: confirmBackward } });
       setConfirmBackward(null);
       setIsOpen(false);
     }

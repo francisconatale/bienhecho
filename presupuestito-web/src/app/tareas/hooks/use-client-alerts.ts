@@ -1,5 +1,5 @@
-import { useDataStore } from "@/lib/store";
-
+import { useQuery } from "@tanstack/react-query";
+import { jobsService, clientsService, tasksService } from "@/services";
 export interface ClientAlert {
   id: string;
   jobId: string;
@@ -9,9 +9,9 @@ export interface ClientAlert {
 }
 
 export function useClientAlerts() {
-  const jobs = useDataStore((state) => state.jobs);
-  const clients = useDataStore((state) => state.clients);
-  const tasks = useDataStore((state) => state.tasks);
+  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
+  const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
 
   const alerts: ClientAlert[] = [];
 
@@ -47,5 +47,5 @@ export function useClientAlerts() {
     }
   });
 
-  return { alerts };
+  return { alerts, isLoading: isLoadingJobs || isLoadingClients || isLoadingTasks };
 }

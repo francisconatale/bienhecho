@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pencil, Trash2, Plus, Phone, MapPin, Mail, CalendarDays } from "lucide-react";
-import { useDataStore } from "@/lib/store";
+import { useQuery } from "@tanstack/react-query";
+import { jobsService, tasksService, materialsService, cobrosService } from "@/services";
 import { Client, Job } from "@/types";
 import { useClientForm } from "./use-client-form";
 import { useCuentaCorriente } from "@/hooks/use-cuenta-corriente";
@@ -56,7 +57,10 @@ export function ClientDetailPane({
   const [showAjuste, setShowAjuste] = useState(false);
   const router = useRouter();
   const { pushHistory } = useNavigationHistory();
-  const { jobs, tasks, materiales, cobros } = useDataStore();
+  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: tasks = [] } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
+  const { data: materiales = [] } = useQuery({ queryKey: ["materials"], queryFn: materialsService.getAll });
+  const { data: cobros = [] } = useQuery({ queryKey: ["payments"], queryFn: cobrosService.getAll });
 
   const clientJobs = jobs.filter((j) => j.cliente_id === client.id);
   const { saldo: deudaTotal } = useCuentaCorriente(client.id);

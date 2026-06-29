@@ -1,14 +1,20 @@
 "use client";
 
 import { generateBudgetPDF } from "@/lib/pdf/generate-budget";
-import { useDataStore } from "@/lib/store";
-import { useUserStore } from "@/lib/user-store";
+import { useQueryClient } from "@tanstack/react-query";
+import { jobsService, clientsService, tasksService, materialsService } from "@/services";
+import { useProfile } from "@/hooks/use-profile";
 
 export function useBudgetPDF() {
-  const { clients, jobs, tasks } = useDataStore();
-  const { user } = useUserStore();
+  const queryClient = useQueryClient();
+  const { profile } = useProfile();
 
   const downloadPDF = async (jobId: string) => {
+    const jobs = await queryClient.fetchQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+    const clients = await queryClient.fetchQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
+    const tasks = await queryClient.fetchQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
+    const materiales = await queryClient.fetchQuery({ queryKey: ["materials"], queryFn: materialsService.getAll });
+
     const job = jobs.find((j) => j.id === jobId);
     const client = clients.find((c) => c.id === job?.cliente_id);
 
@@ -20,15 +26,15 @@ export function useBudgetPDF() {
       .filter((t) => t.trabajo_id === jobId && t.precio !== null)
       .sort((a, b) => a.orden - b.orden);
 
-    const jobMateriales = useDataStore.getState().materiales.filter(m => m.trabajo_id === jobId);
+    const jobMateriales = materiales.filter(m => m.trabajo_id === jobId);
 
     if (jobTasks.length === 0 && jobMateriales.length === 0) {
       throw new Error("No hay tareas con precio ni materiales para generar el presupuesto");
     }
 
     const userProfile = {
-      name: user?.name || "Prestador de Servicios",
-      company: user?.name || "Mi Empresa",
+      name: profile?.nombre || "Prestador de Servicios",
+      company: profile?.nombre || "Mi Empresa",
       address: "Domicilio Comercial S/D",
       cuit: "00-00000000-0",
       trade: job.titulo || "Servicios Profesionales",

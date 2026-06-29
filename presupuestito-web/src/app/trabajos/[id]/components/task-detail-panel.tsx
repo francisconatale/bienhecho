@@ -2,7 +2,8 @@
 
 import React, { useState, useRef } from "react";
 import { ChevronLeft, Pencil, Check, CalendarDays, ClipboardList, Flame } from "lucide-react";
-import { useDataStore } from "@/lib/store";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { jobsService, tasksService, visitsService } from "@/services";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { cn } from "@/lib/utils";
 import { MobilePageHeader } from "@/components/ui/mobile-page-header";
@@ -16,7 +17,16 @@ interface TaskDetailPanelProps {
 }
 
 export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetailPanelProps) {
-  const { jobs, tasks, updateTask, visits, visitaTareas } = useDataStore();
+  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: tasks = [] } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
+  const { data: visits = [] } = useQuery({ queryKey: ["visits"], queryFn: visitsService.getAll });
+  const { data: visitaTareas = [] } = useQuery({ queryKey: ["visitTasks"], queryFn: visitsService.getVisitaTareas });
+
+  const queryClient = useQueryClient();
+  const updateTaskMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => tasksService.update(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+  });
 
   const job = jobs.find((j) => j.id === jobId);
   const task = tasks.find((t) => t.id === taskId && t.trabajo_id === jobId);
@@ -40,11 +50,14 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
     descripcion !== (task?.descripcion ?? "") ||
     (task?.precio !== null && task?.precio !== undefined ? String(task.precio) : "") !== precio;
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!task) return;
-    updateTask(task.id, {
-      descripcion: descripcion.trim(),
-      precio: precio !== "" ? Number(precio) : null,
+    await updateTaskMutation.mutateAsync({
+      id: task.id,
+      data: {
+        descripcion: descripcion.trim(),
+        precio: precio !== "" ? Number(precio) : null,
+      }
     });
     setIsEditing(false);
   };
@@ -124,7 +137,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8">
             <button
-              onClick={() => !isEditing && updateTask(task.id, { completada: !task.completada })}
+              onClick={() => !isEditing && updateTaskMutation.mutateAsync({ id: task.id, data: { completada: !task.completada }})}
               className={cn(
                 "relative overflow-hidden p-5 rounded-xl text-left transition-[background-color,border-color,box-shadow] duration-500 flex flex-col gap-2 group select-none",
                 task.completada
@@ -159,7 +172,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
               onClick={() => {
                 if (isEditing) return;
                 const next = task.prioridad === "alta" ? "baja" : task.prioridad === "media" ? "alta" : "media";
-                updateTask(task.id, { prioridad: next });
+                updateTaskMutation.mutateAsync({ id: task.id, data: { prioridad: next }});
               }}
               className={cn(
                 "relative overflow-hidden p-5 rounded-xl text-left transition-[background-color,border-color,box-shadow] duration-500 flex flex-col gap-2 group select-none",
@@ -260,11 +273,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
         )}
 
         <div className="relative bg-surface/80 rounded-xl p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-shadow duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
-          <div className="relative z-10 flex items-center justify-between">
-            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
-              Fotos del trabajo
-            </h3>
-          </div>
+
           <div className="relative z-10">
             <TaskPhotos tareaId={task.id} />
           </div>

@@ -73,3 +73,50 @@ export function CalendarMonth({ year, month, selectedDay, onSelectDay, dayBadge 
     </div>
   );
 }
+
+export function CalendarStrip({ year, month, selectedDay, onSelectDay, dayBadge }: Omit<CalendarMonthProps, "onSelectDay" | "dayBadge"> & { 
+  onSelectDay?: (y: number, m: number, d: number) => void;
+  dayBadge?: (day: number, isSelected: boolean, y?: number, m?: number) => React.ReactNode;
+}) {
+  const daysInMonth = getDaysInMonth(year, month);
+
+  const days = Array.from({ length: daysInMonth }).map((_, i) => {
+    return new Date(year, month, i + 1, 12, 0, 0);
+  });
+
+  return (
+    <div className="overflow-x-auto pb-2 scrollbar-none snap-x scroll-smooth flex gap-2 px-1">
+      {days.map((date) => {
+        const dYear = date.getFullYear();
+        const dMonth = date.getMonth();
+        const dDay = date.getDate();
+        const dDayOfWeek = date.getDay();
+        const selected = year === dYear && month === dMonth && selectedDay === dDay;
+        const today = isToday(dYear, dMonth, dDay);
+
+        return (
+          <button
+            key={dDay}
+            onClick={() => onSelectDay?.(dYear, dMonth, dDay)}
+            className={cn(
+              "snap-center shrink-0 w-12 h-14 rounded-2xl flex flex-col items-center justify-center gap-1 transition-all relative cursor-pointer",
+              selected
+                ? "bg-primary text-white shadow-sm shadow-primary/20"
+                : today
+                ? "bg-primary/10 text-primary"
+                : "text-on-surface hover:bg-outline-variant/10"
+            )}
+          >
+            <span className="text-[10px] font-bold opacity-60 uppercase tracking-widest">
+              {DAYS_OF_WEEK[dDayOfWeek].substring(0, 3)}
+            </span>
+            <span className="text-[15px] font-bold">{dDay}</span>
+            <div className="absolute bottom-1.5 flex justify-center w-full">
+              {dayBadge?.(dDay, selected, dYear, dMonth)}
+            </div>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
