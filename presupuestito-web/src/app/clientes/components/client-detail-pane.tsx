@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Pencil, Trash2, Briefcase, ExternalLink } from "lucide-react";
+import { Pencil, Trash2, Briefcase, ExternalLink, Plus } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 import { Client } from "@/types";
 import { useClientForm } from "./use-client-form";
+import { useCuentaCorriente } from "@/hooks/use-cuenta-corriente";
+import { AjusteManualForm } from "./ajuste-manual-form";
 import Link from "next/link";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { cn, formatCurrency } from "@/lib/utils";
@@ -34,17 +36,11 @@ export function ClientDetailPane({
   setIsEditing: (v: boolean) => void;
 }) {
   const [loadingJobId, setLoadingJobId] = useState<string | null>(null);
+  const [showAjuste, setShowAjuste] = useState(false);
   const { pushHistory } = useNavigationHistory();
-  const { jobs, cobros: allCobros } = useDataStore();
+  const { jobs } = useDataStore();
   const clientJobs = jobs.filter((j) => j.cliente_id === client.id);
-  const deudaTotal = clientJobs
-    .filter((j) => j.estado === "presupuestado")
-    .reduce((acc, j) => {
-      const cobrado = allCobros
-        .filter((c) => c.trabajo_id === j.id)
-        .reduce((s, c) => s + c.monto_cobrado, 0);
-      return acc + Math.max(0, j.presupuesto - cobrado);
-    }, 0);
+  const { saldo: deudaTotal, transacciones } = useCuentaCorriente(client.id);
 
   const handleSuccess = () => setIsEditing(false);
   const { form, onSubmit, isLoading } = useClientForm(client, handleSuccess);
@@ -184,7 +180,6 @@ export function ClientDetailPane({
 
         {clientJobs.length > 0 && (
           <div className="relative bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-5 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
-
             <div className="relative z-10 flex items-center justify-between">
               <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">Trabajos del Cliente</h3>
               <Link
@@ -194,7 +189,6 @@ export function ClientDetailPane({
                 Nuevo
               </Link>
             </div>
-
             <div className="relative z-10 space-y-3">
               {clientJobs.map((job) => (
                 <Link
@@ -236,6 +230,81 @@ export function ClientDetailPane({
             </div>
           </div>
         )}
+
+        <div className="relative bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-5 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+          <div className="relative z-10 flex items-center justify-between">
+            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">Cuenta Corriente</h3>
+            <button
+              onClick={() => setShowAjuste(true)}
+              className="group flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] border border-primary/30 hover:border-primary bg-primary/10 transition-all duration-300 text-[10px] font-bold text-primary uppercase tracking-wider active:scale-95 cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90 duration-300" strokeWidth={2.5} />
+              Ajuste
+            </button>
+            <span className={cn(
+              "text-lg font-black tracking-tight",
+              deudaTotal > 0 ? "text-amber-600 dark:text-amber-400" : deudaTotal < 0 ? "text-success" : "text-on-surface-variant/50"
+            )}>
+              {deudaTotal > 0 ? "Deuda" : deudaTotal < 0 ? "A favor" : "Al día"}
+              <span className="ml-2 text-xl">{formatCurrency(Math.abs(deudaTotal))}</span>
+            </span>
+          </div>
+          {showAjuste && (
+            <AjusteManualForm
+              clienteId={client.id}
+              onClose={() => setShowAjuste(false)}
+            />
+          )}
+          <div className="relative z-10 space-y-2">
+            {transacciones.length > 0 ? (
+              transacciones.map((tx) => (
+                <div
+                  key={tx.id}
+                  className="group flex items-center gap-3 p-3 md:p-4 bg-surface dark:bg-surface/20 rounded-[16px] border border-white/10 dark:border-white/5 cursor-default select-none"
+                >
+                  <div className={cn(
+                    "w-2 h-2 rounded-full shrink-0",
+                    tx.tipo === "cargo" ? "bg-amber-500" : "bg-success"
+                  )} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-on-surface truncate">{tx.concepto}</span>
+                      {tx.origen === "manual" && (
+                        <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">Manual</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[9px] font-medium text-on-surface-variant/50">
+                        {new Date(tx.fecha + "T00:00:00").toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" })}
+                      </span>
+                      <span className={cn(
+                        "text-[10px] font-black uppercase tracking-wider",
+                        tx.tipo === "cargo" ? "text-amber-600 dark:text-amber-400" : "text-success"
+                      )}>
+                        {tx.tipo === "cargo" ? "Cargo" : "Abono"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className={cn(
+                      "text-sm font-black",
+                      tx.tipo === "cargo" ? "text-amber-600 dark:text-amber-400" : "text-success"
+                    )}>
+                      {tx.tipo === "cargo" ? "+" : "-"}${tx.monto.toLocaleString("es-AR")}
+                    </span>
+                    <div className="text-[9px] font-medium text-on-surface-variant/40 mt-0.5">
+                      Saldo: ${tx.saldo_despues.toLocaleString("es-AR")}
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="py-6 text-center cursor-default select-none">
+                <p className="text-xs font-bold text-on-surface-variant/50">Sin movimientos</p>
+              </div>
+            )}
+          </div>
+        </div>
       </form>
     </div>
   );

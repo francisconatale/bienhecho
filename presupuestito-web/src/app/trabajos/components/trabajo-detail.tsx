@@ -99,7 +99,21 @@ export function TrabajoDetail({
     try {
       downloadPDF(job.id);
       if (emitir) {
-        useDataStore.getState().updateJob(job.id, { estado: "presupuestado" });
+        const store = useDataStore.getState();
+        const currentJob = store.jobs.find((j) => j.id === job.id);
+        store.updateJob(job.id, { estado: "presupuestado" });
+        if (currentJob && currentJob.estado !== "presupuestado") {
+          store.addTransaccion({
+            cliente_id: currentJob.cliente_id,
+            tipo: "cargo",
+            monto: currentJob.presupuesto,
+            concepto: `Emisión de presupuesto: ${currentJob.titulo}`,
+            fecha: new Date().toISOString().slice(0, 10),
+            referencia_trabajo_id: job.id,
+            referencia_cobro_id: null,
+            origen: "automático",
+          });
+        }
       }
     } catch (error) {
       console.error("Failed to generate PDF:", error);

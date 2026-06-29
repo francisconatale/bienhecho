@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Client, Job, Task, JobStatus, TaskPhoto, Visit, VisitaTarea, VisitStatus, Material, Cobro } from "@/types";
+import { Client, Job, Task, JobStatus, TaskPhoto, Visit, VisitaTarea, VisitStatus, Material, Cobro, TransaccionCuentaCorriente } from "@/types";
 
 interface DataState {
   clients: Client[];
@@ -11,6 +11,7 @@ interface DataState {
   visitaTareas: VisitaTarea[];
   materiales: Material[];
   cobros: Cobro[];
+  transacciones: TransaccionCuentaCorriente[];
 
   addMaterial: (material: Omit<Material, "id" | "created_at">) => Material;
   updateMaterial: (id: string, material: Partial<Material>) => void;
@@ -45,6 +46,9 @@ interface DataState {
   getVisitsByJob: (trabajoId: string) => Visit[];
   addVisitaTarea: (vt: VisitaTarea) => void;
   removeVisitaTarea: (visitaId: string, tareaId: string) => void;
+
+  addTransaccion: (tx: Omit<TransaccionCuentaCorriente, "id" | "created_at">) => TransaccionCuentaCorriente;
+  runCCMigration: () => void;
 }
 
 const today = new Date();
@@ -91,6 +95,32 @@ export const useDataStore = create<DataState>()(
   visitaTareas: [],
   materiales: [],
   cobros: [],
+  transacciones: [
+    {
+      id: "tx1",
+      cliente_id: "c2",
+      tipo: "cargo",
+      monto: 800000,
+      concepto: "Emisión de presupuesto: Reforma Consultorio Dental",
+      fecha: todayStr,
+      referencia_trabajo_id: "j2",
+      referencia_cobro_id: null,
+      origen: "automático",
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: "tx2",
+      cliente_id: "c3",
+      tipo: "cargo",
+      monto: 350000,
+      concepto: "Emisión de presupuesto: Mantenimiento General",
+      fecha: todayStr,
+      referencia_trabajo_id: "j3",
+      referencia_cobro_id: null,
+      origen: "automático",
+      created_at: new Date().toISOString(),
+    },
+  ],
 
   clients: [
     {
@@ -192,49 +222,139 @@ export const useDataStore = create<DataState>()(
       jobs: state.jobs.map((j) => (j.id === id ? { ...j, ...jobData } : j)),
     })),
   removeJob: (id) =>
-    set((state) => ({
-      jobs: state.jobs.filter((j) => j.id !== id),
-      tasks: state.tasks.filter((t) => t.trabajo_id !== id),
-    })),
+    set((state) => {
+      const job = state.jobs.find((j) => j.id === id);
+      const result: any = {
+        jobs: state.jobs.filter((j) => j.id !== id),
+        tasks: state.tasks.filter((t) => t.trabajo_id !== id),
+      };
+      if (job && job.estado === "presupuestado") {
+        result.transacciones = [
+          ...state.transacciones,
+          {
+            id: crypto.randomUUID(),
+            cliente_id: job.cliente_id,
+            tipo: "abono",
+            monto: job.presupuesto,
+            concepto: `Anulación de presupuesto: ${job.titulo}`,
+            fecha: new Date().toISOString().slice(0, 10),
+            referencia_trabajo_id: id,
+            referencia_cobro_id: null,
+            origen: "automático",
+            created_at: new Date().toISOString(),
+          } as TransaccionCuentaCorriente,
+        ];
+      }
+      return result;
+    }),
 
   addTask: (taskData) => {
     const newTask: Task = { ...taskData, id: crypto.randomUUID() };
     set((state) => {
       const newTasks = [...state.tasks, newTask];
-      const jobTasks = newTasks.filter(t => t.trabajo_id === newTask.trabajo_id);
+      const job = state.jobs.find((j) => j.id === newTask.trabajo_id);
+      const oldPresupuesto = job?.presupuesto || 0;
+      const jobTasks = newTasks.filter((t) => t.trabajo_id === newTask.trabajo_id);
       const newPresupuesto = jobTasks.reduce((sum, t) => sum + (t.precio || 0), 0);
-      return { 
+      const diff = newPresupuesto - oldPresupuesto;
+      const result: any = {
         tasks: newTasks,
-        jobs: state.jobs.map(j => j.id === newTask.trabajo_id ? { ...j, presupuesto: newPresupuesto } : j)
+        jobs: state.jobs.map((j) =>
+          j.id === newTask.trabajo_id ? { ...j, presupuesto: newPresupuesto } : j,
+        ),
       };
+      if (diff !== 0 && job && job.estado === "presupuestado") {
+        result.transacciones = [
+          ...state.transacciones,
+          {
+            id: crypto.randomUUID(),
+            cliente_id: job.cliente_id,
+            tipo: (diff > 0 ? "cargo" : "abono") as "cargo" | "abono",
+            monto: Math.abs(diff),
+            concepto: `Actualización de presupuesto: ${diff > 0 ? "+" : ""}${diff.toLocaleString("es-AR")}`,
+            fecha: new Date().toISOString().slice(0, 10),
+            referencia_trabajo_id: newTask.trabajo_id,
+            referencia_cobro_id: null,
+            origen: "automático",
+            created_at: new Date().toISOString(),
+          } as TransaccionCuentaCorriente,
+        ];
+      }
+      return result;
     });
     return newTask;
   },
   updateTask: (id, taskData) =>
     set((state) => {
       const newTasks = state.tasks.map((t) => (t.id === id ? { ...t, ...taskData } : t));
-      const updatedTask = newTasks.find(t => t.id === id);
+      const updatedTask = newTasks.find((t) => t.id === id);
       if (updatedTask) {
-        const jobTasks = newTasks.filter(t => t.trabajo_id === updatedTask.trabajo_id);
+        const job = state.jobs.find((j) => j.id === updatedTask.trabajo_id);
+        const oldPresupuesto = job?.presupuesto || 0;
+        const jobTasks = newTasks.filter((t) => t.trabajo_id === updatedTask.trabajo_id);
         const newPresupuesto = jobTasks.reduce((sum, t) => sum + (t.precio || 0), 0);
-        return {
+        const diff = newPresupuesto - oldPresupuesto;
+        const result: any = {
           tasks: newTasks,
-          jobs: state.jobs.map(j => j.id === updatedTask.trabajo_id ? { ...j, presupuesto: newPresupuesto } : j)
+          jobs: state.jobs.map((j) =>
+            j.id === updatedTask.trabajo_id ? { ...j, presupuesto: newPresupuesto } : j,
+          ),
         };
+        if (diff !== 0 && job && job.estado === "presupuestado") {
+          result.transacciones = [
+            ...state.transacciones,
+            {
+              id: crypto.randomUUID(),
+              cliente_id: job.cliente_id,
+              tipo: (diff > 0 ? "cargo" : "abono") as "cargo" | "abono",
+              monto: Math.abs(diff),
+              concepto: `Actualización de presupuesto: ${diff > 0 ? "+" : ""}${diff.toLocaleString("es-AR")}`,
+              fecha: new Date().toISOString().slice(0, 10),
+              referencia_trabajo_id: updatedTask.trabajo_id,
+              referencia_cobro_id: null,
+              origen: "automático",
+              created_at: new Date().toISOString(),
+            } as TransaccionCuentaCorriente,
+          ];
+        }
+        return result;
       }
       return { tasks: newTasks };
     }),
   removeTask: (id) =>
     set((state) => {
-      const taskToRemove = state.tasks.find(t => t.id === id);
+      const taskToRemove = state.tasks.find((t) => t.id === id);
       const newTasks = state.tasks.filter((t) => t.id !== id);
       if (taskToRemove) {
-        const jobTasks = newTasks.filter(t => t.trabajo_id === taskToRemove.trabajo_id);
+        const job = state.jobs.find((j) => j.id === taskToRemove.trabajo_id);
+        const oldPresupuesto = job?.presupuesto || 0;
+        const jobTasks = newTasks.filter((t) => t.trabajo_id === taskToRemove.trabajo_id);
         const newPresupuesto = jobTasks.reduce((sum, t) => sum + (t.precio || 0), 0);
-        return {
+        const diff = newPresupuesto - oldPresupuesto;
+        const result: any = {
           tasks: newTasks,
-          jobs: state.jobs.map(j => j.id === taskToRemove.trabajo_id ? { ...j, presupuesto: newPresupuesto } : j)
+          jobs: state.jobs.map((j) =>
+            j.id === taskToRemove.trabajo_id ? { ...j, presupuesto: newPresupuesto } : j,
+          ),
         };
+        if (diff !== 0 && job && job.estado === "presupuestado") {
+          result.transacciones = [
+            ...state.transacciones,
+            {
+              id: crypto.randomUUID(),
+              cliente_id: job.cliente_id,
+              tipo: (diff > 0 ? "cargo" : "abono") as "cargo" | "abono",
+              monto: Math.abs(diff),
+              concepto: `Actualización de presupuesto: ${diff > 0 ? "+" : ""}${diff.toLocaleString("es-AR")}`,
+              fecha: new Date().toISOString().slice(0, 10),
+              referencia_trabajo_id: taskToRemove.trabajo_id,
+              referencia_cobro_id: null,
+              origen: "automático",
+              created_at: new Date().toISOString(),
+            } as TransaccionCuentaCorriente,
+          ];
+        }
+        return result;
       }
       return { tasks: newTasks };
     }),
@@ -324,7 +444,28 @@ export const useDataStore = create<DataState>()(
       id: crypto.randomUUID(),
       created_at: new Date().toISOString(),
     };
-    set((state) => ({ cobros: [...state.cobros, newCobro] }));
+    set((state) => {
+      const job = state.jobs.find((j) => j.id === cobroData.trabajo_id);
+      if (!job) return { cobros: [...state.cobros, newCobro] };
+      return {
+        cobros: [...state.cobros, newCobro],
+        transacciones: [
+          ...state.transacciones,
+          {
+            id: crypto.randomUUID(),
+            cliente_id: job.cliente_id,
+            tipo: "abono",
+            monto: cobroData.monto_cobrado,
+            concepto: `Cobro registrado: $${cobroData.monto_cobrado.toLocaleString("es-AR")}`,
+            fecha: cobroData.fecha_cobro,
+            referencia_trabajo_id: cobroData.trabajo_id,
+            referencia_cobro_id: newCobro.id,
+            origen: "automático",
+            created_at: new Date().toISOString(),
+          } as TransaccionCuentaCorriente,
+        ],
+      };
+    });
     return newCobro;
   },
   updateCobro: (id, cobroData) =>
@@ -332,12 +473,101 @@ export const useDataStore = create<DataState>()(
       cobros: state.cobros.map((c) => (c.id === id ? { ...c, ...cobroData } : c)),
     })),
   removeCobro: (id) =>
-    set((state) => ({
-      cobros: state.cobros.filter((c) => c.id !== id),
-    })),
+    set((state) => {
+      const cobro = state.cobros.find((c) => c.id === id);
+      if (!cobro) return state;
+      const job = state.jobs.find((j) => j.id === cobro.trabajo_id);
+      if (!job) return { cobros: state.cobros.filter((c) => c.id !== id) };
+      return {
+        cobros: state.cobros.filter((c) => c.id !== id),
+        transacciones: [
+          ...state.transacciones,
+          {
+            id: crypto.randomUUID(),
+            cliente_id: job.cliente_id,
+            tipo: "cargo",
+            monto: cobro.monto_cobrado,
+            concepto: `Reversión de cobro: $${cobro.monto_cobrado.toLocaleString("es-AR")}`,
+            fecha: new Date().toISOString().slice(0, 10),
+            referencia_trabajo_id: cobro.trabajo_id,
+            referencia_cobro_id: id,
+            origen: "automático",
+            created_at: new Date().toISOString(),
+          } as TransaccionCuentaCorriente,
+        ],
+      };
+    }),
+  addTransaccion: (txData) => {
+    const newTx: TransaccionCuentaCorriente = {
+      ...txData,
+      id: crypto.randomUUID(),
+      created_at: new Date().toISOString(),
+    };
+    set((state) => ({ transacciones: [...state.transacciones, newTx] }));
+    return newTx;
+  },
+  runCCMigration: () => {
+    const state = get();
+    if (typeof window === "undefined") return;
+    const flag = "presupuestito-cc-migrated-v1";
+    if (localStorage.getItem(flag)) return;
+    if (state.transacciones.length > 0) return;
+    const nuevas: TransaccionCuentaCorriente[] = [];
+    for (const job of state.jobs) {
+      if (job.estado === "presupuestado" || job.estado === "pagado") {
+        nuevas.push({
+          id: crypto.randomUUID(),
+          cliente_id: job.cliente_id,
+          tipo: "cargo",
+          monto: job.presupuesto,
+          concepto: `Emisión de presupuesto: ${job.titulo}`,
+          fecha: (job.created_at || new Date().toISOString()).slice(0, 10),
+          referencia_trabajo_id: job.id,
+          referencia_cobro_id: null,
+          origen: "automático",
+          created_at: new Date().toISOString(),
+        });
+      }
+    }
+    for (const cobro of state.cobros) {
+      const job = state.jobs.find((j) => j.id === cobro.trabajo_id);
+      if (job) {
+        nuevas.push({
+          id: crypto.randomUUID(),
+          cliente_id: job.cliente_id,
+          tipo: "abono",
+          monto: cobro.monto_cobrado,
+          concepto: `Cobro registrado: $${cobro.monto_cobrado.toLocaleString("es-AR")}`,
+          fecha: (cobro.fecha_cobro || new Date().toISOString().slice(0, 10)),
+          referencia_trabajo_id: cobro.trabajo_id,
+          referencia_cobro_id: cobro.id,
+          origen: "automático",
+          created_at: new Date().toISOString(),
+        });
+      }
+    }
+    if (nuevas.length > 0) {
+      set((s) => ({ transacciones: [...s.transacciones, ...nuevas] }));
+    }
+    try { localStorage.setItem(flag, "true"); } catch {}
+  },
   }),
   {
     name: "presupuestito-store",
+    version: 1,
+    migrate: (persistedState: any) => {
+      if (!persistedState.transacciones) {
+        return { ...persistedState, transacciones: [] };
+      }
+      return persistedState;
+    },
   },
 ),
 );
+
+
+if (typeof window !== "undefined") {
+  setTimeout(() => {
+    useDataStore.getState().runCCMigration();
+  }, 0);
+}

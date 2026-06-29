@@ -78,12 +78,30 @@ export function usePayments(trabajoId: string) {
   };
 
   const updateCobro = (id: string, data: CobroFormValues) => {
+    const store = useDataStore.getState();
+    const oldCobro = store.cobros.find((c) => c.id === id);
     updateCobroStore(id, {
       monto_cobrado: data.monto_cobrado,
       fecha_cobro: data.fecha_cobro,
       forma_pago: data.forma_pago,
       notas: data.notas,
     });
+    if (oldCobro && oldCobro.monto_cobrado !== data.monto_cobrado) {
+      const delta = data.monto_cobrado - oldCobro.monto_cobrado;
+      const job = store.jobs.find((j) => j.id === trabajoId);
+      if (job) {
+        store.addTransaccion({
+          cliente_id: job.cliente_id,
+          tipo: delta > 0 ? "abono" : "cargo",
+          monto: Math.abs(delta),
+          concepto: `Ajuste por modificación de cobro (${delta > 0 ? "+" : ""}${delta.toLocaleString("es-AR")})`,
+          fecha: new Date().toISOString().slice(0, 10),
+          referencia_trabajo_id: trabajoId,
+          referencia_cobro_id: id,
+          origen: "automático",
+        });
+      }
+    }
     checkAndAutoPaid();
   };
 
