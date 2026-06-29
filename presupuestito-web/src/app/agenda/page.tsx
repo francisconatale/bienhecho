@@ -8,6 +8,8 @@ import { AgendaCalendar } from "./components/agenda-calendar";
 import { AgendaFilters } from "./components/agenda-filters";
 import { VisitList } from "./components/visit-list";
 import { VisitForm } from "./components/visit-form";
+import { SmartSuggestions } from "./components/smart-suggestions";
+import { StatsCards } from "./components/stats-cards";
 
 export default function AgendaPage() {
   const { state, actions } = useAgenda();
@@ -28,8 +30,11 @@ export default function AgendaPage() {
         }
       />
 
+      {/* Stats */}
+      <StatsCards dayVisits={state.dayVisits} />
+
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Left Column: Calendar & Filters */}
+        {/* Left Column: Calendar */}
         <div className="w-full lg:w-[480px] shrink-0">
           <AgendaCalendar
             year={state.year}
@@ -40,6 +45,8 @@ export default function AgendaPage() {
             onNextMonth={actions.nextMonth}
             onGoToday={actions.goToday}
             visitCountForDay={actions.visitCountForDay}
+            visitCountForDate={actions.visitCountForDate}
+            onSelectDate={actions.selectDate}
           />
 
           <AgendaFilters
@@ -51,8 +58,9 @@ export default function AgendaPage() {
           />
         </div>
 
-        {/* Right Column: Day Detail */}
-        <div className="flex-1 min-w-0">
+        {/* Right Column: Suggestions + Visits grouped by status */}
+        <div className="flex-1 min-w-0 flex flex-col gap-6">
+          <SmartSuggestions />
           <VisitList
             selectedDate={state.selectedDate}
             selectedDay={state.selectedDay}
