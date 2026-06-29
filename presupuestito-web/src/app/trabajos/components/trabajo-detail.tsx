@@ -275,20 +275,20 @@ export function TrabajoDetail({
             <div className={cn("space-y-4", isEmbedded ? "2xl:sticky 2xl:top-8" : "lg:sticky lg:top-32")}>
               <ProgressBar tasks={jobTasks} />
               
-              <div className="relative overflow-hidden bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
-                
+              <div className="relative overflow-hidden bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-5 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-4 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+
                 <div className="relative flex flex-col gap-1 z-10">
                   <span className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
                     Total estimado
                   </span>
-                  <span className="text-3xl lg:text-4xl font-black text-on-surface tracking-tighter mt-1">
+                  <span className="text-2xl font-bold text-on-surface tracking-tight mt-1">
                     ${presupuestoTotal.toLocaleString("es-AR")}
                   </span>
-                  <span className="text-[10px] font-bold tracking-[0.1em] text-on-surface-variant/40 uppercase mt-1">
+                  <span className="text-[10px] font-bold tracking-[0.1em] text-on-surface-variant/40 uppercase">
                     Tareas + Materiales
                   </span>
 
-                  <div className="flex flex-col gap-0.5 mt-3 pt-3 border-t border-white/10">
+                  <div className="flex flex-col gap-0.5 mt-2 pt-2 border-t border-white/10">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-medium text-on-surface-variant/60">Tareas</span>
                       <span className="text-[11px] font-bold text-on-surface">${totalEstimado.toLocaleString("es-AR")}</span>
@@ -306,7 +306,7 @@ export function TrabajoDetail({
                       onClick={handleDownloadPDF}
                       disabled={!hasItemsForBudget || isGeneratingPdf}
                       className={cn(
-                        "relative w-full py-4 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group",
+                        "relative w-full py-3 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group",
                         hasItemsForBudget
                           ? "bg-primary text-white shadow-[0_8px_20px_rgba(61,139,110,0.25)] hover:shadow-[0_16px_40px_rgba(61,139,110,0.4)] hover:scale-[1.02] active:scale-[0.98]"
                           : "bg-on-surface/5 text-on-surface-variant/30 cursor-not-allowed"
@@ -328,7 +328,7 @@ export function TrabajoDetail({
                   <button
                     onClick={() => { setPdfError(null); downloadPDF(job.id); }}
                     disabled={isGeneratingPdf}
-                    className="relative w-full py-4 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary text-white shadow-[0_8px_20px_rgba(61,139,110,0.25)] hover:shadow-[0_16px_40px_rgba(61,139,110,0.4)] hover:scale-[1.02] active:scale-[0.98]"
+                    className="relative w-full py-3 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary text-white shadow-[0_8px_20px_rgba(61,139,110,0.25)] hover:shadow-[0_16px_40px_rgba(61,139,110,0.4)] hover:scale-[1.02] active:scale-[0.98]"
                   >
                     <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
                     <FileDown className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" strokeWidth={2.5} />
@@ -359,7 +359,7 @@ export function TrabajoDetail({
                       }
                       state.updateJob(job.id, { estado: "pagado" });
                     }}
-                    className="relative w-full py-4 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_8px_20px_rgba(61,139,110,0.15)] active:scale-[0.98]"
+                    className="relative w-full py-3 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_8px_20px_rgba(61,139,110,0.15)] active:scale-[0.98]"
                   >
                     <CheckCircle className="w-4 h-4" strokeWidth={2.5} />
                     Marcar como Pagado

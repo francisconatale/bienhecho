@@ -85,11 +85,11 @@ export default function DashboardPage() {
     if (alerts.length === 0) return null;
     return (
       <div className="space-y-2">
-        <h2 className="text-[13px] font-bold text-on-surface-variant uppercase tracking-widest px-1">Avisos</h2>
+        <h2 className="text-[12px] font-bold text-on-surface-variant uppercase tracking-widest px-1">Avisos</h2>
         {alerts.map((a) => (
-          <div key={a.id} className="flex gap-3 bg-amber-500/8 dark:bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl">
-            <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" aria-hidden="true" />
-            <p className="text-[14px] font-medium text-on-surface leading-snug">{a.mensaje}</p>
+          <div key={a.id} className="flex gap-3 bg-amber-500/8 dark:bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl">
+            <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" aria-hidden="true" />
+            <p className="text-[12px] font-medium text-on-surface leading-snug">{a.mensaje}</p>
           </div>
         ))}
       </div>
@@ -98,17 +98,17 @@ export default function DashboardPage() {
 
   const ActivityList = () => (
     <div>
-      <h2 className="text-[13px] font-bold text-on-surface-variant uppercase tracking-widest mb-3 px-1">Actividad Reciente</h2>
+      <h2 className="text-[12px] font-bold text-on-surface-variant uppercase tracking-widest mb-2 px-1">Actividad Reciente</h2>
       <div className="flex flex-col bg-surface rounded-lg overflow-hidden border border-outline-variant/10 shadow-sm">
         <div className="hidden md:flex items-center px-4 py-2 border-b border-outline-variant/20 bg-surface-variant/20">
           <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest flex-1">Trabajo</div>
           <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-40">Cliente</div>
           <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-32 text-right">Importe</div>
         </div>
-        
+
         <div className="flex flex-col divide-y divide-outline-variant/10">
           {pag.paginatedItems.length === 0 ? (
-            <p className="p-6 text-[14px] text-on-surface-variant/60 text-center italic">No hay actividad reciente.</p>
+            <p className="p-5 text-[13px] text-on-surface-variant/60 text-center italic">No hay actividad reciente.</p>
           ) : (
             pag.paginatedItems.map((job) => {
               const client = clients.find((c) => c.id === job.cliente_id);
@@ -116,16 +116,16 @@ export default function DashboardPage() {
                 <Link
                   key={job.id}
                   href={`/trabajos/${job.id}`}
-                  className="flex flex-col md:flex-row md:items-center px-4 py-3 md:py-4 hover:bg-primary/5 cursor-pointer transition-colors group gap-3 md:gap-0"
+                  className="flex flex-col md:flex-row md:items-center px-4 py-2.5 md:py-3 hover:bg-primary/5 cursor-pointer transition-colors group gap-2 md:gap-0"
                 >
                   {/* Title */}
-                  <div className="flex-1 min-w-0 pr-4 flex flex-col gap-1">
-                    <div className="text-[15px] font-bold text-on-surface truncate group-hover:text-primary transition-colors">
+                  <div className="flex-1 min-w-0 pr-4 flex flex-col gap-0.5">
+                    <div className="text-[14px] font-bold text-on-surface truncate group-hover:text-primary transition-colors">
                       {job.titulo}
                     </div>
                     {/* mobile-only client */}
-                    <div className="md:hidden flex items-center gap-2 text-[12px] text-on-surface-variant">
-                      <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[10px] shrink-0">
+                    <div className="md:hidden flex items-center gap-2 text-[11px] text-on-surface-variant">
+                      <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[9px] shrink-0">
                         {client?.nombre?.charAt(0) || "T"}
                       </div>
                       <span className="truncate">{client?.nombre || "Sin cliente"}</span>
@@ -142,9 +142,9 @@ export default function DashboardPage() {
 
                   {/* Amount Column */}
                   <div className="w-full md:w-32 shrink-0 flex items-center justify-between md:justify-end pt-2 md:pt-0 border-t border-outline-variant/10 md:border-0">
-                    <span className="md:hidden text-[11px] text-on-surface-variant uppercase tracking-widest font-bold">Importe</span>
+                    <span className="md:hidden text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Importe</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-base font-bold text-on-surface tabular-nums">
+                      <span className="text-[15px] font-bold text-on-surface tabular-nums">
                         ${job.presupuesto.toLocaleString()}
                       </span>
                       <ChevronRight size={16} className="text-on-surface-variant/50 group-hover:text-primary transition-colors" aria-hidden="true" />
@@ -157,10 +157,10 @@ export default function DashboardPage() {
         </div>
       </div>
       {pag.totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 mt-3">
-          <button onClick={() => pag.goToPage(pag.currentPage - 1)} disabled={pag.currentPage === 1} className="text-[13px] font-semibold text-primary disabled:text-on-surface-variant/30 transition-colors">Anterior</button>
-          <span className="text-[13px] text-on-surface-variant">{pag.currentPage} / {pag.totalPages}</span>
-          <button onClick={() => pag.goToPage(pag.currentPage + 1)} disabled={pag.currentPage === pag.totalPages} className="text-[13px] font-semibold text-primary disabled:text-on-surface-variant/30 transition-colors">Siguiente</button>
+        <div className="flex justify-center items-center gap-4 mt-2">
+          <button onClick={() => pag.goToPage(pag.currentPage - 1)} disabled={pag.currentPage === 1} className="text-[12px] font-semibold text-primary disabled:text-on-surface-variant/30 transition-colors">Anterior</button>
+          <span className="text-[12px] text-on-surface-variant">{pag.currentPage} / {pag.totalPages}</span>
+          <button onClick={() => pag.goToPage(pag.currentPage + 1)} disabled={pag.currentPage === pag.totalPages} className="text-[12px] font-semibold text-primary disabled:text-on-surface-variant/30 transition-colors">Siguiente</button>
         </div>
       )}
     </div>
@@ -168,11 +168,11 @@ export default function DashboardPage() {
 
   const VisitsList = () => (
     <div>
-      <div className="flex items-center justify-between mb-3 px-1">
+      <div className="flex items-center justify-between mb-2 px-1">
         <h2 className="text-[13px] font-bold text-on-surface-variant uppercase tracking-widest">Próximas Visitas</h2>
         {upcomingVisits.length > 0 && (
-          <Link href="/agenda" className="text-[12px] font-bold text-primary hover:opacity-70 transition-opacity flex items-center gap-0.5">
-            Ver agenda <ChevronRight size={13} aria-hidden="true" />
+          <Link href="/agenda" className="text-[11px] font-bold text-primary hover:opacity-70 transition-opacity flex items-center gap-0.5">
+            Ver agenda <ChevronRight size={12} aria-hidden="true" />
           </Link>
         )}
       </div>
@@ -184,9 +184,9 @@ export default function DashboardPage() {
         
         <div className="flex flex-col divide-y divide-outline-variant/10">
           {upcomingVisits.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-8 px-6 text-center">
-              <CalendarDays className="w-7 h-7 text-on-surface-variant/20 mb-2" aria-hidden="true" />
-              <p className="text-[13px] text-on-surface-variant/60 font-medium">Sin visitas en los próximos 7 días</p>
+            <div className="flex flex-col items-center justify-center py-5 px-4 text-center">
+              <CalendarDays className="w-6 h-6 text-on-surface-variant/20 mb-1.5" aria-hidden="true" />
+              <p className="text-[12px] text-on-surface-variant/60 font-medium">Sin visitas en los próximos 7 días</p>
             </div>
           ) : (
             upcomingVisits.map((visit) => {
@@ -194,22 +194,22 @@ export default function DashboardPage() {
               const client = job ? clients.find((c) => c.id === job.cliente_id) : null;
               const dayName = new Date(visit.fecha + "T00:00:00").toLocaleDateString("es-AR", { weekday: "short", day: "numeric", month: "short" });
               return (
-                <div key={visit.id} className="flex flex-col md:flex-row md:items-center px-4 py-3 hover:bg-primary/5 transition-colors gap-2 md:gap-0">
+                <div key={visit.id} className="flex flex-col md:flex-row md:items-center px-4 py-2.5 hover:bg-primary/5 transition-colors gap-2 md:gap-0">
                   {/* Info Column */}
                   <div className="flex-1 min-w-0 pr-4 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                      <CalendarDays size={14} aria-hidden="true" />
+                    <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                      <CalendarDays size={13} aria-hidden="true" />
                     </div>
                     <div className="flex flex-col min-w-0">
-                      <span className="text-[14px] font-semibold text-on-surface truncate">{job?.titulo || "—"}</span>
-                      <span className="text-[12px] text-on-surface-variant capitalize">{dayName} · {visit.hora_inicio}</span>
+                      <span className="text-[13px] font-semibold text-on-surface truncate">{job?.titulo || "—"}</span>
+                      <span className="text-[11px] text-on-surface-variant capitalize">{dayName} · {visit.hora_inicio}</span>
                     </div>
                   </div>
-                  
+
                   {/* Client Column */}
                   {client && (
                     <div className="w-full md:w-32 shrink-0 md:text-right pt-2 md:pt-0 border-t border-outline-variant/10 md:border-0">
-                      <p className="text-[12px] font-medium text-on-surface-variant truncate">{client.nombre}</p>
+                      <p className="text-[11px] font-medium text-on-surface-variant truncate">{client.nombre}</p>
                     </div>
                   )}
                 </div>
@@ -222,14 +222,14 @@ export default function DashboardPage() {
   );
 
   const StatCards = ({ row = false }) => (
-    <div className={`${row ? "flex gap-4" : "flex gap-3 overflow-x-auto snap-x -mx-4 px-4 pb-1 scrollbar-hide"}`}>
-      <div className={`${row ? "flex-1" : "snap-start shrink-0 w-[200px]"} bg-primary/8 dark:bg-primary/10 backdrop-blur-xl rounded-xl border border-primary/20 shadow-sm p-5`}>
-        <p className="text-[11px] font-bold text-primary/80 uppercase tracking-widest mb-3">Presupuestos</p>
-        <span className="text-[32px] font-bold text-primary leading-none">{jobs.length}</span>
+    <div className={`${row ? "flex gap-4" : "grid grid-cols-2 gap-3"}`}>
+      <div className={`${row ? "flex-1" : ""} bg-primary/8 dark:bg-primary/10 backdrop-blur-xl rounded-xl border border-primary/20 shadow-sm p-4`}>
+        <p className="text-[10px] font-bold text-primary/80 uppercase tracking-widest mb-2">Presupuestos</p>
+        <span className="text-[28px] font-bold text-primary leading-none">{jobs.length}</span>
       </div>
-      <div className={`${row ? "flex-1" : "snap-start shrink-0 w-[200px]"} bg-primary/8 dark:bg-primary/10 backdrop-blur-xl rounded-xl border border-primary/20 shadow-sm p-5`}>
-        <p className="text-[11px] font-bold text-primary/80 uppercase tracking-widest mb-3">Por facturar</p>
-        <span className="text-[32px] font-bold text-primary leading-none">
+      <div className={`${row ? "flex-1" : ""} bg-primary/8 dark:bg-primary/10 backdrop-blur-xl rounded-xl border border-primary/20 shadow-sm p-4`}>
+        <p className="text-[10px] font-bold text-primary/80 uppercase tracking-widest mb-2">Por facturar</p>
+        <span className="text-[28px] font-bold text-primary leading-none">
           ${totalToInvoice >= 1000 ? `${(totalToInvoice / 1000).toFixed(0)}k` : totalToInvoice.toLocaleString()}
         </span>
       </div>
@@ -248,9 +248,9 @@ export default function DashboardPage() {
       </div>
 
       {/* ── MOBILE (< md) ── */}
-      <div className="md:hidden flex flex-col px-4 pt-14 pb-28 space-y-6">
+      <div className="md:hidden flex flex-col px-4 pt-14 pb-28 space-y-5">
         <div className="pt-4">
-          <h1 className="text-[34px] font-bold tracking-tight text-on-surface leading-tight">
+          <h1 className="text-[32px] font-bold tracking-tight text-on-surface leading-tight">
             ¡Hola, {displayName}!
           </h1>
         </div>
