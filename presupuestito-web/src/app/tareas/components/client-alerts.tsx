@@ -1,8 +1,23 @@
+import { useState, useEffect } from "react";
 import { AlertCircle, Clock } from "lucide-react";
 import { useClientAlerts } from "../hooks/use-client-alerts";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export function ClientAlerts() {
+  const [mounted, setMounted] = useState(false);
   const { alerts } = useClientAlerts();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="h-[72px] rounded-2xl bg-surface/10 border border-outline-variant/5 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   if (alerts.length === 0) return null;
 

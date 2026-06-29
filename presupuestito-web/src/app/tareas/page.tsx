@@ -5,8 +5,6 @@ import { PageHeader } from "@/components/ui/page-header";
 import { useTareas } from "./hooks/use-tareas";
 import { TareasFilter } from "./components/tareas-filter";
 import { TareasList } from "./components/tareas-list";
-import { FinancialSummary } from "./components/financial-summary";
-import { ClientAlerts } from "./components/client-alerts";
 import { ShoppingList } from "./components/shopping-list";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
@@ -58,8 +56,8 @@ export default function TareasPage() {
           </div>
         </div>
 
-        {/* Mobile Tabs */}
-        <div className="flex md:hidden gap-2 p-1 bg-surface/40 backdrop-blur-xl rounded-2xl border border-outline-variant/10 shadow-sm">
+        {/* Tabs (Visible on all devices now) */}
+        <div className="flex gap-2 p-1 bg-surface/40 backdrop-blur-xl rounded-2xl border border-outline-variant/10 shadow-sm max-w-[400px]">
           <button
             onClick={() => setActiveTab("tareas")}
             className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all ${
@@ -68,7 +66,7 @@ export default function TareasPage() {
                 : "text-on-surface hover:bg-surface/60"
             }`}
           >
-            Tareas
+            Tablero de Tareas
           </button>
           <button
             onClick={() => setActiveTab("compras")}
@@ -78,7 +76,7 @@ export default function TareasPage() {
                 : "text-on-surface hover:bg-surface/60"
             }`}
           >
-            Compras
+            Lista de Compras
           </button>
         </div>
 
@@ -90,48 +88,31 @@ export default function TareasPage() {
             </p>
           </div>
         ) : (
-          <div className="flex flex-col md:grid md:grid-cols-12 gap-6 lg:gap-8 items-start">
-            
-            {/* Main Column: Tareas */}
-            <div className={`md:col-span-7 lg:col-span-8 space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300 ${activeTab === 'tareas' ? 'flex flex-col' : 'hidden md:flex md:flex-col'}`}>
-              
-              {/* Widgets on Mobile (Rendered in Tareas Tab) */}
-              <div className="md:hidden space-y-6">
-                <FinancialSummary />
-                <ClientAlerts />
+          <div className="flex flex-col w-full animate-in fade-in slide-in-from-bottom-2 duration-300">
+            {activeTab === 'tareas' ? (
+              <div className="space-y-6">
+                <TareasFilter
+                  filter={filter}
+                  setFilter={setFilter}
+                  pendingCount={pendingCount}
+                  completedCount={completedCount}
+                  viewMode={viewMode}
+                  setViewMode={setViewMode}
+                />
+                <TareasList
+                  groupedTasks={groupedTasks}
+                  filter={filter}
+                  viewMode={viewMode}
+                  onToggle={toggleTask}
+                  onTogglePriority={togglePriority}
+                  onDelete={deleteTask}
+                />
               </div>
-
-              <TareasFilter
-                filter={filter}
-                setFilter={setFilter}
-                pendingCount={pendingCount}
-                completedCount={completedCount}
-                viewMode={viewMode}
-                setViewMode={setViewMode}
-              />
-
-              <TareasList
-                groupedTasks={groupedTasks}
-                filter={filter}
-                viewMode={viewMode}
-                onToggle={toggleTask}
-                onTogglePriority={togglePriority}
-                onDelete={deleteTask}
-              />
-            </div>
-
-            {/* Sidebar Column: Financial, Alerts, Shopping List */}
-            <div className={`md:col-span-5 lg:col-span-4 space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300 delay-75 fill-mode-both ${activeTab === 'compras' ? 'block' : 'hidden md:block'}`}>
-              
-              {/* Widgets on Desktop (Rendered in Sidebar) */}
-              <div className="hidden md:block space-y-6">
-                 <FinancialSummary />
-                 <ClientAlerts />
+            ) : (
+              <div className="max-w-2xl">
+                <ShoppingList />
               </div>
-
-              <ShoppingList />
-            </div>
-
+            )}
           </div>
         )}
       </main>

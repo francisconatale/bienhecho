@@ -1,7 +1,22 @@
+import { useState, useEffect } from "react";
 import { useFinancialSummary } from "../hooks/use-financial-summary";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export function FinancialSummary() {
+  const [mounted, setMounted] = useState(false);
   const { totalAFacturar } = useFinancialSummary();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="bg-surface/10 border border-outline-variant/5 rounded-[24px] h-[124px] flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   if (totalAFacturar === 0) return null;
 
