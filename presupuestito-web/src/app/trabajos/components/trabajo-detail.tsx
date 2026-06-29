@@ -15,6 +15,7 @@ import { usePayments } from "../[id]/hooks/use-payments";
 import { cn } from "@/lib/utils";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { MobilePageHeader } from "@/components/ui/mobile-page-header";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 import { TaskDetailPanel } from "../[id]/components/task-detail-panel";
 
 export function TrabajoDetail({
@@ -102,18 +103,7 @@ export function TrabajoDetail({
         const store = useDataStore.getState();
         const currentJob = store.jobs.find((j) => j.id === job.id);
         store.updateJob(job.id, { estado: "presupuestado" });
-        if (currentJob && currentJob.estado !== "presupuestado") {
-          store.addTransaccion({
-            cliente_id: currentJob.cliente_id,
-            tipo: "cargo",
-            monto: currentJob.presupuesto,
-            concepto: `Emisión de presupuesto: ${currentJob.titulo}`,
-            fecha: new Date().toISOString().slice(0, 10),
-            referencia_trabajo_id: job.id,
-            referencia_cobro_id: null,
-            origen: "automático",
-          });
-        }
+
       }
     } catch (error) {
       console.error("Failed to generate PDF:", error);
@@ -138,21 +128,7 @@ export function TrabajoDetail({
     <div className={cn("relative w-full", isEmbedded ? "min-h-full" : "min-h-screen")}>
       {!isEmbedded && !selectedTaskId && (
         <>
-          <div className="fixed inset-0 pointer-events-none opacity-[0.04] mix-blend-overlay z-[100] dark:opacity-[0.06]" style={{ backgroundImage: "url('https://grainy-gradients.vercel.app/noise.svg')" }} />
-
-          <div
-            className="absolute top-0 left-0 right-0 h-[400px] md:h-[1200px] pointer-events-none overflow-hidden transition-all duration-1000"
-            style={{
-              zIndex: -1,
-              WebkitMaskImage: "linear-gradient(to bottom, black 10%, transparent 100%)",
-              maskImage: "linear-gradient(to bottom, black 10%, transparent 100%)",
-            }}
-          >
-            <div className="absolute top-[-50px] left-[-50px] w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-primary/30 md:bg-primary/20 blur-[100px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000 animate-pulse" style={{ animationDuration: '8s' }} />
-            <div className="absolute top-[0px] right-[-100px] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-primary-container/30 md:bg-primary-container/20 blur-[120px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000" />
-            <div className="hidden dark:block absolute top-[-50px] left-[-50px] w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-primary/35 md:bg-primary/25 blur-[120px] md:blur-[180px] rounded-full transition-all duration-1000" />
-            <div className="hidden dark:block absolute top-[50px] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/40 md:bg-primary-container/30 blur-[120px] md:blur-[160px] rounded-full transition-all duration-1000" />
-          </div>
+          <AuroraBackground preset="trabajo" />
 
           <MobilePageHeader
             onBack={() => router.push(popHistory(backDest))}

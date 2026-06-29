@@ -132,9 +132,6 @@ export function JobList() {
                 </div>
                 <div className="text-right shrink-0 hidden md:block">
                   <div className="text-[10px] md:text-sm font-bold text-primary">{job.estado.replace(/_/g, " ")}</div>
-                  <div className="text-[9px] md:text-xs text-on-surface-variant tabular-nums">
-                    {job.presupuesto > 0 ? `$${job.presupuesto >= 1000000 ? `${(job.presupuesto / 1000000).toFixed(1)}M` : job.presupuesto >= 1000 ? `${(job.presupuesto / 1000).toFixed(0)}K` : job.presupuesto}` : "S/P"}
-                  </div>
                 </div>
               </div>
             </button>
