@@ -6,6 +6,7 @@ import { useTareas } from "./hooks/use-tareas";
 import { TareasFilter } from "./components/tareas-filter";
 import { TareasList } from "./components/tareas-list";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { ArrowLeft } from "lucide-react";
 
 export default function TareasPage() {
   const [viewMode, setViewMode] = useState<"list" | "board">("list");
@@ -18,8 +19,11 @@ export default function TareasPage() {
   const {
     filter,
     setFilter,
+    category,
+    setCategory,
     pendingCount,
     completedCount,
+    categoryCounts,
     groupedTasks,
     toggleTask,
     togglePriority,
@@ -62,17 +66,38 @@ export default function TareasPage() {
         ) : (
           <div className="flex flex-col w-full animate-in fade-in slide-in-from-bottom-2 duration-300">
             <div className="space-y-6">
-              <TareasFilter
-                filter={filter}
-                setFilter={setFilter}
-                pendingCount={pendingCount}
-                completedCount={completedCount}
-                viewMode={viewMode}
-                setViewMode={setViewMode}
-              />
+              {category !== "resumen" && filter === "pendientes" && (
+                <div className="flex items-center gap-4 mb-2 animate-in fade-in slide-in-from-left-4">
+                  <button 
+                    onClick={() => setCategory("resumen")}
+                    className="flex items-center gap-2 text-sm font-semibold text-primary hover:bg-primary/20 transition-colors bg-primary/10 px-4 py-2.5 rounded-2xl cursor-pointer"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    Volver al resumen
+                  </button>
+                  <h2 className="text-lg md:text-xl font-bold text-on-surface hidden md:block">
+                    {category === "alta" ? "Tareas para Hoy (Urgentes)" : category === "media" ? "Tareas Próximamente (Media)" : "Tareas Sin Apuro (Baja)"}
+                  </h2>
+                </div>
+              )}
+
+              {category === "resumen" && (
+                <TareasFilter
+                  filter={filter}
+                  setFilter={setFilter}
+                  pendingCount={pendingCount}
+                  completedCount={completedCount}
+                  viewMode={viewMode}
+                  setViewMode={setViewMode}
+                />
+              )}
+
               <TareasList
                 groupedTasks={groupedTasks}
+                categoryCounts={categoryCounts}
                 filter={filter}
+                category={category}
+                setCategory={setCategory}
                 viewMode={viewMode}
                 onToggle={toggleTask}
                 onTogglePriority={togglePriority}

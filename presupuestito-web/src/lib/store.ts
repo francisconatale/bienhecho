@@ -198,6 +198,18 @@ export const useDataStore = create<DataState>()(
     { id: "t5", trabajo_id: "j2", descripcion: "Instalación hidráulica", precio: 250000, completada: false, prioridad: "media", orden: 2 },
     { id: "t6", trabajo_id: "j3", descripcion: "Reparación de grietas", precio: 120000, completada: true, prioridad: "media", orden: 1 },
     { id: "t7", trabajo_id: "j3", descripcion: "Pintura exterior", precio: 180000, completada: true, prioridad: "baja", orden: 2 },
+    { id: "t8", trabajo_id: "j1", descripcion: "Comprar materiales de plomería", precio: 50000, completada: false, prioridad: "alta", orden: 4 },
+    { id: "t9", trabajo_id: "j1", descripcion: "Coordinar retiro de escombros", precio: 15000, completada: false, prioridad: "alta", orden: 5 },
+    { id: "t10", trabajo_id: "j2", descripcion: "Revisar planos eléctricos", precio: null, completada: false, prioridad: "alta", orden: 3 },
+    { id: "t11", trabajo_id: "j2", descripcion: "Aprobar presupuesto de durlock", precio: null, completada: false, prioridad: "media", orden: 4 },
+    { id: "t12", trabajo_id: "j3", descripcion: "Contactar proveedor de grifería", precio: null, completada: false, prioridad: "media", orden: 3 },
+    { id: "t13", trabajo_id: "j1", descripcion: "Medir ventanas para presupuestar", precio: null, completada: false, prioridad: "media", orden: 6 },
+    { id: "t14", trabajo_id: "j2", descripcion: "Solicitar permisos de obra", precio: 8000, completada: false, prioridad: "alta", orden: 5 },
+    { id: "t15", trabajo_id: "j3", descripcion: "Auditoría de seguridad", precio: 120000, completada: false, prioridad: "baja", orden: 4 },
+    { id: "t16", trabajo_id: "j1", descripcion: "Reemplazar zócalos", precio: 45000, completada: false, prioridad: "baja", orden: 7 },
+    { id: "t17", trabajo_id: "j2", descripcion: "Prueba hidráulica general", precio: 22000, completada: false, prioridad: "alta", orden: 6 },
+    { id: "t18", trabajo_id: "j1", descripcion: "Reparación de filtración terraza", precio: 85000, completada: false, prioridad: "alta", orden: 8 },
+    { id: "t19", trabajo_id: "j2", descripcion: "Impermeabilización de medianera", precio: 135000, completada: false, prioridad: "alta", orden: 7 },
   ],
 
   addClient: (clientData) => {
