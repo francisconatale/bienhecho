@@ -85,6 +85,7 @@ export function NuevoTrabajoWizard() {
         isLast={isLast}
         canAdvance={canAdvance}
         canSave={canSave}
+        isLoading={state.isLoading}
         prev={prev}
         next={next}
         handleSave={handleSave}

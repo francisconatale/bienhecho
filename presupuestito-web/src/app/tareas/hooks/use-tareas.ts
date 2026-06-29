@@ -1,6 +1,8 @@
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { jobsService, clientsService, tasksService } from "@/services";
+import { useConfirm } from "@/hooks/use-confirm";
+import { toast } from "sonner";
 export type FilterType = "pendientes" | "completadas";
 export type CategoryType = "resumen" | "alta" | "media" | "baja";
 
@@ -66,6 +68,8 @@ export function useTareas() {
     };
   }, [tasks, jobs, clients, filter, category]);
 
+  const [ConfirmDialog, confirm] = useConfirm();
+
   const toggleTask = async (taskId: string, current: boolean) => {
     await updateTaskMutation.mutateAsync({ id: taskId, data: { completada: !current } });
   };
@@ -76,7 +80,22 @@ export function useTareas() {
   };
 
   const deleteTask = async (taskId: string) => {
-    if (window.confirm("¿Estás seguro de eliminar esta tarea?")) {
+    const taskObj = tasks.find(t => t.id === taskId);
+    if (taskObj) {
+      const jobObj = jobs.find(j => j.id === taskObj.trabajo_id);
+      if (jobObj?.estado === "pagado") {
+        toast.error("No se puede eliminar una tarea de un trabajo pagado");
+        return;
+      }
+    }
+
+    const ok = await confirm({
+      title: "Eliminar Tarea",
+      description: "¿Estás seguro de eliminar esta tarea? Esta acción no se puede deshacer.",
+      confirmText: "Eliminar",
+      variant: "danger",
+    });
+    if (ok) {
       await removeTaskMutation.mutateAsync(taskId);
     }
   };
@@ -94,5 +113,6 @@ export function useTareas() {
     deleteTask,
     groupedTasks,
     categoryCounts,
+    ConfirmDialog,
   };
 }

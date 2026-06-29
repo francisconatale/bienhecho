@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { clientsService, jobsService } from "@/services";
+import { toast } from "sonner";
 export const questions = [
   { id: "cliente", question: "¿Para qué cliente es este trabajo?", hint: "Seleccioná un cliente existente" },
   { id: "titulo", question: "¿Cómo se llama el trabajo?", hint: "Dale un nombre descriptivo" },
@@ -23,7 +24,10 @@ export function useNuevoTrabajo() {
 
   const createMutation = useMutation({
     mutationFn: jobsService.create,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["jobs"] }),
+    onSuccess: (newJob) => {
+      queryClient.setQueryData(["jobs"], (old: any) => old ? [newJob, ...old] : [newJob]);
+      queryClient.invalidateQueries({ queryKey: ["jobs"] });
+    },
   });
 
   const preselectId = searchParams.get("clienteId");
@@ -56,16 +60,21 @@ export function useNuevoTrabajo() {
 
   const handleSave = async () => {
     if (!canSave) return;
-    const newJob = await createMutation.mutateAsync({
-      cliente_id: clienteId,
-      titulo: titulo.trim(),
-      direccion: direccion.trim(),
-      descripcion: descripcion.trim() || undefined,
-      presupuesto: presupuesto ? Number(presupuesto) : 0,
-      fecha_inicio: fechaInicio || undefined,
-      fecha_fin_estimada: fechaFinEstimada || undefined,
-    });
-    router.push(`/trabajos/${newJob.id}`);
+    try {
+      const newJob = await createMutation.mutateAsync({
+        cliente_id: clienteId,
+        titulo: titulo.trim(),
+        direccion: direccion.trim(),
+        descripcion: descripcion.trim() || undefined,
+        presupuesto: presupuesto ? Number(presupuesto) : 0,
+        fecha_inicio: fechaInicio || undefined,
+        fecha_fin_estimada: fechaFinEstimada || undefined,
+      });
+      toast.success("Proyecto creado correctamente");
+      router.push(`/trabajos/${newJob.id}`);
+    } catch (error) {
+      toast.error("Error al crear el proyecto");
+    }
   };
 
   return {

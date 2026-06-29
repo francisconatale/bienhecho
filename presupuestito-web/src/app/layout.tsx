@@ -9,6 +9,7 @@ import { AuthRedirect } from "@/components/auth/auth-redirect";
 import { ThemeScript } from "@/components/layout/theme-script";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import Script from "next/script";
+import { Toaster } from "@/components/layout/toaster";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -64,6 +65,7 @@ export default function RootLayout({
                 <BottomNav />
               </div>
             </AuthRedirect>
+            <Toaster />
           </ThemeProvider>
         </Providers>
       </body>

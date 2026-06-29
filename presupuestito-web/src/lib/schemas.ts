@@ -14,7 +14,7 @@ export const ClientSchema = z.object({
   id: z.string().uuid().or(z.string()),
   user_id: z.string().uuid().optional(),
   nombre: z.string().min(1, "El nombre es obligatorio"),
-  telefono: z.string().min(1, "El teléfono es obligatorio"),
+  telefono: z.string().nullable().optional(),
   email: z.string().email("Email inválido").optional().or(z.literal("")),
   direccion: z.string().min(1, "La dirección es obligatoria"),
   notas: z.string().optional(),

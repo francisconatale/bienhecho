@@ -155,6 +155,29 @@ Mismo patrón de container que Dashboard: `max-w-[1400px]` con padding responsiv
 
 ---
 
+## Páginas de Auth (Login / Register) — Rediseño (29/06/2026)
+
+### Decisión
+Rediseño completo eliminando todos los colores hardcodeados (`#2563EB`) y alineando con el sistema Material You / verde esmeralda.
+
+### Cambios aplicados
+- **Fondo**: Aurora + Noise compartido via `(auth)/layout.tsx` (mismo patrón que Dashboard).
+- **Card glassmorphic**: `bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-[24px] border border-outline-variant/20 shadow-sm` — consistente con el estándar.
+- **Ícono principal**: `bg-primary` con `shadow-lg shadow-primary/20` en vez de `bg-[#2563EB]`.
+- **Inputs**: `bg-on-surface/5 border border-outline-variant/20 rounded-2xl` con `focus:ring-4 focus:ring-primary/10 focus:border-primary` — usando el utility `input-field` adaptado.
+- **Botón submit**: `bg-primary` con `hover:brightness-110` en vez de `bg-[#2563EB] hover:bg-[#1D4ED8]`.
+- **Labels**: `text-primary` en vez de `text-[#2563EB]`.
+- **Links**: `text-primary` en vez de `text-[#2563EB]`.
+- **Animación de entrada**: `animate-page-in` (fade + slide-up) consistente con el resto del proyecto.
+- **Error**: `bg-error/10 text-error` usando tokens del sistema en vez de `bg-red-500/10 text-red-500`.
+
+### Antipatrón evitado
+- ❌ Hardcode `#2563EB` (azul) en labels, botones, íconos y links.
+- ❌ `bg-grouped-bg-light` sin Aurora + Noise de fondo.
+- ❌ `dark:bg-[#1C1C1E]` hardcodeado en la card.
+
+---
+
 ## Accesibilidad (A11y) — Decisiones aplicadas el 29/06/2026
 
 - **Íconos decorativos**: siempre `aria-hidden="true"` cuando hay texto de acompañamiento.

@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { clientsService } from "@/services";
 import { Client } from "@/types";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 const clientSchema = z.object({
   nombre: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
@@ -56,35 +57,39 @@ export function useClientForm(
   }, [initialClient, form]);
 
   const onSubmit = async (data: ClientFormValues) => {
-    if (initialClient) {
-      await updateMutation.mutateAsync({
-        id: initialClient.id,
-        data: {
+    try {
+      if (initialClient) {
+        await updateMutation.mutateAsync({
+          id: initialClient.id,
+          data: {
+            nombre: data.nombre,
+            email: data.email || null,
+            telefono: data.telefono || null,
+            direccion: data.direccion || "",
+          },
+        });
+        toast.success("Cliente actualizado");
+        if (onSuccess) {
+          onSuccess(initialClient.id);
+        } else {
+          router.push("/clientes");
+        }
+      } else {
+        const newClient = await createMutation.mutateAsync({
           nombre: data.nombre,
           email: data.email || null,
           telefono: data.telefono || null,
           direccion: data.direccion || "",
-        },
-      });
-
-      if (onSuccess) {
-        onSuccess(initialClient.id);
-      } else {
-        router.push("/clientes");
+        });
+        toast.success("Cliente creado");
+        if (onSuccess) {
+          onSuccess(newClient.id);
+        } else {
+          router.push("/clientes");
+        }
       }
-    } else {
-      const newClient = await createMutation.mutateAsync({
-        nombre: data.nombre,
-        email: data.email || null,
-        telefono: data.telefono || null,
-        direccion: data.direccion || "",
-      });
-
-      if (onSuccess) {
-        onSuccess(newClient.id);
-      } else {
-        router.push("/clientes");
-      }
+    } catch (error) {
+      toast.error(initialClient ? "Error al actualizar cliente" : "Error al crear cliente");
     }
   };
 

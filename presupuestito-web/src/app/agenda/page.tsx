@@ -1,5 +1,7 @@
 "use client";
 
+import { toast } from "sonner";
+
 import { Plus } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { PageHeader } from "@/components/ui/page-header";
@@ -10,9 +12,12 @@ import { VisitList } from "./components/visit-list";
 import { VisitForm } from "./components/visit-form";
 import { SmartSuggestions } from "./components/smart-suggestions";
 import { StatsCards } from "./components/stats-cards";
+import { useState } from "react";
+import { SuccessModal } from "@/components/ui/success-modal";
 
 export default function AgendaPage() {
   const { state, actions } = useAgenda();
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   return (
     <main className="flex-1 pb-32 w-full pt-10 transition-all max-w-[1400px] mx-auto px-4 md:px-8 lg:px-10 xl:px-16">
@@ -90,9 +95,14 @@ export default function AgendaPage() {
           jobs={state.jobs}
           clients={state.clients}
           defaultFecha={state.selectedDate || undefined}
-          onSubmit={(data) => {
-            actions.addVisit(data);
-            actions.setShowNewModal(false);
+          onSubmit={async (data) => {
+            try {
+              await actions.addVisit(data);
+              actions.setShowNewModal(false);
+              setShowSuccessModal(true);
+            } catch (error) {
+              toast.error("Error al crear la visita");
+            }
           }}
           onCancel={() => actions.setShowNewModal(false)}
         />
@@ -108,14 +118,28 @@ export default function AgendaPage() {
             jobs={state.jobs}
             clients={state.clients}
             initial={state.editingVisit}
-            onSubmit={(data) => {
-              actions.updateVisit(state.editingVisit!.id, data);
-              actions.setEditingVisit(null);
+            onSubmit={async (data) => {
+              try {
+                await actions.updateVisit(state.editingVisit!.id, data);
+                toast.success("Visita actualizada");
+                actions.setEditingVisit(null);
+              } catch (error) {
+                toast.error("Error al actualizar la visita");
+              }
             }}
             onCancel={() => actions.setEditingVisit(null)}
           />
         )}
       </Modal>
+
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="¡Visita Programada!"
+        description="La visita se agregó a la agenda correctamente. Recordá que podés editarla o marcarla como completada más adelante."
+        primaryButtonText="Cerrar"
+      />
+      <actions.ConfirmDialog />
     </main>
   );
 }

@@ -18,10 +18,11 @@ const PRIORITY_BADGE: Record<string, string> = {
 interface TaskItemProps {
   task: Task;
   jobId: string;
+  isJobPaid?: boolean;
   onSelect?: (taskId: string) => void;
 }
 
-export function TaskItem({ task, jobId, onSelect }: TaskItemProps) {
+export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -106,20 +107,22 @@ export function TaskItem({ task, jobId, onSelect }: TaskItemProps) {
         </div>
 
         {/* Actions */}
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
-          <button
-            onClick={() => setIsEditing(true)}
-            className="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 hover:shadow-sm active:scale-90"
-          >
-            <Pencil className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setConfirmDelete(true)}
-            className="p-1.5 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 hover:shadow-sm active:scale-90"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
+        {!isJobPaid && (
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
+            <button
+              onClick={() => setIsEditing(true)}
+              className="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 hover:shadow-sm active:scale-90"
+            >
+              <Pencil className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setConfirmDelete(true)}
+              className="p-1.5 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 hover:shadow-sm active:scale-90"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Edit modal */}

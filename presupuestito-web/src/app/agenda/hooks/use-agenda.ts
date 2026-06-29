@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { visitsService, jobsService, clientsService } from "@/services";
 import { Visit, VisitStatus } from "@/types";
+import { useConfirm } from "@/hooks/use-confirm";
+import { toast } from "sonner";
 
 export const MONTHS = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -111,9 +113,18 @@ export function useAgenda() {
     };
   };
 
+  const [ConfirmDialog, confirm] = useConfirm();
+
   const handleDelete = async (id: string) => {
-    if (window.confirm("¿Eliminar esta visita?")) {
+    const ok = await confirm({
+      title: "Eliminar Visita",
+      description: "¿Estás seguro de que querés eliminar esta visita de la agenda?",
+      confirmText: "Eliminar",
+      variant: "danger",
+    });
+    if (ok) {
       await removeVisitMutation.mutateAsync(id);
+      toast.success("Visita eliminada");
     }
   };
 
@@ -166,6 +177,7 @@ export function useAgenda() {
       visitCountForDay,
       visitCountForDate,
       getJobInfo,
+      ConfirmDialog,
       handleDelete,
       handleStatusToggle,
       addVisit,

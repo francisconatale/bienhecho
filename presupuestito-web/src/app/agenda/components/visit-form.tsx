@@ -21,8 +21,9 @@ export function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCa
   const [notas, setNotas] = useState(initial?.notas || "");
   const [estado, setEstado] = useState<VisitStatus>(initial?.estado || "planificada");
   const [errors, setErrors] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const errs: string[] = [];
     if (!trabajoId) errs.push("Seleccioná un trabajo");
     if (!fecha) errs.push("Seleccioná una fecha");
@@ -32,14 +33,19 @@ export function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCa
       return;
     }
     setErrors([]);
-    onSubmit({
-      trabajo_id: trabajoId,
-      fecha,
-      hora_inicio: horaInicio,
-      hora_fin: horaFin || undefined,
-      notas: notas || undefined,
-      estado,
-    });
+    setIsSubmitting(true);
+    try {
+      await onSubmit({
+        trabajo_id: trabajoId,
+        fecha,
+        hora_inicio: horaInicio,
+        hora_fin: horaFin || undefined,
+        notas: notas || undefined,
+        estado,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -161,14 +167,19 @@ export function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCa
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 h-11 rounded-xl font-bold text-xs text-on-surface-variant hover:bg-outline-variant/10 transition-colors"
+          disabled={isSubmitting}
+          className="flex-1 h-11 rounded-xl font-bold text-xs text-on-surface-variant hover:bg-outline-variant/10 transition-colors disabled:opacity-50"
         >
           Cancelar
         </button>
         <button
           type="submit"
-          className="flex-1 h-11 rounded-xl font-bold text-xs text-white bg-primary hover:bg-primary-dark transition-colors"
+          disabled={isSubmitting}
+          className="flex-1 h-11 rounded-xl font-bold text-xs text-white bg-primary hover:bg-primary-dark transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
         >
+          {isSubmitting && (
+            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          )}
           {initial ? "Guardar Cambios" : "Crear Visita"}
         </button>
       </div>

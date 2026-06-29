@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { clientsService } from "@/services";
 import { usePagination } from "@/hooks/use-pagination";
 import { Client } from "@/types";
+import { useConfirm } from "@/hooks/use-confirm";
 
 export function useClients() {
   const queryClient = useQueryClient();
@@ -60,8 +61,16 @@ export function useClients() {
 
   const selected = clients.find((c) => c.id === selectedId) || null;
 
-  const handleDelete = (client: Client) => {
-    if (window.confirm(`Estas seguro de que queres eliminar a ${client.nombre}?`)) {
+  const [ConfirmDialog, confirm] = useConfirm();
+
+  const handleDelete = async (client: Client) => {
+    const ok = await confirm({
+      title: "Eliminar Cliente",
+      description: `¿Estás seguro de que querés eliminar a ${client.nombre}? Esta acción no se puede deshacer y podría afectar los trabajos asociados.`,
+      confirmText: "Eliminar",
+      variant: "danger",
+    });
+    if (ok) {
       deleteMutation.mutate(client.id);
       if (selectedId === client.id) handleSelectedIdChange(null);
     }
@@ -96,5 +105,6 @@ export function useClients() {
     handleToggleCreation,
     handleCreationSuccess,
     isLoading,
+    ConfirmDialog,
   };
 }

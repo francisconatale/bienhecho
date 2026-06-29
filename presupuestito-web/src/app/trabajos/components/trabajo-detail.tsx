@@ -36,7 +36,7 @@ export function TrabajoDetail({
 }) {
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
-  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
   const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
   const { data: tasks = [] } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
   const { data: cobros = [] } = useQuery({ queryKey: ["cobros", id], queryFn: () => cobrosService.getByJobId(id) });
@@ -90,6 +90,13 @@ export function TrabajoDetail({
   const job = jobs.find((j) => j.id === id);
 
   if (!job) {
+    if (isLoadingJobs) {
+      return (
+        <div className="flex-1 min-h-screen flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+        </div>
+      );
+    }
     if (isEmbedded) return null;
     notFound();
   }
@@ -379,7 +386,7 @@ export function TrabajoDetail({
 
         {!selectedTaskId && (
           <div className="mt-8">
-            <TaskList jobId={job.id} onSelectTask={setSelectedTaskId} />
+            <TaskList jobId={job.id} isJobPaid={job.estado === "pagado"} onSelectTask={setSelectedTaskId} />
           </div>
         )}
       </main>

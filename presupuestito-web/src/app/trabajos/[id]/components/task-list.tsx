@@ -9,13 +9,15 @@ import { TaskForm } from "./task-form";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { Modal } from "@/components/ui/modal";
 import type { Task } from "@/types";
+import { toast } from "sonner";
 
 interface TaskListProps {
   jobId: string;
+  isJobPaid?: boolean;
   onSelectTask?: (taskId: string) => void;
 }
 
-export function TaskList({ jobId, onSelectTask }: TaskListProps) {
+export function TaskList({ jobId, isJobPaid, onSelectTask }: TaskListProps) {
   const queryClient = useQueryClient();
   const { data: tasks = [] } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
   const createTaskMutation = useMutation({
@@ -50,16 +52,21 @@ export function TaskList({ jobId, onSelectTask }: TaskListProps) {
   const hasMore = !showAll && jobTasks.length > initialCount;
 
   const handleAdd = async (data: { descripcion: string; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string }) => {
-    await createTaskMutation.mutateAsync({
-      trabajo_id: jobId,
-      descripcion: data.descripcion,
-      precio: data.precio,
-      completada: false,
-      orden: jobTasks.length,
-      prioridad: data.prioridad,
-      fecha_vencimiento: data.fecha_vencimiento,
-    });
-    setIsAdding(false);
+    try {
+      await createTaskMutation.mutateAsync({
+        trabajo_id: jobId,
+        descripcion: data.descripcion,
+        precio: data.precio,
+        completada: false,
+        orden: jobTasks.length,
+        prioridad: data.prioridad,
+        fecha_vencimiento: data.fecha_vencimiento,
+      });
+      toast.success("Tarea agregada");
+      setIsAdding(false);
+    } catch (error) {
+      toast.error("Error al agregar tarea");
+    }
   };
 
   const columns: Column<Task>[] = [
@@ -77,15 +84,17 @@ export function TaskList({ jobId, onSelectTask }: TaskListProps) {
         title="Tareas del Trabajo"
         emptyMessage="Aún no hay tareas definidas"
         actions={
-          <button
-            onClick={() => setIsAdding(true)}
-            className="group flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 hover:bg-primary/15 transition-colors text-[13px] font-bold text-primary shrink-0"
-          >
-            <Plus className="w-3.5 h-3.5" aria-hidden="true" /> Agregar
-          </button>
+          !isJobPaid ? (
+            <button
+              onClick={() => setIsAdding(true)}
+              className="group flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 hover:bg-primary/15 transition-colors text-[13px] font-bold text-primary shrink-0"
+            >
+              <Plus className="w-3.5 h-3.5" aria-hidden="true" /> Agregar
+            </button>
+          ) : undefined
         }
         renderRow={(task) => (
-          <TaskItem task={task} jobId={jobId} onSelect={onSelectTask} />
+          <TaskItem task={task} jobId={jobId} isJobPaid={isJobPaid} onSelect={onSelectTask} />
         )}
         footerRow={hasMore ? (
           <div className="pt-3 pb-3 flex justify-center border-t border-outline-variant/10 bg-surface/30">

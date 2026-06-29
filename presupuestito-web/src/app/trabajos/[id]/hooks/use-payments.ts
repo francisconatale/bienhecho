@@ -3,6 +3,7 @@ import { z } from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { cobrosService, materialsService, jobsService } from "@/services";
 import { Cobro } from "@/types";
+import { toast } from "sonner";
 
 export const cobroSchema = z.object({
   monto_cobrado: z.coerce.number().min(0.01, "El monto debe ser mayor a 0"),
@@ -74,25 +75,37 @@ export function usePayments(trabajoId: string) {
   });
 
   const addCobro = async (data: CobroFormValues) => {
-    await addMutation.mutateAsync({
-      trabajo_id: trabajoId,
-      monto_cobrado: data.monto_cobrado,
-      fecha_cobro: data.fecha_cobro,
-      forma_pago: data.forma_pago,
-      notas: data.notas,
-    });
-  };
-
-  const updateCobro = async (id: string, data: CobroFormValues) => {
-    await updateMutation.mutateAsync({
-      id,
-      data: {
+    try {
+      await addMutation.mutateAsync({
+        trabajo_id: trabajoId,
         monto_cobrado: data.monto_cobrado,
         fecha_cobro: data.fecha_cobro,
         forma_pago: data.forma_pago,
         notas: data.notas,
-      },
-    });
+      });
+      toast.success("Cobro registrado");
+    } catch (error) {
+      toast.error("Error al registrar cobro");
+      throw error;
+    }
+  };
+
+  const updateCobro = async (id: string, data: CobroFormValues) => {
+    try {
+      await updateMutation.mutateAsync({
+        id,
+        data: {
+          monto_cobrado: data.monto_cobrado,
+          fecha_cobro: data.fecha_cobro,
+          forma_pago: data.forma_pago,
+          notas: data.notas,
+        },
+      });
+      toast.success("Cobro actualizado");
+    } catch (error) {
+      toast.error("Error al actualizar cobro");
+      throw error;
+    }
   };
 
   const removeCobro = async (id: string) => {

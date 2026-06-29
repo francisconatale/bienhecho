@@ -23,6 +23,7 @@ export function ClientList() {
     handleDelete,
     handleToggleCreation,
     handleCreationSuccess,
+    ConfirmDialog,
   } = useClients();
 
   return (
@@ -114,6 +115,7 @@ export function ClientList() {
           </div>
         }
       />
+      <ConfirmDialog />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { materialsService } from "@/services";
 import { Material } from "@/types";
+import { toast } from "sonner";
 export const materialSchema = z.object({
   nombre_material: z.string().min(1, "El nombre es obligatorio"),
   cantidad: z.coerce.number().min(0.01, "La cantidad debe ser mayor a 0"),
@@ -40,28 +41,40 @@ export function useMaterials(trabajoId: string) {
   });
 
   const addMaterial = async (data: MaterialFormValues) => {
-    const subtotal = data.cantidad * data.precio_unitario;
-    await addMutation.mutateAsync({
-      trabajo_id: trabajoId,
-      nombre_material: data.nombre_material,
-      cantidad: data.cantidad,
-      precio_unitario: data.precio_unitario,
-      subtotal,
-      comprado: false,
-    });
-  };
-
-  const updateMaterial = async (id: string, data: MaterialFormValues) => {
-    const subtotal = data.cantidad * data.precio_unitario;
-    await updateMutation.mutateAsync({
-      id,
-      data: {
+    try {
+      const subtotal = data.cantidad * data.precio_unitario;
+      await addMutation.mutateAsync({
+        trabajo_id: trabajoId,
         nombre_material: data.nombre_material,
         cantidad: data.cantidad,
         precio_unitario: data.precio_unitario,
         subtotal,
-      },
-    });
+        comprado: false,
+      });
+      toast.success("Material agregado");
+    } catch (error) {
+      toast.error("Error al agregar material");
+      throw error;
+    }
+  };
+
+  const updateMaterial = async (id: string, data: MaterialFormValues) => {
+    try {
+      const subtotal = data.cantidad * data.precio_unitario;
+      await updateMutation.mutateAsync({
+        id,
+        data: {
+          nombre_material: data.nombre_material,
+          cantidad: data.cantidad,
+          precio_unitario: data.precio_unitario,
+          subtotal,
+        },
+      });
+      toast.success("Material actualizado");
+    } catch (error) {
+      toast.error("Error al actualizar material");
+      throw error;
+    }
   };
 
   const removeMaterial = async (id: string) => {

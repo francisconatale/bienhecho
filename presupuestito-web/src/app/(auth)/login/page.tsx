@@ -33,13 +33,13 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-grouped-bg-light dark:bg-black flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+    <main className="min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-8 animate-page-in">
         <div className="text-center space-y-3">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-[#2563EB] text-white shadow-xl shadow-[#2563EB]/20 mb-4">
-            <LogIn className="w-8 h-8" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary shadow-lg shadow-primary/20 mb-4">
+            <LogIn className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-black tracking-tight text-on-surface">
+          <h1 className="text-[34px] font-bold tracking-tight text-on-surface">
             Bienvenido
           </h1>
           <p className="text-on-surface-variant font-medium">
@@ -48,16 +48,15 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
-          <div className="bg-surface dark:bg-[#1C1C1E] rounded-xl p-8 border border-outline-variant/20 shadow-xl space-y-6">
+          <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-[24px] border border-outline-variant/20 shadow-sm p-8 space-y-6">
             {error && (
-              <div className="bg-red-500/10 text-red-500 text-sm font-medium p-3 rounded-xl text-center">
+              <div className="bg-error/10 text-error text-sm font-medium p-3 rounded-xl text-center">
                 {error}
               </div>
             )}
 
-            {/* Email */}
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#2563EB] ml-1">
+              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary ml-1">
                 Email
               </label>
               <div className="relative">
@@ -68,14 +67,13 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="tu@email.com"
-                  className="w-full bg-surface-variant/10 border-none rounded-2xl pl-12 pr-6 py-4 text-base font-bold text-on-surface focus:ring-2 focus:ring-[#2563EB]/20 outline-none transition-all placeholder:text-on-surface-variant/30"
+                  className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl pl-12 pr-6 py-4 text-base font-semibold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
                 />
               </div>
             </div>
 
-            {/* Password */}
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#2563EB] ml-1">
+              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary ml-1">
                 Contraseña
               </label>
               <div className="relative">
@@ -86,7 +84,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-surface-variant/10 border-none rounded-2xl pl-12 pr-6 py-4 text-base font-bold text-on-surface focus:ring-2 focus:ring-[#2563EB]/20 outline-none transition-all placeholder:text-on-surface-variant/30"
+                  className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl pl-12 pr-6 py-4 text-base font-semibold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
                 />
               </div>
             </div>
@@ -95,7 +93,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || !email || !password}
-            className="w-full py-5 rounded-xl bg-[#2563EB] text-white font-black uppercase tracking-[0.2em] text-xs shadow-2xl shadow-[#2563EB]/30 hover:bg-[#1D4ED8] disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-[0.98] flex items-center justify-center gap-3"
+            className="w-full py-4 rounded-2xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/25 hover:brightness-110 disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-[0.98] flex items-center justify-center gap-3"
           >
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
@@ -110,7 +108,7 @@ export default function LoginPage() {
 
         <p className="text-center text-on-surface-variant text-sm">
           ¿No tenés cuenta?{" "}
-          <Link href="/register" className="text-[#2563EB] font-bold hover:underline">
+          <Link href="/register" className="text-primary font-bold hover:underline">
             Registrate
           </Link>
         </p>

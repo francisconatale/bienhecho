@@ -28,6 +28,13 @@ interface TareasListProps {
 
 export function TareasList({ groupedTasks, categoryCounts, filter, category, setCategory, viewMode = "list", onToggle, onTogglePriority, onDelete }: TareasListProps) {
   const { alta, media, baja, completadas } = groupedTasks;
+  const isResumen = category === "resumen";
+  const activeTasks = category === "alta" ? alta : category === "media" ? media : baja;
+  const pag = usePagination(activeTasks, 12);
+
+  if (!isResumen && pag.currentPage > 1 && activeTasks.length > 0 && pag.paginatedItems.length === 0) {
+     pag.goToPage(1);
+  }
 
   if (filter === "completadas") {
     if (completadas.length === 0) return <TareasEmpty filter={filter} />;
@@ -37,17 +44,6 @@ export function TareasList({ groupedTasks, categoryCounts, filter, category, set
   const hasPending = categoryCounts.alta > 0 || categoryCounts.media > 0 || categoryCounts.baja > 0;
   if (!hasPending) {
     return <TareasEmpty filter={filter} />;
-  }
-
-  const isResumen = category === "resumen";
-  
-  // Calculamos las activeTasks siempre para poder usar el hook de forma segura
-  const activeTasks = category === "alta" ? alta : category === "media" ? media : baja;
-  const pag = usePagination(activeTasks, 12);
-
-  // Resetear a pag 1 cuando se cambia la categoría
-  if (!isResumen && pag.currentPage > 1 && activeTasks.length > 0 && pag.paginatedItems.length === 0) {
-     pag.goToPage(1);
   }
 
   // Si estamos en una vista especializada, renderizamos solo los items de esa categoría,

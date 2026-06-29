@@ -30,6 +30,7 @@ export default function TareasPage() {
     toggleTask,
     togglePriority,
     deleteTask,
+    ConfirmDialog,
   } = useTareas();
 
   const isSpecialized = category !== "resumen";
@@ -186,6 +187,7 @@ export default function TareasPage() {
           </div>
         )}
       </main>
+      <ConfirmDialog />
     </>
   );
 }
