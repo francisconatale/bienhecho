@@ -1,5 +1,6 @@
 import { TareasEmpty } from "./tareas-empty";
 import { PriorityTaskGroup } from "./priority-task-group";
+import { TareaItem } from "./tarea-item";
 import type { FilterType, CategoryType } from "../hooks/use-tareas";
 
 interface TareasListProps {
@@ -37,6 +38,38 @@ export function TareasList({ groupedTasks, categoryCounts, filter, category, set
   }
 
   const isResumen = category === "resumen";
+
+  // Si estamos en una vista especializada, renderizamos solo los items de esa categoría,
+  // sin agrupadores extra (ya que el título de la página cumple esa función).
+  if (!isResumen) {
+    const activeTasks = category === "alta" ? alta : category === "media" ? media : baja;
+    
+    if (activeTasks.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center py-12 px-4 border-2 border-dashed border-outline-variant/10 rounded-[28px]">
+          <span className="text-on-surface-variant font-medium">No hay tareas en esta categoría.</span>
+        </div>
+      );
+    }
+
+    if (viewMode === "board") {
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          {activeTasks.map(task => (
+            <TareaItem key={task.id} task={task} viewMode="list" onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
+          ))}
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-3">
+        {activeTasks.map(task => (
+          <TareaItem key={task.id} task={task} viewMode="list" onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
+        ))}
+      </div>
+    );
+  }
 
   if (viewMode === "board") {
     return (

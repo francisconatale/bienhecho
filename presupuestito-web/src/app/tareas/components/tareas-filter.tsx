@@ -51,35 +51,6 @@ export function TareasFilter({
           </span>
         </button>
       </div>
-
-      {setViewMode && filter !== "completadas" && (
-        <div className="hidden md:flex bg-surface border border-outline-variant/20 p-1 rounded-[16px] shadow-sm">
-          <button
-            onClick={() => setViewMode("list")}
-            className={cn(
-              "px-3 py-1.5 rounded-[12px] flex items-center gap-2 text-sm font-semibold transition-all",
-              viewMode === "list"
-                ? "bg-primary/10 text-primary"
-                : "text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50"
-            )}
-            title="Vista de Lista"
-          >
-            <LayoutList className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setViewMode("board")}
-            className={cn(
-              "px-3 py-1.5 rounded-[12px] flex items-center gap-2 text-sm font-semibold transition-all",
-              viewMode === "board"
-                ? "bg-primary/10 text-primary"
-                : "text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50"
-            )}
-            title="Vista de Tablero"
-          >
-            <LayoutGrid className="w-4 h-4" />
-          </button>
-        </div>
-      )}
     </div>
   );
 }

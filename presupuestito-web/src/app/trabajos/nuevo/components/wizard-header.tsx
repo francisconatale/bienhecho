@@ -19,7 +19,7 @@ export function WizardHeader() {
         </button>
       </Link>
       <div>
-        <h1 className="text-xl md:text-2xl font-bold tracking-tight text-on-surface">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-on-surface">
           Nuevo Trabajo
         </h1>
         <p className="text-sm text-on-surface-variant/60 mt-0.5">
