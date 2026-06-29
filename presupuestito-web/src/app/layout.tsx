@@ -6,6 +6,7 @@ import { BottomNav } from "@/components/layout/bottom-nav";
 import { TopNav } from "@/components/layout/top-nav";
 import { AuthRedirect } from "@/components/auth/auth-redirect";
 import { ThemeScript } from "@/components/layout/theme-script";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -47,16 +48,7 @@ export default function RootLayout({
           `,
         }} />
         
-        {/* Grain / Noise Overlay (Persistent) */}
-        <div className="fixed inset-0 pointer-events-none opacity-[0.04] mix-blend-overlay z-[-1] dark:opacity-[0.06]" style={{ backgroundImage: "url('https://grainy-gradients.vercel.app/noise.svg')" }} />
-
-        {/* Aurora Background (Persistent) */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden transition-all duration-1000 z-[-1]">
-          <div className="absolute top-[-50px] left-[-50px] w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-primary/20 md:bg-primary/15 blur-[100px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000 animate-pulse" style={{ animationDuration: '8s' }} />
-          <div className="absolute top-[20%] right-[-100px] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-primary-container/20 md:bg-primary-container/15 blur-[120px] md:blur-[160px] rounded-full dark:hidden transition-all duration-1000" />
-          <div className="hidden dark:block absolute top-[-50px] left-[-50px] w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-primary/25 md:bg-primary/15 blur-[120px] md:blur-[180px] rounded-full transition-all duration-1000" />
-          <div className="hidden dark:block absolute top-[20%] right-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/30 md:bg-primary-container/20 blur-[120px] md:blur-[160px] rounded-full transition-all duration-1000" />
-        </div>
+        <AuroraBackground preset="layout" />
 
         <ThemeProvider>
           <AuthRedirect>

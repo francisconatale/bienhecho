@@ -2,6 +2,7 @@
 
 import { FileText } from "lucide-react";
 import { useUserStore } from "@/lib/user-store";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 import { useEffect, useState } from "react";
 
 interface DashboardHeroProps {
@@ -25,17 +26,7 @@ export function DashboardHero({
   return (
     <div className="relative w-full">
       {/* Aurora Background */}
-      <div className="absolute top-0 left-0 right-0 h-[500px] md:h-[1200px] pointer-events-none overflow-hidden transition-all duration-700"
-        style={{ zIndex: -1, WebkitMaskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)' }}>
-
-        {/* Light Mode Blobs */}
-        <div className="absolute top-0 right-0 w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-primary/20 md:bg-primary/15 blur-[100px] md:blur-[160px] rounded-full -translate-y-1/4 translate-x-1/4 dark:hidden transition-all duration-700" />
-        <div className="absolute top-[100px] left-[-100px] w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-primary-container/15 md:bg-primary-container/10 blur-[120px] md:blur-[140px] rounded-full dark:hidden transition-all duration-700" />
-
-        {/* Dark Mode Blobs */}
-        <div className="hidden dark:block absolute top-[-50px] md:top-[-100px] right-[-50px] md:right-[-200px] w-[500px] md:w-[900px] h-[500px] md:h-[900px] bg-primary/25 md:bg-primary/20 blur-[120px] md:blur-[180px] rounded-full transition-all duration-700" />
-        <div className="hidden dark:block absolute top-[150px] md:top-[50px] left-[-150px] md:left-[-100px] w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-primary-container/40 md:bg-primary-container/30 blur-[130px] md:blur-[160px] rounded-full transition-all duration-700" />
-      </div>
+      <AuroraBackground preset="dashboard" />
 
       {/* Main Foreground Content */}
       <div className="relative pt-16 md:pt-24 px-5 md:px-8 lg:px-12">

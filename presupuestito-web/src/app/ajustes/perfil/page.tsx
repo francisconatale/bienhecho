@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import Link from "next/link";
-import { EditarPerfilContent } from "@/app/ajustes/perfil/components/content";
+import { ProfilePicture } from "./components/profile-picture";
+import { ProfileForm } from "./components/profile-form";
+import { SecondaryActions } from "./components/secondary-actions";
+import { DangerZone } from "./components/danger-zone";
 
 export const metadata: Metadata = {
   title: "Presupuestito - Editar Perfil",
@@ -33,7 +36,10 @@ export default function EditarPerfilPage() {
           </button>
         </div>
 
-        <EditarPerfilContent />
+        <ProfilePicture />
+        <ProfileForm />
+        <SecondaryActions />
+        <DangerZone />
       </main>
     </div>
   );
