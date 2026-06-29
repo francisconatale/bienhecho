@@ -223,17 +223,16 @@ export function MasterDetail<T>({
           {!isCollapsed && (
             <>
               <div className="flex items-center justify-between px-4 md:px-5 py-2.5 md:py-3 border-b border-outline-variant/6 bg-surface/80 md:bg-transparent">
-                <span className="text-[10px] md:text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                <span className="text-[12px] md:text-sm font-medium text-on-surface-variant/80">
                   {pagination.totalItems} {countLabel}
                 </span>
                 {hasDetail && isListExpanded && (
                   <button
                     onClick={() => setIsListExpanded(false)}
-                    className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-on-surface/5 hover:bg-on-surface/10 text-on-surface-variant transition-colors cursor-pointer active:scale-95"
-                    title="Minimizar lista"
+                    className="hidden md:flex items-center justify-center w-8 h-8 rounded-full hover:bg-on-surface/5 text-on-surface-variant transition-colors cursor-pointer active:scale-95"
+                    title="Ocultar lista"
                   >
-                    <ChevronsLeft className="w-3.5 h-3.5" />
-                    <span className="text-[10px] font-bold">Ocultar</span>
+                    <ChevronsLeft className="w-5 h-5" />
                   </button>
                 )}
               </div>

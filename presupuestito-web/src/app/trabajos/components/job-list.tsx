@@ -17,16 +17,7 @@ function formatCurrency(amount: number): string {
   return `$${amount}`;
 }
 
-function getStatusColor(estado: string): string {
-  switch (estado) {
-    case "pagado":
-      return "bg-success";
-    case "presupuestado":
-      return "bg-accent-dark";
-    default:
-      return "bg-outline";
-  }
-}
+
 
 export function JobList() {
   const searchParams = useSearchParams();
@@ -83,7 +74,7 @@ export function JobList() {
         search={search}
         onSearchChange={setSearch}
         searchPlaceholder="Filtrar trabajos..."
-        countLabel="trabajo(s)"
+        countLabel="trabajos"
         mobileTitle="Trabajos"
         mobileDescription="Gestioná tus proyectos."
         detailTitle={(job) => job.titulo}
@@ -118,20 +109,17 @@ export function JobList() {
             >
               {isSelected && <div className="hidden md:block absolute left-0 top-0 bottom-0 w-1 bg-primary shadow-[0_0_8px_var(--color-primary)]" />}
               <div className="flex items-center gap-3 md:gap-4">
-                <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors duration-300 ${
-                  isSelected ? "bg-primary/20 text-primary shadow-inner" : "bg-primary/8 text-primary/60"
+                <div className={`w-8 h-8 flex items-center justify-center shrink-0 transition-colors duration-300 ${
+                  isSelected ? "text-primary" : "text-on-surface-variant/40"
                 }`}>
-                  <Briefcase className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2} />
+                  <Briefcase className="w-5 h-5" strokeWidth={1.5} />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <div className={`font-medium text-sm md:text-base truncate transition-colors ${isSelected ? "text-primary" : "text-on-surface"}`}>{job.titulo}</div>
-                    <div className={`w-2 h-2 rounded-full shrink-0 ${getStatusColor(job.estado)}`} />
-                  </div>
-                  <div className="text-[11px] md:text-sm text-on-surface-variant truncate">{client?.nombre || "Sin cliente"}</div>
-                </div>
-                <div className="text-right shrink-0 hidden md:block">
-                  <div className="text-[10px] md:text-sm font-bold text-primary">{job.estado.replace(/_/g, " ")}</div>
+                <div className="flex-1 min-w-0 flex flex-col items-start">
+                  <div className={`font-medium text-sm md:text-base truncate transition-colors ${isSelected ? "text-primary" : "text-on-surface"}`}>{job.titulo}</div>
+                  <div className="text-[11px] md:text-sm text-on-surface-variant truncate mb-1">{client?.nombre || "Sin cliente"}</div>
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] md:text-[11px] font-medium bg-on-surface/5 text-on-surface-variant/70 capitalize">
+                    {job.estado.replace(/_/g, " ")}
+                  </span>
                 </div>
               </div>
             </button>

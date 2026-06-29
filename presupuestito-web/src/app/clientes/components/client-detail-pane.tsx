@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pencil, Trash2, Briefcase, ExternalLink, Plus } from "lucide-react";
+import { Pencil, Trash2, Plus, Phone, MapPin, Mail, Briefcase, FileText } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 import { Client } from "@/types";
 import { useClientForm } from "./use-client-form";
@@ -8,11 +8,25 @@ import { AjusteManualForm } from "./ajuste-manual-form";
 import Link from "next/link";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { cn, formatCurrency } from "@/lib/utils";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 
 export function getStatusColor(estado: string): string {
   switch (estado) {
     case "pagado":
-      return "bg-success";
+      return "bg-[#E8F5E9] text-[#2E7D32] dark:bg-[#2E7D32]/20 dark:text-[#81C784]";
+    case "presupuestado":
+      return "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400";
+    case "borrador":
+      return "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400";
+    default:
+      return "bg-surface text-on-surface-variant";
+  }
+}
+
+export function getStatusDotColor(estado: string): string {
+  switch (estado) {
+    case "pagado":
+      return "bg-[#4CAF50]";
     case "presupuestado":
       return "bg-amber-500";
     case "borrador":
@@ -39,270 +53,313 @@ export function ClientDetailPane({
   const [showAjuste, setShowAjuste] = useState(false);
   const { pushHistory } = useNavigationHistory();
   const { jobs } = useDataStore();
+  
   const clientJobs = jobs.filter((j) => j.cliente_id === client.id);
   const { saldo: deudaTotal, transacciones } = useCuentaCorriente(client.id);
 
+  const totalCargos = transacciones.filter(t => t.tipo === "cargo").reduce((acc, t) => acc + t.monto, 0);
+  const totalAbonos = transacciones.filter(t => t.tipo === "abono").reduce((acc, t) => acc + t.monto, 0);
+  const totalMovimientos = transacciones.length;
+  const totalCobrosCount = transacciones.filter(t => t.tipo === "abono").length;
+
   const handleSuccess = () => setIsEditing(false);
   const { form, onSubmit, isLoading } = useClientForm(client, handleSuccess);
-  const {
-    register,
-    formState: { errors },
-  } = form;
+  const { register, formState: { errors } } = form;
 
   return (
     <div className="flex-1 overflow-y-auto relative w-full min-h-screen">
-      <form onSubmit={onSubmit} className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
-        <div className="group relative overflow-hidden bg-surface/80 rounded-[28px] p-6 md:p-8 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+      <AuroraBackground preset="perfil" />
 
-          <div className="relative z-10 flex items-start justify-between">
-            <div className="flex items-start gap-4 md:gap-6">
-              <div className="w-12 h-12 md:w-16 md:h-16 rounded-[20px] bg-primary/10 flex items-center justify-center text-primary font-black text-xl md:text-2xl shrink-0 shadow-inner">
-                {client.nombre.charAt(0)}
-              </div>
-              <div className="flex-1 min-w-0 pt-1 cursor-default select-none">
-                {isEditing ? (
-                  <div className="space-y-2">
-                    <input
-                      type="text"
-                      {...register("nombre")}
-                      className="w-full bg-transparent border-b border-outline-variant/30 text-2xl md:text-3xl font-black text-on-surface tracking-tighter leading-none focus:outline-none focus:border-primary transition-all py-1"
-                      placeholder="Nombre del cliente"
-                      autoFocus
-                    />
+      <form onSubmit={onSubmit} className="relative z-10 px-4 py-6 md:py-8 max-w-[1200px] mx-auto flex flex-col gap-6 pb-32">
+        
+        {/* 1. Header Card */}
+        <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col md:flex-row md:items-start justify-between gap-6">
+          <div className="flex flex-col md:flex-row md:items-start gap-6 w-full">
+            <div className="w-20 h-20 rounded-[16px] bg-[#E8F5E9] text-[#2E7D32] dark:bg-[#2E7D32]/20 dark:text-[#81C784] flex items-center justify-center font-bold text-3xl shrink-0">
+              {client.nombre.charAt(0)}
+            </div>
+            
+            <div className="flex-1 min-w-0 flex flex-col gap-2">
+              {isEditing ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                  <div className="md:col-span-2 space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Nombre</label>
+                    <input type="text" {...register("nombre")} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-lg font-bold focus:border-primary focus:outline-none transition-colors" autoFocus />
                     {errors.nombre && <p className="text-xs font-bold text-error mt-1">{errors.nombre.message}</p>}
-
-                    <input
-                      type="email"
-                      {...register("email")}
-                      placeholder="Email del cliente (opcional)"
-                      className="w-full bg-transparent border-b border-outline-variant/30 text-sm font-medium text-on-surface-variant focus:outline-none focus:border-primary transition-all py-1 mt-2"
-                    />
-                    {errors.email && <p className="text-xs font-bold text-error mt-1">{errors.email.message}</p>}
                   </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Email</label>
+                    <input type="email" {...register("email")} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Teléfono</label>
+                    <input type="tel" {...register("telefono")} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors" />
+                  </div>
+                  <div className="md:col-span-2 space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Dirección</label>
+                    <input type="text" {...register("direccion")} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors" />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <h2 className="text-2xl md:text-[28px] font-bold text-on-surface tracking-tight leading-none">{client.nombre}</h2>
+                  <span className="text-[13px] text-on-surface-variant/70">
+                    Cliente desde {new Date(client.created_at).toLocaleDateString("es-AR", { month: "short", year: "numeric" })}
+                  </span>
+                  <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-2">
+                    {client.email && (
+                      <span className="flex items-center gap-2 text-[13px] text-on-surface-variant">
+                        <Mail className="w-3.5 h-3.5 opacity-60" /> {client.email}
+                      </span>
+                    )}
+                    {client.telefono && (
+                      <span className="flex items-center gap-2 text-[13px] text-on-surface-variant">
+                        <Phone className="w-3.5 h-3.5 opacity-60" /> {client.telefono}
+                      </span>
+                    )}
+                    {client.direccion && (
+                      <span className="flex items-center gap-2 text-[13px] text-on-surface-variant">
+                        <MapPin className="w-3.5 h-3.5 opacity-60" /> {client.direccion}
+                      </span>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+          
+          <div className="flex gap-2 shrink-0">
+            {isEditing ? (
+              <>
+                <button type="button" onClick={() => setIsEditing(false)} className="px-4 py-2 rounded-xl bg-on-surface/5 hover:bg-on-surface/10 text-sm font-bold transition-colors">
+                  Cancelar
+                </button>
+                <button type="submit" disabled={isLoading} className="px-5 py-2 rounded-xl bg-primary text-white hover:bg-primary-dark text-sm font-bold shadow-sm transition-all active:scale-95">
+                  {isLoading ? "..." : "Guardar"}
+                </button>
+              </>
+            ) : (
+              <>
+                <button type="button" onClick={() => setIsEditing(true)} className="w-10 h-10 flex items-center justify-center rounded-[12px] border border-outline-variant/20 dark:border-white/10 text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-colors group">
+                  <Pencil className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                </button>
+                <button type="button" onClick={() => onDelete(client)} className="w-10 h-10 flex items-center justify-center rounded-[12px] border border-outline-variant/20 dark:border-white/10 text-on-surface-variant hover:text-error hover:bg-error/5 transition-colors group">
+                  <Trash2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* 2. Top Metrics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col gap-1">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60">Balance</span>
+            <span className={cn("text-3xl font-bold tracking-tight mt-1", deudaTotal > 0 ? "text-[#EF4444]" : deudaTotal < 0 ? "text-[#22C55E]" : "text-on-surface")}>
+              {formatCurrency(Math.abs(deudaTotal))}
+            </span>
+            <div className="flex items-center gap-2 mt-4 text-[13px] text-on-surface-variant/80">
+              <div className={cn("w-2 h-2 rounded-full", deudaTotal > 0 ? "bg-[#EF4444]" : deudaTotal < 0 ? "bg-[#22C55E]" : "bg-on-surface-variant/40")} />
+              {deudaTotal > 0 ? "En deuda" : deudaTotal < 0 ? "A favor" : "Al día"}
+            </div>
+          </div>
+
+          <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col gap-1">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60">Total Facturado</span>
+            <span className="text-3xl font-bold tracking-tight mt-1 text-on-surface">
+              {formatCurrency(totalCargos)}
+            </span>
+            <div className="flex items-center gap-2 mt-4 text-[13px] text-on-surface-variant/80">
+              Histórico acumulado
+            </div>
+          </div>
+
+          <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col gap-1">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60">Total Cobrado</span>
+            <span className="text-3xl font-bold tracking-tight mt-1 text-[#22C55E]">
+              {formatCurrency(totalAbonos)}
+            </span>
+            <div className="flex items-center gap-2 mt-4 text-[13px] text-on-surface-variant/80">
+              <div className="w-2 h-2 rounded-full bg-[#22C55E]" />
+              {totalCobrosCount} cobros registrados
+            </div>
+          </div>
+        </div>
+
+        {/* 3. Main Master-Detail Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
+          
+          {/* Columna Izquierda */}
+          <div className="space-y-6">
+            
+            {/* Trabajos Activos */}
+            <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60">Trabajos Activos</h3>
+                <Link
+                  href={`/trabajos/nuevo?clienteId=${client.id}`}
+                  className="flex items-center gap-2 px-4 py-2 rounded-[12px] border border-outline-variant/30 dark:border-white/10 hover:bg-on-surface/5 transition-colors text-sm font-semibold"
+                >
+                  <Briefcase className="w-4 h-4" />
+                  Nuevo trabajo
+                </Link>
+              </div>
+
+              <div className="space-y-3">
+                {clientJobs.length > 0 ? (
+                  clientJobs.map((job) => (
+                    <Link
+                      key={job.id}
+                      href={`/trabajos/${job.id}`}
+                      onClick={() => {
+                        setLoadingJobId(job.id);
+                        pushHistory(window.location.pathname + window.location.search);
+                      }}
+                      className="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-5 bg-surface/40 dark:bg-white/[0.03] rounded-[16px] border border-outline-variant/10 dark:border-white/5 hover:bg-surface/80 dark:hover:bg-white/[0.06] transition-colors"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className={cn("w-2.5 h-2.5 rounded-full mt-1.5 shrink-0", getStatusDotColor(job.estado))} />
+                        <div className="flex flex-col items-start gap-2">
+                          <p className="text-base font-bold text-on-surface group-hover:text-primary transition-colors leading-tight">{job.titulo}</p>
+                          <span className={cn("text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md", getStatusColor(job.estado))}>
+                            {job.estado.replace(/_/g, " ")}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4 sm:ml-auto shrink-0">
+                        <span className="text-lg font-bold tracking-tight text-on-surface">
+                          {job.presupuesto > 0 ? formatCurrency(job.presupuesto) : "S/P"}
+                        </span>
+                        <div className="w-8 h-8 rounded-lg border border-outline-variant/20 dark:border-white/10 flex items-center justify-center text-on-surface-variant">
+                          {loadingJobId === job.id ? (
+                            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                          ) : (
+                            <FileText className="w-4 h-4" />
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  ))
                 ) : (
-                  <div className="group relative flex flex-col">
-                    <h2 className="text-3xl font-black text-on-surface tracking-tighter truncate leading-none cursor-default select-none">{client.nombre}</h2>
-                    <p className="text-sm font-medium text-on-surface-variant truncate mt-1.5 cursor-default select-none">{client.email || "Sin email registrado"}</p>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40 mt-1.5 cursor-default select-none">
-                      Cliente desde {new Date(client.created_at).toLocaleDateString("es-AR", { month: "long", year: "numeric" })}
-                    </p>
+                  <div className="py-8 text-center text-[13px] font-medium text-on-surface-variant/60">
+                    No hay trabajos activos.
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="hidden md:flex gap-2 shrink-0 ml-4">
-              {isEditing ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setIsEditing(false)}
-                    className="p-2.5 rounded-xl bg-on-surface/5 text-on-surface-variant hover:text-on-surface hover:bg-on-surface/10 transition-all active:scale-95"
-                    title="Cancelar"
-                  >
-                    <span className="text-xs font-bold px-1">Cancelar</span>
-                  </button>
-                  <button
-                    type="submit"
-                    data-client-save
-                    disabled={isLoading}
-                    className="p-2.5 rounded-xl bg-primary text-white hover:bg-primary-dark transition-all disabled:opacity-50 active:scale-95 flex items-center gap-1.5 shadow-md"
-                  >
-                    <span className="text-xs font-bold px-1">{isLoading ? "Guardando..." : "Guardar"}</span>
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setIsEditing(true)}
-                    className="p-2.5 rounded-xl bg-on-surface/5 text-on-surface-variant hover:text-primary hover:bg-primary/10 transition-all active:scale-95 group/btn"
-                    title="Editar información"
-                  >
-                    <Pencil className="w-4 h-4 group-hover/btn:scale-110 transition-transform" strokeWidth={2.5} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onDelete(client)}
-                    className="p-2.5 rounded-xl bg-on-surface/5 text-on-surface-variant hover:text-error hover:bg-error/10 transition-all active:scale-95 group/btn"
-                    title="Eliminar cliente"
-                  >
-                    <Trash2 className="w-4 h-4 group-hover/btn:scale-110 transition-transform" strokeWidth={2.5} />
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
+            {/* Historial de Movimientos */}
+            <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60 mb-6">Historial de Movimientos</h3>
 
-          <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 mt-6 border-t border-outline-variant/10">
-            <div className="flex flex-col gap-1.5 cursor-default select-none">
-              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">Teléfono</span>
-              {isEditing ? (
-                <input
-                  type="tel"
-                  {...register("telefono")}
-                  placeholder="+54 11..."
-                  className="w-full bg-transparent border-b border-outline-variant/30 px-0 py-0.5 text-sm font-semibold text-on-surface focus:outline-none focus:border-primary transition-all placeholder:text-on-surface-variant/30"
-                />
-              ) : (
-                <span className="text-sm font-semibold text-on-surface">{client.telefono || "—"}</span>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-1.5 cursor-default select-none">
-              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">Dirección</span>
-              {isEditing ? (
-                <input
-                  type="text"
-                  {...register("direccion")}
-                  placeholder="Av. Corrientes 1234"
-                  className="w-full bg-transparent border-b border-outline-variant/30 px-0 py-0.5 text-sm font-semibold text-on-surface focus:outline-none focus:border-primary transition-all placeholder:text-on-surface-variant/30"
-                />
-              ) : (
-                <span className="text-sm font-semibold text-on-surface truncate">{client.direccion || "—"}</span>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-1.5 cursor-default select-none">
-              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">Trabajos</span>
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm font-bold text-on-surface">{clientJobs.length}</span>
-                <Briefcase className="w-3.5 h-3.5 text-primary/60" strokeWidth={2.5} />
+              <div className="space-y-3">
+                {transacciones.length > 0 ? (
+                  transacciones.map((tx) => (
+                    <div
+                      key={tx.id}
+                      className="flex items-center justify-between gap-4 p-4 bg-surface/40 dark:bg-white/[0.03] rounded-[16px] border border-outline-variant/10 dark:border-white/5"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className={cn("w-2 h-2 rounded-full shrink-0", tx.tipo === "cargo" ? "bg-[#EF4444]" : "bg-[#22C55E]")} />
+                        <div className="flex flex-col gap-1.5">
+                          <p className="text-[14px] font-bold text-on-surface leading-none">{tx.concepto}</p>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[12px] text-on-surface-variant/70">
+                              {new Date(tx.fecha + "T00:00:00").toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric" })}
+                            </span>
+                            <span className={cn(
+                              "text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md",
+                              tx.tipo === "cargo" ? "bg-amber-100 text-amber-700 dark:bg-[#EF4444]/20 dark:text-[#EF4444]" : "bg-[#E8F5E9] text-[#2E7D32] dark:bg-[#22C55E]/20 dark:text-[#81C784]"
+                            )}>
+                              {tx.tipo === "cargo" ? "Cargo" : "Abono"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <span className={cn(
+                          "text-base font-bold tracking-tight block",
+                          tx.tipo === "cargo" ? "text-[#EF4444]" : "text-[#22C55E]"
+                        )}>
+                          {tx.tipo === "cargo" ? "+" : "-"}{formatCurrency(tx.monto)}
+                        </span>
+                        <span className="text-[11px] text-on-surface-variant/60">
+                          Saldo {formatCurrency(tx.saldo_despues)}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="py-8 text-center text-[13px] font-medium text-on-surface-variant/60">
+                    Aún no hay movimientos.
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="flex flex-col gap-1.5 cursor-default select-none">
-              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">Deuda</span>
-              <span className={cn("text-lg font-black tracking-tight leading-none mt-auto", deudaTotal > 0 ? "text-amber-600 dark:text-amber-400" : "text-primary")}>{formatCurrency(deudaTotal)}</span>
-            </div>
           </div>
-        </div>
 
-        {clientJobs.length > 0 && (
-          <div className="relative bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-5 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
-            <div className="relative z-10 flex items-center justify-between">
-              <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">Trabajos del Cliente</h3>
-              <Link
-                href={`/trabajos/nuevo?clienteId=${client.id}`}
-                className="px-3 py-1.5 rounded-[12px] text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 hover:bg-primary/20 transition-all active:scale-95 border border-primary/10"
-              >
-                Nuevo
-              </Link>
-            </div>
-            <div className="relative z-10 space-y-3">
-              {clientJobs.map((job) => (
-                <Link
-                  key={job.id}
-                  href={`/trabajos/${job.id}`}
-                  onClick={() => {
-                    setLoadingJobId(job.id);
-                    pushHistory(window.location.pathname + window.location.search);
-                  }}
-                  className="group flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 md:p-5 bg-surface dark:bg-surface/20 rounded-[20px] border border-white/10 dark:border-white/5 transition-all duration-300 hover:bg-surface/60 hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)] hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer"
-                >
-                  <div className="flex items-center gap-4 min-w-0 flex-1">
-                    <div className={`w-3 h-3 rounded-full shrink-0 ${getStatusColor(job.estado)} shadow-[0_0_12px_currentColor] opacity-80 group-hover:opacity-100 transition-opacity`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-base font-bold text-on-surface group-hover:text-primary transition-colors truncate">{job.titulo}</p>
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50 mt-1">{job.estado.replace(/_/g, " ")}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-4 md:pl-4 md:border-l border-white/10 dark:border-white/5">
-                    {job.presupuesto > 0 ? (
-                      <p className="text-lg font-black tracking-tight text-on-surface">{formatCurrency(job.presupuesto)}</p>
-                    ) : (
-                      <p className="text-sm font-semibold text-on-surface-variant/50">S/P</p>
-                    )}
-                    <div className={`w-10 h-10 rounded-full bg-on-surface/5 flex items-center justify-center transition-all shrink-0 ${
-                      loadingJobId === job.id 
-                        ? "opacity-100 bg-primary/10" 
-                        : "opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-hover:bg-primary/10 group-active:scale-95"
-                    }`}>
-                      {loadingJobId === job.id ? (
-                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <ExternalLink className="w-5 h-5 text-on-surface-variant group-hover:text-primary" />
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="relative bg-surface/80 rounded-[28px] p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-5 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
-          <div className="relative z-10 flex items-center justify-between">
-            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">Cuenta Corriente</h3>
-            <button
-              onClick={() => setShowAjuste(true)}
-              className="group flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] border border-primary/30 hover:border-primary bg-primary/10 transition-all duration-300 text-[10px] font-bold text-primary uppercase tracking-wider active:scale-95 cursor-pointer"
-            >
-              <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90 duration-300" strokeWidth={2.5} />
-              Ajuste
-            </button>
-            <span className={cn(
-              "text-lg font-black tracking-tight",
-              deudaTotal > 0 ? "text-amber-600 dark:text-amber-400" : deudaTotal < 0 ? "text-success" : "text-on-surface-variant/50"
-            )}>
-              {deudaTotal > 0 ? "Deuda" : deudaTotal < 0 ? "A favor" : "Al día"}
-              <span className="ml-2 text-xl">{formatCurrency(Math.abs(deudaTotal))}</span>
-            </span>
-          </div>
-          {showAjuste && (
-            <AjusteManualForm
-              clienteId={client.id}
-              onClose={() => setShowAjuste(false)}
-            />
-          )}
-          <div className="relative z-10 space-y-2">
-            {transacciones.length > 0 ? (
-              transacciones.map((tx) => (
-                <div
-                  key={tx.id}
-                  className="group flex items-center gap-3 p-3 md:p-4 bg-surface dark:bg-surface/20 rounded-[16px] border border-white/10 dark:border-white/5 cursor-default select-none"
-                >
-                  <div className={cn(
-                    "w-2 h-2 rounded-full shrink-0",
-                    tx.tipo === "cargo" ? "bg-amber-500" : "bg-success"
-                  )} />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-on-surface truncate">{tx.concepto}</span>
-                      {tx.origen === "manual" && (
-                        <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">Manual</span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[9px] font-medium text-on-surface-variant/50">
-                        {new Date(tx.fecha + "T00:00:00").toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" })}
-                      </span>
-                      <span className={cn(
-                        "text-[10px] font-black uppercase tracking-wider",
-                        tx.tipo === "cargo" ? "text-amber-600 dark:text-amber-400" : "text-success"
-                      )}>
-                        {tx.tipo === "cargo" ? "Cargo" : "Abono"}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <span className={cn(
-                      "text-sm font-black",
-                      tx.tipo === "cargo" ? "text-amber-600 dark:text-amber-400" : "text-success"
-                    )}>
-                      {tx.tipo === "cargo" ? "+" : "-"}${tx.monto.toLocaleString("es-AR")}
-                    </span>
-                    <div className="text-[9px] font-medium text-on-surface-variant/40 mt-0.5">
-                      Saldo: ${tx.saldo_despues.toLocaleString("es-AR")}
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="py-6 text-center cursor-default select-none">
-                <p className="text-xs font-bold text-on-surface-variant/50">Sin movimientos</p>
+          {/* Columna Derecha (Sidebar) */}
+          <div className="space-y-6 lg:sticky lg:top-8">
+            
+            {/* Balance Card */}
+            <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60 mb-2">Balance de Cuenta</span>
+              
+              <span className={cn("text-[40px] font-bold tracking-tighter leading-none mb-3", deudaTotal > 0 ? "text-[#EF4444]" : deudaTotal < 0 ? "text-[#22C55E]" : "text-on-surface")}>
+                {formatCurrency(Math.abs(deudaTotal))}
+              </span>
+              
+              <div className="flex items-center self-start">
+                <span className={cn(
+                  "text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-md flex items-center gap-1.5",
+                  deudaTotal > 0 ? "bg-amber-100 text-amber-700 dark:bg-[#EF4444]/20 dark:text-[#EF4444]" : deudaTotal < 0 ? "bg-[#E8F5E9] text-[#2E7D32] dark:bg-[#22C55E]/20 dark:text-[#81C784]" : "bg-surface text-on-surface-variant"
+                )}>
+                  <div className={cn("w-1.5 h-1.5 rounded-full", deudaTotal > 0 ? "bg-current" : deudaTotal < 0 ? "bg-current" : "bg-current")} />
+                  {deudaTotal > 0 ? "En deuda" : deudaTotal < 0 ? "A favor" : "Al día"}
+                </span>
               </div>
+
+              <div className="mt-8">
+                <button
+                  type="button"
+                  onClick={() => setShowAjuste(true)}
+                  className="w-full py-3 rounded-xl border border-outline-variant/30 dark:border-white/10 hover:bg-on-surface/5 transition-colors flex items-center justify-center gap-2 text-[13px] font-bold"
+                >
+                  <FileText className="w-4 h-4" />
+                  Ajuste manual
+                </button>
+              </div>
+            </div>
+
+            {showAjuste && (
+              <AjusteManualForm clienteId={client.id} onClose={() => setShowAjuste(false)} />
             )}
+
+            {/* Resumen Bento */}
+            <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-[24px] p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60 mb-4">Resumen</h3>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-surface/40 dark:bg-white/[0.03] rounded-[16px] p-4 flex flex-col gap-1 border border-outline-variant/10 dark:border-white/5">
+                  <span className="text-xl font-bold text-on-surface">{clientJobs.length}</span>
+                  <span className="text-[11px] text-on-surface-variant/70">Trabajos activos</span>
+                </div>
+                <div className="bg-surface/40 dark:bg-white/[0.03] rounded-[16px] p-4 flex flex-col gap-1 border border-outline-variant/10 dark:border-white/5">
+                  <span className="text-xl font-bold text-on-surface">{totalMovimientos}</span>
+                  <span className="text-[11px] text-on-surface-variant/70">Movimientos</span>
+                </div>
+                <div className="bg-surface/40 dark:bg-white/[0.03] rounded-[16px] p-4 flex flex-col gap-1 border border-outline-variant/10 dark:border-white/5">
+                  <span className="text-xl font-bold text-on-surface">{totalCobrosCount}</span>
+                  <span className="text-[11px] text-on-surface-variant/70">Cobros</span>
+                </div>
+                <div className="bg-surface/40 dark:bg-white/[0.03] rounded-[16px] p-4 flex flex-col gap-1 border border-outline-variant/10 dark:border-white/5">
+                  <span className="text-xl font-bold text-on-surface">0</span>
+                  <span className="text-[11px] text-on-surface-variant/70">Vencidos</span>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </form>
