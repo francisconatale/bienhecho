@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 import Link from "next/link";
 import { EditarPerfilContent } from "@/app/ajustes/perfil/components/content";
 
@@ -10,18 +11,7 @@ export const metadata: Metadata = {
 export default function EditarPerfilPage() {
   return (
     <div className="relative w-full min-h-screen">
-      {/* Aurora Background (difuso, inmersivo) único para Perfil */}
-      <div className="absolute top-0 left-0 right-0 h-[400px] pointer-events-none overflow-hidden"
-           style={{ zIndex: -1, WebkitMaskImage: 'linear-gradient(to bottom, black 10%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 10%, transparent 100%)' }}>
-        
-        {/* Light Mode Blobs (Centro Izquierda) */}
-        <div className="absolute top-[20px] left-[-80px] w-[300px] h-[300px] bg-indigo-500/20 blur-[120px] rounded-[100%] dark:hidden" />
-        <div className="absolute top-[10px] right-[50px] w-[200px] h-[200px] bg-primary/15 blur-[90px] rounded-full dark:hidden" />
-        
-        {/* Dark Mode Blobs (Foco superior medio e izquierdo masivo) */}
-        <div className="hidden dark:block absolute top-[0px] left-[-150px] w-[450px] h-[450px] bg-primary/30 blur-[130px] rounded-full" />
-        <div className="hidden dark:block absolute top-[-50px] right-[50px] w-[250px] h-[250px] bg-primary-container/40 blur-[110px] rounded-full" />
-      </div>
+      <AuroraBackground preset="perfil" />
 
       <main className="relative flex-1 px-5 pt-14 pb-32 max-w-3xl mx-auto w-full space-y-8">
         {/* Header Actions */}

@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { AjustesContent } from "@/app/ajustes/components/content";
+import { AuroraBackground } from "@/components/ui/aurora-background";
+import { AccountSection } from "./components/account-section";
+import { SubscriptionSection } from "./components/subscription-section";
+import { PreferencesSection } from "./components/preferences-section";
+import { AccountActionsSection } from "./components/account-actions-section";
 
 export const metadata: Metadata = {
   title: "Presupuestito - Ajustes",
@@ -9,18 +13,7 @@ export const metadata: Metadata = {
 export default function AjustesPage() {
   return (
     <div className="relative w-full min-h-screen">
-      {/* Aurora Background (difuso, inmersivo) único para Ajustes */}
-      <div className="absolute top-0 left-0 right-0 h-[400px] md:h-[1200px] pointer-events-none overflow-hidden transition-all duration-700"
-           style={{ zIndex: -1, WebkitMaskImage: 'linear-gradient(to bottom, black 10%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 10%, transparent 100%)' }}>
-        
-        {/* Light Mode Blobs (Centro alto y derecha media) */}
-        <div className="absolute top-[-150px] left-1/2 -translate-x-1/2 w-[500px] md:w-[800px] h-[400px] md:h-[600px] bg-primary/20 md:bg-primary/15 blur-[110px] md:blur-[140px] rounded-[100%] dark:hidden transition-all duration-700" />
-        <div className="absolute top-[80px] right-[-50px] w-[250px] md:w-[500px] h-[250px] md:h-[500px] bg-indigo-500/15 md:bg-indigo-500/10 blur-[100px] md:blur-[140px] rounded-full dark:hidden transition-all duration-700" />
-        
-        {/* Dark Mode Blobs (Foco superior derecho masivo y destello izquierdo) */}
-        <div className="hidden dark:block absolute top-[-150px] right-[-100px] w-[500px] md:w-[900px] h-[500px] md:h-[900px] bg-primary/25 md:bg-primary/15 blur-[130px] md:blur-[180px] rounded-full transition-all duration-700" />
-        <div className="hidden dark:block absolute top-[120px] left-[-150px] w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-primary-container/35 md:bg-primary-container/25 blur-[120px] md:blur-[160px] rounded-full transition-all duration-700" />
-      </div>
+      <AuroraBackground preset="ajustes" />
 
       <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-16 pb-32 w-full transition-all">
         <div className="mb-8 pl-1">
@@ -29,7 +22,10 @@ export default function AjustesPage() {
           </h1>
         </div>
         <div className="space-y-6">
-          <AjustesContent />
+          <AccountSection />
+          <SubscriptionSection />
+          <PreferencesSection />
+          <AccountActionsSection />
         </div>
       </main>
     </div>
