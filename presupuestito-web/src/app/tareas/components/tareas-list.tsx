@@ -2,6 +2,8 @@ import { TareasEmpty } from "./tareas-empty";
 import { PriorityTaskGroup } from "./priority-task-group";
 import { TareaItem } from "./tarea-item";
 import type { FilterType, CategoryType } from "../hooks/use-tareas";
+import { usePagination } from "@/hooks/use-pagination";
+import { PaginationButtons } from "@/components/ui/pagination-buttons";
 
 interface TareasListProps {
   groupedTasks: {
@@ -38,11 +40,19 @@ export function TareasList({ groupedTasks, categoryCounts, filter, category, set
   }
 
   const isResumen = category === "resumen";
+  
+  // Calculamos las activeTasks siempre para poder usar el hook de forma segura
+  const activeTasks = category === "alta" ? alta : category === "media" ? media : baja;
+  const pag = usePagination(activeTasks, 12);
+
+  // Resetear a pag 1 cuando se cambia la categoría
+  if (!isResumen && pag.currentPage > 1 && activeTasks.length > 0 && pag.paginatedItems.length === 0) {
+     pag.goToPage(1);
+  }
 
   // Si estamos en una vista especializada, renderizamos solo los items de esa categoría,
   // sin agrupadores extra (ya que el título de la página cumple esa función).
   if (!isResumen) {
-    const activeTasks = category === "alta" ? alta : category === "media" ? media : baja;
     
     if (activeTasks.length === 0) {
       return (
@@ -52,21 +62,23 @@ export function TareasList({ groupedTasks, categoryCounts, filter, category, set
       );
     }
 
-    if (viewMode === "board") {
-      return (
+    // Al tocar "ver más", el usuario quiere ver siempre la grilla cuadriculada
+    return (
+      <div className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {activeTasks.map(task => (
-            <TareaItem key={task.id} task={task} viewMode="list" onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
+          {pag.paginatedItems.map(task => (
+            <TareaItem key={task.id} task={task} viewMode="board" onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
           ))}
         </div>
-      );
-    }
-
-    return (
-      <div className="space-y-3">
-        {activeTasks.map(task => (
-          <TareaItem key={task.id} task={task} viewMode="list" onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
-        ))}
+        <div className="pb-8">
+          <PaginationButtons
+            currentPage={pag.currentPage}
+            totalPages={pag.totalPages}
+            totalItems={pag.totalItems}
+            pageSize={pag.pageSize}
+            onPageChange={pag.goToPage}
+          />
+        </div>
       </div>
     );
   }

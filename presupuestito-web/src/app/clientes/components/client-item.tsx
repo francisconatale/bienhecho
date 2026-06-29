@@ -16,8 +16,8 @@ export function ClientItem({ client, isSelected, onSelect }: ClientItemProps) {
   return (
     <button
       onClick={() => onSelect(client.id)}
-      className={`relative group w-full text-left px-4 md:px-5 py-4 transition-colors duration-300 transition-transform duration-300 cursor-pointer rounded-[24px] md:rounded-none border border-white/20 dark:border-white/5 md:border-0 md:border-b md:border-outline-variant/5 bg-surface dark:bg-surface/20 md:bg-transparent bg-surface/80  shadow-[0_4px_12px_rgba(0,0,0,0.02)] md:shadow-none hover:-translate-y-0.5 md:hover:translate-y-0 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] md:hover:shadow-none ${
-        isSelected ? "md:bg-primary/15 dark:md:bg-primary/25 border-primary/30 md:border-b-outline-variant/5" : "md:hover:bg-on-surface/5"
+      className={`relative group w-full text-left px-4 md:px-5 py-4 transition-colors duration-200 cursor-pointer md:rounded-none md:border-0 md:border-b md:border-outline-variant/5 md:bg-transparent md:shadow-none hover:bg-black/[0.02] dark:hover:bg-white/[0.02] md:hover:bg-on-surface/5 ${
+        isSelected ? "md:bg-primary/15 dark:md:bg-primary/25 md:border-b-outline-variant/5" : ""
       }`}
     >
       {isSelected && <div className="hidden md:block absolute left-0 top-0 bottom-0 w-1 bg-primary shadow-[0_0_8px_var(--color-primary)]" />}

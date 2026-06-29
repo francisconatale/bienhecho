@@ -99,10 +99,8 @@ export function MasterDetail<T>({
     <>
       {/* Mobile PageHeader — hide when detail is active */}
       <div className={`${hasDetail ? "hidden" : "block"} md:hidden pt-8 pb-2 px-4 relative z-10`}>
-        <div>
-          <h1 className="text-3xl font-black text-on-surface tracking-tighter">{mobileTitle}</h1>
-          {mobileDescription && <p className="text-sm font-medium text-on-surface-variant mt-1">{mobileDescription}</p>}
-        </div>
+        <h1 className="text-[34px] font-bold text-on-surface tracking-tight leading-tight">{mobileTitle}</h1>
+        {mobileDescription && <p className="text-[15px] font-medium text-on-surface-variant mt-1">{mobileDescription}</p>}
       </div>
 
       {/* Mobile Detail Back Button — shown only on mobile when a detail is selected */}
@@ -199,27 +197,57 @@ export function MasterDetail<T>({
                   {pagination.totalItems} {countLabel}
                 </span>
               </div>
-              <div className="flex-1 overflow-y-auto px-4 md:px-0 py-4 md:py-0 space-y-3 md:space-y-0">
+              <div className="flex-1 overflow-y-auto py-4 md:py-0">
                 {pagination.paginatedItems.length > 0 ? (
-                  pagination.paginatedItems.map((item) => (
-                    <div key={getItemId(item)}>
-                      {renderItem(item, selectedId === getItemId(item))}
+                  <>
+                    {/* Mobile: grouped iOS-style container */}
+                    <div className="md:hidden mx-4 bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-[24px] border border-outline-variant/20 shadow-sm overflow-hidden">
+                      {pagination.paginatedItems.map((item, index) => (
+                        <div
+                          key={getItemId(item)}
+                          className={index !== pagination.paginatedItems.length - 1 ? "border-b border-outline-variant/15" : ""}
+                        >
+                          {renderItem(item, selectedId === getItemId(item))}
+                        </div>
+                      ))}
                     </div>
-                  ))
+                    {/* Desktop: plain list */}
+                    <div className="hidden md:block">
+                      {pagination.paginatedItems.map((item) => (
+                        <div key={getItemId(item)}>
+                          {renderItem(item, selectedId === getItemId(item))}
+                        </div>
+                      ))}
+                    </div>
+                  </>
                 ) : (
                   <div className="py-8 text-center text-on-surface-variant">
                     <p className="text-xs md:text-sm">Sin resultados</p>
                   </div>
                 )}
+                {/* Pagination inside scroll — always reachable on mobile */}
+                <div className="md:hidden pb-28">
+                  <PaginationButtons
+                    currentPage={pagination.currentPage}
+                    totalPages={pagination.totalPages}
+                    totalItems={pagination.totalItems}
+                    pageSize={pagination.pageSize}
+                    onPageChange={pagination.goToPage}
+                    className="px-4 pt-2"
+                  />
+                </div>
               </div>
-              <PaginationButtons
-                currentPage={pagination.currentPage}
-                totalPages={pagination.totalPages}
-                totalItems={pagination.totalItems}
-                pageSize={pagination.pageSize}
-                onPageChange={pagination.goToPage}
-                className="px-4 md:px-5 pb-4 pt-2 md:pt-0"
-              />
+              {/* Desktop pagination: pinned at bottom of pane */}
+              <div className="hidden md:block">
+                <PaginationButtons
+                  currentPage={pagination.currentPage}
+                  totalPages={pagination.totalPages}
+                  totalItems={pagination.totalItems}
+                  pageSize={pagination.pageSize}
+                  onPageChange={pagination.goToPage}
+                  className="px-5 pb-4 pt-0"
+                />
+              </div>
             </>
           )}
         </div>

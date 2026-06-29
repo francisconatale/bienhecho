@@ -35,12 +35,9 @@ export function usePagination<T>(
     return items.slice(start, start + internalPageSize);
   }, [items, currentPage, internalPageSize]);
 
-  useEffect(() => {
-    if (itemsRef.current !== items) {
-      setCurrentPage(1);
-      itemsRef.current = items;
-    }
-  }, [items]);
+  // Eliminamos el reseteo automático por referencia porque rompía la paginación 
+  // al actualizarse el store o al memoizar el array.
+  // El useEffect de abajo ya se encarga de ajustar la página si totalPages baja.
 
   useEffect(() => {
     if (currentPage > totalPages) {

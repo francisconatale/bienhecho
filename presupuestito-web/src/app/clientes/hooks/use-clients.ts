@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useDataStore } from "@/lib/store";
 import { usePagination } from "@/hooks/use-pagination";
@@ -32,14 +32,19 @@ export function useClients() {
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  const filtered = clients.filter(
+  const filtered = useMemo(() => clients.filter(
     (c) =>
       c.nombre.toLowerCase().includes(search.toLowerCase()) ||
       c.email?.toLowerCase().includes(search.toLowerCase()) ||
       false
-  );
+  ), [clients, search]);
 
   const pag = usePagination(filtered, 10);
+
+  useEffect(() => {
+    pag.goToPage(1);
+  }, [search]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const selected = clients.find((c) => c.id === selectedId) || null;
 
   const handleDelete = (client: Client) => {
