@@ -1,18 +1,32 @@
-import { type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/utils/supabase/middleware";
 
 const publicPaths = ["/login", "/register", "/landing"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  
+  // We need to get the response and the user status from a modified updateSession,
+  // or we can just fetch the user here. But wait, updateSession handles cookies.
+  const { response, user } = await updateSession(request);
 
-  // Allow public paths
-  if (publicPaths.includes(pathname)) {
-    return await updateSession(request);
+  const isPublicPath = publicPaths.includes(pathname);
+
+  // Si no está logueado y la ruta NO es pública, mandarlo al login
+  if (!user && !isPublicPath) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
   }
 
-  // Refresh session and protect private routes
-  return await updateSession(request);
+  // Si YA está logueado y quiere entrar a /login o /register, mandarlo al dashboard
+  if (user && (pathname === "/login" || pathname === "/register")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    return NextResponse.redirect(url);
+  }
+
+  return response;
 }
 
 export const config = {

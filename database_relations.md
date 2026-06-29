@@ -40,6 +40,7 @@ El proyecto grande. Cada trabajo pertenece a un cliente y tiene presupuesto prop
 | Campo | Tipo | Nullable | Descripción |
 |-------|------|----------|-------------|
 | `id` | uuid PK | no | Identificador único |
+| `user_id` | uuid FK | no | Usuario propietario (`→ auth.users.id`) |
 | `cliente_id` | uuid FK | no | Cliente al que pertenece (`→ clientes.id`) |
 | `titulo` | string | no | Nombre descriptivo del trabajo |
 | `direccion` | string | no | Dirección donde se realiza (puede diferir del cliente) |
@@ -70,6 +71,7 @@ El proyecto grande. Cada trabajo pertenece a un cliente y tiene presupuesto prop
 | Campo | Tipo | Nullable | Descripción |
 |-------|------|----------|-------------|
 | `id` | uuid PK | no | Identificador único |
+| `user_id` | uuid FK | no | Usuario propietario (`→ auth.users.id`) |
 | `trabajo_id` | uuid FK | no | Trabajo al que pertenece (`→ trabajos.id`) |
 | `descripcion` | string | no | Qué es la tarea (ej: "Instalación de foco") |
 | `precio` | decimal | sí | Precio unitario. Si es null, NO se factura |
@@ -104,6 +106,7 @@ Instancias de trabajo en campo. Son registro interno, NO van a la factura.
 | Campo | Tipo | Nullable | Descripción |
 |-------|------|----------|-------------|
 | `id` | uuid PK | no | Identificador único |
+| `user_id` | uuid FK | no | Usuario propietario (`→ auth.users.id`) |
 | `trabajo_id` | uuid FK | no | Trabajo al que corresponde (`→ trabajos.id`) |
 | `fecha` | date | no | Día de la visita |
 | `hora_inicio` | time | no | Hora de llegada |
@@ -136,6 +139,50 @@ Tabla intermedia. Registra qué tareas se avanzaron en cada visita.
 
 ---
 
+### `task_photos`
+
+Fotos asociadas a una tarea (progreso, evidencia, etc.).
+
+| Campo | Tipo | Nullable | Descripción |
+|-------|------|----------|-------------|
+| `id` | uuid PK | no | Identificador único |
+| `user_id` | uuid FK | no | Usuario propietario (`→ auth.users.id`) |
+| `tarea_id` | uuid FK | no | Tarea a la que pertenece (`→ tareas.id`) |
+| `url` | string | no | URL pública de la imagen |
+| `descripcion` | text | sí | Descripción opcional de la foto |
+| `orden` | integer | no | Posición en la galería |
+| `created_at` | timestamp | no | Fecha de creación |
+
+---
+
+### `transacciones`
+
+Movimientos de cuenta corriente. Se generan automáticamente al emitir presupuestos o registrar cobros, pero pueden ser manuales.
+
+| Campo | Tipo | Nullable | Descripción |
+|-------|------|----------|-------------|
+| `id` | uuid PK | no | Identificador único |
+| `user_id` | uuid FK | no | Usuario propietario (`→ auth.users.id`) |
+| `cliente_id` | uuid FK | no | Cliente al que pertenece (`→ clientes.id`) |
+| `tipo` | string | no | `cargo` o `abono` |
+| `monto` | decimal | no | Monto de la transacción |
+| `concepto` | string | no | Descripción del movimiento |
+| `fecha` | date | no | Fecha de la transacción |
+| `referencia_trabajo_id` | uuid FK | sí | Trabajo relacionado (`→ trabajos.id`) |
+| `referencia_cobro_id` | uuid FK | sí | Cobro relacionado (`→ cobros.id`) |
+| `origen` | string | no | `automático` o `manual` |
+| `created_at` | timestamp | no | Fecha de creación |
+
+**Tipos** (`tipo`):
+- `cargo` — Deuda a favor del usuario (ej: emisión de presupuesto)
+- `abono` — Pago registrado (ej: cobro)
+
+**Orígenes** (`origen`):
+- `automático` — Generado por triggers del sistema
+- `manual` — Creado por el usuario directamente
+
+---
+
 ### `cobros`
 
 Registro de pagos recibidos por un trabajo.
@@ -143,6 +190,7 @@ Registro de pagos recibidos por un trabajo.
 | Campo | Tipo | Nullable | Descripción |
 |-------|------|----------|-------------|
 | `id` | uuid PK | no | Identificador único |
+| `user_id` | uuid FK | no | Usuario propietario (`→ auth.users.id`) |
 | `trabajo_id` | uuid FK | no | Trabajo al que pertenece (`→ trabajos.id`) |
 | `monto_cobrado` | decimal | no | Monto recibido |
 | `fecha_cobro` | date | no | Fecha en que se cobró |
@@ -159,6 +207,7 @@ Materiales utilizados o presupuestados para un trabajo.
 | Campo | Tipo | Nullable | Descripción |
 |-------|------|----------|-------------|
 | `id` | uuid PK | no | Identificador único |
+| `user_id` | uuid FK | no | Usuario propietario (`→ auth.users.id`) |
 | `trabajo_id` | uuid FK | no | Trabajo al que pertenece (`→ trabajos.id`) |
 | `nombre_material` | string | no | Nombre del material |
 | `cantidad` | decimal | no | Cantidad utilizada |
@@ -174,9 +223,11 @@ Materiales utilizados o presupuestados para un trabajo.
 ```
 CLIENTE (1) ──── (N) TRABAJO
 TRABAJO  (1) ──── (N) TAREA
+TAREA    (1) ──── (N) TASK_PHOTO
 TRABAJO  (1) ──── (N) VISITA
 TRABAJO  (1) ──── (N) COBRO
 TRABAJO  (1) ──── (N) MATERIAL
+CLIENTE  (1) ──── (N) TRANSACCION
 VISITA   (N) ──── (N) TAREA                      →  a través de VISITA_TAREAS
 ```
 

@@ -4,14 +4,18 @@ import { createClient } from "@/utils/supabase/client";
 export const tasksService = {
   getAll: async (): Promise<Task[]> => {
     const supabase = createClient();
-    const { data, error } = await supabase.from("tareas").select("*").order("orden", { ascending: true });
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("No authenticated user");
+    const { data, error } = await supabase.from("tareas").select("*").eq("user_id", user.id).order("orden", { ascending: true });
     if (error) throw new Error(error.message);
     return data as Task[];
   },
 
   getByJobId: async (jobId: string): Promise<Task[]> => {
     const supabase = createClient();
-    const { data, error } = await supabase.from("tareas").select("*").eq("trabajo_id", jobId).order("orden", { ascending: true });
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("No authenticated user");
+    const { data, error } = await supabase.from("tareas").select("*").eq("trabajo_id", jobId).eq("user_id", user.id).order("orden", { ascending: true });
     if (error) throw new Error(error.message);
     return data as Task[];
   },
@@ -32,14 +36,18 @@ export const tasksService = {
 
   update: async (id: string, taskData: Partial<Task>): Promise<Task> => {
     const supabase = createClient();
-    const { data, error } = await supabase.from("tareas").update(taskData).eq("id", id).select().single();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("No authenticated user");
+    const { data, error } = await supabase.from("tareas").update(taskData).eq("id", id).eq("user_id", user.id).select().single();
     if (error) throw new Error(error.message);
     return data as Task;
   },
 
   delete: async (id: string): Promise<void> => {
     const supabase = createClient();
-    const { error } = await supabase.from("tareas").delete().eq("id", id);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("No authenticated user");
+    const { error } = await supabase.from("tareas").delete().eq("id", id).eq("user_id", user.id);
     if (error) throw new Error(error.message);
   },
 
