@@ -1,13 +1,13 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/008-cuenta-corriente-cliente/plan.md
+at specs/009-dashboard-operativo-tareas/plan.md
 
 Design artifacts (Phase 1) available at:
-- specs/008-cuenta-corriente-cliente/research.md (Phase 0)
-- specs/008-cuenta-corriente-cliente/data-model.md (Phase 1)
-- specs/008-cuenta-corriente-cliente/contracts/store-interface.md (Phase 1)
-- specs/008-cuenta-corriente-cliente/quickstart.md (Phase 1)
+- specs/009-dashboard-operativo-tareas/research.md (Phase 0)
+- specs/009-dashboard-operativo-tareas/data-model.md (Phase 1)
+- specs/009-dashboard-operativo-tareas/contracts/store-interface.md (Phase 1)
+- specs/009-dashboard-operativo-tareas/quickstart.md (Phase 1)
 <!-- SPECKIT END -->
 
 ## Regla: TODO.md

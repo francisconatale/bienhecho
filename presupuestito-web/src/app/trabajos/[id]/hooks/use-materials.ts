@@ -32,6 +32,7 @@ export function useMaterials(trabajoId: string) {
       cantidad: data.cantidad,
       precio_unitario: data.precio_unitario,
       subtotal,
+      comprado: false,
     });
   };
 

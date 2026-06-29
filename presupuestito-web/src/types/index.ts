@@ -32,6 +32,8 @@ export interface Task {
   descripcion: string;
   precio: number | null;
   completada: boolean;
+  prioridad?: "alta" | "media" | "baja";
+  fecha_vencimiento?: string;
   orden: number;
 }
 
@@ -70,6 +72,7 @@ export interface Material {
   cantidad: number;
   precio_unitario: number;
   subtotal: number;
+  comprado: boolean;
   created_at: string;
 }
 

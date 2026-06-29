@@ -93,7 +93,18 @@ export const useDataStore = create<DataState>()(
     },
   ],
   visitaTareas: [],
-  materiales: [],
+  materiales: [
+    {
+      id: "m1",
+      trabajo_id: "j1",
+      nombre_material: "Cables x 100m",
+      cantidad: 2,
+      precio_unitario: 15000,
+      subtotal: 30000,
+      comprado: false,
+      created_at: new Date().toISOString(),
+    }
+  ],
   cobros: [],
   transacciones: [
     {
@@ -180,13 +191,13 @@ export const useDataStore = create<DataState>()(
     },
   ],
   tasks: [
-    { id: "t1", trabajo_id: "j1", descripcion: "Instalación eléctrica general", precio: 450000, completada: true, orden: 1 },
-    { id: "t2", trabajo_id: "j1", descripcion: "Pintura interior", precio: 320000, completada: false, orden: 2 },
-    { id: "t3", trabajo_id: "j1", descripcion: "Limpieza final", precio: null, completada: false, orden: 3 },
-    { id: "t4", trabajo_id: "j2", descripcion: "Demolición de paredes", precio: 180000, completada: false, orden: 1 },
-    { id: "t5", trabajo_id: "j2", descripcion: "Instalación hidráulica", precio: 250000, completada: false, orden: 2 },
-    { id: "t6", trabajo_id: "j3", descripcion: "Reparación de grietas", precio: 120000, completada: true, orden: 1 },
-    { id: "t7", trabajo_id: "j3", descripcion: "Pintura exterior", precio: 180000, completada: true, orden: 2 },
+    { id: "t1", trabajo_id: "j1", descripcion: "Instalación eléctrica general", precio: 450000, completada: true, prioridad: "alta", orden: 1 },
+    { id: "t2", trabajo_id: "j1", descripcion: "Pintura interior", precio: 320000, completada: false, prioridad: "media", orden: 2 },
+    { id: "t3", trabajo_id: "j1", descripcion: "Limpieza final", precio: null, completada: false, prioridad: "baja", orden: 3 },
+    { id: "t4", trabajo_id: "j2", descripcion: "Demolición de paredes", precio: 180000, completada: false, prioridad: "alta", orden: 1 },
+    { id: "t5", trabajo_id: "j2", descripcion: "Instalación hidráulica", precio: 250000, completada: false, prioridad: "media", orden: 2 },
+    { id: "t6", trabajo_id: "j3", descripcion: "Reparación de grietas", precio: 120000, completada: true, prioridad: "media", orden: 1 },
+    { id: "t7", trabajo_id: "j3", descripcion: "Pintura exterior", precio: 180000, completada: true, prioridad: "baja", orden: 2 },
   ],
 
   addClient: (clientData) => {
@@ -424,6 +435,7 @@ export const useDataStore = create<DataState>()(
     const newMaterial: Material = {
       ...materialData,
       id: crypto.randomUUID(),
+      comprado: "comprado" in materialData ? (materialData as any).comprado : false,
       created_at: new Date().toISOString(),
     };
     set((state) => ({ materiales: [...state.materiales, newMaterial] }));

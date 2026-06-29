@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useDataStore } from "@/lib/store";
-import { usePagination } from "@/hooks/use-pagination";
 
 export type FilterType = "pendientes" | "completadas";
 
@@ -19,11 +18,11 @@ export function useTareas() {
   const pendingCount = allTasks.filter((t) => !t.completada).length;
   const completedCount = allTasks.filter((t) => t.completada).length;
 
-  const filtered = allTasks.filter((t) =>
-    filter === "pendientes" ? !t.completada : t.completada
-  );
-
-  const pag = usePagination(filtered, 10);
+  // Agrupamos
+  const alta = allTasks.filter((t) => !t.completada && t.prioridad === "alta");
+  const media = allTasks.filter((t) => !t.completada && t.prioridad === "media");
+  const baja = allTasks.filter((t) => !t.completada && (!t.prioridad || t.prioridad === "baja"));
+  const completadas = allTasks.filter((t) => t.completada);
 
   const toggleTask = (taskId: string, current: boolean) => {
     updateTask(taskId, { completada: !current });
@@ -35,11 +34,6 @@ export function useTareas() {
     pendingCount,
     completedCount,
     toggleTask,
-    paginatedItems: pag.paginatedItems,
-    currentPage: pag.currentPage,
-    totalPages: pag.totalPages,
-    totalItems: pag.totalItems,
-    pageSize: pag.pageSize,
-    goToPage: pag.goToPage,
+    groupedTasks: { alta, media, baja, completadas },
   };
 }
