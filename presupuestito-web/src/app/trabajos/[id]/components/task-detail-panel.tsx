@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { ChevronLeft, Pencil, Check, CalendarDays, ClipboardList } from "lucide-react";
+import { ChevronLeft, Pencil, Check, CalendarDays, ClipboardList, Flame } from "lucide-react";
 import { useDataStore } from "@/lib/store";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { cn } from "@/lib/utils";
@@ -122,7 +122,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
             />
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8">
             <button
               onClick={() => !isEditing && updateTask(task.id, { completada: !task.completada })}
               className={cn(
@@ -150,7 +150,50 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
                   "text-xl font-bold tracking-tight transition-colors duration-300",
                   task.completada ? "text-primary" : "text-on-surface group-hover:text-primary"
                 )}>
-                  {task.completada ? "Lista y finalizada" : "En progreso"}
+                  {task.completada ? "Completada" : "En progreso"}
+                </span>
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                if (isEditing) return;
+                const next = task.prioridad === "alta" ? "baja" : task.prioridad === "media" ? "alta" : "media";
+                updateTask(task.id, { prioridad: next });
+              }}
+              className={cn(
+                "relative overflow-hidden p-5 rounded-[24px] text-left transition-[background-color,border-color,box-shadow] duration-500 flex flex-col gap-2 group select-none",
+                task.prioridad === "alta"
+                  ? "bg-orange-500/10 hover:bg-orange-500/15 border border-orange-500/20 shadow-inner"
+                  : task.prioridad === "media"
+                  ? "bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 shadow-inner"
+                  : "bg-surface/40 dark:bg-surface/10 hover:bg-surface/60 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-lg"
+              )}
+            >
+              <span className={cn(
+                "relative z-10 text-[10px] font-black uppercase tracking-[0.25em] transition-colors duration-300",
+                task.prioridad === "alta" ? "text-orange-500/70" : task.prioridad === "media" ? "text-amber-500/70" : "text-on-surface-variant/50"
+              )}>
+                Prioridad
+              </span>
+              <div className="relative z-10 flex items-center gap-3 mt-1">
+                <div
+                  className={cn(
+                    "w-7 h-7 rounded-[10px] border-[2.5px] flex items-center justify-center shrink-0 transition-all duration-300 group-active:scale-75",
+                    task.prioridad === "alta"
+                      ? "bg-orange-500 border-orange-500 shadow-[0_0_16px_rgba(249,115,22,0.4)]"
+                      : task.prioridad === "media"
+                      ? "bg-amber-500 border-amber-500 shadow-[0_0_16px_rgba(245,158,11,0.4)]"
+                      : "border-outline-variant/30 group-hover:border-orange-500/50 bg-surface/50 text-on-surface-variant/30 group-hover:text-orange-500/50"
+                  )}
+                >
+                  <Flame className={cn("w-4 h-4", task.prioridad === "alta" || task.prioridad === "media" ? "text-white" : "fill-current")} strokeWidth={task.prioridad === "alta" ? 3 : 2} />
+                </div>
+                <span className={cn(
+                  "text-xl font-bold tracking-tight transition-colors duration-300 capitalize",
+                  task.prioridad === "alta" ? "text-orange-500" : task.prioridad === "media" ? "text-amber-500" : "text-on-surface group-hover:text-orange-500"
+                )}>
+                  {task.prioridad || "Baja"}
                 </span>
               </div>
             </button>
@@ -160,12 +203,12 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
                 "relative z-10 text-[10px] font-black uppercase tracking-[0.25em]",
                 task.precio !== null ? "text-primary/70" : "text-on-surface-variant/50"
               )}>
-                {task.precio !== null ? "Línea Facturable" : "Nota Descriptiva"}
+                {task.precio !== null ? "Línea Facturable" : "Costo / Nota"}
               </span>
               <div className="relative z-10 mt-1">
                 {!isEditing ? (
                   <span className="text-2xl font-bold tracking-tight text-on-surface flex items-center gap-1.5 cursor-default select-none">
-                    {task.precio !== null ? `$${task.precio.toLocaleString("es-AR")}` : "Sin costo extra"}
+                    {task.precio !== null ? `$${task.precio.toLocaleString("es-AR")}` : "Sin costo"}
                   </span>
                 ) : (
                   <div className="relative w-full max-w-[200px]">
