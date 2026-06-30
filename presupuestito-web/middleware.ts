@@ -5,9 +5,9 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const publicPaths = ["/login", "/register", "/landing"];
 
-// ─── Proxy principal (reemplaza middleware.ts en Next.js 16) ──────────────────
+// ─── Middleware principal ───────────────────────────────────────────────────
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Guardrail: si faltan las env vars, dejar pasar sin autenticar
@@ -16,7 +16,7 @@ export async function proxy(request: NextRequest) {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     console.error(
-      "[proxy] Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY"
+      "[middleware] Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY"
     );
     return NextResponse.next({
       request: {
