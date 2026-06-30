@@ -44,7 +44,7 @@ export default function RootLayout({
                 });
               } else {
                 window.addEventListener("load", () => {
-                  navigator.serviceWorker.register("/serwist/sw.js");
+                  navigator.serviceWorker.register("/sw.js");
                 });
               }
             }
