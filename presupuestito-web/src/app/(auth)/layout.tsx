@@ -1,8 +1,22 @@
-export default function AuthLayout({
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+
+export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = await createClient();
+
+  const {
+    data: { claims },
+    error,
+  } = await supabase.auth.getClaims();
+
+  if (!error && claims?.sub) {
+    redirect("/");
+  }
+
   return (
     <>
       <div className="fixed inset-0 pointer-events-none z-[-1] opacity-[0.04] mix-blend-overlay bg-[url('/noise.svg')] bg-repeat" />
