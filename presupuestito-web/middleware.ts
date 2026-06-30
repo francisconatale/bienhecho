@@ -1,6 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
+// Forzar Node.js runtime para evitar incompatibilidades de @supabase/ssr con Edge Runtime
+export const runtime = "nodejs";
+
 // ─── Rutas públicas ───────────────────────────────────────────────────────────
 
 const publicPaths = ["/login", "/register", "/landing"];
