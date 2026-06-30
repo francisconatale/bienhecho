@@ -3,7 +3,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const publicPaths = ["/login", "/register", "/landing"];
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -11,7 +11,7 @@ export async function proxy(request: NextRequest) {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     console.error(
-      "[proxy] Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY"
+      "[middleware] Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY"
     );
     return NextResponse.next({
       request: {
@@ -48,9 +48,8 @@ export async function proxy(request: NextRequest) {
       },
     });
 
-    const {
-      data: { claims },
-    } = await supabase.auth.getClaims();
+    const { data } = await supabase.auth.getClaims();
+    const claims = data?.claims;
 
     const isPublicPath = publicPaths.includes(pathname);
     const isAuthenticated = !!claims;
@@ -67,7 +66,7 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(url);
     }
   } catch (err) {
-    console.error("[proxy] Unexpected error:", err);
+    console.error("[middleware] Unexpected error:", err);
     const isPublicPath = publicPaths.includes(pathname);
     if (!isPublicPath) {
       const url = request.nextUrl.clone();
