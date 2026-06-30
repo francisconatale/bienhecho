@@ -1,22 +1,17 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
-// ─── Rutas públicas ───────────────────────────────────────────────────────────
-
 const publicPaths = ["/login", "/register", "/landing"];
 
-// ─── Middleware principal ───────────────────────────────────────────────────
-
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Guardrail: si faltan las env vars, dejar pasar sin autenticar
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
     console.error(
-      "[middleware] Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY"
+      "[proxy] Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY"
     );
     return NextResponse.next({
       request: {
@@ -54,20 +49,19 @@ export async function middleware(request: NextRequest) {
     });
 
     const {
-      data: { user },
-    } = await supabase.auth.getUser();
+      data: { claims },
+    } = await supabase.auth.getClaims();
 
     const isPublicPath = publicPaths.includes(pathname);
+    const isAuthenticated = !!claims;
 
-    // Si no está logueado y la ruta NO es pública, mandarlo al login
-    if (!user && !isPublicPath) {
+    if (!isAuthenticated && !isPublicPath) {
       const url = request.nextUrl.clone();
       url.pathname = "/login";
       return NextResponse.redirect(url);
     }
 
-    // Si YA está logueado y quiere entrar a /login o /register, mandarlo al dashboard
-    if (user && (pathname === "/login" || pathname === "/register")) {
+    if (isAuthenticated && (pathname === "/login" || pathname === "/register")) {
       const url = request.nextUrl.clone();
       url.pathname = "/";
       return NextResponse.redirect(url);
@@ -87,13 +81,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (images, etc.)
-     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
