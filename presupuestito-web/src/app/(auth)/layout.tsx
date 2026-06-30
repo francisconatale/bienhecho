@@ -9,11 +9,11 @@ export default async function AuthLayout({
   const supabase = await createClient();
 
   const {
-    data: { claims },
+    data: { user },
     error,
-  } = await supabase.auth.getClaims();
+  } = await supabase.auth.getUser();
 
-  if (!error && claims?.sub) {
+  if (!error && user) {
     redirect("/");
   }
 
