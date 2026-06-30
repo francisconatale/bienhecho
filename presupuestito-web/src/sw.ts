@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-import { defaultCache } from "@serwist/turbopack/worker";
+import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry } from "@serwist/precaching";
 import { installSerwist } from "@serwist/sw";
 
