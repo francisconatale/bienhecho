@@ -6,7 +6,7 @@ const nextConfig = {
     '*.trycloudflare.com',
     '*.loca.lt',
   ],
-  turbopack: {},
+  serverExternalPackages: ["@supabase/ssr", "@supabase/supabase-js"],
   outputFileTracingIncludes: {
     "*": ["./node_modules/@swc/helpers/esm/**"],
   },

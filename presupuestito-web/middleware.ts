@@ -48,19 +48,19 @@ export async function middleware(request: NextRequest) {
       },
     });
 
-    const { data } = await supabase.auth.getClaims();
-    const claims = data?.claims;
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     const isPublicPath = publicPaths.includes(pathname);
-    const isAuthenticated = !!claims;
 
-    if (!isAuthenticated && !isPublicPath) {
+    if (!user && !isPublicPath) {
       const url = request.nextUrl.clone();
       url.pathname = "/login";
       return NextResponse.redirect(url);
     }
 
-    if (isAuthenticated && (pathname === "/login" || pathname === "/register")) {
+    if (user && (pathname === "/login" || pathname === "/register")) {
       const url = request.nextUrl.clone();
       url.pathname = "/";
       return NextResponse.redirect(url);
