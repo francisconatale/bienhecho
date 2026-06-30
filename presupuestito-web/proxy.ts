@@ -1,16 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
-// Forzar Node.js runtime para evitar incompatibilidades de @supabase/ssr con Edge Runtime
-export const runtime = "nodejs";
-
 // ─── Rutas públicas ───────────────────────────────────────────────────────────
 
 const publicPaths = ["/login", "/register", "/landing"];
 
-// ─── Middleware principal ─────────────────────────────────────────────────────
+// ─── Proxy principal (reemplaza middleware.ts en Next.js 16) ──────────────────
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Guardrail: si faltan las env vars, dejar pasar sin autenticar
@@ -19,7 +16,7 @@ export async function middleware(request: NextRequest) {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     console.error(
-      "[middleware] Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY"
+      "[proxy] Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY"
     );
     return NextResponse.next({ request });
   }
@@ -64,9 +61,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
   } catch (err) {
-    // Log del error real para diagnosticar en Vercel
-    console.error("[middleware] Unexpected error:", err);
-    // En caso de crash, redirigir al login si no es ruta pública
+    console.error("[proxy] Unexpected error:", err);
     const isPublicPath = publicPaths.includes(pathname);
     if (!isPublicPath) {
       const url = request.nextUrl.clone();
