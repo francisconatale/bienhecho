@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { jobsService, clientsService, visitsService } from "@/services";
 import { useProfile } from "@/hooks/use-profile";
-import { useClientAlerts } from "@/app/tareas/hooks/use-client-alerts";
+import { useClientAlerts } from "@/app/(dashboard)/tareas/hooks/use-client-alerts";
 import { useServerPagination } from "@/hooks/use-server-pagination";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { useEffect, useState, useMemo } from "react";

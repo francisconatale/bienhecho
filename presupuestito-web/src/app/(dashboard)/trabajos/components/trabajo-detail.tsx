@@ -398,6 +398,7 @@ export function TrabajoDetail({
 
                 {job.estado === "presupuestado" && (
                   <button
+                    disabled={addCobroMutation.isPending || updateJobMutation.isPending}
                     onClick={async () => {
                       const totalCobrado = cobros.reduce((s, c) => s + c.monto_cobrado, 0);
                       const restante = Math.max(0, presupuestoTotal - totalCobrado);
@@ -413,10 +414,14 @@ export function TrabajoDetail({
                       // update job state is handled via trigger, but we can do it explicitly just in case
                       await updateJobMutation.mutateAsync({ id: job.id, data: { estado: "pagado" } });
                     }}
-                    className="relative w-full py-3 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_8px_20px_rgba(61,139,110,0.15)] active:scale-[0.98]"
+                    className="relative w-full py-3 rounded-xl font-black text-[11px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_8px_20px_rgba(61,139,110,0.15)] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
                   >
-                    <CheckCircle className="w-4 h-4" strokeWidth={2.5} />
-                    Marcar como Pagado
+                    {addCobroMutation.isPending || updateJobMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.5} />
+                    ) : (
+                      <CheckCircle className="w-4 h-4" strokeWidth={2.5} />
+                    )}
+                    {addCobroMutation.isPending || updateJobMutation.isPending ? "Procesando..." : "Marcar como Pagado"}
                   </button>
                 )}
               </div>

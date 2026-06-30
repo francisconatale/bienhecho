@@ -31,6 +31,7 @@ export default function TareasPage() {
     togglePriority,
     deleteTask,
     ConfirmDialog,
+    pag,
   } = useTareas();
 
   const isSpecialized = category !== "resumen";
@@ -182,7 +183,7 @@ export default function TareasPage() {
                 onToggle={toggleTask}
                 onTogglePriority={togglePriority}
                 onDelete={deleteTask}
-                pag={pag as any}
+                pag={pag}
               />
             </div>
           </div>

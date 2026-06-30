@@ -4,7 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { tasksService } from "@/services";
-import { TaskDetailPanel } from "@/app/trabajos/[id]/components/task-detail-panel";
+import { TaskDetailPanel } from "@/app/(dashboard)/trabajos/[id]/components/task-detail-panel";
 
 interface TareaPageProps {
   params: Promise<{ id: string }>;
