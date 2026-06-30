@@ -10,12 +10,21 @@ const publicPaths = ["/login", "/register", "/landing"];
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Guardrail: si faltan las env vars, dejar pasar sin autenticar
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error(
+      "[middleware] Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY"
+    );
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  try {
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
       cookies: {
         getAll() {
           return request.cookies.getAll();
@@ -30,36 +39,39 @@ export async function middleware(request: NextRequest) {
           );
         },
       },
+    });
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const isPublicPath = publicPaths.includes(pathname);
+
+    // Si no está logueado y la ruta NO es pública, mandarlo al login
+    if (!user && !isPublicPath) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
     }
-  );
 
-  // IMPORTANT: Avoid writing any logic between createServerClient and
-  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-  // issues with users being randomly logged out.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const isPublicPath = publicPaths.includes(pathname);
-
-  // Si no está logueado y la ruta NO es pública, mandarlo al login
-  if (!user && !isPublicPath) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+    // Si YA está logueado y quiere entrar a /login o /register, mandarlo al dashboard
+    if (user && (pathname === "/login" || pathname === "/register")) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/";
+      return NextResponse.redirect(url);
+    }
+  } catch (err) {
+    // Log del error real para diagnosticar en Vercel
+    console.error("[middleware] Unexpected error:", err);
+    // En caso de crash, redirigir al login si no es ruta pública
+    const isPublicPath = publicPaths.includes(pathname);
+    if (!isPublicPath) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
   }
 
-  // Si YA está logueado y quiere entrar a /login o /register, mandarlo al dashboard
-  if (user && (pathname === "/login" || pathname === "/register")) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/";
-    return NextResponse.redirect(url);
-  }
-
-  // IMPORTANT: You must return the supabaseResponse object as it is. If you're
-  // creating a new response object with NextResponse.next() make sure to:
-  // 1. Pass the request in it, like so: NextResponse.next({ request })
-  // 2. Copy over the cookies, like so: newResponse.cookies.setAll(supabaseResponse.cookies.getAll())
   return supabaseResponse;
 }
 
