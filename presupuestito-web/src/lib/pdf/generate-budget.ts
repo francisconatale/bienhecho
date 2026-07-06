@@ -76,6 +76,7 @@ export async function generateBudgetPDF({
   const primaryColor: [number, number, number] = [21, 128, 61]; // emerald-700
   const secondaryColor: [number, number, number] = [100, 116, 139];
   const lightGreen: [number, number, number] = [236, 253, 245]; // emerald-50
+  const materialsTabColor: [number, number, number] = [116, 168, 145]; // verde musgo/salvia sutil
 
   doc.setFont("Inter", "bold");
   doc.setFontSize(22);
@@ -138,6 +139,14 @@ export async function generateBudgetPDF({
 
   y += 15;
 
+  if (tasks.length > 0) {
+    doc.setFont("Inter", "bold");
+    doc.setFontSize(10);
+    doc.setTextColor(...primaryColor);
+    doc.text("TRABAJOS Y SERVICIOS", margin, y);
+    y += 4;
+  }
+
   const tableData = tasks.map((task) => [
     task.descripcion,
     task.cantidad ? String(task.cantidad) : "1",
@@ -176,6 +185,13 @@ export async function generateBudgetPDF({
   let currentY = (doc as Parameters<typeof autoTable.default>[0] & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
 
   if (materiales && materiales.length > 0) {
+    currentY += 2;
+    doc.setFont("Inter", "bold");
+    doc.setFontSize(10);
+    doc.setTextColor(...primaryColor);
+    doc.text("MATERIALES INSUMIDOS", margin, currentY);
+    currentY += 4;
+
     const materialsData = materiales.map((m) => [
       m.nombre_material,
       `${m.cantidad}`,
@@ -190,7 +206,7 @@ export async function generateBudgetPDF({
       body: materialsData,
       theme: "grid",
       headStyles: {
-        fillColor: primaryColor,
+        fillColor: materialsTabColor,
         textColor: [255, 255, 255],
         fontStyle: "bold",
         fontSize: 9,

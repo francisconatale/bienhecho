@@ -12,8 +12,9 @@ export function useBudgetPDF() {
   const downloadPDF = async (jobId: string) => {
     const jobs = await queryClient.fetchQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
     const clients = await queryClient.fetchQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
-    const tasks = await queryClient.fetchQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
-    const materiales = await queryClient.fetchQuery({ queryKey: ["materials"], queryFn: materialsService.getAll });
+    
+    const tasks = await queryClient.fetchQuery({ queryKey: ["tasks", jobId], queryFn: () => tasksService.getByJobId(jobId) });
+    const materiales = await queryClient.fetchQuery({ queryKey: ["materials", jobId], queryFn: () => materialsService.getByJobId(jobId) });
 
     const job = jobs.find((j) => j.id === jobId);
     const client = clients.find((c) => c.id === job?.cliente_id);
@@ -23,10 +24,10 @@ export function useBudgetPDF() {
     }
 
     const jobTasks = tasks
-      .filter((t) => t.trabajo_id === jobId && t.precio !== null)
+      .filter((t) => t.precio !== null)
       .sort((a, b) => a.orden - b.orden);
 
-    const jobMateriales = materiales.filter(m => m.trabajo_id === jobId);
+    const jobMateriales = materiales;
 
     if (jobTasks.length === 0 && jobMateriales.length === 0) {
       throw new Error("No hay tareas con precio ni materiales para generar el presupuesto");
