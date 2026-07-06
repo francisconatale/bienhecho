@@ -10,6 +10,7 @@ interface PDFData {
     company?: string;
     address?: string;
     cuit?: string;
+    matricula?: string;
     trade?: string;
   };
 }
@@ -125,6 +126,11 @@ export async function generateBudgetPDF({
   doc.text(`CUIT: ${userProfile.cuit || "Consumidor Final"}`, margin, y);
   if (client.direccion) {
     doc.text(client.direccion, pageWidth / 2 + 10, y);
+  }
+
+  if (userProfile.matricula) {
+    y += 5;
+    doc.text(`Matrícula: ${userProfile.matricula}`, margin, y);
   }
 
   y += 5;

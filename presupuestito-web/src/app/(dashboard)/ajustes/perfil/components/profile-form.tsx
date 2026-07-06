@@ -16,8 +16,9 @@ export function ProfileForm() {
     mutationFn: async (formData: FormData) => {
       const nombre = formData.get("nombre") as string;
       const rubro = formData.get("rubro") as string;
-      // We don't save phone right now since it's not in the perfiles table based on 001_create_perfiles.sql
-      await profileService.upsert({ nombre, rubro });
+      const numero_matricula = formData.get("numero_matricula") as string;
+      const direccion = formData.get("direccion") as string;
+      await profileService.upsert({ nombre, rubro, numero_matricula, direccion });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
@@ -78,10 +79,11 @@ export function ProfileForm() {
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-on-surface mb-2">Teléfono</label>
+          <label className="block text-sm font-semibold text-on-surface mb-2">Número de Matrícula</label>
           <input 
-            type="tel" 
-            name="telefono"
+            type="text" 
+            name="numero_matricula"
+            defaultValue={profile?.numero_matricula || ""} 
             placeholder="Opcional" 
             className="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/20 focus:outline-none" 
           />
@@ -93,6 +95,16 @@ export function ProfileForm() {
             name="rubro"
             defaultValue={profile?.rubro || ""} 
             placeholder="Tu rubro de trabajo" 
+            className="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/20 focus:outline-none" 
+          />
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-semibold text-on-surface mb-2">Dirección para la factura</label>
+          <input 
+            type="text" 
+            name="direccion"
+            defaultValue={profile?.direccion || ""} 
+            placeholder="Ej: Av. Corrientes 1234, CABA" 
             className="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/20 focus:outline-none" 
           />
         </div>

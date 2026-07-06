@@ -4,6 +4,8 @@ export interface Profile {
   id: string;
   nombre: string;
   rubro: string | null;
+  numero_matricula: string | null;
+  direccion: string | null;
   created_at: string;
 }
 
@@ -27,7 +29,7 @@ export const profileService = {
     return data as Profile;
   },
 
-  upsert: async (profile: { nombre: string; rubro?: string }): Promise<Profile> => {
+  upsert: async (profile: { nombre: string; rubro?: string; numero_matricula?: string; direccion?: string }): Promise<Profile> => {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("No authenticated user");
@@ -45,7 +47,7 @@ export const profileService = {
     return data as Profile;
   },
 
-  update: async (updates: Partial<Pick<Profile, "nombre" | "rubro">>): Promise<Profile> => {
+  update: async (updates: Partial<Pick<Profile, "nombre" | "rubro" | "numero_matricula" | "direccion">>): Promise<Profile> => {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("No authenticated user");

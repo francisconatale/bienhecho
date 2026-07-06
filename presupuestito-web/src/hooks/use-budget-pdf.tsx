@@ -35,9 +35,10 @@ export function useBudgetPDF() {
     const userProfile = {
       name: profile?.nombre || "Prestador de Servicios",
       company: profile?.nombre || "Mi Empresa",
-      address: "Domicilio Comercial S/D",
+      address: profile?.direccion || "Domicilio Comercial S/D",
       cuit: "00-00000000-0",
-      trade: job.titulo || "Servicios Profesionales",
+      matricula: profile?.numero_matricula,
+      trade: job.titulo || profile?.rubro || "Servicios Profesionales",
     };
 
     generateBudgetPDF({
