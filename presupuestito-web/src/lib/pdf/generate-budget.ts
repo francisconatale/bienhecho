@@ -133,9 +133,7 @@ export async function generateBudgetPDF({
     doc.text(`Matrícula: ${userProfile.matricula}`, margin, y);
   }
 
-  y += 5;
-  doc.setFont("Inter", "bold");
-  doc.text(`Trabajo: ${job.titulo}`, pageWidth / 2 + 10, y);
+
 
   y += 15;
 
@@ -250,6 +248,7 @@ export async function generateBudgetPDF({
   doc.setTextColor(...secondaryColor);
   doc.text("Generado con Presupuestito", margin, footerY);
 
-  const fileName = `presupuesto-${client.nombre.replace(/\s+/g, "-").toLowerCase()}.pdf`;
+  const timestamp = Date.now();
+  const fileName = `presupuesto-${client.nombre.replace(/\s+/g, "-").toLowerCase()}-${timestamp}.pdf`;
   doc.save(fileName);
 }
