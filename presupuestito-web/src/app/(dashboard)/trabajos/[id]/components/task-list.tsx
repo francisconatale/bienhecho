@@ -51,11 +51,13 @@ export function TaskList({ jobId, isJobPaid, onSelectTask }: TaskListProps) {
   const visibleTasks = showAll ? jobTasks : jobTasks.slice(0, initialCount);
   const hasMore = !showAll && jobTasks.length > initialCount;
 
-  const handleAdd = async (data: { descripcion: string; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string }) => {
+  const handleAdd = async (data: { descripcion: string; cantidad?: number; precio_unitario?: number; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string }) => {
     try {
       await createTaskMutation.mutateAsync({
         trabajo_id: jobId,
         descripcion: data.descripcion,
+        cantidad: data.cantidad,
+        precio_unitario: data.precio_unitario,
         precio: data.precio,
         completada: false,
         orden: jobTasks.length,
