@@ -5,8 +5,22 @@ import { cn } from "@/lib/utils";
 import { CalendarDays, CheckCircle } from "lucide-react";
 
 interface TaskFormProps {
-  initialData?: { descripcion: string; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string };
-  onSave: (data: { descripcion: string; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string }) => Promise<void> | void;
+  initialData?: { 
+    descripcion: string; 
+    cantidad?: number;
+    precio_unitario?: number;
+    precio: number | null; 
+    prioridad?: "alta" | "media" | "baja"; 
+    fecha_vencimiento?: string 
+  };
+  onSave: (data: { 
+    descripcion: string; 
+    cantidad?: number;
+    precio_unitario?: number;
+    precio: number | null; 
+    prioridad?: "alta" | "media" | "baja"; 
+    fecha_vencimiento?: string 
+  }) => Promise<void> | void;
   onCancel: () => void;
   isSaving?: boolean;
 }
@@ -19,8 +33,13 @@ const PRIORIDADES = [
 
 export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: TaskFormProps) {
   const [descripcion, setDescripcion] = useState(initialData?.descripcion ?? "");
-  const [precio, setPrecio] = useState(
-    initialData?.precio !== null && initialData?.precio !== undefined
+  const [cantidad, setCantidad] = useState(
+    initialData?.cantidad ? String(initialData.cantidad) : "1"
+  );
+  const [precioUnitario, setPrecioUnitario] = useState(
+    initialData?.precio_unitario !== undefined && initialData?.precio_unitario !== null
+      ? String(initialData.precio_unitario)
+      : initialData?.precio !== null && initialData?.precio !== undefined
       ? String(initialData.precio)
       : ""
   );
@@ -30,12 +49,18 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: Ta
 
   const canSave = descripcion.trim() !== "";
 
+  const cant = cantidad !== "" ? Number(cantidad) : 1;
+  const pUnit = precioUnitario !== "" ? Number(precioUnitario) : null;
+  const precioTotal = pUnit !== null ? cant * pUnit : null;
+
   const handleSave = async () => {
     if (!canSave || isSaving) return;
     try {
       await onSave({
         descripcion: descripcion.trim(),
-        precio: precio !== "" ? Number(precio) : null,
+        cantidad: cant,
+        precio_unitario: pUnit !== null ? pUnit : undefined,
+        precio: precioTotal,
         prioridad,
         fecha_vencimiento: fechaVencimiento || undefined,
       });
@@ -93,18 +118,40 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: Ta
         />
       </div>
 
-      <div className="space-y-1.5">
-        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Cuánto cobrás</label>
-        <input
-          type="number"
-          value={precio}
-          onChange={(e) => setPrecio(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Opcional — si no ponés precio, es descriptiva"
-          min={0}
-          className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
-        />
+      <div className="flex gap-4">
+        <div className="space-y-1.5 w-1/3">
+          <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Cantidad</label>
+          <input
+            type="number"
+            value={cantidad}
+            onChange={(e) => setCantidad(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="1"
+            min={0.01}
+            step="0.01"
+            className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+          />
+        </div>
+        <div className="space-y-1.5 flex-1">
+          <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Precio Unitario</label>
+          <input
+            type="number"
+            value={precioUnitario}
+            onChange={(e) => setPrecioUnitario(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Opcional"
+            min={0}
+            className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+          />
+        </div>
       </div>
+      
+      {precioTotal !== null && (
+        <div className="flex justify-between items-center bg-on-surface/5 rounded-xl px-4 py-2 border border-outline-variant/10">
+          <span className="text-xs font-medium text-on-surface-variant">Total Calculado:</span>
+          <span className="text-sm font-black text-primary">${precioTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}</span>
+        </div>
+      )}
 
       <div className="space-y-1.5">
         <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Qué tan urgente</label>

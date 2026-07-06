@@ -1,6 +1,17 @@
 import { Task } from "@/types";
 import { createClient } from "@/utils/supabase/client";
 
+const applyDefaults = (task: any): Task => {
+  const result = { ...task };
+  if (result.cantidad === undefined || result.cantidad === null) {
+    result.cantidad = 1;
+    if (result.precio !== undefined && result.precio !== null) {
+      result.precio_unitario = result.precio;
+    }
+  }
+  return result as Task;
+};
+
 export const tasksService = {
   getAll: async (): Promise<Task[]> => {
     const supabase = createClient();
@@ -8,7 +19,7 @@ export const tasksService = {
     if (!user) throw new Error("No authenticated user");
     const { data, error } = await supabase.from("tareas").select("*").eq("user_id", user.id).order("orden", { ascending: true });
     if (error) throw new Error(error.message);
-    return data as Task[];
+    return (data as any[]).map(applyDefaults);
   },
 
   getPaginated: async (
@@ -47,7 +58,7 @@ export const tasksService = {
     if (error) throw new Error(error.message);
 
     // Flatten relations to match expected format (job, client)
-    const formatted = data.map((t: any) => ({
+    const formatted = data.map((t: any) => applyDefaults({
       ...t,
       job: t.trabajos ? { ...t.trabajos, id: t.trabajo_id } : null,
       client: t.trabajos?.clientes ? { ...t.trabajos.clientes } : null,
@@ -75,7 +86,7 @@ export const tasksService = {
       baseQuery.or("prioridad.eq.baja,prioridad.is.null")
     ]);
 
-    const formatData = (res: any) => (res.data || []).map((t: any) => ({
+    const formatData = (res: any) => (res.data || []).map((t: any) => applyDefaults({
       ...t,
       job: t.trabajos ? { ...t.trabajos, id: t.trabajo_id } : null,
       client: t.trabajos?.clientes ? { ...t.trabajos.clientes } : null,
@@ -126,7 +137,7 @@ export const tasksService = {
     if (!user) throw new Error("No authenticated user");
     const { data, error } = await supabase.from("tareas").select("*").eq("trabajo_id", jobId).eq("user_id", user.id).order("orden", { ascending: true });
     if (error) throw new Error(error.message);
-    return data as Task[];
+    return (data as any[]).map(applyDefaults);
   },
 
   create: async (taskData: Omit<Task, "id" | "user_id">): Promise<Task> => {
@@ -140,7 +151,7 @@ export const tasksService = {
       .select()
       .single();
     if (error) throw new Error(error.message);
-    return data as Task;
+    return applyDefaults(data);
   },
 
   update: async (id: string, taskData: Partial<Task>): Promise<Task> => {
@@ -149,7 +160,7 @@ export const tasksService = {
     if (!user) throw new Error("No authenticated user");
     const { data, error } = await supabase.from("tareas").update(taskData).eq("id", id).eq("user_id", user.id).select().single();
     if (error) throw new Error(error.message);
-    return data as Task;
+    return applyDefaults(data);
   },
 
   delete: async (id: string): Promise<void> => {

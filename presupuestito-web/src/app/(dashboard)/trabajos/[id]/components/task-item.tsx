@@ -42,7 +42,7 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
     await updateTaskMutation.mutateAsync({ id: task.id, data: { completada: !task.completada } });
   };
 
-  const handleSave = async (data: { descripcion: string; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string }) => {
+  const handleSave = async (data: { descripcion: string; cantidad?: number; precio_unitario?: number; precio: number | null; prioridad?: "alta" | "media" | "baja"; fecha_vencimiento?: string }) => {
     await updateTaskMutation.mutateAsync({ id: task.id, data });
     setIsEditing(false);
   };
@@ -99,18 +99,28 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
                 </span>
               )}
             </div>
-            <div className="md:hidden mt-0.5">
+            <div className="md:hidden mt-0.5 flex flex-col gap-0.5">
+              {task.cantidad && task.precio_unitario && (
+                <span className="text-[11px] font-medium text-on-surface-variant/70">
+                  {task.cantidad} x ${task.precio_unitario.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
+                </span>
+              )}
               <span className="text-[12px] font-medium text-on-surface-variant">
-                {task.precio !== null ? `$${task.precio.toLocaleString("es-AR")}` : "Sin precio"}
+                {task.precio !== null ? `$${task.precio.toLocaleString("es-AR", { minimumFractionDigits: 2 })}` : "Sin precio"}
               </span>
             </div>
           </button>
         </div>
 
         {/* Amount (Desktop) */}
-        <div className="hidden md:flex w-32 shrink-0 items-center justify-end pr-4 group-hover:opacity-0 transition-opacity">
+        <div className="hidden md:flex w-40 shrink-0 flex-col items-end justify-center pr-4 group-hover:opacity-0 transition-opacity">
+          {task.cantidad && task.precio_unitario && (
+            <span className="text-[11px] font-medium text-on-surface-variant/70">
+              {task.cantidad} x ${task.precio_unitario.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
+            </span>
+          )}
           <span className={cn("text-[14px] font-semibold tabular-nums", task.completada ? "text-on-surface-variant/40" : "text-on-surface")}>
-            {task.precio !== null ? `$${task.precio.toLocaleString("es-AR")}` : "—"}
+            {task.precio !== null ? `$${task.precio.toLocaleString("es-AR", { minimumFractionDigits: 2 })}` : "—"}
           </span>
         </div>
 
@@ -136,7 +146,7 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
       {/* Edit modal */}
       <Modal isOpen={isEditing} onClose={() => setIsEditing(false)} title="Editar tarea">
         <TaskForm
-          initialData={{ descripcion: task.descripcion, precio: task.precio, prioridad: task.prioridad, fecha_vencimiento: task.fecha_vencimiento }}
+          initialData={{ descripcion: task.descripcion, cantidad: task.cantidad, precio_unitario: task.precio_unitario, precio: task.precio, prioridad: task.prioridad, fecha_vencimiento: task.fecha_vencimiento }}
           onSave={handleSave}
           onCancel={() => setIsEditing(false)}
           isSaving={updateTaskMutation.isPending}

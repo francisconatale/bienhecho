@@ -135,13 +135,17 @@ export async function generateBudgetPDF({
 
   const tableData = tasks.map((task) => [
     task.descripcion,
+    task.cantidad ? String(task.cantidad) : "1",
+    task.precio_unitario !== undefined && task.precio_unitario !== null 
+      ? `$ ${task.precio_unitario.toLocaleString("es-AR", { minimumFractionDigits: 2 })}` 
+      : "-",
     `$ ${(task.precio ?? 0).toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
   ]);
 
   autoTable.default(doc, {
     startY: y,
     margin: { left: margin, right: margin },
-    head: [["Descripción", "Precio"]],
+    head: [["Descripción", "Cant.", "Precio Unit.", "Subtotal"]],
     body: tableData,
     theme: "grid",
     headStyles: {
@@ -159,7 +163,9 @@ export async function generateBudgetPDF({
     },
     columnStyles: {
       0: { cellWidth: "auto" },
-      1: { cellWidth: 40, halign: "right" },
+      1: { cellWidth: 15, halign: "center" },
+      2: { cellWidth: 25, halign: "right" },
+      3: { cellWidth: 35, halign: "right" },
     },
   });
 

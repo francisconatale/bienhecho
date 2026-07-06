@@ -33,9 +33,14 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
 
   const [isEditing, setIsEditing] = useState(false);
   const [descripcion, setDescripcion] = useState(task?.descripcion ?? "");
-  const [precio, setPrecio] = useState(
-    task?.precio !== null && task?.precio !== undefined ? String(task.precio) : ""
+  const [cantidad, setCantidad] = useState(task?.cantidad ? String(task.cantidad) : "1");
+  const [precioUnitario, setPrecioUnitario] = useState(
+    task?.precio_unitario !== undefined && task?.precio_unitario !== null ? String(task.precio_unitario) : task?.precio !== null && task?.precio !== undefined ? String(task.precio) : ""
   );
+
+  const cant = Number(cantidad) || 1;
+  const pUnit = precioUnitario !== "" ? Number(precioUnitario) : null;
+  const precioCalculado = pUnit !== null ? cant * pUnit : null;
 
   const taskProgresses = visitaTareas
     .filter((vt) => vt.tarea_id === taskId)
@@ -48,7 +53,8 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
 
   const hasChanges =
     descripcion !== (task?.descripcion ?? "") ||
-    (task?.precio !== null && task?.precio !== undefined ? String(task.precio) : "") !== precio;
+    (task?.cantidad ? String(task.cantidad) : "1") !== cantidad ||
+    (task?.precio_unitario !== undefined && task?.precio_unitario !== null ? String(task.precio_unitario) : task?.precio !== null && task?.precio !== undefined ? String(task.precio) : "") !== precioUnitario;
 
   const handleSave = async () => {
     if (!task) return;
@@ -56,7 +62,9 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
       id: task.id,
       data: {
         descripcion: descripcion.trim(),
-        precio: precio !== "" ? Number(precio) : null,
+        cantidad: cant,
+        precio_unitario: pUnit !== null ? pUnit : undefined,
+        precio: precioCalculado,
       }
     });
     setIsEditing(false);
@@ -65,7 +73,8 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
   const handleCancel = () => {
     if (!task) return;
     setDescripcion(task.descripcion);
-    setPrecio(task.precio !== null ? String(task.precio) : "");
+    setCantidad(task.cantidad ? String(task.cantidad) : "1");
+    setPrecioUnitario(task.precio_unitario !== undefined && task.precio_unitario !== null ? String(task.precio_unitario) : task.precio !== null ? String(task.precio) : "");
     setIsEditing(false);
   };
 
@@ -220,22 +229,44 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
               </span>
               <div className="relative z-10 mt-1">
                 {!isEditing ? (
-                  <span className="text-2xl font-bold tracking-tight text-on-surface flex items-center gap-1.5 cursor-default select-none">
-                    {task.precio !== null ? `$${task.precio.toLocaleString("es-AR")}` : "Sin costo"}
-                  </span>
-                ) : (
-                  <div className="relative w-full max-w-[200px]">
-                    <span className="absolute left-1 top-1/2 -translate-y-1/2 text-lg font-bold text-on-surface-variant/40 pointer-events-none">
-                      $
+                  <div className="flex flex-col">
+                    {task.cantidad && task.precio_unitario && (
+                      <span className="text-xs font-medium text-on-surface-variant/70">
+                        {task.cantidad} x ${task.precio_unitario.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
+                      </span>
+                    )}
+                    <span className="text-2xl font-bold tracking-tight text-on-surface flex items-center gap-1.5 cursor-default select-none">
+                      {task.precio !== null ? `$${task.precio.toLocaleString("es-AR", { minimumFractionDigits: 2 })}` : "Sin costo"}
                     </span>
-                    <input
-                      type="number"
-                      value={precio}
-                      onChange={(e) => setPrecio(e.target.value)}
-                      placeholder="0"
-                      min={0}
-                      className="w-full bg-transparent border-b-2 border-outline-variant/30 pl-6 pr-1 py-1 text-2xl font-bold text-on-surface outline-none focus:border-primary transition-all"
-                    />
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <label className="text-[10px] font-black text-on-surface-variant/50 uppercase tracking-widest block mb-1">Cant.</label>
+                        <input
+                          type="number"
+                          value={cantidad}
+                          onChange={(e) => setCantidad(e.target.value)}
+                          className="w-full bg-transparent border-b-2 border-outline-variant/30 py-1 text-lg font-bold text-on-surface outline-none focus:border-primary transition-all"
+                        />
+                      </div>
+                      <div className="flex-1 relative">
+                        <label className="text-[10px] font-black text-on-surface-variant/50 uppercase tracking-widest block mb-1">P. Unit.</label>
+                        <span className="absolute left-0 bottom-2 text-sm font-bold text-on-surface-variant/40 pointer-events-none">$</span>
+                        <input
+                          type="number"
+                          value={precioUnitario}
+                          onChange={(e) => setPrecioUnitario(e.target.value)}
+                          className="w-full bg-transparent border-b-2 border-outline-variant/30 pl-4 py-1 text-lg font-bold text-on-surface outline-none focus:border-primary transition-all"
+                        />
+                      </div>
+                    </div>
+                    {precioCalculado !== null && (
+                      <div className="text-right text-xs font-bold text-primary mt-1">
+                        Total: ${precioCalculado.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

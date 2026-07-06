@@ -2,6 +2,8 @@ export interface Task {
   id: string;
   trabajo_id: string;
   descripcion: string;
+  cantidad?: number;
+  precio_unitario?: number;
   precio: number | null;
   completada: boolean;
   orden: number;

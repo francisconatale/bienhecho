@@ -40,6 +40,8 @@ export const TaskSchema = z.object({
   user_id: z.string().uuid().optional(),
   trabajo_id: z.string(),
   descripcion: z.string().min(1, "La descripción es obligatoria"),
+  cantidad: z.number().min(0.01).optional(),
+  precio_unitario: z.number().min(0).optional(),
   precio: z.number().nullable(),
   completada: z.boolean(),
   prioridad: TaskPrioritySchema.optional(),
