@@ -51,6 +51,11 @@ async function createDocWithInter(): Promise<InstanceType<Awaited<typeof import(
   return doc;
 }
 
+/**
+ * ESTILO CORPORATIVO VERDE
+ * Layout tradicional con paleta verde bosque/esmeralda.
+ * Línea divisoria gruesa, encabezados de tabla en verde oscuro, total resaltado en caja.
+ */
 export async function generateBudgetPDF({
   client,
   job,
@@ -67,8 +72,10 @@ export async function generateBudgetPDF({
   const pageWidth = doc.internal.pageSize.getWidth();
   const margin = 20;
 
-  const primaryColor: [number, number, number] = [37, 99, 235];
+  // Verde bosque como primario, gris verdoso como secundario
+  const primaryColor: [number, number, number] = [21, 128, 61]; // emerald-700
   const secondaryColor: [number, number, number] = [100, 116, 139];
+  const lightGreen: [number, number, number] = [236, 253, 245]; // emerald-50
 
   doc.setFont("Inter", "bold");
   doc.setFontSize(22);
@@ -103,9 +110,8 @@ export async function generateBudgetPDF({
 
   doc.setFont("Inter", "bold");
   doc.setFontSize(8);
-  doc.setTextColor(...secondaryColor);
+  doc.setTextColor(...primaryColor);
   doc.text("DE", margin, y);
-
   doc.text("PARA", pageWidth / 2 + 10, y);
 
   y += 7;
@@ -123,25 +129,20 @@ export async function generateBudgetPDF({
   doc.text(client.email || "S/D", pageWidth / 2 + 10, y);
 
   y += 5;
-  doc.text(`CUIT: ${userProfile.cuit || "Consumidor Final"}`, margin, y);
+  if (userProfile.matricula) {
+    doc.text(`Matrícula: ${userProfile.matricula}`, margin, y);
+  }
   if (client.direccion) {
     doc.text(client.direccion, pageWidth / 2 + 10, y);
   }
-
-  if (userProfile.matricula) {
-    y += 5;
-    doc.text(`Matrícula: ${userProfile.matricula}`, margin, y);
-  }
-
-
 
   y += 15;
 
   const tableData = tasks.map((task) => [
     task.descripcion,
     task.cantidad ? String(task.cantidad) : "1",
-    task.precio_unitario !== undefined && task.precio_unitario !== null 
-      ? `$ ${task.precio_unitario.toLocaleString("es-AR", { minimumFractionDigits: 2 })}` 
+    task.precio_unitario !== undefined && task.precio_unitario !== null
+      ? `$ ${task.precio_unitario.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`
       : "-",
     `$ ${(task.precio ?? 0).toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
   ]);
@@ -163,10 +164,9 @@ export async function generateBudgetPDF({
       textColor: [30, 41, 59],
     },
     alternateRowStyles: {
-      fillColor: [248, 250, 252],
+      fillColor: lightGreen,
     },
     columnStyles: {
-      0: { cellWidth: "auto" },
       1: { cellWidth: 15, halign: "center" },
       2: { cellWidth: 25, halign: "right" },
       3: { cellWidth: 35, halign: "right" },
@@ -190,7 +190,7 @@ export async function generateBudgetPDF({
       body: materialsData,
       theme: "grid",
       headStyles: {
-        fillColor: secondaryColor,
+        fillColor: primaryColor,
         textColor: [255, 255, 255],
         fontStyle: "bold",
         fontSize: 9,
@@ -200,10 +200,9 @@ export async function generateBudgetPDF({
         textColor: [30, 41, 59],
       },
       alternateRowStyles: {
-        fillColor: [248, 250, 252],
+        fillColor: lightGreen,
       },
       columnStyles: {
-        0: { cellWidth: "auto" },
         1: { cellWidth: 15, halign: "center" },
         2: { cellWidth: 25, halign: "right" },
         3: { cellWidth: 35, halign: "right" },
@@ -217,13 +216,20 @@ export async function generateBudgetPDF({
   const totalMaterials = (materiales || []).reduce((acc, m) => acc + m.subtotal, 0);
   const finalTotal = totalTasks + totalMaterials;
 
+  // Separación adicional para que el total no quede tan pegado a la tabla
+  currentY += 10;
+
+  // Caja de total resaltada en verde claro
+  doc.setFillColor(...lightGreen);
+  doc.roundedRect(pageWidth - margin - 80, currentY - 8, 80, 14, 2, 2, "F");
+
   doc.setFont("Inter", "bold");
   doc.setFontSize(13);
   doc.setTextColor(...primaryColor);
-  doc.text("TOTAL", pageWidth - margin - 50, currentY);
+  doc.text("TOTAL", pageWidth - margin - 75, currentY);
   doc.text(
     `$ ${finalTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
-    pageWidth - margin,
+    pageWidth - margin - 5,
     currentY,
     { align: "right" }
   );

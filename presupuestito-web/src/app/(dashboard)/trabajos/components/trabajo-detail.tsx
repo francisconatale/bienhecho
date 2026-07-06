@@ -101,6 +101,31 @@ export function TrabajoDetail({
     setShowPdfDialog(true);
   };
 
+  const doGeneratePDF = useCallback(async (emitir: boolean) => {
+    setGeneratingAction(emitir ? "emitir" : "guardar");
+    const currentJob = jobs.find((j) => j.id === id);
+    if (!currentJob) {
+      setGeneratingAction(null);
+      return;
+    }
+    try {
+      downloadPDF(currentJob.id);
+      if (emitir && currentJob.estado !== "presupuestado") {
+        await updateJobMutation.mutateAsync({
+          id: currentJob.id,
+          data: { estado: "presupuestado" },
+        });
+      }
+      setShowPdfDialog(false);
+    } catch (error) {
+      console.error("Failed to generate PDF:", error);
+      setPdfError(error instanceof Error ? error.message : "Error al generar el PDF");
+      setShowPdfDialog(false);
+    } finally {
+      setGeneratingAction(null);
+    }
+  }, [id, downloadPDF, updateJobMutation, jobs]);
+
   const job = jobs.find((j) => j.id === id);
 
   const handleDeleteJob = useCallback(() => {
@@ -133,31 +158,6 @@ export function TrabajoDetail({
     document.addEventListener("delete-job", handleEvent);
     return () => document.removeEventListener("delete-job", handleEvent);
   }, [id, handleDeleteJob]);
-
-  const doGeneratePDF = useCallback(async (emitir: boolean) => {
-    setGeneratingAction(emitir ? "emitir" : "guardar");
-    const currentJob = jobs.find((j) => j.id === id);
-    if (!currentJob) {
-      setGeneratingAction(null);
-      return;
-    }
-    try {
-      downloadPDF(currentJob.id);
-      if (emitir && currentJob.estado !== "presupuestado") {
-        await updateJobMutation.mutateAsync({
-          id: currentJob.id,
-          data: { estado: "presupuestado" },
-        });
-      }
-      setShowPdfDialog(false);
-    } catch (error) {
-      console.error("Failed to generate PDF:", error);
-      setPdfError(error instanceof Error ? error.message : "Error al generar el PDF");
-      setShowPdfDialog(false);
-    } finally {
-      setGeneratingAction(null);
-    }
-  }, [id, downloadPDF, updateJobMutation, jobs]);
 
   const handleEmitPresupuesto = useCallback(() => {
     doGeneratePDF(true);

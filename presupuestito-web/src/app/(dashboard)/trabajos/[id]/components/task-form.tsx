@@ -45,7 +45,6 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: Ta
   );
   const [prioridad, setPrioridad] = useState<"alta" | "media" | "baja" | undefined>(initialData?.prioridad);
   const [fechaVencimiento, setFechaVencimiento] = useState(initialData?.fecha_vencimiento ?? "");
-  const [showConfirm, setShowConfirm] = useState(false);
 
   const canSave = descripcion.trim() !== "";
 
@@ -65,7 +64,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: Ta
         fecha_vencimiento: fechaVencimiento || undefined,
       });
       if (!initialData) {
-        setShowConfirm(true);
+        onCancel();
       }
     } catch {
       // error toast handled by parent
@@ -82,25 +81,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: Ta
     }
   };
 
-  if (showConfirm) {
-    return (
-      <div className="flex flex-col items-center gap-4 py-8">
-        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-          <CheckCircle className="w-9 h-9 text-primary" strokeWidth={1.5} />
-        </div>
-        <div className="text-center">
-          <p className="text-sm font-black text-on-surface">Tarea creada</p>
-          <p className="text-xs font-medium text-on-surface-variant/60 mt-1">con éxito</p>
-        </div>
-        <button
-          onClick={onCancel}
-          className="mt-2 px-8 py-2.5 rounded-xl bg-primary text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all active:scale-95"
-        >
-          Listo
-        </button>
-      </div>
-    );
-  }
+
 
   return (
     <div className="space-y-4">
