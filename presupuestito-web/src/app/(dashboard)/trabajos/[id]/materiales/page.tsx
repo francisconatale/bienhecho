@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { jobsService } from "@/services";
 import { MaterialList } from "../components/material-list";
 import { getBackUrl } from "./navigation";
+import { MaterialesSkeleton } from "@/components/ui/skeletons";
 
 interface MaterialesPageInnerProps {
   id: string;
@@ -18,8 +19,18 @@ function MaterialesPageInner({ id }: MaterialesPageInnerProps) {
   const searchParams = useSearchParams();
   const from = searchParams.get("from");
   const { popHistory } = useNavigationHistory();
-  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-  const job = jobs.find((j) => j.id === id);
+  const { data: job, isLoading } = useQuery({
+    queryKey: ["job", id],
+    queryFn: () => jobsService.getById(id),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[40vh] bg-transparent">
+        <div className="w-10 h-10 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
+      </div>
+    );
+  }
 
   if (!job) {
     notFound();
@@ -70,7 +81,7 @@ function MaterialesPageInner({ id }: MaterialesPageInnerProps) {
 export default function MaterialesPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
   return (
-    <Suspense fallback={<div className="min-h-screen bg-transparent" />}>
+    <Suspense fallback={<MaterialesSkeleton />}>
       <MaterialesPageInner id={id} />
     </Suspense>
   );

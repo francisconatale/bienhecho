@@ -10,7 +10,7 @@ export function RecentActivity() {
   const [page, setPage] = useState(1);
   const pageSize = 5;
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["jobs", "paginated", page, pageSize, ""],
     queryFn: () => jobsService.getPaginated(page, pageSize, ""),
   });
@@ -27,13 +27,27 @@ export function RecentActivity() {
     paginatedItems: jobs as any[],
   };
 
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
+  if (isLoading) {
+    return (
+      <section className="transition-all w-full flex flex-col h-full">
+        <div className="flex items-center justify-between mb-3 px-1">
+          <div className="w-32 h-3 bg-outline-variant/10 rounded animate-pulse" />
+        </div>
+        <div className="flex-1 flex flex-col bg-surface/60 backdrop-blur-2xl rounded-xl shadow-sm border border-outline-variant/20 overflow-hidden">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex items-center gap-3 p-4 md:p-5 border-b border-outline-variant/5 last:border-0">
+              <div className="w-10 h-10 rounded-xl bg-outline-variant/10 animate-pulse shrink-0" />
+              <div className="flex-1 space-y-1.5">
+                <div className="w-2/3 h-3.5 bg-outline-variant/10 rounded animate-pulse" />
+                <div className="w-1/3 h-2.5 bg-outline-variant/10 rounded animate-pulse" />
+              </div>
+              <div className="w-14 h-4 bg-outline-variant/10 rounded animate-pulse" />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="transition-all w-full flex flex-col h-full">

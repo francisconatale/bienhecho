@@ -6,6 +6,7 @@ import { useProfile } from "@/hooks/use-profile";
 import { useClientAlerts } from "@/app/(dashboard)/tareas/hooks/use-client-alerts";
 import { useServerPagination } from "@/hooks/use-server-pagination";
 import { DataTable, type Column } from "@/components/ui/data-table";
+import { DashboardSkeleton } from "@/components/ui/skeletons";
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -20,27 +21,23 @@ import {
 } from "lucide-react";
 
 export default function DashboardPage() {
-  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-  const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
-  const { data: visits = [] } = useQuery({ queryKey: ["visits"], queryFn: visitsService.getAll });
+  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
+  const { data: visits = [], isLoading: isLoadingVisits } = useQuery({ queryKey: ["visits"], queryFn: visitsService.getAll });
   
   const [page, setPage] = useState(1);
   const pageSize = 5;
-  const { data: paginatedData } = useQuery({
+  const { data: paginatedData, isLoading: isLoadingPaginated } = useQuery({
     queryKey: ["jobs", "paginated", page, pageSize, ""],
     queryFn: () => jobsService.getPaginated(page, pageSize, ""),
   });
 
   const { profile } = useProfile();
   const { alerts } = useClientAlerts();
-  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const displayName = mounted ? (profile?.nombre || "Francisco") : "Francisco";
+  const isLoading = isLoadingJobs || isLoadingClients || isLoadingVisits || isLoadingPaginated;
+  const displayName = profile?.nombre || "Francisco";
 
   const totalItems = paginatedData?.total || 0;
   const serverPag = useServerPagination(totalItems, pageSize);
@@ -73,7 +70,9 @@ export default function DashboardPage() {
     [jobs]
   );
 
-  if (!mounted) return null;
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
 
   // ─── Reusable sub-components ────────────────────────────────────────────────
 

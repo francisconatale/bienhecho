@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import Link from "next/link";
 import { ProfileLayout } from "./components/profile-layout";
@@ -7,6 +8,24 @@ export const metadata: Metadata = {
   title: "Presupuestito - Editar Perfil",
   description: "Modificá los datos de tu cuenta personal y empresa",
 };
+
+function ProfileFallback() {
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-center">
+        <div className="w-24 h-24 rounded-full bg-outline-variant/10 animate-pulse" />
+      </div>
+      <div className="space-y-4">
+        {[1, 2, 3].map((_, i) => (
+          <div key={i} className="space-y-1.5">
+            <div className="w-24 h-3 bg-outline-variant/10 rounded animate-pulse" />
+            <div className="w-full h-10 bg-outline-variant/10 rounded-lg animate-pulse" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function EditarPerfilPage() {
   return (
@@ -34,7 +53,9 @@ export default function EditarPerfilPage() {
           </button>
         </div>
 
-        <ProfileLayout />
+        <Suspense fallback={<ProfileFallback />}>
+          <ProfileLayout />
+        </Suspense>
       </main>
     </div>
   );

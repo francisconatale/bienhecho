@@ -7,6 +7,7 @@ import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { useQuery } from "@tanstack/react-query";
 import { jobsService } from "@/services";
 import { PaymentsDashboard } from "../components/payments-dashboard";
+import { PagosSkeleton } from "@/components/ui/skeletons";
 
 interface PagosPageProps {
   params: Promise<{ id: string }>;
@@ -16,8 +17,14 @@ export default function PagosPage({ params }: PagosPageProps) {
   const { id } = React.use(params);
   const router = useRouter();
   const { popHistory } = useNavigationHistory();
-  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-  const job = jobs.find((j) => j.id === id);
+  const { data: job, isLoading } = useQuery({
+    queryKey: ["job", id],
+    queryFn: () => jobsService.getById(id),
+  });
+
+  if (isLoading) {
+    return <PagosSkeleton />;
+  }
 
   if (!job) {
     notFound();

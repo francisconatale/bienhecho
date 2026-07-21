@@ -9,11 +9,32 @@ import { useAgenda } from "./hooks/use-agenda";
 import { AgendaCalendar } from "./components/agenda-calendar";
 import { AgendaFilters } from "./components/agenda-filters";
 import { VisitList } from "./components/visit-list";
-import { VisitForm } from "./components/visit-form";
-import { SmartSuggestions } from "./components/smart-suggestions";
 import { StatsCards } from "./components/stats-cards";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { SuccessModal } from "@/components/ui/success-modal";
+import dynamic from "next/dynamic";
+
+const SmartSuggestions = dynamic(
+  () => import("./components/smart-suggestions").then((m) => m.SmartSuggestions),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="bg-surface/60 backdrop-blur-xl rounded-2xl border border-outline-variant/15 p-5 shadow-sm">
+        <div className="w-40 h-5 bg-outline-variant/10 rounded animate-pulse mb-4" />
+        <div className="flex gap-3">
+          {[1, 2].map((i) => (
+            <div key={i} className="flex-1 h-20 bg-outline-variant/8 rounded-xl animate-pulse" />
+          ))}
+        </div>
+      </div>
+    ),
+  }
+);
+
+const VisitForm = dynamic(
+  () => import("./components/visit-form").then((m) => m.VisitForm),
+  { ssr: false }
+);
 
 export default function AgendaPage() {
   const { state, actions } = useAgenda();

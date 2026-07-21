@@ -5,18 +5,15 @@ import { PaginationButtons } from "@/components/ui/pagination-buttons";
 import { CalendarDays, ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { visitsService, jobsService, clientsService } from "@/services";
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 
 export function UpcomingVisits() {
-  const { data: visits = [] } = useQuery({ queryKey: ["visits"], queryFn: visitsService.getAll });
-  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-  const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
-  const [mounted, setMounted] = useState(false);
+  const { data: visits = [], isLoading: isLoadingVisits } = useQuery({ queryKey: ["visits"], queryFn: visitsService.getAll });
+  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const isLoading = isLoadingVisits || isLoadingJobs || isLoadingClients;
 
   const sortedVisits = useMemo(() => {
     const today = new Date();
@@ -34,7 +31,27 @@ export function UpcomingVisits() {
 
   const pag = usePagination(sortedVisits, 5);
 
-  if (!mounted) return null;
+  if (isLoading) {
+    return (
+      <section className="transition-all w-full flex flex-col h-full">
+        <div className="flex items-center justify-between mb-3 px-1">
+          <div className="w-32 h-3 bg-outline-variant/10 rounded animate-pulse" />
+        </div>
+        <div className="flex-1 flex flex-col bg-surface/60 backdrop-blur-2xl rounded-xl shadow-sm border border-outline-variant/20 overflow-hidden">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex items-center gap-3 p-4 md:p-5 border-b border-outline-variant/5 last:border-0">
+              <div className="w-10 h-10 rounded-xl bg-outline-variant/10 animate-pulse shrink-0" />
+              <div className="flex-1 space-y-1.5">
+                <div className="w-2/3 h-3.5 bg-outline-variant/10 rounded animate-pulse" />
+                <div className="w-1/3 h-2.5 bg-outline-variant/10 rounded animate-pulse" />
+              </div>
+              <div className="w-16 h-3 bg-outline-variant/10 rounded animate-pulse" />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   if (pag.paginatedItems.length === 0) {
     return (

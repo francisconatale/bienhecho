@@ -2,6 +2,7 @@
 
 import React, { Suspense } from "react";
 import { TrabajoDetail } from "../components/trabajo-detail";
+import { TrabajoDetailSkeleton } from "@/components/ui/skeletons";
 
 interface TrabajoPageProps {
   params: Promise<{ id: string }>;
@@ -10,7 +11,7 @@ interface TrabajoPageProps {
 export default function TrabajoPage({ params }: TrabajoPageProps) {
   const { id } = React.use(params);
   return (
-    <Suspense fallback={<div className="flex-1 min-h-screen bg-transparent" />}>
+    <Suspense fallback={<TrabajoDetailSkeleton />}>
       <TrabajoDetail id={id} />
     </Suspense>
   );

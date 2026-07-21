@@ -19,7 +19,27 @@ import { cn } from "@/lib/utils";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { MobilePageHeader } from "@/components/ui/mobile-page-header";
 import { AuroraBackground } from "@/components/ui/aurora-background";
-import { TaskDetailPanel } from "../[id]/components/task-detail-panel";
+import dynamic from "next/dynamic";
+
+const TaskDetailPanel = dynamic(
+  () => import("../[id]/components/task-detail-panel").then((m) => m.TaskDetailPanel),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="bg-surface/60 backdrop-blur-xl rounded-2xl border border-outline-variant/15 p-6 shadow-sm">
+        <div className="w-40 h-5 bg-outline-variant/10 rounded animate-pulse mb-4" />
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-outline-variant/10 animate-pulse" />
+              <div className="flex-1 h-3 bg-outline-variant/10 rounded animate-pulse" />
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
+  }
+);
 
 export function TrabajoDetail({
   id,

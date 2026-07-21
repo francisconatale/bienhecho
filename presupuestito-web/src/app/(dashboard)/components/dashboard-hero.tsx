@@ -2,7 +2,6 @@
 
 import { FileText } from "lucide-react";
 import { useProfile } from "@/hooks/use-profile";
-import { useEffect, useState } from "react";
 
 interface DashboardHeroProps {
   name?: string;
@@ -13,14 +12,9 @@ export function DashboardHero({
   name,
   activeBudgets = 12,
 }: DashboardHeroProps) {
-  const { profile } = useProfile();
-  const [mounted, setMounted] = useState(false);
+  const { profile, isLoading } = useProfile();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const displayName = name || (mounted ? profile?.nombre : null) || "Francisco";
+  const displayName = name || profile?.nombre || "Francisco";
 
   return (
     <div className="relative w-full pt-4 pb-2 md:pt-8 md:pb-4">

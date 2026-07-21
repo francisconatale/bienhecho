@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { ChevronLeft } from "lucide-react";
 import { notFound, useRouter } from "next/navigation";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
@@ -13,8 +13,31 @@ import { TransaccionesList } from "./components/transacciones-list";
 export function CuentaCorrientePageClient({ id }: { id: string }) {
   const router = useRouter();
   const { popHistory } = useNavigationHistory();
-  const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
-  const client = clients.find((c) => c.id === id);
+  const { data: client, isLoading } = useQuery({
+    queryKey: ["client", id],
+    queryFn: () => clientsService.getById(id),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="relative w-full min-h-screen bg-transparent">
+        <AuroraBackground preset="perfil" />
+        <main className="relative z-10 flex-1 px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-12 max-w-[1200px] mx-auto w-full space-y-6">
+          <div className="space-y-2">
+            <div className="w-56 h-10 bg-outline-variant/10 rounded-xl animate-pulse" />
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-surface/60 backdrop-blur-xl rounded-xl border border-outline-variant/15 p-4">
+                <div className="w-16 h-3 bg-outline-variant/10 rounded animate-pulse mb-2" />
+                <div className="w-20 h-7 bg-outline-variant/10 rounded animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   if (!client) {
     notFound();
@@ -53,10 +76,37 @@ export function CuentaCorrientePageClient({ id }: { id: string }) {
         </div>
 
         <div className="space-y-6 relative">
-          <MetricasCuenta clienteId={client.id} />
+          <Suspense fallback={
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-surface/60 backdrop-blur-xl rounded-xl border border-outline-variant/15 p-4">
+                  <div className="w-16 h-3 bg-outline-variant/10 rounded animate-pulse mb-2" />
+                  <div className="w-20 h-7 bg-outline-variant/10 rounded animate-pulse" />
+                </div>
+              ))}
+            </div>
+          }>
+            <MetricasCuenta clienteId={client.id} />
+          </Suspense>
           
           <div className="grid grid-cols-1 gap-6">
-            <TransaccionesList clienteId={client.id} />
+            <Suspense fallback={
+              <div className="bg-surface/60 backdrop-blur-xl rounded-xl border border-outline-variant/15 p-5 shadow-sm">
+                <div className="w-40 h-5 bg-outline-variant/10 rounded animate-pulse mb-4" />
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center gap-3 py-3 border-b border-outline-variant/5 last:border-0">
+                    <div className="w-10 h-10 rounded-full bg-outline-variant/10 animate-pulse shrink-0" />
+                    <div className="flex-1 space-y-1.5">
+                      <div className="w-2/3 h-3.5 bg-outline-variant/10 rounded animate-pulse" />
+                      <div className="w-1/3 h-2.5 bg-outline-variant/10 rounded animate-pulse" />
+                    </div>
+                    <div className="w-20 h-5 bg-outline-variant/10 rounded animate-pulse" />
+                  </div>
+                ))}
+              </div>
+            }>
+              <TransaccionesList clienteId={client.id} />
+            </Suspense>
           </div>
         </div>
       </main>

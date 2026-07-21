@@ -1,21 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { useTareas } from "./hooks/use-tareas";
 import { TareasFilter } from "./components/tareas-filter";
 import { TareasList } from "./components/tareas-list";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { ArrowLeft, LayoutList, LayoutGrid } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { TareasSkeletonContent } from "@/components/ui/skeletons";
 
 export default function TareasPage() {
   const [viewMode, setViewMode] = useState<"list" | "board">("list");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const {
     isLoading,
@@ -126,13 +121,8 @@ export default function TareasPage() {
           </div>
         </div>
 
-        {!mounted || isLoading ? (
-          <div className="flex flex-col items-center justify-center min-h-[40vh] w-full">
-            <LoadingSpinner size={48} />
-            <p className="text-on-surface-variant mt-6 text-sm font-bold tracking-widest uppercase animate-pulse">
-              Obteniendo tareas...
-            </p>
-          </div>
+        {isLoading ? (
+          <TareasSkeletonContent />
         ) : (
           <div className={cn("flex flex-col w-full animate-in fade-in slide-in-from-bottom-2 duration-500", isSpecialized ? "px-4 md:px-0" : "")}>
             <div className="space-y-6">
