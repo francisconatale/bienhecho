@@ -86,6 +86,10 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl pl-12 pr-6 py-4 text-base font-semibold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
                 />
+              <div className="flex justify-end">
+                <Link href="/recover-password" className="text-xs font-bold text-primary hover:underline">
+                  ¿Olvidaste tu contraseña?
+                </Link>
               </div>
             </div>
           </div>
