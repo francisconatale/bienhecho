@@ -111,14 +111,9 @@ export async function generateBudgetPDF({
   let textX = margin;
   if (logoBase64 && logoFormat) {
     // Draw logo in the header
-    // The logo will be drawn at left margin, centered vertically in the header
-    const maxLogoHeight = 25;
-    const maxLogoWidth = 40;
-    
-    // We assume a square logo for now, or we can just pass width=height.
-    // Let's use 25x25 for simplicity, or we can get actual dimensions if needed.
-    doc.addImage(logoBase64, logoFormat, margin, (headerHeight - 20) / 2, 20, 20);
-    textX = margin + 25;
+    // The logo will be drawn in the center horizontally, centered vertically in the header
+    const logoSize = 20;
+    doc.addImage(logoBase64, logoFormat, (pageWidth - logoSize) / 2, (headerHeight - logoSize) / 2, logoSize, logoSize);
   }
 
   doc.setFont("Inter", "bold");

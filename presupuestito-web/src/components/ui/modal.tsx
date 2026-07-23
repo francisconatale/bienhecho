@@ -83,7 +83,7 @@ export function Modal({ isOpen, onClose, title, children, position = "auto" }: M
           "relative w-full max-h-[95dvh] bg-surface/95 dark:bg-surface/90 backdrop-blur-xl shadow-2xl flex flex-col " +
           (position === "center"
             ? "rounded-3xl border border-outline-variant/15 animate-in fade-in zoom-in-95 duration-200 max-w-lg max-h-[85vh] m-4 sm:m-0"
-            : "rounded-t-[28px] rounded-b-none sm:rounded-3xl border-t sm:border border-outline-variant/15 animate-in slide-in-from-bottom-full sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 sm:duration-200 sm:max-w-lg sm:max-h-[85vh]")
+            : "rounded-t-[28px] rounded-b-none sm:rounded-3xl border-t sm:border border-outline-variant/15 animate-in fade-in-0 slide-in-from-bottom-[100%] sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 sm:duration-200 sm:max-w-lg sm:max-h-[85vh]")
         }
       >
         {position !== "center" && (
