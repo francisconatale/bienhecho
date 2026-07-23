@@ -177,7 +177,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
               {job.estado !== "pagado" && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-primary hover:bg-primary/10 transition-all hidden md:flex opacity-0 group-hover:opacity-100 active:scale-95 shrink-0 cursor-pointer"
+                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-primary hover:bg-primary/10 transition-all hidden md:flex active:scale-95 shrink-0 cursor-pointer"
                   title="Editar información del trabajo"
                 >
                   <Pencil className="w-4 h-4" />
@@ -186,7 +186,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
               {job.estado === "borrador" && (
                 <button
                   onClick={() => document.dispatchEvent(new CustomEvent('delete-job', { detail: job.id }))}
-                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-red-500 hover:bg-red-500/10 transition-all hidden md:flex opacity-0 group-hover:opacity-100 active:scale-95 shrink-0 cursor-pointer"
+                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-red-500 hover:bg-red-500/10 transition-all hidden md:flex active:scale-95 shrink-0 cursor-pointer"
                   title="Eliminar trabajo"
                 >
                   <Trash2 className="w-4 h-4" />
