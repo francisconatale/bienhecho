@@ -112,8 +112,21 @@ export async function generateBudgetPDF({
   if (logoBase64 && logoFormat) {
     // Draw logo in the header
     // The logo will be drawn in the center horizontally, centered vertically in the header
-    const logoSize = 20;
-    doc.addImage(logoBase64, logoFormat, (pageWidth - logoSize) / 2, (headerHeight - logoSize) / 2, logoSize, logoSize);
+    try {
+      const props = doc.getImageProperties(logoBase64);
+      const maxWidth = 40; // Max width in mm
+      const maxHeight = 20; // Max height in mm
+      
+      const ratio = Math.min(maxWidth / props.width, maxHeight / props.height);
+      const finalWidth = props.width * ratio;
+      const finalHeight = props.height * ratio;
+
+      doc.addImage(logoBase64, logoFormat, (pageWidth - finalWidth) / 2, (headerHeight - finalHeight) / 2, finalWidth, finalHeight);
+    } catch (e) {
+      // Fallback in case getImageProperties fails
+      const logoSize = 20;
+      doc.addImage(logoBase64, logoFormat, (pageWidth - logoSize) / 2, (headerHeight - logoSize) / 2, logoSize, logoSize);
+    }
   }
 
   doc.setFont("Inter", "bold");
