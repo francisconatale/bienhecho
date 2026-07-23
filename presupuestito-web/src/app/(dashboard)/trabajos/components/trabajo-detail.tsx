@@ -172,20 +172,25 @@ export function TrabajoDetail({
       {!isEmbedded && (
         <>
           <AuroraBackground preset="trabajo" />
-
-          {!selectedTaskId && (
-            <MobilePageHeader
-              onBack={() => router.push(popHistory(backDest))}
-              isEditing={isHeaderEditing}
-              hasChanges={headerHasChanges}
-              onEditStart={job.estado !== "pagado" ? () => setIsHeaderEditing(true) : undefined}
-              onCancel={() => setIsHeaderEditing(false)}
-              onSave={() => {
-                document.querySelector<HTMLButtonElement>('[data-job-header-save]')?.click();
-              }}
-            />
-          )}
         </>
+      )}
+      
+      {/* Show Aurora on mobile even if embedded in MasterDetail */}
+      {isEmbedded && (
+        <AuroraBackground preset="trabajo" className="md:hidden" />
+      )}
+
+      {!isEmbedded && !selectedTaskId && (
+        <MobilePageHeader
+          onBack={() => router.push(popHistory(backDest))}
+          isEditing={isHeaderEditing}
+          hasChanges={headerHasChanges}
+          onEditStart={job.estado !== "pagado" ? () => setIsHeaderEditing(true) : undefined}
+          onCancel={() => setIsHeaderEditing(false)}
+          onSave={() => {
+            document.querySelector<HTMLButtonElement>('[data-job-header-save]')?.click();
+          }}
+        />
       )}
 
       {/* Task detail overlay (mobile) */}
@@ -203,12 +208,12 @@ export function TrabajoDetail({
         "relative flex-1 w-full mx-auto",
         selectedTaskId ? "hidden md:block" : "",
         isEmbedded 
-          ? "px-4 pt-28 pb-28 md:pt-6 md:px-8 max-w-full" 
-          : "px-4 pt-28 pb-28 md:px-8 md:pt-8 md:pb-12 max-w-7xl md:mt-0"
+          ? "px-4 pt-24 pb-28 md:pt-6 md:px-8 max-w-full" 
+          : "px-4 pt-24 pb-28 md:px-8 md:pt-8 md:pb-12 max-w-[1400px] md:mt-0"
       )}>
         <div className={cn(
-          "flex flex-col gap-4 md:gap-6",
-          selectedTaskId ? "lg:grid lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] lg:gap-6 xl:gap-10 items-start" : "lg:grid items-start",
+          "flex flex-col gap-3 md:gap-6",
+          selectedTaskId ? "lg:grid lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] lg:gap-6 xl:gap-10 lg:items-start" : "lg:grid lg:items-start",
           !selectedTaskId && (isEmbedded
             ? "xl:flex xl:flex-col 2xl:grid 2xl:grid-cols-[1fr_300px] gap-6"
             : "lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] lg:gap-6 xl:gap-10")
@@ -248,113 +253,133 @@ export function TrabajoDetail({
 
               {/* Item 2: Sidebar / Totals (Right column on desktop, 2nd on mobile) */}
               <div className={cn(
-                "order-2 lg:col-start-2 lg:row-span-4 space-y-4", 
+                "order-2 lg:col-start-2 lg:row-span-4", 
                 isEmbedded ? "2xl:sticky 2xl:top-8" : "lg:sticky lg:top-32"
               )}>
-                <ProgressBar tasks={jobTasks} />
-                
-                <div className="relative overflow-hidden bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-5 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-4 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
-                  <div className="relative flex flex-col gap-1 z-10">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">
-                      Total estimado
-                    </span>
-                    <span className="text-2xl font-bold text-on-surface tracking-tight mt-1">
-                      ${presupuestoTotal.toLocaleString("es-AR")}
-                    </span>
-                    <span className="text-xs font-semibold tracking-wider text-on-surface-variant/60 uppercase">
-                      Tareas + Materiales
-                    </span>
-
-                    <div className="flex flex-col gap-0.5 mt-2 pt-2 border-t border-white/10">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-medium text-on-surface-variant/60">Tareas</span>
-                        <span className="text-[11px] font-bold text-on-surface">${totalEstimado.toLocaleString("es-AR")}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-medium text-on-surface-variant/60">Materiales</span>
-                        <span className="text-[11px] font-bold text-on-surface">${totalMateriales.toLocaleString("es-AR")}</span>
-                      </div>
+                <div className="relative overflow-hidden bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-500">
+                  
+                  {/* Progress Section */}
+                  <div className="p-4 md:p-5 flex flex-col gap-3">
+                    <div className="flex items-end justify-between">
+                      <h3 className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">Progreso</h3>
+                      <span className="text-xs font-bold text-on-surface-variant/50">
+                        {jobTasks.filter(t => t.completada).length} / {jobTasks.length} completadas
+                      </span>
                     </div>
+                    
+                    {(() => {
+                      const total = jobTasks.length;
+                      const completed = jobTasks.filter((t) => t.completada).length;
+                      const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
+                      
+                      return (
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1 h-3 bg-on-surface/5 dark:bg-black/20 rounded-full overflow-hidden relative">
+                            <div className="absolute top-0 left-0 h-full bg-primary transition-all duration-1000 ease-out" style={{ width: `${percentage}%` }} />
+                          </div>
+                          <span className="text-xs font-bold text-on-surface w-8 text-right">{percentage}%</span>
+                        </div>
+                      );
+                    })()}
                   </div>
 
-                  {job.estado === "borrador" ? (
-                    <>
-                      <button
-                        onClick={handleDownloadPDF}
-                        disabled={!hasItemsForBudget || generatingAction !== null}
-                        className={cn(
-                          "relative w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group",
-                          hasItemsForBudget
-                            ? "bg-primary text-white shadow-[0_8px_20px_rgba(61,139,110,0.25)] hover:shadow-[0_16px_40px_rgba(61,139,110,0.4)] hover:scale-[1.02] active:scale-[0.98]"
-                            : "bg-surface-variant text-on-surface-variant/70 cursor-not-allowed"
-                        )}
-                      >
-                        {hasItemsForBudget && (
-                          <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
-                        )}
-                        <FileDown className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" strokeWidth={2.5} />
-                        Generar Presupuesto
-                      </button>
-                      {!hasItemsForBudget && (
-                        <p className="text-xs font-medium text-on-surface-variant/70 text-center">
-                          Agregá tareas o materiales con precio para generar el presupuesto
+                  <div className="h-px w-full bg-outline-variant/10" />
+
+                  {/* Total Section */}
+                  <div className="p-4 md:p-5 flex flex-col gap-4">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">
+                        Total estimado
+                      </span>
+                      <span className="text-[28px] leading-none font-bold text-on-surface tracking-tight mt-1">
+                        ${presupuestoTotal.toLocaleString("es-AR")}
+                      </span>
+                      
+                      <div className="flex flex-col gap-1 mt-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-on-surface-variant/70">Tareas</span>
+                          <span className="text-xs font-bold text-on-surface">${totalEstimado.toLocaleString("es-AR")}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-on-surface-variant/70">Materiales</span>
+                          <span className="text-xs font-bold text-on-surface">${totalMateriales.toLocaleString("es-AR")}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-2">
+                      {job.estado === "borrador" ? (
+                        <>
+                          <button
+                            onClick={handleDownloadPDF}
+                            disabled={!hasItemsForBudget || generatingAction !== null}
+                            className={cn(
+                              "w-full py-3.5 rounded-xl font-bold text-[13px] uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2",
+                              hasItemsForBudget
+                                ? "bg-primary text-white hover:bg-primary-dark active:scale-[0.98] shadow-sm"
+                                : "bg-surface-variant text-on-surface-variant/70 cursor-not-allowed"
+                            )}
+                          >
+                            <FileDown className="w-4 h-4" strokeWidth={2.5} />
+                            Generar Presupuesto
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => { setPdfError(null); downloadPDF(job.id); }}
+                          disabled={generatingAction !== null}
+                          className="w-full py-3.5 rounded-xl font-bold text-[13px] uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary-dark active:scale-[0.98] shadow-sm"
+                        >
+                          <FileDown className="w-4 h-4" strokeWidth={2.5} />
+                          Ver PDF
+                        </button>
+                      )}
+                      
+                      {pdfError && (
+                        <p className="text-xs font-medium text-red-500 text-center mt-2">
+                          {pdfError}
                         </p>
                       )}
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => { setPdfError(null); downloadPDF(job.id); }}
-                      disabled={generatingAction !== null}
-                      className="relative w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary text-white shadow-[0_8px_20px_rgba(61,139,110,0.25)] hover:shadow-[0_16px_40px_rgba(61,139,110,0.4)] hover:scale-[1.02] active:scale-[0.98]"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
-                      <FileDown className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" strokeWidth={2.5} />
-                      Ver PDF
-                    </button>
-                  )}
-                  {pdfError && (
-                    <p className="text-xs font-medium text-red-500 text-center">
-                      {pdfError}
-                    </p>
-                  )}
 
-                  {job.estado === "presupuestado" && (
-                    <button
-                      disabled={addCobroMutation.isPending || updateJobMutation.isPending}
-                      onClick={async () => {
-                        const totalCobrado = cobros.reduce((s, c) => s + c.monto_cobrado, 0);
-                        const restante = Math.max(0, presupuestoTotal - totalCobrado);
-                        if (restante > 0) {
-                          await addCobroMutation.mutateAsync({
-                            trabajo_id: job.id,
-                            monto_cobrado: restante,
-                            fecha_cobro: new Date().toISOString().slice(0, 10),
-                            forma_pago: "transferencia",
-                            notas: "Pagado manualmente",
-                          });
-                        }
-                        await updateJobMutation.mutateAsync({ id: job.id, data: { estado: "pagado" } });
-                      }}
-                      className="relative w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden z-10 group bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:shadow-[0_8px_20px_rgba(61,139,110,0.15)] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
-                    >
-                      {addCobroMutation.isPending || updateJobMutation.isPending ? (
-                        <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.5} />
-                      ) : (
-                        <CheckCircle className="w-4 h-4" strokeWidth={2.5} />
+                      {job.estado === "presupuestado" && (
+                        <button
+                          disabled={addCobroMutation.isPending || updateJobMutation.isPending}
+                          onClick={async () => {
+                            const totalCobrado = cobros.reduce((s, c) => s + c.monto_cobrado, 0);
+                            const restante = Math.max(0, presupuestoTotal - totalCobrado);
+                            if (restante > 0) {
+                              await addCobroMutation.mutateAsync({
+                                trabajo_id: job.id,
+                                monto_cobrado: restante,
+                                fecha_cobro: new Date().toISOString().slice(0, 10),
+                                forma_pago: "transferencia",
+                                notas: "Pagado manualmente",
+                              });
+                            }
+                            await updateJobMutation.mutateAsync({ id: job.id, data: { estado: "pagado" } });
+                          }}
+                          className="mt-3 w-full py-3.5 rounded-xl font-bold text-[13px] uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 bg-primary/10 text-primary hover:bg-primary/20 active:scale-[0.98] disabled:opacity-50"
+                        >
+                          {addCobroMutation.isPending || updateJobMutation.isPending ? (
+                            <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.5} />
+                          ) : (
+                            <CheckCircle className="w-4 h-4" strokeWidth={2.5} />
+                          )}
+                          {addCobroMutation.isPending || updateJobMutation.isPending ? "Procesando..." : "Marcar como Pagado"}
+                        </button>
                       )}
-                      {addCobroMutation.isPending || updateJobMutation.isPending ? "Procesando..." : "Marcar como Pagado"}
-                    </button>
-                  )}
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {/* Item 3: Summary Cards (Left column on desktop, 3rd on mobile) */}
-              <div className="order-3 lg:col-start-1 mt-2">
+              <div className="order-3 lg:col-start-1 mt-0 md:mt-2">
                 <JobSummaryCards jobId={job.id} from={from} pushHistory={pushHistory} />
               </div>
 
               {/* Item 4: Task List (Left column on desktop, 4th on mobile) */}
-              <div className="order-4 lg:col-start-1 mt-4">
+              <div className="order-4 lg:col-start-1 mt-1 md:mt-4">
                 <TaskList jobId={job.id} isJobPaid={job.estado === "pagado"} onSelectTask={setSelectedTaskId} />
               </div>
             </>

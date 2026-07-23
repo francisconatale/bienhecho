@@ -10,10 +10,19 @@ import { getStatusColor } from "./client-detail-pane"; // We'll keep it there to
 export function ClientJobsCard({ clientId }: { clientId: string }) {
   const [loadingJobId, setLoadingJobId] = useState<string | null>(null);
   const { pushHistory } = useNavigationHistory();
-  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: jobs = [], isLoading } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
   
   const clientJobs = jobs.filter((j) => j.cliente_id === clientId);
   
+  if (isLoading) {
+    return (
+      <div className="relative bg-surface/40 dark:bg-surface/10 backdrop-blur-2xl rounded-xl p-8 md:p-10 border border-white/30 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex flex-col items-center justify-center min-h-[200px]">
+        <div className="w-8 h-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin mb-4" />
+        <p className="text-sm font-medium text-on-surface-variant/70">Cargando trabajos...</p>
+      </div>
+    );
+  }
+
   if (clientJobs.length === 0) return null;
 
   // Progressive Disclosure: show only top 5 recent jobs

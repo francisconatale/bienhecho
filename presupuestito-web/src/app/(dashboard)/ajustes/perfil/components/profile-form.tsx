@@ -4,13 +4,16 @@ import { useProfile } from "@/hooks/use-profile";
 import { useAuth } from "@/contexts/auth-context";
 import { profileService } from "@/services/profile.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useProfileSave } from "./profile-save-context";
 
 export function ProfileForm() {
   const { profile, isLoading } = useProfile();
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [isSaving, setIsSaving] = useState(false);
+  const { setIsPending } = useProfileSave();
 
   const mutation = useMutation({
     mutationFn: async (formData: FormData) => {
@@ -22,16 +25,20 @@ export function ProfileForm() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
-      alert("¡Perfil guardado con éxito!");
+      toast.success("Perfil guardado", { description: "Tus datos se actualizaron correctamente." });
     },
     onError: (err) => {
       console.error(err);
-      alert("Error al guardar el perfil.");
+      toast.error("Error al guardar", { description: "Intentá nuevamente." });
     },
     onSettled: () => {
       setIsSaving(false);
     }
   });
+
+  useEffect(() => {
+    setIsPending(mutation.isPending);
+  }, [mutation.isPending, setIsPending]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -66,6 +73,7 @@ export function ProfileForm() {
             name="nombre"
             defaultValue={displayName} 
             required
+            autoComplete="name"
             className="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/20 focus:outline-none" 
           />
         </div>
@@ -75,6 +83,7 @@ export function ProfileForm() {
             type="email" 
             defaultValue={email} 
             disabled
+            autoComplete="email"
             className="w-full bg-surface-container/50 border border-outline-variant/20 rounded-xl px-4 py-3 text-on-surface-variant cursor-not-allowed focus:outline-none" 
           />
         </div>
@@ -105,6 +114,7 @@ export function ProfileForm() {
             name="direccion"
             defaultValue={profile?.direccion || ""} 
             placeholder="Ej: Av. Corrientes 1234, CABA" 
+            autoComplete="street-address"
             className="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/20 focus:outline-none" 
           />
         </div>

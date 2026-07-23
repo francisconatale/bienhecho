@@ -59,7 +59,7 @@ export function ClientDetailPane({
   const router = useRouter();
   const { pushHistory } = useNavigationHistory();
   
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["client-data", client.id],
     queryFn: async () => {
       const supabase = createClient();
@@ -138,7 +138,7 @@ export function ClientDetailPane({
   const { saldo: deudaTotal } = useCuentaCorriente(client.id);
 
   const handleSuccess = () => setIsEditing(false);
-  const { form, onSubmit, isLoading } = useClientForm(client, handleSuccess);
+  const { form, onSubmit, isLoading: isFormLoading } = useClientForm(client, handleSuccess);
   const { register, formState: { errors } } = form;
 
   return (
@@ -346,6 +346,15 @@ export function ClientDetailPane({
                 },
               },
             ];
+
+            if (isLoading) {
+              return (
+                <div className="flex flex-col items-center justify-center p-8 border border-outline-variant/20 rounded-xl bg-surface/50">
+                  <div className="w-8 h-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin mb-4" />
+                  <p className="text-sm font-medium text-on-surface-variant/70">Cargando trabajos...</p>
+                </div>
+              );
+            }
 
             return (
               <DataTable

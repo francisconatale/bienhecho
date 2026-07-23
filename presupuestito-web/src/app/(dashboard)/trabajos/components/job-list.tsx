@@ -108,6 +108,7 @@ export function JobList() {
 
   return (
     <div className="flex flex-col flex-1 bg-transparent relative overflow-hidden">
+      <AuroraBackground preset="trabajo" className="md:hidden" />
 
       <MasterDetail
         detailAnimationClass={isBackDirection ? "animate-slide-in-left" : "animate-page-in"}

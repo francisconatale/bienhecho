@@ -22,11 +22,11 @@ export function CuentaCorrientePageClient({ id }: { id: string }) {
     return (
       <div className="relative w-full min-h-screen bg-transparent">
         <AuroraBackground preset="perfil" />
-        <main className="relative z-10 flex-1 px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-12 max-w-[1200px] mx-auto w-full space-y-6">
+        <main className="relative z-10 flex-1 px-4 py-6 pb-28 md:px-8 lg:px-10 xl:px-16 md:py-8 md:pb-12 max-w-[1400px] mx-auto w-full space-y-6">
           <div className="space-y-2">
             <div className="w-56 h-10 bg-outline-variant/10 rounded-xl animate-pulse" />
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-surface/60 backdrop-blur-xl rounded-xl border border-outline-variant/15 p-4">
                 <div className="w-16 h-3 bg-outline-variant/10 rounded animate-pulse mb-2" />
@@ -55,7 +55,7 @@ export function CuentaCorrientePageClient({ id }: { id: string }) {
         </button>
       </div>
 
-      <main className="relative z-10 flex-1 px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-12 max-w-[1200px] mx-auto w-full md:mt-0 space-y-6">
+      <main className="relative z-10 flex-1 px-4 py-6 pb-28 md:px-8 lg:px-10 xl:px-16 md:py-8 md:pb-12 max-w-[1400px] mx-auto w-full md:mt-0 space-y-6">
         {/* Desktop Breadcrumb */}
         <div className="hidden md:flex items-center justify-between mb-4">
           <div className="flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
@@ -77,7 +77,7 @@ export function CuentaCorrientePageClient({ id }: { id: string }) {
 
         <div className="space-y-6 relative">
           <Suspense fallback={
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="bg-surface/60 backdrop-blur-xl rounded-xl border border-outline-variant/15 p-4">
                   <div className="w-16 h-3 bg-outline-variant/10 rounded animate-pulse mb-2" />

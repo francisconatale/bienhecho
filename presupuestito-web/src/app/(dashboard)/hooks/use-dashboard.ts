@@ -58,6 +58,8 @@ export function useDashboard() {
 
   const isLoading = isLoadingStats || isLoadingVisits || isLoadingPaginated || isLoadingProfile;
 
+
+
   return {
     isLoading,
     stats: stats || { totalJobs: 0, totalToInvoice: 0 },

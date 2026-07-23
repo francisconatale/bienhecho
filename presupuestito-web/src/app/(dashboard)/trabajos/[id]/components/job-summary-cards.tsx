@@ -18,7 +18,7 @@ export function JobSummaryCards({
   const { saldoPendiente } = usePayments(jobId);
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
       <Link 
         href={`/trabajos/${jobId}/materiales${from ? `?from=${from}` : ""}`} 
         onClick={() => pushHistory(window.location.pathname + window.location.search)}

@@ -39,7 +39,8 @@ export function useTareas() {
     placeholderData: keepPreviousData,
   });
 
-  const isLoading = isLoadingCounts || isLoadingResumen || isLoadingPaginated;
+  const hasAnyData = !!(resumen?.alta?.length || resumen?.media?.length || resumen?.baja?.length || paginated?.data?.length);
+  const isLoading = !hasAnyData && (isLoadingCounts || isLoadingResumen || isLoadingPaginated);
 
   const updateTaskMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => tasksService.update(id, data),

@@ -56,7 +56,7 @@ export function Row(props: RowProps) {
           {icon}
         </div>
         <span className="flex-1 font-semibold text-on-surface">{label}</span>
-        <Toggle checked={props.checked} onChange={props.onToggle} />
+        <Toggle checked={props.checked} onChange={props.onToggle} label={props.label} />
       </div>
     );
   }

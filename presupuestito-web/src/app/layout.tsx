@@ -4,10 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { Providers } from "./providers";
 
-import { AuthRedirect } from "@/components/auth/auth-redirect";
 import { ThemeScript } from "@/components/layout/theme-script";
 import { AuroraBackground } from "@/components/ui/aurora-background";
-import Script from "next/script";
 import { Toaster } from "@/components/layout/toaster";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -29,35 +27,12 @@ export default function RootLayout({
         className="bg-grouped-bg-light text-on-background font-body min-h-screen antialiased transition-colors duration-200 flex flex-col"
       >
         <ThemeScript />
-        <link rel="manifest" href="/manifest.webmanifest" />
-        
-        <Script id="service-worker" strategy="afterInteractive" dangerouslySetInnerHTML={{
-          __html: `
-            if ("serviceWorker" in navigator) {
-              if (location.search.includes("reset-sw")) {
-                window.addEventListener("load", async () => {
-                  const registrations = await navigator.serviceWorker.getRegistrations();
-                  for (const reg of registrations) {
-                    await reg.unregister();
-                  }
-                  location.href = location.pathname + location.hash;
-                });
-              } else {
-                window.addEventListener("load", () => {
-                  navigator.serviceWorker.register("/sw.js");
-                });
-              }
-            }
-          `,
-        }} />
-        
+
         <AuroraBackground preset="layout" />
 
         <Providers>
           <ThemeProvider>
-            <AuthRedirect>
-              {children}
-            </AuthRedirect>
+            {children}
             <Toaster />
           </ThemeProvider>
         </Providers>

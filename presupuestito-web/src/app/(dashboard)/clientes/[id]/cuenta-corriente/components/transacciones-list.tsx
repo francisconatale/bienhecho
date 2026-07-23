@@ -26,7 +26,7 @@ export function TransaccionesList({ clienteId }: { clienteId: string }) {
               >
                 {/* Concept */}
                 <div className="flex-1 min-w-0 pr-4 flex items-center gap-3">
-                  <div className={cn("w-2 h-2 rounded-full shrink-0", tx.tipo === "cargo" ? "bg-[#EF4444]" : "bg-[#22C55E]")} />
+                  <div className={cn("w-2 h-2 rounded-full shrink-0", tx.tipo === "cargo" ? "bg-error" : "bg-success")} />
                   <div className="flex flex-col min-w-0">
                     <p className="text-[14px] font-bold text-on-surface truncate group-hover:text-primary transition-colors">{tx.concepto}</p>
                     <div className="md:hidden flex items-center gap-2 mt-1">
@@ -48,7 +48,7 @@ export function TransaccionesList({ clienteId }: { clienteId: string }) {
                 <div className="w-full md:w-32 shrink-0 flex flex-col md:text-right pt-2 md:pt-0 border-t border-outline-variant/10 md:border-0">
                   <span className={cn(
                     "text-[15px] font-bold tabular-nums block",
-                    tx.tipo === "cargo" ? "text-[#EF4444]" : "text-[#22C55E]"
+                    tx.tipo === "cargo" ? "text-error" : "text-success"
                   )}>
                     {tx.tipo === "cargo" ? "+" : "-"}{formatCurrency(tx.monto)}
                   </span>

@@ -3,15 +3,17 @@
 interface ToggleProps {
   checked: boolean;
   onChange: (value: boolean) => void;
+  label?: string;
 }
 
-export function Toggle({ checked, onChange }: ToggleProps) {
+export function Toggle({ checked, onChange, label }: ToggleProps) {
   return (
     <button
       role="switch"
       aria-checked={checked}
+      aria-label={label}
       onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-[30px] w-[52px] shrink-0 cursor-pointer rounded-full transition-all duration-300 ease-in-out focus:outline-none border ${
+      className={`relative inline-flex h-[30px] w-[52px] shrink-0 cursor-pointer rounded-full transition-all duration-300 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 border ${
         checked ? "bg-primary border-transparent shadow-[0_0_12px_rgba(74,140,127,0.4)]" : "bg-surface-variant/30 border-outline-variant/20"
       }`}
     >

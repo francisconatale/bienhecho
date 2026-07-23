@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
 
@@ -21,26 +21,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const supabaseRef = useRef(createClient());
 
   useEffect(() => {
-    const getData = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
+    const supabase = supabaseRef.current;
+    let didSetInitial = false;
+
+    // Use onAuthStateChange exclusively — the INITIAL_SESSION event
+    // fires synchronously with the cached session, which is more
+    // reliable in React Strict Mode than a separate getSession() call.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, currentSession) => {
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+
+        if (!didSetInitial) {
+          didSetInitial = true;
+          setLoading(false);
+        }
+      }
+    );
+
+    // Safety timeout: if onAuthStateChange never fires (e.g. network issue),
+    // stop blocking the UI after 3 seconds.
+    const timeout = setTimeout(() => {
+      if (!didSetInitial) {
+        console.warn("Auth: timed out waiting for session, unblocking UI");
+        didSetInitial = true;
+        setLoading(false);
+      }
+    }, 3000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
     };
+  }, []);
 
-    getData();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [supabase]);
+  const supabase = supabaseRef.current;
 
   const signUp = async (email: string, password: string) => {
     const { error } = await supabase.auth.signUp({ email, password });

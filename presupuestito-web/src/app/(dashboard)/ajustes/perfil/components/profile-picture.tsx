@@ -60,6 +60,7 @@ export function ProfilePicture() {
   };
 
   const handleDelete = async () => {
+    if (!window.confirm("¿Eliminar tu foto de perfil?")) return;
     try {
       const updatedProfile = await deleteLogo();
       if (updatedProfile) {
@@ -79,7 +80,7 @@ export function ProfilePicture() {
           {previewUrl ? (
             <Image
               src={previewUrl}
-              alt="Logo"
+              alt={`Foto de perfil de ${displayName || "usuario"}`}
               fill
               className="object-cover"
               unoptimized

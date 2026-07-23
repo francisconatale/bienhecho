@@ -81,7 +81,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
 
   useClickOutside(editRef, () => {
     if (isEditing && !editJustStarted.current) {
-      handleSave();
+      handleCancel();
     }
   });
 
@@ -172,6 +172,18 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
                   {client?.nombre || "Sin cliente"}
                 </span>
               </div>
+              <div className="pt-2">
+                <span className={cn(
+                  "text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest select-none inline-block",
+                  job.estado === "borrador" && "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+                  job.estado === "presupuestado" && "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+                  job.estado === "pagado" && "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+                )}>
+                  {job.estado === "borrador" && "Borrador"}
+                  {job.estado === "presupuestado" && "Presupuestado"}
+                  {job.estado === "pagado" && "Pagado"}
+                </span>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               {job.estado !== "pagado" && (
@@ -209,16 +221,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
               </div>
             )}
 
-            <span className={cn(
-              "text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest select-none",
-              job.estado === "borrador" && "bg-blue-500/10 text-blue-600 dark:text-blue-400",
-              job.estado === "presupuestado" && "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-              job.estado === "pagado" && "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-            )}>
-              {job.estado === "borrador" && "Borrador"}
-              {job.estado === "presupuestado" && "Presupuestado"}
-              {job.estado === "pagado" && "Pagado"}
-            </span>
+
 
             {job.fecha_inicio && (
               <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium cursor-default select-none">

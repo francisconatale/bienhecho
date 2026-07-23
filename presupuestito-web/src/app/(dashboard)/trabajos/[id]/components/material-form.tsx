@@ -49,6 +49,7 @@ export function MaterialForm({ initialData, onSave, onCancel }: MaterialFormProp
         </span>
         <button
           onClick={onCancel}
+          aria-label="Cerrar formulario"
           className="p-1 rounded-lg hover:bg-on-surface/5 text-on-surface-variant/40 transition-all"
         >
           <X className="w-4 h-4" />
@@ -61,6 +62,7 @@ export function MaterialForm({ initialData, onSave, onCancel }: MaterialFormProp
         onChange={(e) => setNombre(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Nombre del material..."
+        aria-label="Nombre del material"
         autoFocus
         className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
       />
@@ -72,6 +74,7 @@ export function MaterialForm({ initialData, onSave, onCancel }: MaterialFormProp
           onChange={(e) => setCantidad(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Cantidad"
+          aria-label="Cantidad"
           min={0.01}
           step="any"
           className="w-1/3 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
@@ -82,6 +85,7 @@ export function MaterialForm({ initialData, onSave, onCancel }: MaterialFormProp
           onChange={(e) => setPrecioUnitario(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Precio unitario"
+          aria-label="Precio unitario"
           min={0}
           className="w-2/3 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
         />

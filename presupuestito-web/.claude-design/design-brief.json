@@ -1,0 +1,33 @@
+{
+  "scope": "page",
+  "isRedesign": true,
+  "targetPath": "src/components/ui/skeletons/trabajo-detail-skeleton.tsx",
+  "targetName": "TrabajoDetailSkeleton",
+  "painPoints": [
+    "Too cluttered/dense",
+    "Unclear hierarchy",
+    "Poor mobile experience",
+    "Outdated look"
+  ],
+  "inspiration": {
+    "visual": ["Apple"],
+    "functional": ["Inline editing"]
+  },
+  "brand": {
+    "adjectives": ["Minimal", "Premium"],
+    "density": "comfortable",
+    "darkMode": true
+  },
+  "persona": {
+    "primary": "End consumer",
+    "context": "mobile-first",
+    "keyTasks": ["View details", "Track progress"]
+  },
+  "constraints": {
+    "mustKeep": [],
+    "technical": []
+  },
+  "framework": "nextjs-app",
+  "packageManager": "npm",
+  "stylingSystem": "tailwind"
+}

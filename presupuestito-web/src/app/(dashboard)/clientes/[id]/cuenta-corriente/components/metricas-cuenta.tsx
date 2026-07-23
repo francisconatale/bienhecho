@@ -31,18 +31,18 @@ export function MetricasCuenta({ clienteId }: { clienteId: string }) {
               </button>
             </div>
             
-            <span className={cn("text-[32px] font-bold tracking-tight mt-1 leading-none", deudaTotal > 0 ? "text-[#EF4444]" : deudaTotal < 0 ? "text-[#22C55E]" : "text-on-surface")}>
+            <span className={cn("text-[32px] font-bold tracking-tight mt-1 leading-none", deudaTotal > 0 ? "text-error" : deudaTotal < 0 ? "text-success" : "text-on-surface")}>
               {formatCurrency(Math.abs(deudaTotal))}
             </span>
             <div className="flex items-center gap-2 mt-4 text-[13px] text-on-surface-variant/80">
-              <div className={cn("w-2 h-2 rounded-full", deudaTotal > 0 ? "bg-[#EF4444]" : deudaTotal < 0 ? "bg-[#22C55E]" : "bg-on-surface-variant/40")} />
+              <div className={cn("w-2 h-2 rounded-full", deudaTotal > 0 ? "bg-error" : deudaTotal < 0 ? "bg-success" : "bg-on-surface-variant/40")} />
               {deudaTotal > 0 ? "En deuda" : deudaTotal < 0 ? "A favor" : "Al día"}
             </div>
           </div>
           
           <div className={cn(
             "absolute -right-12 -bottom-12 w-40 h-40 rounded-full blur-2xl pointer-events-none transition-transform duration-500",
-            deudaTotal > 0 ? "bg-red-500/10" : deudaTotal < 0 ? "bg-green-500/10" : "bg-primary/10",
+            deudaTotal > 0 ? "bg-error/10" : deudaTotal < 0 ? "bg-success/10" : "bg-primary/10",
             "group-hover:scale-110"
           )} />
         </div>
@@ -59,11 +59,11 @@ export function MetricasCuenta({ clienteId }: { clienteId: string }) {
 
         <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-xl p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col gap-1">
           <span className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60">Total Cobrado</span>
-          <span className="text-[32px] font-bold tracking-tight mt-1 text-[#22C55E] leading-none">
+          <span className="text-[32px] font-bold tracking-tight mt-1 text-success leading-none">
             {formatCurrency(totalAbonos)}
           </span>
           <div className="flex items-center gap-2 mt-4 text-[13px] text-on-surface-variant/80">
-            <div className="w-2 h-2 rounded-full bg-[#22C55E]" />
+            <div className="w-2 h-2 rounded-full bg-success" />
             {totalCobrosCount} cobros registrados
           </div>
         </div>

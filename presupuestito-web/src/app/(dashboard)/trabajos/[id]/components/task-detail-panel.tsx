@@ -122,7 +122,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
         <div ref={editRef} className="space-y-4">
           {!isEditing ? (
             <div className="group flex items-start justify-between gap-4">
-              <h1 className="text-4xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter cursor-default select-none flex-1">
+              <h1 className="text-xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter cursor-default select-none flex-1">
                 {task.descripcion}
               </h1>
               <button
@@ -139,16 +139,16 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
               onChange={(e) => setDescripcion(e.target.value)}
               placeholder="Descripción de la tarea"
               rows={2}
-              className="w-full bg-transparent border-b border-outline-variant/30 text-4xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter placeholder:text-on-surface-variant/25 outline-none focus:border-primary transition-all resize-none py-1"
+              className="w-full bg-transparent border-b border-outline-variant/30 text-2xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter placeholder:text-on-surface-variant/25 outline-none focus:border-primary transition-all resize-none py-1"
               autoFocus
             />
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mt-4 md:mt-8">
             <button
               onClick={() => !isEditing && updateTaskMutation.mutateAsync({ id: task.id, data: { completada: !task.completada }})}
               className={cn(
-                "relative overflow-hidden p-5 rounded-xl text-left transition-[background-color,border-color,box-shadow] duration-500 flex flex-col gap-2 group select-none",
+                "relative overflow-hidden p-4 md:p-5 rounded-xl text-left transition-[background-color,border-color,box-shadow] duration-500 flex flex-col gap-2 group select-none",
                 task.completada
                   ? "bg-primary/10 hover:bg-primary/15 border border-primary/20 shadow-inner"
                   : "bg-surface/40 dark:bg-surface/10 hover:bg-surface/60 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-lg"
@@ -169,7 +169,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
                   {task.completada && <Check className="w-4 h-4 text-white" strokeWidth={4} />}
                 </div>
                 <span className={cn(
-                  "text-xl font-bold tracking-tight transition-colors duration-300",
+                  "text-sm md:text-xl font-bold tracking-tight transition-colors duration-300",
                   task.completada ? "text-primary" : "text-on-surface group-hover:text-primary"
                 )}>
                   {task.completada ? "Completada" : "En progreso"}
@@ -184,7 +184,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
                 updateTaskMutation.mutateAsync({ id: task.id, data: { prioridad: next }});
               }}
               className={cn(
-                "relative overflow-hidden p-5 rounded-xl text-left transition-[background-color,border-color,box-shadow] duration-500 flex flex-col gap-2 group select-none",
+                "relative overflow-hidden p-4 md:p-5 rounded-xl text-left transition-[background-color,border-color,box-shadow] duration-500 flex flex-col gap-2 group select-none",
                 task.prioridad === "alta"
                   ? "bg-orange-500/10 hover:bg-orange-500/15 border border-orange-500/20 shadow-inner"
                   : task.prioridad === "media"
@@ -212,7 +212,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
                   <Flame className={cn("w-4 h-4", task.prioridad === "alta" || task.prioridad === "media" ? "text-white" : "fill-current")} strokeWidth={task.prioridad === "alta" ? 3 : 2} />
                 </div>
                 <span className={cn(
-                  "text-xl font-bold tracking-tight transition-colors duration-300 capitalize",
+                  "text-sm md:text-xl font-bold tracking-tight transition-colors duration-300 capitalize",
                   task.prioridad === "alta" ? "text-orange-500" : task.prioridad === "media" ? "text-amber-500" : "text-on-surface group-hover:text-orange-500"
                 )}>
                   {task.prioridad || "Baja"}
@@ -220,7 +220,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
               </div>
             </button>
 
-            <div className="relative overflow-hidden p-5 rounded-xl bg-surface dark:bg-surface/10 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] flex flex-col gap-2">
+            <div className="relative overflow-hidden p-4 md:p-5 rounded-xl bg-surface dark:bg-surface/10 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] flex flex-col gap-2">
               <span className={cn(
                 "relative z-10 text-[10px] font-black uppercase tracking-[0.25em]",
                 task.precio !== null ? "text-primary/70" : "text-on-surface-variant/50"
@@ -235,7 +235,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
                         {task.cantidad} x ${task.precio_unitario.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
                       </span>
                     )}
-                    <span className="text-2xl font-bold tracking-tight text-on-surface flex items-center gap-1.5 cursor-default select-none">
+                    <span className="text-base md:text-2xl font-bold tracking-tight text-on-surface flex items-center gap-1.5 cursor-default select-none">
                       {task.precio !== null ? `$${task.precio.toLocaleString("es-AR", { minimumFractionDigits: 2 })}` : "Sin costo"}
                     </span>
                   </div>

@@ -14,14 +14,13 @@ export function SubscriptionSection() {
           label="Plan Actual"
           value="Pro"
         />
-        <Row
-          type="nav"
-          icon={
+        <div className="flex items-center gap-4 px-5 py-3.5 min-h-[56px] opacity-50 cursor-not-allowed border-b border-outline-variant/10">
+          <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
             <CreditCard className="w-4 h-4 text-primary" strokeWidth={2} />
-          }
-          iconBg="bg-primary/10"
-          label="Facturación"
-        />
+          </div>
+          <span className="flex-1 font-medium text-on-surface">Facturación</span>
+          <span className="text-xs text-on-surface-variant/60 italic">Próximamente</span>
+        </div>
       </div>
     </section>
   );

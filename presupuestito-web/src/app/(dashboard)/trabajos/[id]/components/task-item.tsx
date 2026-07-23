@@ -61,7 +61,7 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
 
   return (
     <>
-      <div className="group relative flex flex-col md:flex-row md:items-center px-4 py-3 hover:bg-primary/5 transition-colors gap-3 md:gap-0">
+      <div className="group relative flex flex-col md:flex-row md:items-center px-3 py-2.5 md:px-4 md:py-3 hover:bg-primary/5 transition-colors gap-2 md:gap-0">
         
         <div className="flex-1 min-w-0 pr-14 md:pr-4 flex items-center gap-3">
           {/* Checkbox */}
@@ -85,7 +85,7 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
             onClick={() => onSelect?.(task.id)}
             className="flex-1 text-left cursor-pointer min-w-0"
           >
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
               <p
                 className={cn(
                   "text-[14px] font-bold transition-all duration-300 truncate",
@@ -97,18 +97,18 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
                 {task.descripcion}
               </p>
               {task.prioridad && (
-                <span className={cn("text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0", PRIORITY_BADGE[task.prioridad])}>
+                <span className={cn("text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0 w-max", PRIORITY_BADGE[task.prioridad])}>
                   {task.prioridad}
                 </span>
               )}
             </div>
-            <div className="md:hidden mt-0.5 flex flex-col gap-0.5">
+            <div className="md:hidden mt-1.5 flex flex-col gap-0.5">
               {task.cantidad && task.precio_unitario && (
                 <span className="text-[11px] font-medium text-on-surface-variant/70">
                   {task.cantidad} x ${task.precio_unitario.toLocaleString("es-AR", { minimumFractionDigits: 2 })}
                 </span>
               )}
-              <span className="text-[12px] font-medium text-on-surface-variant">
+              <span className="text-[13px] font-bold text-on-surface">
                 {task.precio !== null ? `$${task.precio.toLocaleString("es-AR", { minimumFractionDigits: 2 })}` : "Sin precio"}
               </span>
             </div>

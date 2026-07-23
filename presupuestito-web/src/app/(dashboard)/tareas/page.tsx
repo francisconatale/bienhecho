@@ -44,8 +44,8 @@ export default function TareasPage() {
       </div>
 
       <main className={cn(
-        "flex-1 max-w-7xl mx-auto w-full transition-all pb-24 md:pb-10",
-        isSpecialized ? "px-0 md:px-4 md:py-10" : "px-4 py-6 md:py-10 space-y-6"
+        "flex-1 max-w-[1400px] mx-auto w-full transition-all pb-24 md:pb-10",
+        isSpecialized ? "px-0 md:px-4 lg:px-10 xl:px-16 md:py-10" : "px-4 md:px-8 lg:px-10 xl:px-16 py-6 md:py-10 space-y-6"
       )}>
         
         {/* Mobile Header */}
@@ -57,7 +57,7 @@ export default function TareasPage() {
             />
           </div>
         ) : (
-          <div className="md:hidden sticky top-0 z-20 bg-surface/60 backdrop-blur-2xl border-b border-outline-variant/10 px-4 py-4 mb-6 flex items-center gap-3 shadow-sm">
+          <div className="md:hidden sticky top-0 z-50 bg-surface/60 backdrop-blur-2xl border-b border-outline-variant/10 px-4 py-4 mb-6 flex items-center gap-3 shadow-sm">
             <button 
               onClick={() => setCategory("resumen")} 
               className="p-2 -ml-2 rounded-full bg-surface hover:bg-surface-variant/50 border border-outline-variant/20 active:scale-95 transition-all text-on-surface-variant shadow-sm"

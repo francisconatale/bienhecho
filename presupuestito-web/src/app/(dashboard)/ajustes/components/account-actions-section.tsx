@@ -11,6 +11,7 @@ export function AccountActionsSection() {
   const { signOut } = useAuth();
 
   const handleLogout = async () => {
+    if (!window.confirm("¿Cerrar sesión?")) return;
     await signOut();
     router.push("/login");
     router.refresh();

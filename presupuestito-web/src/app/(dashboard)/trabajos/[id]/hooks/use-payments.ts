@@ -109,7 +109,13 @@ export function usePayments(trabajoId: string) {
   };
 
   const removeCobro = async (id: string) => {
-    await removeMutation.mutateAsync(id);
+    try {
+      await removeMutation.mutateAsync(id);
+      toast.success("Cobro eliminado");
+    } catch (error) {
+      toast.error("Error al eliminar cobro");
+      throw error;
+    }
   };
 
   return {
