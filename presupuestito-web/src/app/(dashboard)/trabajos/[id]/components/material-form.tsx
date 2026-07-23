@@ -42,59 +42,55 @@ export function MaterialForm({ initialData, onSave, onCancel }: MaterialFormProp
   };
 
   return (
-    <div className="bg-surface rounded-2xl p-4 border border-primary/20 shadow-sm space-y-3">
-      <div className="flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
-          {initialData ? "Editar material" : "Nuevo material"}
-        </span>
-        <button
-          onClick={onCancel}
-          aria-label="Cerrar formulario"
-          className="p-1 rounded-lg hover:bg-on-surface/5 text-on-surface-variant/40 transition-all"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-
-      <input
-        type="text"
-        value={nombre}
-        onChange={(e) => setNombre(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Nombre del material..."
-        aria-label="Nombre del material"
-        autoFocus
-        className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
-      />
-
-      <div className="flex gap-3">
+    <div className="space-y-4">
+      <div className="space-y-1.5">
+        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Nombre del Material</label>
         <input
-          type="number"
-          value={cantidad}
-          onChange={(e) => setCantidad(e.target.value)}
+          type="text"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Cantidad"
-          aria-label="Cantidad"
-          min={0.01}
-          step="any"
-          className="w-1/3 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
-        />
-        <input
-          type="number"
-          value={precioUnitario}
-          onChange={(e) => setPrecioUnitario(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Precio unitario"
-          aria-label="Precio unitario"
-          min={0}
-          className="w-2/3 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+          placeholder="Ej: Cemento Loma Negra..."
+          aria-label="Nombre del material"
+          autoFocus
+          className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
         />
       </div>
 
-      <div className="flex gap-2 pt-1">
+      <div className="flex gap-4">
+        <div className="space-y-1.5 w-1/3">
+          <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Cantidad</label>
+          <input
+            type="number"
+            value={cantidad}
+            onChange={(e) => setCantidad(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="1"
+            aria-label="Cantidad"
+            min={0.01}
+            step="any"
+            className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+          />
+        </div>
+        <div className="space-y-1.5 flex-1">
+          <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Precio Unitario</label>
+          <input
+            type="number"
+            value={precioUnitario}
+            onChange={(e) => setPrecioUnitario(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="0.00"
+            aria-label="Precio unitario"
+            min={0}
+            className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+          />
+        </div>
+      </div>
+
+      <div className="sticky bottom-0 bg-surface/95 dark:bg-surface/90 backdrop-blur-xl border-t border-outline-variant/10 -mx-5 px-5 sm:-mx-6 sm:px-6 py-4 flex gap-2 z-10 -mb-8 sm:-mb-6">
         <button
           onClick={onCancel}
-          className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95"
+          className="flex-1 py-3 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95 disabled:opacity-50"
         >
           Cancelar
         </button>
@@ -102,7 +98,7 @@ export function MaterialForm({ initialData, onSave, onCancel }: MaterialFormProp
           onClick={handleSave}
           disabled={!canSave}
           className={cn(
-            "flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95",
+            "flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95",
             canSave
               ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark"
               : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"

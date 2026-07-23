@@ -6,6 +6,7 @@ import { Material } from "@/types";
 import { useMaterials } from "../hooks/use-materials";
 import { MaterialForm } from "./material-form";
 import { useConfirm } from "@/hooks/use-confirm";
+import { Modal } from "@/components/ui/modal";
 
 interface MaterialItemProps {
   material: Material;
@@ -34,22 +35,19 @@ export function MaterialItem({ material, jobId }: MaterialItemProps) {
     });
   };
 
-  if (isEditing) {
-    return (
-      <MaterialForm
-        initialData={{ 
-          nombre_material: material.nombre_material, 
-          cantidad: material.cantidad, 
-          precio_unitario: material.precio_unitario 
-        }}
-        onSave={handleSave}
-        onCancel={() => setIsEditing(false)}
-      />
-    );
-  }
-
   return (
     <>
+      <Modal isOpen={isEditing} onClose={() => setIsEditing(false)} title="Editar Material">
+        <MaterialForm
+          initialData={{ 
+            nombre_material: material.nombre_material, 
+            cantidad: material.cantidad, 
+            precio_unitario: material.precio_unitario 
+          }}
+          onSave={handleSave}
+          onCancel={() => setIsEditing(false)}
+        />
+      </Modal>
       <div className="group relative flex flex-col md:flex-row md:items-center px-4 py-3 hover:bg-primary/5 transition-colors gap-1 md:gap-0">
         
         {/* Name */}

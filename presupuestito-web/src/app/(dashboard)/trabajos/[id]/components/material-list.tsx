@@ -7,6 +7,7 @@ import { usePagination } from "@/hooks/use-pagination";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { MaterialItem } from "./material-item";
 import { MaterialForm } from "./material-form";
+import { Modal } from "@/components/ui/modal";
 import type { Material } from "@/types";
 
 interface MaterialListProps {
@@ -47,11 +48,7 @@ export function MaterialList({ jobId }: MaterialListProps) {
             <Plus className="w-3.5 h-3.5" aria-hidden="true" /> Agregar
           </button>
         }
-        topContent={isAdding && (
-          <div className="bg-surface/50 p-4 border-b border-outline-variant/10">
-            <MaterialForm onSave={handleAdd} onCancel={() => setIsAdding(false)} />
-          </div>
-        )}
+        topContent={undefined}
         renderRow={(material) => (
           <MaterialItem material={material} jobId={jobId} />
         )}
@@ -62,6 +59,10 @@ export function MaterialList({ jobId }: MaterialListProps) {
           </div>
         ) : undefined}
       />
+      
+      <Modal isOpen={isAdding} onClose={() => setIsAdding(false)} title="Nuevo Material">
+        <MaterialForm onSave={handleAdd} onCancel={() => setIsAdding(false)} />
+      </Modal>
     </div>
   );
 }
