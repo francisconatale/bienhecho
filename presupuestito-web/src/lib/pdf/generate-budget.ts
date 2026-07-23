@@ -13,6 +13,7 @@ interface PDFData {
     matricula?: string;
     trade?: string;
     logo_url?: string;
+    phone?: string;
   };
 }
 
@@ -52,12 +53,6 @@ async function createDocWithInter(): Promise<InstanceType<Awaited<typeof import(
   return doc;
 }
 
-/**
- * ESTILO EDITORIAL MINIMALISTA — verde sutil
- * Fondo blanco, mucho espacio en blanco, serif solo en el nombre y el total.
- * Líneas divisorias finas en verde salvia apagado, sin bloques de color,
- * jerarquía por tipografía y peso, no por color.
- */
 export async function generateBudgetPDF({
   client,
   job,
@@ -72,22 +67,27 @@ export async function generateBudgetPDF({
 
   const doc = await createDocWithInter();
   const pageWidth = doc.internal.pageSize.getWidth();
-  const margin = 20;
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 14; // Achicado de 16 a 14 para ganar espacio
+  
+  // Colors based on globals.css
+  const primary: [number, number, number] = [61, 139, 110]; // #3D8B6E
+  const onPrimary: [number, number, number] = [255, 255, 255]; // #FFFFFF
+  const onSurface: [number, number, number] = [26, 48, 32]; // #1A3020
+  const onSurfaceVariant: [number, number, number] = [61, 96, 72]; // #3D6048
+  const outlineVariant: [number, number, number] = [181, 208, 188]; // #B5D0BC
+  
+  let currentY = 0;
+  
+  // Helper to add a new page if needed
+  const checkPageBreak = (neededHeight: number) => {
+    if (currentY + neededHeight > pageHeight - margin) {
+      doc.addPage();
+      currentY = margin;
+    }
+  };
 
-  // Paleta editorial minimalista con acento verde salvia apagado
-  const ink: [number, number, number] = [26, 32, 27]; // casi negro, con tinte verdoso
-  const textSecondary: [number, number, number] = [100, 116, 105]; // gris-verde
-  const textMuted: [number, number, number] = [140, 152, 140];
-  const sage: [number, number, number] = [91, 138, 111]; // acento verde salvia
-  const sageDark: [number, number, number] = [58, 94, 74]; // verde más oscuro para el total
-  const hairline: [number, number, number] = [214, 224, 216]; // línea muy sutil verde-gris
-  const brandGreen: [number, number, number] = [21, 128, 61]; // verde vibrante para headers y totales
-
-  // ---------- Encabezado (Solido Compacto) ----------
-  const headerHeight = 35;
-  doc.setFillColor(...brandGreen);
-  doc.rect(0, 0, pageWidth, headerHeight, "F");
-
+  // Load logo
   let logoBase64 = null;
   let logoFormat = null;
   if (userProfile.logo_url) {
@@ -99,7 +99,7 @@ export async function generateBudgetPDF({
         const urlLower = userProfile.logo_url.toLowerCase();
         if (urlLower.includes(".png")) {
           logoFormat = "PNG";
-        } else if (urlLower.includes(".jpg") || urlLower.includes(".jpeg")) {
+        } else if (urlLower.includes(".jpg") || urlLower.includes(".jpeg") || urlLower.includes(".webp")) {
           logoFormat = "JPEG";
         }
       }
@@ -108,249 +108,260 @@ export async function generateBudgetPDF({
     }
   }
 
-  let textX = margin;
+  // Header (Más compacto)
+  const headerHeight = 28; // Achicado de 35 a 28
+  doc.setFillColor(...primary);
+  doc.rect(0, 0, pageWidth, headerHeight, "F");
+  
+  // Center logo in the header
   if (logoBase64 && logoFormat) {
-    // Draw logo in the header
-    // The logo will be drawn in the center horizontally, centered vertically in the header
     try {
       const props = doc.getImageProperties(logoBase64);
-      const maxWidth = 40; // Max width in mm
-      const maxHeight = 20; // Max height in mm
+      const maxHeight = 20; // Achicado para el header más chico
+      const maxWidth = 45; 
       
       const ratio = Math.min(maxWidth / props.width, maxHeight / props.height);
       const finalWidth = props.width * ratio;
       const finalHeight = props.height * ratio;
 
-      doc.addImage(logoBase64, logoFormat, (pageWidth - finalWidth) / 2, (headerHeight - finalHeight) / 2, finalWidth, finalHeight);
+      const logoX = (pageWidth - finalWidth) / 2;
+      const logoY = (headerHeight - finalHeight) / 2;
+      
+      doc.addImage(logoBase64, logoFormat, logoX, logoY, finalWidth, finalHeight);
     } catch (e) {
-      // Fallback in case getImageProperties fails
-      const logoSize = 20;
+      const logoSize = 16;
       doc.addImage(logoBase64, logoFormat, (pageWidth - logoSize) / 2, (headerHeight - logoSize) / 2, logoSize, logoSize);
     }
   }
-
+  
+  doc.setTextColor(...onPrimary);
+  
+  // Sender info (Left)
+  const senderName = userProfile.company || userProfile.name || "Sin nombre";
   doc.setFont("Inter", "bold");
-  doc.setFontSize(18);
-  doc.setTextColor(255, 255, 255);
-  doc.text(userProfile.company || userProfile.name, textX, 18);
-
-  doc.setFont("Inter", "normal");
-  doc.setFontSize(9);
-  doc.setTextColor(240, 253, 244); // light green tint
-  doc.text(userProfile.trade || "Servicios Profesionales", textX, 26);
-
+  doc.setFontSize(18); // de 22 a 18
+  doc.text(senderName, margin, 15);
+  
+  if (userProfile.trade) {
+    doc.setFont("Inter", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(230, 245, 235);
+    doc.text(userProfile.trade, margin, 21);
+  }
+  
+  // Invoice info (Right)
   doc.setFont("Inter", "bold");
-  doc.setFontSize(14);
-  doc.setTextColor(255, 255, 255);
-  doc.text("PRESUPUESTO", pageWidth - margin, 18, { align: "right" });
-
-  doc.setFont("Inter", "normal");
-  doc.setFontSize(9);
-  doc.setTextColor(240, 253, 244);
+  doc.setFontSize(7);
+  doc.setTextColor(230, 245, 235);
+  doc.text("PRESUPUESTO", pageWidth - margin, 10, { align: "right", charSpace: 1 });
+  
+  doc.setTextColor(...onPrimary);
+  doc.setFontSize(12);
+  const invoiceId = job.id ? job.id.substring(0, 6).toUpperCase() : "000000";
+  doc.text(`#${invoiceId}`, pageWidth - margin, 16, { align: "right" });
+  
   const dateStr = new Date().toLocaleDateString("es-AR", {
     day: "2-digit",
-    month: "long",
+    month: "2-digit",
     year: "numeric",
   });
-  doc.text(dateStr, pageWidth - margin, 26, { align: "right" });
-
-  // ---------- DE / PARA ----------
-  let y = 50;
-
-  doc.setFont("Inter", "normal");
-  doc.setFontSize(8);
-  doc.setTextColor(...sage);
-  doc.text("DE", margin, y, { charSpace: 0.4 });
-  doc.text("PARA", pageWidth / 2 + 10, y, { charSpace: 0.4 });
-
-  y += 7;
-  doc.setFont("Inter", "bold");
-  doc.setFontSize(11);
-  doc.setTextColor(...ink);
-  doc.text(userProfile.name, margin, y);
-  doc.text(client.nombre, pageWidth / 2 + 10, y);
-
-  y += 5;
   doc.setFont("Inter", "normal");
   doc.setFontSize(9);
-  doc.setTextColor(...textSecondary);
-  doc.text(userProfile.address || "Domicilio no especificado", margin, y);
-  doc.text(client.email || "S/D", pageWidth / 2 + 10, y);
-
-  y += 5;
-  if (userProfile.matricula) {
-    doc.text(`Matrícula: ${userProfile.matricula}`, margin, y);
+  doc.setTextColor(230, 245, 235);
+  doc.text(dateStr, pageWidth - margin, 22, { align: "right" });
+  
+  currentY = headerHeight + 8; // Espaciado reducido
+  
+  // Separator
+  const drawSeparator = (yPos: number) => {
+    doc.setDrawColor(...outlineVariant);
+    doc.setLineWidth(0.2);
+    doc.line(margin, yPos, pageWidth - margin, yPos);
+  };
+  
+  drawSeparator(currentY);
+  currentY += 8; // de 12 a 8
+  
+  // Client & Sender blocks (De / Para)
+  const colWidth = (pageWidth - margin * 2) / 2;
+  
+  // DE column
+  doc.setFont("Inter", "bold");
+  doc.setFontSize(7);
+  doc.setTextColor(...onSurfaceVariant);
+  doc.text("DE", margin, currentY, { charSpace: 1 });
+  
+  currentY += 5; // de 6 a 5
+  doc.setFontSize(12); // de 14 a 12
+  doc.setTextColor(...onSurface);
+  doc.text(senderName, margin, currentY);
+  
+  doc.setFont("Inter", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(...onSurfaceVariant);
+  let senderInfoY = currentY + 5;
+  if (userProfile.address) {
+    doc.text(userProfile.address, margin, senderInfoY);
+    senderInfoY += 4;
   }
+  if (userProfile.phone) {
+    doc.text(userProfile.phone, margin, senderInfoY);
+    senderInfoY += 4;
+  }
+  if (userProfile.cuit) {
+    doc.text(`CUIT: ${userProfile.cuit}`, margin, senderInfoY);
+    senderInfoY += 4;
+  }
+  
+  // PARA column
+  let paraY = currentY - 5;
+  doc.setFont("Inter", "bold");
+  doc.setFontSize(7);
+  doc.setTextColor(...onSurfaceVariant);
+  doc.text("PARA", margin + colWidth, paraY, { charSpace: 1 });
+  
+  paraY += 5;
+  doc.setFontSize(12);
+  doc.setTextColor(...onSurface);
+  doc.text(client.nombre || "Cliente sin nombre", margin + colWidth, paraY);
+  
+  doc.setFont("Inter", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(...onSurfaceVariant);
+  let clientInfoY = paraY + 5;
   if (client.direccion) {
-    doc.text(client.direccion, pageWidth / 2 + 10, y);
+    doc.text(client.direccion, margin + colWidth, clientInfoY);
+    clientInfoY += 4;
   }
-
-  y += 8;
-  doc.setDrawColor(...hairline);
-  doc.setLineWidth(0.3);
-  doc.line(margin, y, pageWidth - margin, y);
-
-  y += 15;
-
-  // ---------- Tareas y servicios ----------
-  if (tasks.length > 0) {
-    doc.setFont("Inter", "normal");
-    doc.setFontSize(9);
-    doc.setTextColor(...sage);
-    doc.text("TAREAS Y SERVICIOS", margin, y, { charSpace: 0.4 });
-    y += 4;
+  if (client.telefono) {
+    doc.text(client.telefono, margin + colWidth, clientInfoY);
+    clientInfoY += 4;
   }
-
-  const tableData = tasks.map((task) => [
-    task.descripcion,
-    task.cantidad ? String(task.cantidad) : "1",
-    task.precio_unitario !== undefined && task.precio_unitario !== null
-      ? `$ ${task.precio_unitario.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`
-      : "-",
-    `$ ${(task.precio ?? 0).toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
-  ]);
-
+  
+  currentY = Math.max(senderInfoY, clientInfoY) + 6; // de 8 a 6
+  
+  drawSeparator(currentY);
+  currentY += 8; // de 12 a 8
+  
+  // Items
+  checkPageBreak(25);
+  doc.setFont("Inter", "bold");
+  doc.setFontSize(7);
+  doc.setTextColor(...onSurfaceVariant);
+  doc.text("DESCRIPCIÓN", margin, currentY, { charSpace: 1 });
+  currentY += 3; // de 4 a 3
+  
+  const allItems = [
+    ...(tasks || []).map(t => ({
+      desc: t.descripcion,
+      qty: t.cantidad || 1,
+      total: t.precio || 0
+    })),
+    ...(materiales || []).map(m => ({
+      desc: m.nombre_material,
+      qty: m.cantidad || 1,
+      total: m.subtotal || 0
+    }))
+  ];
+  
   autoTable.default(doc, {
-    startY: y,
+    startY: currentY,
     margin: { left: margin, right: margin },
-    head: [[
-      { content: "Descripción", styles: { halign: "left" } },
-      { content: "Cant.", styles: { halign: "center" } },
-      { content: "Precio Unit.", styles: { halign: "right" } },
-      { content: "Subtotal", styles: { halign: "right" } }
-    ]],
-    body: tableData,
-    theme: "grid",
-    tableLineWidth: 0,
-    headStyles: {
-      fillColor: brandGreen,
-      textColor: [255, 255, 255],
-      fontStyle: "bold",
-      fontSize: 8,
-      lineColor: brandGreen,
-      lineWidth: 0.3,
-    },
-    bodyStyles: {
-      fontSize: 9,
-      textColor: ink,
-      lineColor: hairline,
-      lineWidth: { bottom: 0.3, top: 0, left: 0, right: 0 },
-    },
-    alternateRowStyles: {
-      fillColor: [255, 255, 255],
+    showHead: false,
+    body: allItems.map(item => [
+      item.desc,
+      `${item.qty} un.`,
+      `$${item.total.toLocaleString("es-AR")}`
+    ]),
+    theme: "plain",
+    styles: {
+      cellPadding: { top: 2, bottom: 2, left: 0, right: 0 }, // Reducido de 4 a 2
+      font: "Inter",
     },
     columnStyles: {
-      1: { cellWidth: 15, halign: "center" },
-      2: { cellWidth: 25, halign: "right" },
-      3: { cellWidth: 35, halign: "right", textColor: sageDark },
+      0: { cellWidth: colWidth * 1.3, halign: "left", textColor: onSurface, fontSize: 10, fontStyle: "normal" }, // de 11 a 10
+      1: { halign: "right", textColor: onSurfaceVariant, fontSize: 9 }, // de 10 a 9
+      2: { halign: "right", textColor: onSurface, fontStyle: "bold", fontSize: 10 } // de 11 a 10
     },
+    didDrawCell: (data) => {
+      // Draw border bottom except last row
+      if (data.row.index < allItems.length - 1 && data.cell.section === 'body') {
+        doc.setDrawColor(...outlineVariant);
+        doc.setLineWidth(0.1);
+        doc.line(
+          data.cell.x,
+          data.cell.y + data.cell.height,
+          data.cell.x + data.cell.width,
+          data.cell.y + data.cell.height
+        );
+      }
+    }
   });
 
-  let currentY =
-    (doc as Parameters<typeof autoTable.default>[0] & { lastAutoTable: { finalY: number } })
-      .lastAutoTable.finalY + 10;
-
-  // ---------- Materiales insumidos ----------
-  if (materiales && materiales.length > 0) {
-    currentY += 2;
+  currentY = (doc as any).lastAutoTable.finalY + 6; // de 8 a 6
+  
+  drawSeparator(currentY);
+  currentY += 8; // de 12 a 8
+  
+  // Observations
+  if (job.descripcion) {
+    checkPageBreak(30); // de 40 a 30
+    doc.setFont("Inter", "bold");
+    doc.setFontSize(7);
+    doc.setTextColor(...onSurfaceVariant);
+    doc.text("OBSERVACIONES", margin, currentY, { charSpace: 1 });
+    currentY += 6; // de 8 a 6
+    
     doc.setFont("Inter", "normal");
-    doc.setFontSize(9);
-    doc.setTextColor(...sage);
-    doc.text("MATERIALES INSUMIDOS", margin, currentY, { charSpace: 0.4 });
-    currentY += 4;
-
-    const materialsData = materiales.map((m) => [
-      m.nombre_material,
-      `${m.cantidad}`,
-      `$ ${m.precio_unitario.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
-      `$ ${m.subtotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
-    ]);
-
-    autoTable.default(doc, {
-      startY: currentY,
-      margin: { left: margin, right: margin },
-      head: [[
-        { content: "Material", styles: { halign: "left" } },
-        { content: "Cant.", styles: { halign: "center" } },
-        { content: "Precio Unit.", styles: { halign: "right" } },
-        { content: "Subtotal", styles: { halign: "right" } }
-      ]],
-      body: materialsData,
-      theme: "grid",
-      tableLineWidth: 0,
-      headStyles: {
-        fillColor: brandGreen,
-        textColor: [255, 255, 255],
-        fontStyle: "bold",
-        fontSize: 8,
-        lineColor: brandGreen,
-        lineWidth: 0.3,
-      },
-      bodyStyles: {
-        fontSize: 9,
-        textColor: ink,
-        lineColor: hairline,
-        lineWidth: { bottom: 0.3, top: 0, left: 0, right: 0 },
-      },
-      alternateRowStyles: {
-        fillColor: [255, 255, 255],
-      },
-      columnStyles: {
-        1: { cellWidth: 15, halign: "center" },
-        2: { cellWidth: 25, halign: "right" },
-        3: { cellWidth: 35, halign: "right", textColor: sageDark },
-      },
-    });
-
-    currentY =
-      (doc as Parameters<typeof autoTable.default>[0] & { lastAutoTable: { finalY: number } })
-        .lastAutoTable.finalY + 10;
+    doc.setFontSize(9); // de 10 a 9
+    doc.setTextColor(...onSurfaceVariant);
+    const obsLines = doc.splitTextToSize(job.descripcion, pageWidth - margin * 2);
+    doc.text(obsLines, margin, currentY);
+    currentY += obsLines.length * 4 + 4; // Menos interlineado
+    
+    drawSeparator(currentY);
+    currentY += 8; // de 12 a 8
   }
 
-  // ---------- Total ----------
-  const totalTasks = tasks.reduce((acc, t) => acc + (t.precio ?? 0), 0);
-  const totalMaterials = (materiales || []).reduce((acc, m) => acc + m.subtotal, 0);
-  const finalTotal = totalTasks + totalMaterials;
-
-  currentY += 10;
-
-  doc.setDrawColor(...brandGreen);
-  doc.setLineWidth(0.4);
-  doc.line(pageWidth - margin - 65, currentY - 6, pageWidth - margin, currentY - 6);
-
+  // Footer / Total
+  const footerHeight = 30; // de 40 a 30
+  
+  // Only add a new page if the content overlaps with the fixed footer area
+  if (currentY + footerHeight + 10 > pageHeight) {
+    doc.addPage();
+  }
+  
+  // Siempre al fondo de la hoja
+  let finalFooterY = pageHeight - footerHeight;
+  
+  doc.setFillColor(...primary);
+  // Full width footer
+  doc.rect(0, finalFooterY, pageWidth, footerHeight, "F");
+  
+  doc.setFont("Inter", "normal");
+  doc.setFontSize(7);
+  doc.setTextColor(230, 245, 235);
+  doc.text("presupuestito.com", margin, finalFooterY + footerHeight - 10);
+  
   doc.setFont("Inter", "bold");
   doc.setFontSize(9);
-  doc.setTextColor(...brandGreen);
-  doc.text("TOTAL", pageWidth - margin, currentY, { align: "right", charSpace: 0.4 });
-
-  doc.setFont("Inter", "bold");
-  doc.setFontSize(18);
-  doc.setTextColor(...brandGreen);
-  const totalText = `$ ${finalTotal.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`;
-  doc.text(totalText, pageWidth - margin, currentY + 8, { align: "right" });
-
-  // ---------- Notas ----------
-  if (job.descripcion) {
-    const notesY = currentY + 22;
-    doc.setFont("Inter", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(...sage);
-    doc.text("NOTAS", margin, notesY, { charSpace: 0.4 });
-
-    doc.setFont("Inter", "italic");
-    doc.setFontSize(9);
-    doc.setTextColor(...textSecondary);
-    const splitNotes = doc.splitTextToSize(job.descripcion, pageWidth - margin * 2);
-    doc.text(splitNotes, margin, notesY + 6);
-  }
-
-  // ---------- Footer ----------
-  const footerY = doc.internal.pageSize.getHeight() - 15;
-  doc.setFont("Inter", "normal");
-  doc.setFontSize(8);
-  doc.setTextColor(...textMuted);
-  doc.text("Generado con Presupuestito", margin, footerY);
-
+  doc.text("TOTAL", pageWidth - margin, finalFooterY + 12, { align: "right", charSpace: 1 });
+  
+  const finalTotal = allItems.reduce((acc, i) => acc + i.total, 0);
+  doc.setFontSize(22); // de 28 a 22
+  doc.setTextColor(...onPrimary);
+  doc.text(`$${finalTotal.toLocaleString("es-AR")}`, pageWidth - margin, finalFooterY + 22, { align: "right" });
+  
+  // Asignar el nombre del archivo para que al descargar desde el visor tenga el nombre correcto
+  const clientNameStr = client.nombre ? client.nombre.replace(/\s+/g, "_") : "Cliente";
+  const fileName = `Presupuesto_${clientNameStr}_${invoiceId}.pdf`;
+  
+  doc.setProperties({
+    title: fileName,
+    subject: `Presupuesto para ${client.nombre}`,
+    creator: "Presupuestito"
+  });
+  
   const pdfBlobUrl = doc.output("bloburl");
   window.open(pdfBlobUrl.toString(), "_blank");
 }

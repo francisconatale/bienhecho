@@ -1,31 +1,34 @@
 {
-  "scope": "page",
+  "scope": "component",
   "isRedesign": true,
-  "targetPath": "src/components/ui/skeletons/trabajo-detail-skeleton.tsx",
-  "targetName": "TrabajoDetailSkeleton",
+  "targetPath": "src/app/(dashboard)/presupuestos/components/pdf-invoice.tsx",
+  "targetName": "Invoice PDF Template",
   "painPoints": [
-    "Too cluttered/dense",
-    "Unclear hierarchy",
-    "Poor mobile experience",
-    "Outdated look"
+    "Logo con poco aire",
+    "Presupuesto ocupa mucho espacio",
+    "Total perdido/sin protagonismo",
+    "Observaciones mezcladas",
+    "Demasiadas líneas en la tabla",
+    "Precio unitario irrelevante para el cliente",
+    "Bloque de cliente poco moderno"
   ],
   "inspiration": {
-    "visual": ["Apple"],
-    "functional": ["Inline editing"]
+    "visual": ["Apple Store", "Revistas Editoriales", "Estudios de Arquitectura"],
+    "functional": ["Priorizar el total", "Eliminar columnas innecesarias", "Limpiar líneas de tabla"]
   },
   "brand": {
-    "adjectives": ["Minimal", "Premium"],
-    "density": "comfortable",
-    "darkMode": true
+    "adjectives": ["Minimalista", "Premium", "Limpio", "Moderno"],
+    "density": "Spacious",
+    "darkMode": false
   },
   "persona": {
-    "primary": "End consumer",
-    "context": "mobile-first",
-    "keyTasks": ["View details", "Track progress"]
+    "primary": "Cliente final",
+    "context": "desktop-first",
+    "keyTasks": ["Ver el total rápidamente", "Entender qué incluye el trabajo", "Leer las observaciones y garantía"]
   },
   "constraints": {
-    "mustKeep": [],
-    "technical": []
+    "mustKeep": ["Descripción, Cantidad, Total"],
+    "technical": ["Usar colores del sistema", "Diseño imprimible o exportable a PDF"]
   },
   "framework": "nextjs-app",
   "packageManager": "npm",

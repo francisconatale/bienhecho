@@ -90,7 +90,7 @@ export function MaterialForm({ initialData, onSave, onCancel }: MaterialFormProp
       <div className="sticky bottom-0 bg-surface/95 dark:bg-surface/90 backdrop-blur-xl border-t border-outline-variant/10 -mx-5 px-5 sm:-mx-6 sm:px-6 py-4 flex gap-2 z-10 -mb-8 sm:-mb-6">
         <button
           onClick={onCancel}
-          className="flex-1 py-3 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95 disabled:opacity-50"
+          className="flex-1 py-3 rounded-full bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95 disabled:opacity-50"
         >
           Cancelar
         </button>
@@ -98,7 +98,7 @@ export function MaterialForm({ initialData, onSave, onCancel }: MaterialFormProp
           onClick={handleSave}
           disabled={!canSave}
           className={cn(
-            "flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95",
+            "flex-1 py-3 rounded-full font-black text-[10px] uppercase tracking-widest transition-all active:scale-95",
             canSave
               ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark"
               : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
