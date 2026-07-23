@@ -6,6 +6,7 @@ import { usePayments } from "../hooks/use-payments";
 import { CobroForm } from "./cobro-form";
 import { cn } from "@/lib/utils";
 import { Cobro } from "@/types";
+import { Modal } from "@/components/ui/modal";
 
 interface PaymentsDashboardProps {
   jobId: string;
@@ -70,16 +71,27 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
         </div>
 
         <div className="space-y-3">
-          {isAddingCobro && (
+          <Modal
+            isOpen={isAddingCobro}
+            onClose={() => setIsAddingCobro(false)}
+            title="Registrar Cobro"
+          >
             <CobroForm onSave={handleSaveCobro} onCancel={() => setIsAddingCobro(false)} />
-          )}
-          {editingCobro && (
-            <CobroForm
-              initialData={editingCobro}
-              onSave={handleSaveCobro}
-              onCancel={() => setEditingCobro(null)}
-            />
-          )}
+          </Modal>
+
+          <Modal
+            isOpen={editingCobro !== null}
+            onClose={() => setEditingCobro(null)}
+            title="Editar Cobro"
+          >
+            {editingCobro && (
+              <CobroForm
+                initialData={editingCobro}
+                onSave={handleSaveCobro}
+                onCancel={() => setEditingCobro(null)}
+              />
+            )}
+          </Modal>
 
           {cobros.length > 0 ? (
             cobros.map((cobro) => (
