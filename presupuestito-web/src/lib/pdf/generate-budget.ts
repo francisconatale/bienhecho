@@ -12,6 +12,7 @@ interface PDFData {
     cuit?: string;
     matricula?: string;
     trade?: string;
+    logo_url?: string;
   };
 }
 
@@ -87,15 +88,48 @@ export async function generateBudgetPDF({
   doc.setFillColor(...brandGreen);
   doc.rect(0, 0, pageWidth, headerHeight, "F");
 
+  let logoBase64 = null;
+  let logoFormat = null;
+  if (userProfile.logo_url) {
+    try {
+      const response = await fetch(userProfile.logo_url);
+      if (response.ok) {
+        const buffer = await response.arrayBuffer();
+        logoBase64 = arrayBufferToBase64(buffer);
+        const urlLower = userProfile.logo_url.toLowerCase();
+        if (urlLower.includes(".png")) {
+          logoFormat = "PNG";
+        } else if (urlLower.includes(".jpg") || urlLower.includes(".jpeg")) {
+          logoFormat = "JPEG";
+        }
+      }
+    } catch (error) {
+      console.error("Failed to load logo", error);
+    }
+  }
+
+  let textX = margin;
+  if (logoBase64 && logoFormat) {
+    // Draw logo in the header
+    // The logo will be drawn at left margin, centered vertically in the header
+    const maxLogoHeight = 25;
+    const maxLogoWidth = 40;
+    
+    // We assume a square logo for now, or we can just pass width=height.
+    // Let's use 25x25 for simplicity, or we can get actual dimensions if needed.
+    doc.addImage(logoBase64, logoFormat, margin, (headerHeight - 20) / 2, 20, 20);
+    textX = margin + 25;
+  }
+
   doc.setFont("Inter", "bold");
   doc.setFontSize(18);
   doc.setTextColor(255, 255, 255);
-  doc.text(userProfile.company || userProfile.name, margin, 18);
+  doc.text(userProfile.company || userProfile.name, textX, 18);
 
   doc.setFont("Inter", "normal");
   doc.setFontSize(9);
   doc.setTextColor(240, 253, 244); // light green tint
-  doc.text(userProfile.trade || "Servicios Profesionales", margin, 26);
+  doc.text(userProfile.trade || "Servicios Profesionales", textX, 26);
 
   doc.setFont("Inter", "bold");
   doc.setFontSize(14);

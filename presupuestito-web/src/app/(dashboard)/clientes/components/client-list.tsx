@@ -6,7 +6,9 @@ import { MasterDetail } from "@/components/ui/master-detail";
 import { MobileHeaderActions } from "@/components/ui/mobile-header-actions";
 import { ClientDetailPane } from "./client-detail-pane";
 import { ClientItem } from "./client-item";
+import { MasterDetailSkeleton } from "@/components/ui/master-detail-skeleton";
 import { useClients } from "../hooks/use-clients";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 
 export function ClientList() {
   const {
@@ -23,8 +25,13 @@ export function ClientList() {
     handleDelete,
     handleToggleCreation,
     handleCreationSuccess,
+    isLoading,
     ConfirmDialog,
   } = useClients();
+
+  if (isLoading && filtered.length === 0) {
+    return <MasterDetailSkeleton />;
+  }
 
   return (
     <div className="flex flex-col flex-1 bg-transparent relative overflow-hidden">
@@ -96,8 +103,9 @@ export function ClientList() {
           />
         )}
         emptyDetail={
-          <div className="flex-1 flex items-start justify-center pt-16 text-on-surface-variant">
-            <div className="text-center">
+          <div className="flex-1 flex items-start justify-center pt-16 text-on-surface-variant relative">
+            <AuroraBackground preset="perfil" />
+            <div className="text-center z-10 relative">
               <User className="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2 opacity-15" />
               <p className="text-xs md:text-base font-medium">Seleccioná un cliente</p>
             </div>

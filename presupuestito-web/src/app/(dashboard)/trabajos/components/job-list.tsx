@@ -7,10 +7,15 @@ import { jobsService, clientsService } from "@/services";
 import { Job } from "@/types";
 import { useServerPagination } from "@/hooks/use-server-pagination";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { TrabajoDetail } from "./trabajo-detail";
 import { JobStatusSelector } from "../[id]/components/job-status";
 import { MobileHeaderActions } from "@/components/ui/mobile-header-actions";
 import { MasterDetail } from "@/components/ui/master-detail";
+import { MasterDetailSkeleton } from "@/components/ui/master-detail-skeleton";
+import { useConfirm } from "@/hooks/use-confirm";
+import { toast } from "sonner";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 
 function formatCurrency(amount: number): string {
   if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
@@ -24,6 +29,16 @@ export function JobList() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const queryClient = useQueryClient();
+  const [ConfirmDialog, confirm] = useConfirm();
+
+  const deleteJobMutation = useMutation({
+    mutationFn: (id: string) => jobsService.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["jobs"] });
+      toast.success("Trabajo eliminado correctamente");
+    }
+  });
 
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(
@@ -52,16 +67,13 @@ export function JobList() {
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
-  const { data } = useQuery({ 
+  const { data, isLoading } = useQuery({ 
     queryKey: ["jobs", "paginated", page, pageSize, search], 
     queryFn: () => jobsService.getPaginated(page, pageSize, search) 
   });
 
   const jobs = data?.data || [];
   const total = data?.total || 0;
-
-  // We can still fetch all clients if other components need it, but job.clientes will have the name
-  const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
 
   const serverPag = useServerPagination(total, pageSize);
 
@@ -89,6 +101,10 @@ export function JobList() {
   }, [search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const selected = jobs.find((j) => j.id === selectedId) || null;
+
+  if (isLoading && jobs.length === 0) {
+    return <MasterDetailSkeleton />;
+  }
 
   return (
     <div className="flex flex-col flex-1 bg-transparent relative overflow-hidden">
@@ -122,7 +138,18 @@ export function JobList() {
                 document.querySelector<HTMLButtonElement>('[data-job-header-save]')?.click();
               }}
               onDelete={job.estado === "borrador" ? () => {
-                document.dispatchEvent(new CustomEvent('delete-job', { detail: job.id }));
+                confirm({
+                  title: "Eliminar Trabajo",
+                  description: `¿Estás seguro de que querés eliminar el trabajo "${job.titulo}"? Esta acción no se puede deshacer.`,
+                  confirmText: "Eliminar",
+                  variant: "danger",
+                  action: async () => {
+                    await deleteJobMutation.mutateAsync(job.id);
+                    if (selectedId === job.id) {
+                      handleSelectedIdChange(null);
+                    }
+                  }
+                });
               } : undefined}
             />
           );
@@ -130,7 +157,7 @@ export function JobList() {
         pagination={pag as any}
         creationHref="/trabajos/nuevo"
         renderItem={(job: any, isSelected) => {
-          const clientName = job.clientes?.nombre || clients.find((c) => c.id === job.cliente_id)?.nombre || "Sin cliente";
+          const clientName = job.clientes?.nombre || "Sin cliente";
           return (
             <button
               onClick={() => handleSelectedIdChange(job.id)}
@@ -187,8 +214,9 @@ export function JobList() {
           />
         )}
         emptyDetail={
-          <div className="flex-1 flex items-start justify-center pt-16 text-on-surface-variant">
-            <div className="text-center">
+          <div className="flex-1 flex items-start justify-center pt-16 text-on-surface-variant relative">
+            <AuroraBackground preset="trabajo" />
+            <div className="text-center z-10 relative">
               <Briefcase className="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2 opacity-15" />
               <p className="text-xs md:text-base font-medium">Seleccioná un trabajo</p>
             </div>
@@ -206,6 +234,7 @@ export function JobList() {
           </div>
         }
       />
+      <ConfirmDialog />
     </div>
   );
 }

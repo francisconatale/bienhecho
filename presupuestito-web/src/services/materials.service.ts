@@ -4,7 +4,8 @@ import { createClient } from "@/utils/supabase/client";
 export const materialsService = {
   getAll: async (): Promise<Material[]> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
     const { data, error } = await supabase.from("materiales").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
@@ -13,7 +14,8 @@ export const materialsService = {
 
   getByJobId: async (jobId: string): Promise<Material[]> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
     const { data, error } = await supabase.from("materiales").select("*").eq("trabajo_id", jobId).eq("user_id", user.id);
     if (error) throw new Error(error.message);
@@ -22,7 +24,8 @@ export const materialsService = {
 
   create: async (materialData: Omit<Material, "id" | "created_at" | "user_id">): Promise<Material> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
 
     const { data, error } = await supabase
@@ -36,7 +39,8 @@ export const materialsService = {
 
   update: async (id: string, materialData: Partial<Material>): Promise<Material> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
     const { data, error } = await supabase.from("materiales").update(materialData).eq("id", id).eq("user_id", user.id).select().single();
     if (error) throw new Error(error.message);
@@ -45,9 +49,11 @@ export const materialsService = {
 
   delete: async (id: string): Promise<void> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
     const { error } = await supabase.from("materiales").delete().eq("id", id).eq("user_id", user.id);
     if (error) throw new Error(error.message);
   },
 };
+

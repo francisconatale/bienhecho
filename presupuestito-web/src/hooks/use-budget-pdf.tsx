@@ -3,6 +3,7 @@
 import { generateBudgetPDF } from "@/lib/pdf/generate-budget";
 import { useQueryClient } from "@tanstack/react-query";
 import { jobsService, clientsService, tasksService, materialsService } from "@/services";
+import { storageService } from "@/services/storage.service";
 import { useProfile } from "@/hooks/use-profile";
 
 export function useBudgetPDF() {
@@ -40,6 +41,7 @@ export function useBudgetPDF() {
       cuit: "00-00000000-0",
       matricula: profile?.numero_matricula,
       trade: job.titulo || profile?.rubro || "Servicios Profesionales",
+      logo_url: profile?.logo_path ? storageService.getPublicUrl(profile.logo_path) : undefined,
     };
 
     generateBudgetPDF({

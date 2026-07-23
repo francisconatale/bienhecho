@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { tasksService } from "@/services";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
@@ -28,6 +28,7 @@ export function useTareas() {
     queryKey: ["tasks", "resumen"],
     queryFn: tasksService.getResumen,
     enabled: category === "resumen" && filter === "pendientes",
+    placeholderData: keepPreviousData,
   });
 
   // 3. Fetch paginated category if needed
@@ -35,6 +36,7 @@ export function useTareas() {
     queryKey: ["tasks", "paginated", filter, category, page, pageSize],
     queryFn: () => tasksService.getPaginated(page, pageSize, filter, category !== "resumen" ? category : undefined),
     enabled: category !== "resumen" || filter === "completadas",
+    placeholderData: keepPreviousData,
   });
 
   const isLoading = isLoadingCounts || isLoadingResumen || isLoadingPaginated;

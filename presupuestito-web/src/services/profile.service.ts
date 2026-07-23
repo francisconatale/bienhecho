@@ -6,13 +6,15 @@ export interface Profile {
   rubro: string | null;
   numero_matricula: string | null;
   direccion: string | null;
+  logo_path: string | null;
   created_at: string;
 }
 
 export const profileService = {
   get: async (): Promise<Profile | null> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) return null;
 
     const { data, error } = await supabase
@@ -29,9 +31,10 @@ export const profileService = {
     return data as Profile;
   },
 
-  upsert: async (profile: { nombre: string; rubro?: string; numero_matricula?: string; direccion?: string }): Promise<Profile> => {
+  upsert: async (profile: { nombre: string; rubro?: string; numero_matricula?: string; direccion?: string; logo_path?: string | null }): Promise<Profile> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
 
     const { data, error } = await supabase
@@ -47,9 +50,10 @@ export const profileService = {
     return data as Profile;
   },
 
-  update: async (updates: Partial<Pick<Profile, "nombre" | "rubro" | "numero_matricula" | "direccion">>): Promise<Profile> => {
+  update: async (updates: Partial<Pick<Profile, "nombre" | "rubro" | "numero_matricula" | "direccion" | "logo_path">>): Promise<Profile> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
 
     const { data, error } = await supabase
@@ -63,3 +67,4 @@ export const profileService = {
     return data as Profile;
   },
 };
+

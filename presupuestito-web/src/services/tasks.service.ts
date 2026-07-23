@@ -15,7 +15,8 @@ const applyDefaults = (task: any): Task => {
 export const tasksService = {
   getAll: async (): Promise<Task[]> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
     const { data, error } = await supabase.from("tareas").select("*").eq("user_id", user.id).order("orden", { ascending: true });
     if (error) throw new Error(error.message);
@@ -29,7 +30,8 @@ export const tasksService = {
     category?: "alta" | "media" | "baja"
   ) => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
 
     // Fetch joined data using string notation
@@ -69,60 +71,64 @@ export const tasksService = {
 
   getResumen: async () => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
 
-    const baseQuery = supabase
+    // Fetch up to 50 pending tasks and group them client-side to save queries
+    const { data, error } = await supabase
       .from("tareas")
       .select("*, trabajos!inner(titulo, estado, clientes(nombre))")
       .eq("user_id", user.id)
       .eq("completada", false)
       .order("orden", { ascending: true })
-      .limit(5);
+      .limit(50); // Get enough to likely satisfy 5 per category
 
-    const [alta, media, baja] = await Promise.all([
-      baseQuery.eq("prioridad", "alta"),
-      baseQuery.eq("prioridad", "media"),
-      baseQuery.or("prioridad.eq.baja,prioridad.is.null")
-    ]);
+    if (error) throw new Error(error.message);
 
-    const formatData = (res: any) => (res.data || []).map((t: any) => applyDefaults({
+    const formattedData = (data || []).map((t: any) => applyDefaults({
       ...t,
       job: t.trabajos ? { ...t.trabajos, id: t.trabajo_id } : null,
       client: t.trabajos?.clientes ? { ...t.trabajos.clientes } : null,
     }));
 
-    return {
-      alta: formatData(alta),
-      media: formatData(media),
-      baja: formatData(baja),
-    };
+    const alta = formattedData.filter((t: any) => t.prioridad === "alta").slice(0, 5);
+    const media = formattedData.filter((t: any) => t.prioridad === "media").slice(0, 5);
+    const baja = formattedData.filter((t: any) => t.prioridad === "baja" || !t.prioridad).slice(0, 5);
+
+    return { alta, media, baja };
   },
 
   getCounts: async () => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
 
-    // En Supabase lo más eficiente para counts múltiples es agrupar o hacer RPC
-    // Para simplificar, hacemos counts paralelos
-    const getCount = async (filters: any) => {
-      let q = supabase.from("tareas").select("*", { count: "exact", head: true }).eq("user_id", user.id);
-      Object.entries(filters).forEach(([k, v]) => {
-        if (k === "or") q = q.or(v as string);
-        else q = q.eq(k, v);
-      });
-      const { count } = await q;
-      return count || 0;
-    };
+    // Replace 5 parallel counts with a single query fetching only what's needed for counts
+    const { data, error } = await supabase
+      .from("tareas")
+      .select("completada, prioridad")
+      .eq("user_id", user.id);
 
-    const [pendingCount, completedCount, alta, media, baja] = await Promise.all([
-      getCount({ completada: false }),
-      getCount({ completada: true }),
-      getCount({ completada: false, prioridad: "alta" }),
-      getCount({ completada: false, prioridad: "media" }),
-      getCount({ completada: false, or: "prioridad.eq.baja,prioridad.is.null" }),
-    ]);
+    if (error) throw new Error(error.message);
+
+    let pendingCount = 0;
+    let completedCount = 0;
+    let alta = 0;
+    let media = 0;
+    let baja = 0;
+
+    (data || []).forEach((t: any) => {
+      if (t.completada) {
+        completedCount++;
+      } else {
+        pendingCount++;
+        if (t.prioridad === "alta") alta++;
+        else if (t.prioridad === "media") media++;
+        else baja++;
+      }
+    });
 
     return {
       pendingCount,
@@ -133,7 +139,8 @@ export const tasksService = {
 
   getByJobId: async (jobId: string): Promise<Task[]> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
     const { data, error } = await supabase.from("tareas").select("*").eq("trabajo_id", jobId).eq("user_id", user.id).order("orden", { ascending: true });
     if (error) throw new Error(error.message);
@@ -142,7 +149,8 @@ export const tasksService = {
 
   create: async (taskData: Omit<Task, "id" | "user_id">): Promise<Task> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
 
     const { data, error } = await supabase
@@ -156,7 +164,8 @@ export const tasksService = {
 
   update: async (id: string, taskData: Partial<Task>): Promise<Task> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
     const { data, error } = await supabase.from("tareas").update(taskData).eq("id", id).eq("user_id", user.id).select().single();
     if (error) throw new Error(error.message);
@@ -165,7 +174,8 @@ export const tasksService = {
 
   delete: async (id: string): Promise<void> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
     const { error } = await supabase.from("tareas").delete().eq("id", id).eq("user_id", user.id);
     if (error) throw new Error(error.message);
@@ -173,7 +183,8 @@ export const tasksService = {
 
   reorder: async (jobId: string, taskIds: string[]): Promise<void> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
 
     const updates = taskIds.map((id, index) => ({
@@ -186,3 +197,4 @@ export const tasksService = {
     if (error) throw new Error(error.message);
   },
 };
+

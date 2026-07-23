@@ -1,15 +1,10 @@
-"use client";
-
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { ChevronLeft, FileDown, Hammer, Wallet, CheckCircle, X, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { notFound, useSearchParams, useRouter } from "next/navigation";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { notFound, useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import { jobsService } from "@/services";
 import { useBudgetPDF } from "@/hooks/use-budget-pdf";
-import { jobsService, clientsService, tasksService, cobrosService } from "@/services";
-import { JobHeader } from "../[id]/components/job-header";
-import { useConfirm } from "@/hooks/use-confirm";
-import { toast } from "sonner";
 
 import { ProgressBar } from "../[id]/components/progress-bar";
 import { TaskList } from "../[id]/components/task-list";
@@ -20,6 +15,12 @@ import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { MobilePageHeader } from "@/components/ui/mobile-page-header";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import dynamic from "next/dynamic";
+import { useTrabajoDetail } from "../[id]/hooks/use-trabajo-detail";
+import { JobSummaryCards } from "../[id]/components/job-summary-cards";
+import { EmitPdfDialog } from "../[id]/components/emit-pdf-dialog";
+import { JobHeader } from "../[id]/components/job-header";
+import { useConfirm } from "@/hooks/use-confirm";
+import { toast } from "sonner";
 
 const TaskDetailPanel = dynamic(
   () => import("../[id]/components/task-detail-panel").then((m) => m.TaskDetailPanel),
@@ -54,34 +55,30 @@ export function TrabajoDetail({
   onBack?: () => void;
   startEditing?: boolean;
   onEditStarted?: () => void;
-  onEditingChange?: (editing: boolean) => void;
+  onEditingChange?: (isEditing: boolean) => void;
 }) {
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
-  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-  const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
-  const { data: tasks = [] } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
-  const { data: cobros = [] } = useQuery({ queryKey: ["cobros", id], queryFn: () => cobrosService.getByJobId(id) });
+  const { 
+    job, 
+    isLoadingJob, 
+    client, 
+    jobTasks, 
+    cobros, 
+    updateJobMutation, 
+    addCobroMutation, 
+    pdfError, 
+    setPdfError, 
+    showPdfDialog, 
+    setShowPdfDialog, 
+    generatingAction, 
+    doGeneratePDF, 
+    downloadPDF 
+  } = useTrabajoDetail(id);
 
-  const updateJobMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => jobsService.update(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["jobs"] }),
-  });
-
-  const addCobroMutation = useMutation({
-    mutationFn: cobrosService.create,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cobros", id] });
-      queryClient.invalidateQueries({ queryKey: ["jobs"] });
-    },
-  });
-  const { downloadPDF } = useBudgetPDF();
-  const [pdfError, setPdfError] = useState<string | null>(null);
   const [isHeaderEditing, setIsHeaderEditing] = useState(false);
   const [headerHasChanges, setHeaderHasChanges] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  const [showPdfDialog, setShowPdfDialog] = useState(false);
-  const pdfGeneratedRef = useRef(false);
 
   useEffect(() => { setIsHeaderEditing(false); }, []);
   useEffect(() => {
@@ -92,9 +89,8 @@ export function TrabajoDetail({
   }, [startEditing]);
   useEffect(() => { onEditingChange?.(isHeaderEditing); }, [isHeaderEditing]);
 
-
-
   const router = useRouter();
+  const pathname = usePathname();
   const { popHistory, pushHistory } = useNavigationHistory();
   const from = searchParams.get("from");
 
@@ -102,51 +98,22 @@ export function TrabajoDetail({
   const initialTaskHandled = useRef(false);
   useEffect(() => {
     if (initialTaskHandled.current) return;
-    if (taskParam && tasks.some((t) => t.id === taskParam && t.trabajo_id === id)) {
+    if (taskParam && jobTasks.some((t) => t.id === taskParam && t.trabajo_id === id)) {
       setSelectedTaskId(taskParam);
       initialTaskHandled.current = true;
-      const url = new URL(window.location.href);
-      url.searchParams.delete("task");
-      window.history.replaceState({}, "", url.pathname + url.search);
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("task");
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     }
-  }, [taskParam, tasks, id]);
+  }, [taskParam, jobTasks, id, pathname, router, searchParams]);
 
-  const { totalMateriales, materiales } = useMaterials(id);
-  const { saldoPendiente } = usePayments(id);
-  const [generatingAction, setGeneratingAction] = useState<"guardar" | "emitir" | null>(null);
+  const { totalMateriales } = useMaterials(id);
   const [ConfirmDialog, confirm] = useConfirm();
 
   const handleDownloadPDF = () => {
     setPdfError(null);
     setShowPdfDialog(true);
   };
-
-  const doGeneratePDF = useCallback(async (emitir: boolean) => {
-    setGeneratingAction(emitir ? "emitir" : "guardar");
-    const currentJob = jobs.find((j) => j.id === id);
-    if (!currentJob) {
-      setGeneratingAction(null);
-      return;
-    }
-    try {
-      downloadPDF(currentJob.id);
-      if (emitir && currentJob.estado !== "presupuestado") {
-        await updateJobMutation.mutateAsync({
-          id: currentJob.id,
-          data: { estado: "presupuestado" },
-        });
-      }
-      setShowPdfDialog(false);
-    } catch (error) {
-      console.error("Failed to generate PDF:", error);
-      setPdfError(error instanceof Error ? error.message : "Error al generar el PDF");
-      setShowPdfDialog(false);
-    } finally {
-      setGeneratingAction(null);
-    }
-  }, [id, downloadPDF, updateJobMutation, jobs]);
-
-  const job = jobs.find((j) => j.id === id);
 
   const handleDeleteJob = useCallback(() => {
     if (!job) return;
@@ -156,6 +123,9 @@ export function TrabajoDetail({
       confirmText: "Eliminar",
       variant: "danger",
       action: async () => {
+        // jobsService is imported through useTrabajoDetail or directly. But here we don't need jobsService if we use deleteJobMutation. Actually we still need jobsService. Let me just use jobsService.delete(job.id) directly. 
+        // Oh wait, I didn't export deleteJobMutation in useTrabajoDetail? I did, but I didn't extract it from the hook here. Let's just import jobsService if not present. It is not in imports since I removed it. I will restore it in a sec if needed, wait, I didn't remove it from imports, I removed the whole line.
+        // Wait, the hook has deleteJobMutation, I'll use it or add it later. I will just leave the delete logic unchanged since it works but needs jobsService, which I might have removed. I'll add `import { jobsService } from "@/services"` at the top.
         await jobsService.delete(job.id);
         queryClient.invalidateQueries({ queryKey: ["jobs"] });
         toast.success("Trabajo eliminado correctamente");
@@ -168,27 +138,16 @@ export function TrabajoDetail({
     });
   }, [confirm, job, queryClient, router, isEmbedded, onBack]);
 
-  useEffect(() => {
-    const handleEvent = (e: Event) => {
-      const customEvent = e as CustomEvent<string>;
-      if (customEvent.detail === id) {
-        handleDeleteJob();
-      }
-    };
-    document.addEventListener("delete-job", handleEvent);
-    return () => document.removeEventListener("delete-job", handleEvent);
-  }, [id, handleDeleteJob]);
+  // Expose delete handler for external calls via ref if needed, but we removed event bus.
+  // Instead, the parent should trigger it or handle it.
+  // We'll leave it attached to a known window function for legacy or use a ref,
+  // but since we want to remove the event bus, we remove it completely.
 
-  const handleEmitPresupuesto = useCallback(() => {
-    doGeneratePDF(true);
-  }, [doGeneratePDF]);
-
-  const handleGuardarPdf = useCallback(() => {
-    doGeneratePDF(false);
-  }, [doGeneratePDF]);
+  const handleEmitPresupuesto = useCallback(() => { doGeneratePDF(true); }, [doGeneratePDF]);
+  const handleGuardarPdf = useCallback(() => { doGeneratePDF(false); }, [doGeneratePDF]);
 
   if (!job) {
-    if (isLoadingJobs) {
+    if (isLoadingJob) {
       return (
         <div className="flex-1 min-h-screen flex items-center justify-center">
           <div className="w-8 h-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
@@ -199,8 +158,6 @@ export function TrabajoDetail({
     notFound();
   }
 
-  const client = clients.find((c) => c.id === job.cliente_id);
-  const jobTasks = tasks.filter((t) => t.trabajo_id === job.id);
   const totalEstimado = jobTasks.reduce((sum, t) => sum + (t.precio ?? 0), 0);
   const hasTasksWithPrice = jobTasks.some((t) => t.precio !== null);
   
@@ -211,7 +168,7 @@ export function TrabajoDetail({
   const backDest = from === "/tareas" ? "/tareas" : from === "/clientes" && client?.id ? `/clientes?clienteId=${client.id}` : "/trabajos";
 
   return (
-    <div className={cn("relative w-full", isEmbedded ? "" : "min-h-screen")}>
+    <div className={cn("relative w-full flex flex-col", isEmbedded ? "min-h-full h-full flex-1" : "min-h-screen")}>
       {!isEmbedded && (
         <>
           <AuroraBackground preset="trabajo" />
@@ -292,55 +249,7 @@ export function TrabajoDetail({
                 </div>
 
                 <JobHeader job={job} client={client} isEditing={isHeaderEditing} onEditingChange={setIsHeaderEditing} onHasChanges={setHeaderHasChanges} />
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <Link 
-                    href={`/trabajos/${job.id}/materiales${from ? `?from=${from}` : ""}`} 
-                    onClick={() => pushHistory(window.location.pathname + window.location.search)}
-                    className="group relative overflow-hidden bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
-                  >
-                    <div className="relative z-10 flex items-center justify-between">
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
-                        Materiales
-                      </span>
-                      <Hammer className="w-4 h-4 text-primary opacity-50 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                    <div className="relative z-10 mt-1">
-                      <span className="text-2xl font-bold tracking-tight text-on-surface group-hover:text-primary transition-colors">
-                        ${totalMateriales.toLocaleString("es-AR")}
-                      </span>
-                      <p className="text-[10px] font-medium text-on-surface-variant/40 mt-1 uppercase tracking-wider">
-                        {materiales.length} ítem{materiales.length !== 1 && 's'}
-                      </p>
-                    </div>
-                  </Link>
-
-                  <Link 
-                    href={`/trabajos/${job.id}/pagos`} 
-                    onClick={() => pushHistory(window.location.pathname + window.location.search)}
-                    className="group relative overflow-hidden bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
-                  >
-                    <div className="relative z-10 flex items-center justify-between">
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
-                        Cuentas a Cobrar
-                      </span>
-                      <Wallet className="w-4 h-4 text-primary opacity-50 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                    <div className="relative z-10 mt-1">
-                      <span className={cn(
-                        "text-2xl font-bold tracking-tight transition-colors",
-                        saldoPendiente <= 0 ? "text-primary" : "text-on-surface group-hover:text-primary"
-                      )}>
-                        ${Math.max(0, saldoPendiente).toLocaleString("es-AR")}
-                      </span>
-                      <p className="text-[10px] font-medium text-on-surface-variant/40 mt-1 uppercase tracking-wider">
-                        Saldo pendiente
-                      </p>
-                    </div>
-                  </Link>
-                </div>
-
-
+                <JobSummaryCards jobId={job.id} from={from} pushHistory={pushHistory} />
               </>
             )}
           </div>
@@ -456,42 +365,13 @@ export function TrabajoDetail({
         )}
       </main>
 
-      {showPdfDialog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowPdfDialog(false)}>
-          <div className="bg-surface/90 dark:bg-surface/70 backdrop-blur-xl rounded-xl p-6 border border-white/20 dark:border-white/5 shadow-[0_32px_64px_rgba(0,0,0,0.3)] max-w-sm w-full mx-4 space-y-4" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-on-surface">¿Emitir presupuesto?</h3>
-              <button
-                onClick={() => setShowPdfDialog(false)}
-                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-on-surface/10 text-on-surface-variant transition-all cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <p className="text-sm text-on-surface-variant/70 leading-relaxed">
-              Vas a generar el PDF del presupuesto para este trabajo. ¿Querés emitirlo formalmente o solo guardar el PDF?
-            </p>
-            <div className="flex gap-2 pt-2">
-              <button
-                onClick={handleGuardarPdf}
-                disabled={generatingAction !== null}
-                className="flex-1 px-4 py-3 rounded-xl bg-on-surface/5 text-on-surface font-bold text-sm hover:bg-on-surface/10 transition-all active:scale-95 cursor-pointer flex justify-center items-center gap-2 disabled:opacity-50"
-              >
-                {generatingAction === "guardar" && <Loader2 className="w-4 h-4 animate-spin" />}
-                Solo guardar PDF
-              </button>
-              <button
-                onClick={handleEmitPresupuesto}
-                disabled={generatingAction !== null}
-                className="flex-1 px-4 py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-dark transition-all active:scale-95 shadow-[0_4px_12px_rgba(61,139,110,0.3)] cursor-pointer flex justify-center items-center gap-2 disabled:opacity-70"
-              >
-                {generatingAction === "emitir" && <Loader2 className="w-4 h-4 animate-spin" />}
-                Emitir
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <EmitPdfDialog
+        show={showPdfDialog}
+        onClose={() => setShowPdfDialog(false)}
+        generatingAction={generatingAction}
+        onGuardar={handleGuardarPdf}
+        onEmitir={handleEmitPresupuesto}
+      />
       <ConfirmDialog />
     </div>
   );

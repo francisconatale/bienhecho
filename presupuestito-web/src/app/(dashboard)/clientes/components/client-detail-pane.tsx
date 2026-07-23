@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Pencil, Trash2, Plus, Phone, MapPin, Mail, CalendarDays } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { jobsService, tasksService, materialsService, cobrosService } from "@/services";
+// No services used anymore
 import { Client, Job } from "@/types";
 import { useClientForm } from "./use-client-form";
 import { useCuentaCorriente } from "@/hooks/use-cuenta-corriente";
+import { createClient } from "@/utils/supabase/client";
 
 import { AjusteManualForm } from "./ajuste-manual-form";
 import Link from "next/link";
@@ -57,12 +58,83 @@ export function ClientDetailPane({
   const [showAjuste, setShowAjuste] = useState(false);
   const router = useRouter();
   const { pushHistory } = useNavigationHistory();
-  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-  const { data: tasks = [] } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
-  const { data: materiales = [] } = useQuery({ queryKey: ["materials"], queryFn: materialsService.getAll });
-  const { data: cobros = [] } = useQuery({ queryKey: ["payments"], queryFn: cobrosService.getAll });
+  
+  const { data } = useQuery({
+    queryKey: ["client-data", client.id],
+    queryFn: async () => {
+      const supabase = createClient();
+      const { data: jobs, error: jobsError } = await supabase
+        .from("trabajos")
+        .select("*")
+        .eq("cliente_id", client.id)
+        .order("created_at", { ascending: false });
+        
+      if (jobsError) throw jobsError;
+      const jobIds = jobs?.map(j => j.id) || [];
+      
+      if (jobIds.length === 0) {
+        return { jobs: [], tasks: [], materiales: [], cobros: [] };
+      }
+      
+      const [
+        { data: tasks },
+        { data: materiales },
+        { data: cobros }
+      ] = await Promise.all([
+        supabase.from("tareas").select("*").in("trabajo_id", jobIds),
+        supabase.from("materiales").select("*").in("trabajo_id", jobIds),
+        supabase.from("cobros").select("*").in("trabajo_id", jobIds)
+      ]);
+      
+      return {
+        jobs: jobs || [],
+        tasks: tasks || [],
+        materiales: materiales || [],
+        cobros: cobros || []
+      };
+    }
+  });
 
-  const clientJobs = jobs.filter((j) => j.cliente_id === client.id);
+  const clientJobs = data?.jobs || [];
+  
+  const jobMetrics = useMemo(() => {
+    const tasks = data?.tasks || [];
+    const materiales = data?.materiales || [];
+    const cobros = data?.cobros || [];
+
+    const metrics: Record<string, {
+      completedTasks: number,
+      totalTasks: number,
+      materialsCost: number,
+      totalEstimado: number,
+      totalCobrado: number,
+      saldoPendiente: number,
+    }> = {};
+
+    clientJobs.forEach(job => {
+      const jobTasks = tasks.filter((t: any) => t.trabajo_id === job.id);
+      const jobMaterials = materiales.filter((m: any) => m.trabajo_id === job.id);
+      const jobCobros = cobros.filter((c: any) => c.trabajo_id === job.id);
+
+      const completedTasks = jobTasks.filter((t: any) => t.completada).length;
+      const totalTasks = jobTasks.length;
+      const materialsCost = jobMaterials.reduce((sum: number, m: any) => sum + m.subtotal, 0);
+      const totalEstimado = jobTasks.reduce((sum: number, t: any) => sum + (t.precio ?? 0), 0) + materialsCost;
+      const totalCobrado = jobCobros.reduce((s: number, c: any) => s + c.monto_cobrado, 0);
+      const saldoPendiente = Math.max(0, totalEstimado - totalCobrado);
+
+      metrics[job.id] = {
+        completedTasks,
+        totalTasks,
+        materialsCost,
+        totalEstimado,
+        totalCobrado,
+        saldoPendiente
+      };
+    });
+    
+    return metrics;
+  }, [clientJobs, data]);
   const { saldo: deudaTotal } = useCuentaCorriente(client.id);
 
   const handleSuccess = () => setIsEditing(false);
@@ -70,7 +142,7 @@ export function ClientDetailPane({
   const { register, formState: { errors } } = form;
 
   return (
-    <div className="flex-1 overflow-y-auto relative w-full min-h-screen">
+    <div className="flex-1 overflow-y-auto relative w-full h-full min-h-full flex flex-col">
       <AuroraBackground preset="perfil" />
 
       <form onSubmit={onSubmit} className="relative z-10 px-4 pt-28 pb-6 md:pt-8 md:pb-8 max-w-[1200px] mx-auto flex flex-col gap-6 pb-32">
@@ -137,7 +209,7 @@ export function ClientDetailPane({
                 <button type="button" onClick={() => setIsEditing(false)} className="px-4 py-2 rounded-xl bg-on-surface/5 hover:bg-on-surface/10 text-sm font-bold transition-colors">
                   Cancelar
                 </button>
-                <button type="submit" disabled={isLoading} className="px-5 py-2 rounded-xl bg-primary text-white hover:bg-primary-dark text-sm font-bold shadow-sm transition-all active:scale-95">
+                <button type="submit" disabled={isLoading} data-client-save className="px-5 py-2 rounded-xl bg-primary text-white hover:bg-primary-dark text-sm font-bold shadow-sm transition-all active:scale-95">
                   {isLoading ? "..." : "Guardar"}
                 </button>
               </>
@@ -205,7 +277,6 @@ export function ClientDetailPane({
               {
                 label: "Trabajo",
                 render: (job) => {
-                  const jobTasks = tasks.filter((t) => t.trabajo_id === job.id);
                   const daysSinceCreation = Math.floor((Date.now() - new Date(job.created_at).getTime()) / (1000 * 60 * 60 * 24));
                   return (
                     <div className="flex flex-col gap-1">
@@ -232,10 +303,8 @@ export function ClientDetailPane({
                 label: "Estado",
                 className: "md:w-40",
                 render: (job) => {
-                  const jobTasks = tasks.filter((t) => t.trabajo_id === job.id);
-                  const completedTasks = jobTasks.filter((t) => t.completada).length;
-                  const totalTasks = jobTasks.length;
-                  const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+                  const metrics = jobMetrics[job.id] || { totalTasks: 0, completedTasks: 0 };
+                  const progress = metrics.totalTasks > 0 ? Math.round((metrics.completedTasks / metrics.totalTasks) * 100) : 0;
                   return (
                     <div className="flex flex-col gap-1.5">
                       <div className="flex items-center gap-2">
@@ -244,7 +313,7 @@ export function ClientDetailPane({
                           {job.estado.replace(/_/g, " ")}
                         </span>
                       </div>
-                      {totalTasks > 0 && (
+                      {metrics.totalTasks > 0 && (
                         <div className="flex items-center gap-2">
                           <div className="flex-1 h-1.5 bg-on-surface/5 dark:bg-white/[0.06] rounded-full overflow-hidden">
                             <div className="h-full bg-primary rounded-full" style={{ width: `${progress}%` }} />
@@ -261,20 +330,15 @@ export function ClientDetailPane({
                 className: "md:w-32 text-right",
                 headerClassName: "text-right",
                 render: (job) => {
-                  const jobTasks = tasks.filter((t) => t.trabajo_id === job.id);
-                  const jobMaterials = materiales.filter((m) => m.trabajo_id === job.id);
-                  const materialsCost = jobMaterials.reduce((sum, m) => sum + m.subtotal, 0);
-                  const totalEstimado = jobTasks.reduce((sum, t) => sum + (t.precio ?? 0), 0) + materialsCost;
-                  const totalCobrado = cobros.filter((c) => c.trabajo_id === job.id).reduce((s, c) => s + c.monto_cobrado, 0);
-                  const saldoPendiente = Math.max(0, totalEstimado - totalCobrado);
+                  const metrics = jobMetrics[job.id] || { totalEstimado: 0, saldoPendiente: 0 };
                   return (
                     <div className="flex flex-col items-end justify-center">
                       <span className="text-base font-bold text-on-surface tabular-nums">
                         {job.presupuesto > 0 ? formatCurrency(job.presupuesto) : "S/P"}
                       </span>
-                      {job.estado === "presupuestado" && totalEstimado > 0 && saldoPendiente > 0 && (
+                      {job.estado === "presupuestado" && metrics.totalEstimado > 0 && metrics.saldoPendiente > 0 && (
                         <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 mt-0.5">
-                          Debe {formatCurrency(saldoPendiente)}
+                          Debe {formatCurrency(metrics.saldoPendiente)}
                         </span>
                       )}
                     </div>

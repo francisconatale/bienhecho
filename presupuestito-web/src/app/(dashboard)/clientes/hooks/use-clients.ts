@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useDeferredValue } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { clientsService } from "@/services";
@@ -13,9 +13,8 @@ export function useClients() {
   const pathname = usePathname();
 
   const [search, setSearch] = useState("");
-  const [selectedId, setSelectedId] = useState<string | null>(
-    () => searchParams.get("clienteId") || null
-  );
+  const deferredSearch = useDeferredValue(search);
+  const selectedId = searchParams.get("clienteId");
 
   const [showCreationForm, setShowCreationForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -26,8 +25,8 @@ export function useClients() {
   const pageSize = 10;
 
   const { data, isLoading } = useQuery({
-    queryKey: ["clients", "paginated", page, pageSize, search],
-    queryFn: () => clientsService.getPaginated(page, pageSize, search),
+    queryKey: ["clients", "paginated", page, pageSize, deferredSearch],
+    queryFn: () => clientsService.getPaginated(page, pageSize, deferredSearch),
   });
 
   const clients = data?.data || [];
@@ -35,37 +34,29 @@ export function useClients() {
 
   const pag = useServerPagination(total, pageSize);
   
-  // Sync internal page state with the hook
-  useEffect(() => {
-    pag.goToPage(page);
-  }, [page]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // But we want to override pag's goToPage to also update our query state
   const goToPage = (p: number) => {
     setPage(p);
-    pag.goToPage(p);
   };
   
   const nextPage = () => {
     if (!pag.isLastPage) {
       setPage(p => p + 1);
-      pag.nextPage();
     }
   };
 
   const prevPage = () => {
     if (!pag.isFirstPage) {
       setPage(p => p - 1);
-      pag.prevPage();
     }
   };
 
   const serverPag = {
     ...pag,
+    currentPage: page, // Override currentPage from useServerPagination if needed
     goToPage,
     nextPage,
     prevPage,
-    paginatedItems: clients, // Attach the data here so the UI still works the same way!
+    paginatedItems: clients,
   };
 
   const deleteMutation = useMutation({
@@ -79,7 +70,6 @@ export function useClients() {
   useEffect(() => { setIsEditing(false); }, [selectedId]);
 
   const handleSelectedIdChange = (id: string | null) => {
-    setSelectedId(id);
     const params = new URLSearchParams(searchParams.toString());
     if (id) {
       params.set("clienteId", id);
@@ -91,7 +81,7 @@ export function useClients() {
 
   useEffect(() => {
     goToPage(1);
-  }, [search]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [deferredSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const selected = clients.find((c) => c.id === selectedId) || null;
 

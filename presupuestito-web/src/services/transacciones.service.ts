@@ -4,7 +4,8 @@ import { createClient } from "@/utils/supabase/client";
 export const transaccionesService = {
   getAll: async (): Promise<TransaccionCuentaCorriente[]> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
     const { data, error } = await supabase.from("transacciones").select("*").eq("user_id", user.id).order("fecha", { ascending: false });
     if (error) throw new Error(error.message);
@@ -13,7 +14,8 @@ export const transaccionesService = {
 
   getByClientId: async (clientId: string): Promise<TransaccionCuentaCorriente[]> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
     const { data, error } = await supabase.from("transacciones").select("*").eq("cliente_id", clientId).eq("user_id", user.id).order("fecha", { ascending: false });
     if (error) throw new Error(error.message);
@@ -22,7 +24,8 @@ export const transaccionesService = {
 
   create: async (txData: Omit<TransaccionCuentaCorriente, "id" | "created_at" | "user_id">): Promise<TransaccionCuentaCorriente> => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error("No authenticated user");
 
     const { data, error } = await supabase
@@ -34,3 +37,4 @@ export const transaccionesService = {
     return data as TransaccionCuentaCorriente;
   },
 };
+

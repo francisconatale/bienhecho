@@ -9,6 +9,7 @@ export function useProfile() {
     data: profile,
     isLoading,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["profile"],
     queryFn: profileService.get,
@@ -19,6 +20,7 @@ export function useProfile() {
     profile,
     isLoading: isLoading || authLoading,
     error,
+    refetchProfile: refetch,
   };
 }
 
