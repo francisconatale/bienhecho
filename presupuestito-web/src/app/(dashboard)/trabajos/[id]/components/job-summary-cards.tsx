@@ -22,10 +22,10 @@ export function JobSummaryCards({
       <Link 
         href={`/trabajos/${jobId}/materiales${from ? `?from=${from}` : ""}`} 
         onClick={() => pushHistory(window.location.pathname + window.location.search)}
-        className="group relative overflow-hidden bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
+        className="group relative overflow-hidden bg-surface-variant/20 rounded-xl p-4 md:p-5 transition-all duration-300 hover:bg-surface-variant/40 flex flex-col gap-2"
       >
         <div className="relative z-10 flex items-center justify-between">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
+          <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">
             Materiales
           </span>
           <Hammer className="w-4 h-4 text-primary opacity-50 group-hover:opacity-100 transition-opacity" />
@@ -34,7 +34,7 @@ export function JobSummaryCards({
           <span className="text-2xl font-bold tracking-tight text-on-surface group-hover:text-primary transition-colors">
             ${totalMateriales.toLocaleString("es-AR")}
           </span>
-          <p className="text-[10px] font-medium text-on-surface-variant/40 mt-1 uppercase tracking-wider">
+          <p className="text-xs font-medium text-on-surface-variant/60 mt-1 uppercase tracking-wider">
             {materiales.length} ítem{materiales.length !== 1 && 's'}
           </p>
         </div>
@@ -43,10 +43,10 @@ export function JobSummaryCards({
       <Link 
         href={`/trabajos/${jobId}/pagos`} 
         onClick={() => pushHistory(window.location.pathname + window.location.search)}
-        className="group relative overflow-hidden bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-5 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:scale-[1.02] flex flex-col gap-2"
+        className="group relative overflow-hidden bg-surface-variant/20 rounded-xl p-4 md:p-5 transition-all duration-300 hover:bg-surface-variant/40 flex flex-col gap-2"
       >
         <div className="relative z-10 flex items-center justify-between">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">
+          <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">
             Cuentas a Cobrar
           </span>
           <Wallet className="w-4 h-4 text-primary opacity-50 group-hover:opacity-100 transition-opacity" />
@@ -58,7 +58,7 @@ export function JobSummaryCards({
           )}>
             ${Math.max(0, saldoPendiente).toLocaleString("es-AR")}
           </span>
-          <p className="text-[10px] font-medium text-on-surface-variant/40 mt-1 uppercase tracking-wider">
+          <p className="text-xs font-medium text-on-surface-variant/60 mt-1 uppercase tracking-wider">
             Saldo pendiente
           </p>
         </div>
