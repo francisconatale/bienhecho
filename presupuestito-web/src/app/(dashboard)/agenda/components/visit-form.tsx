@@ -55,6 +55,7 @@ export function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCa
         handleSubmit();
       }}
       className="space-y-4 pt-2"
+      aria-label={initial ? "Formulario de edición de visita" : "Formulario de nueva visita"}
     >
       {/* Job selector */}
       <div>
@@ -77,14 +78,19 @@ export function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCa
         <label className="block text-xs font-semibold text-on-surface-variant mb-1.5">
           Fecha
         </label>
-        <div className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-xl px-3.5 py-2.5 text-sm text-on-surface">
-          {new Date(fecha + "T12:00").toLocaleDateString("es-AR", {
+        <input
+          type="text"
+          readOnly
+          aria-readonly="true"
+          tabIndex={0}
+          value={new Date(fecha + "T12:00").toLocaleDateString("es-AR", {
             weekday: "long",
             day: "numeric",
             month: "long",
             year: "numeric",
           })}
-        </div>
+          className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-xl px-3.5 py-2.5 text-sm text-on-surface cursor-default"
+        />
       </div>
 
       {/* Time range */}
@@ -153,7 +159,7 @@ export function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCa
 
       {/* Errors */}
       {errors.length > 0 && (
-        <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-3">
+        <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-3" role="alert" aria-live="assertive">
           {errors.map((e, i) => (
             <p key={i} className="text-xs text-red-500 font-medium">
               {e}

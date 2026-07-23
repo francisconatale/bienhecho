@@ -127,6 +127,7 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
           value={tipo}
           onChange={(e) => setTipo(e.target.value as "cargo" | "abono")}
           onKeyDown={handleKeyDown}
+          aria-label="Tipo de ajuste"
           className="w-1/2 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all appearance-none cursor-pointer"
         >
           <option value="cargo">Cargo</option>
@@ -141,6 +142,7 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
           min={0.01}
           step="any"
           autoFocus
+          aria-label="Monto del ajuste"
           className="w-1/2 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
         />
       </div>
@@ -151,6 +153,7 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
         onChange={(e) => setConcepto(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Concepto del ajuste"
+        aria-label="Concepto del ajuste"
         className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
       />
 

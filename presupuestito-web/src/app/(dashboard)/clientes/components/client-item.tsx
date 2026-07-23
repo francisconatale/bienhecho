@@ -36,12 +36,12 @@ export function ClientItem({ client, isSelected, onSelect }: ClientItemProps) {
         <div className="text-right shrink-0">
           {clientJobs.filter(j => j.estado === "presupuestado").length > 0 && (
             <div className="flex flex-col items-end gap-0.5">
-              <span className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 leading-none">PRESUPUESTADO</span>
+              <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 leading-none">PRESUPUESTADO</span>
               <span className="text-[10px] md:text-sm font-bold text-on-surface leading-none">
                 {formatCurrency(clientJobs.filter(j => j.estado === "presupuestado").reduce((a, j) => a + j.presupuesto, 0))}
               </span>
               {saldo > 0 && (
-                <span className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] text-amber-600 dark:text-amber-400 mt-1.5 leading-none">ADEUDA</span>
+                <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-amber-600 dark:text-amber-400 mt-1.5 leading-none">ADEUDA</span>
               )}
               {saldo > 0 && (
                 <span className="text-[10px] md:text-sm font-bold text-amber-600 dark:text-amber-400 leading-none">{formatCurrency(saldo)}</span>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { JobStatus, Job } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { jobsService } from "@/services";
@@ -43,6 +43,17 @@ export function JobStatusSelector({ job }: JobStatusProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [ConfirmDialog, confirm] = useConfirm();
 
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === "Escape") setIsOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [isOpen, handleKeyDown]);
+
   const currentIndex = STATUS_ORDER.indexOf(job.estado);
 
   const handleStatusChange = async (newStatus: JobStatus) => {
@@ -69,6 +80,8 @@ export function JobStatusSelector({ job }: JobStatusProps) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-haspopup="true"
         className={cn(
           "text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest transition-all active:scale-95",
           STATUS_COLORS[job.estado]
@@ -78,11 +91,13 @@ export function JobStatusSelector({ job }: JobStatusProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-2 right-0 bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl p-2 z-50 min-w-[200px] animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute top-full mt-2 right-0 bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl p-2 z-50 min-w-[200px] animate-in fade-in zoom-in-95 duration-150" role="menu">
           {STATUS_ORDER.map((status, index) => (
             <button
               key={status}
               onClick={() => handleStatusChange(status)}
+              role="menuitem"
+              aria-label={STATUS_LABELS[status]}
               className={cn(
                 "w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold transition-all",
                 status === job.estado

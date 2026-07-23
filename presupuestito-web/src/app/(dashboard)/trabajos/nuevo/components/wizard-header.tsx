@@ -10,13 +10,12 @@ export function WizardHeader() {
 
   return (
     <div className="flex items-center gap-3 mb-5">
-      <Link href={preselectId ? `/clientes?clienteId=${preselectId}` : "/trabajos"}>
-        <button
-          aria-label="Volver"
-          className="w-9 h-9 rounded-xl bg-surface border border-outline-variant/30 flex items-center justify-center hover:bg-on-surface/5 transition-all active:scale-95 cursor-pointer"
-        >
-          <ChevronLeft className="w-4 h-4 text-on-surface" />
-        </button>
+      <Link
+        href={preselectId ? `/clientes?clienteId=${preselectId}` : "/trabajos"}
+        aria-label="Volver"
+        className="w-9 h-9 rounded-xl bg-surface border border-outline-variant/30 flex items-center justify-center hover:bg-on-surface/5 transition-all active:scale-95 cursor-pointer"
+      >
+        <ChevronLeft className="w-4 h-4 text-on-surface" />
       </Link>
       <div>
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-on-surface">

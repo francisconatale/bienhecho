@@ -46,18 +46,14 @@ export function AgendaFilters({
           size="sm"
           className="flex-1 min-w-[120px]"
         />
-        <select
+        <SelectInput
           value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value as VisitStatus | "")}
-          className="flex-1 min-w-[100px] bg-grouped-bg-light border border-outline-variant/20 rounded-xl px-3 py-2 text-xs font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20"
-        >
-          <option value="">Todos los estados</option>
-          {STATUS_OPTIONS.map((s) => (
-            <option key={s.value} value={s.value}>
-              {s.label}
-            </option>
-          ))}
-        </select>
+          onValueChange={(val) => setFilterStatus(val as VisitStatus | "")}
+          options={[{ value: "", label: "Todos los estados" }, ...STATUS_OPTIONS]}
+          placeholder="Todos los estados"
+          size="sm"
+          className="flex-1 min-w-[100px]"
+        />
       </div>
     </div>
   );

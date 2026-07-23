@@ -34,23 +34,26 @@ export function AgendaCalendar({
       <div className="flex items-center justify-between px-6 py-4 border-b border-black/[0.04] dark:border-white/[0.04]">
         <button
           onClick={onGoToday}
-          className="text-xs font-bold text-primary hover:text-primary-dark transition-colors"
+          aria-label="Ir a la fecha de hoy"
+          className="text-xs font-bold text-primary hover:text-primary-dark transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 rounded-lg"
         >
           Hoy
         </button>
         <div className="flex items-center gap-3">
           <button
             onClick={onPrevMonth}
-            className="w-8 h-8 rounded-xl hover:bg-outline-variant/10 flex items-center justify-center transition-colors"
+            aria-label="Mes anterior"
+            className="w-8 h-8 rounded-xl hover:bg-outline-variant/10 flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 rounded-lg"
           >
             <ChevronLeft className="w-4 h-4 text-on-surface-variant" />
           </button>
-          <span className="text-sm font-extrabold text-on-surface min-w-[140px] text-center">
+          <span className="text-sm font-extrabold text-on-surface min-w-[140px] text-center" aria-live="polite">
             {MONTHS[month]} {year}
           </span>
           <button
             onClick={onNextMonth}
-            className="w-8 h-8 rounded-xl hover:bg-outline-variant/10 flex items-center justify-center transition-colors"
+            aria-label="Mes siguiente"
+            className="w-8 h-8 rounded-xl hover:bg-outline-variant/10 flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 rounded-lg"
           >
             <ChevronRight className="w-4 h-4 text-on-surface-variant" />
           </button>

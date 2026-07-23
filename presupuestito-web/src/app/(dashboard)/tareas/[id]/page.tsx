@@ -16,7 +16,17 @@ export default function TareaPage({ params }: TareaPageProps) {
   const { data: tasks = [] } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
   const task = tasks.find((t) => t.id === id);
 
-  if (!task) return null;
+  if (!task) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center px-4">
+        <h2 className="text-lg font-bold text-on-surface">Tarea no encontrada</h2>
+        <p className="text-sm text-on-surface-variant mt-1">La tarea que buscás no existe o fue eliminada.</p>
+        <button onClick={() => router.push("/tareas")} className="mt-4 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold">
+          Volver a Tareas
+        </button>
+      </div>
+    );
+  }
 
   return (
     <TaskDetailPanel

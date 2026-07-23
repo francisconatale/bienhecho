@@ -67,6 +67,9 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
           {/* Checkbox */}
           <button
             onClick={handleToggleComplete}
+            role="checkbox"
+            aria-checked={task.completada}
+            aria-label={`Marcar tarea "${task.descripcion}" como ${task.completada ? "pendiente" : "completada"}`}
             className={cn(
               "relative z-10 w-5 h-5 rounded-[6px] border-[2px] flex items-center justify-center shrink-0 transition-all duration-300 active:scale-75",
               task.completada
@@ -126,15 +129,17 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
 
         {/* Actions */}
         {!isJobPaid && (
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10 flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 translate-x-0 md:translate-x-2 md:group-hover:translate-x-0">
             <button
               onClick={() => setIsEditing(true)}
+              aria-label={`Editar tarea: ${task.descripcion}`}
               className="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 hover:shadow-sm active:scale-90"
             >
               <Pencil className="w-4 h-4" />
             </button>
             <button
               onClick={handleDelete}
+              aria-label={`Eliminar tarea: ${task.descripcion}`}
               className="p-1.5 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 hover:shadow-sm active:scale-90"
             >
               <Trash2 className="w-4 h-4" />

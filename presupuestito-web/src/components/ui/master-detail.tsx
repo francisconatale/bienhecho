@@ -136,6 +136,7 @@ export function MasterDetail<T>({
                     value={search}
                     onChange={(e) => onSearchChange(e.target.value)}
                     placeholder={searchPlaceholder}
+                    aria-label={searchPlaceholder}
                     className="w-full bg-grouped-bg-light rounded-lg pl-9 md:pl-10 pr-3 py-2 md:py-2.5 text-xs md:text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary/20 border-0"
                   />
                 </div>
@@ -236,6 +237,7 @@ export function MasterDetail<T>({
                           value={search}
                           onChange={(e) => onSearchChange(e.target.value)}
                           placeholder={searchPlaceholder}
+                          aria-label={searchPlaceholder}
                           className="w-full bg-surface/70 dark:bg-surface/40 backdrop-blur-xl border border-outline-variant/20 shadow-sm rounded-lg pl-9 pr-3 py-2.5 text-[15px] text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary/20"
                         />
                       </div>

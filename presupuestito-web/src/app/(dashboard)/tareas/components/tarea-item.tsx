@@ -24,6 +24,9 @@ export function TareaItem({ task, viewMode = "list", onToggle, onTogglePriority,
       <div className={cn("flex w-full", isBoard ? "items-start gap-3" : "items-center gap-4 flex-1 min-w-0")}>
         <button
           onClick={() => onToggle(task.id, task.completada)}
+          role="checkbox"
+          aria-checked={task.completada}
+          aria-label={task.completada ? `Marcar "${task.descripcion}" como pendiente` : `Marcar "${task.descripcion}" como completada`}
           className={cn(
             "rounded-lg border-2 flex items-center justify-center shrink-0 transition-all active:scale-90",
             isBoard ? "w-5 h-5 mt-0.5" : "w-6 h-6",
@@ -88,6 +91,7 @@ export function TareaItem({ task, viewMode = "list", onToggle, onTogglePriority,
             <button
               onClick={() => onTogglePriority(task.id, task.prioridad)}
               title={task.prioridad === "alta" ? "Prioridad Alta" : task.prioridad === "media" ? "Prioridad Media" : "Prioridad Baja"}
+              aria-label={`Prioridad actual: ${task.prioridad || "ninguna"}. Cambiar prioridad.`}
               className={cn(
                 "p-1.5 rounded-full transition-all",
                 task.prioridad === "alta" 
@@ -103,8 +107,9 @@ export function TareaItem({ task, viewMode = "list", onToggle, onTogglePriority,
             <button
               onClick={() => onDelete(task.id)}
               title="Eliminar tarea"
+              aria-label={`Eliminar tarea: ${task.descripcion}`}
               className={cn(
-                "p-1.5 rounded-full text-on-surface-variant/30 hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                "p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full text-on-surface-variant/30 hover:text-red-500 hover:bg-red-500/10 transition-colors"
               )}
             >
               <Trash2 className={isBoard ? "w-4 h-4" : "w-[18px] h-[18px]"} />

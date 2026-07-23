@@ -145,7 +145,7 @@ export function ClientDetailPane({
     <div className="flex-1 overflow-y-auto relative w-full h-full min-h-full flex flex-col">
       <AuroraBackground preset="perfil" />
 
-      <form onSubmit={onSubmit} className="relative z-10 px-4 pt-28 pb-6 md:pt-8 md:pb-8 max-w-[1200px] mx-auto flex flex-col gap-6 pb-32">
+      <form onSubmit={onSubmit} className="relative z-10 px-4 pt-28 pb-24 md:pt-8 md:pb-8 max-w-[1200px] mx-auto flex flex-col gap-6">
         
         {/* 1. Header Card */}
         <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-5 md:p-6 border border-outline-variant/20 shadow-sm flex flex-col md:flex-row md:items-start justify-between gap-6">
@@ -158,21 +158,21 @@ export function ClientDetailPane({
               {isEditing ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                   <div className="md:col-span-2 space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Nombre</label>
-                    <input type="text" {...register("nombre")} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-lg font-bold focus:border-primary focus:outline-none transition-colors" autoFocus />
-                    {errors.nombre && <p className="text-xs font-bold text-error mt-1">{errors.nombre.message}</p>}
+                    <label htmlFor="client-nombre" className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Nombre</label>
+                    <input id="client-nombre" type="text" {...register("nombre")} aria-invalid={!!errors.nombre} aria-describedby={errors.nombre ? "client-nombre-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-lg font-bold focus:border-primary focus:outline-none transition-colors" autoFocus />
+                    {errors.nombre && <p id="client-nombre-error" role="alert" className="text-xs font-bold text-error mt-1">{errors.nombre.message}</p>}
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Email</label>
-                    <input type="email" {...register("email")} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors" />
+                    <label htmlFor="client-email" className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Email</label>
+                    <input id="client-email" type="email" {...register("email")} aria-invalid={!!errors.email} aria-describedby={errors.email ? "client-email-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Teléfono</label>
-                    <input type="tel" {...register("telefono")} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors" />
+                    <label htmlFor="client-telefono" className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Teléfono</label>
+                    <input id="client-telefono" type="tel" {...register("telefono")} aria-invalid={!!errors.telefono} aria-describedby={errors.telefono ? "client-telefono-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors" />
                   </div>
                   <div className="md:col-span-2 space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Dirección</label>
-                    <input type="text" {...register("direccion")} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors" />
+                    <label htmlFor="client-direccion" className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Dirección</label>
+                    <input id="client-direccion" type="text" {...register("direccion")} aria-invalid={!!errors.direccion} aria-describedby={errors.direccion ? "client-direccion-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors" />
                   </div>
                 </div>
               ) : (

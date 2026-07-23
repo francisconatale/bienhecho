@@ -28,6 +28,9 @@ export function ShoppingList() {
         >
           <div className="pt-0.5">
             <button
+              role="checkbox"
+              aria-checked={item.comprado}
+              aria-label={`Marcar "${item.nombre_material}" como comprado`}
               className="w-6 h-6 rounded-full border-2 border-outline flex items-center justify-center transition-colors group-hover:border-primary"
             >
               <Check className="w-4 h-4 opacity-0 transition-opacity" />

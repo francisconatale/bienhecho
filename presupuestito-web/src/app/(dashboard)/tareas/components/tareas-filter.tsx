@@ -24,6 +24,7 @@ export function TareasFilter({
       <div className="flex gap-2">
         <button
           onClick={() => setFilter("pendientes")}
+          aria-pressed={filter === "pendientes"}
           className={cn(
             "flex items-center gap-2 px-5 py-2.5 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all",
             filter === "pendientes"
@@ -38,6 +39,7 @@ export function TareasFilter({
         </button>
         <button
           onClick={() => setFilter("completadas")}
+          aria-pressed={filter === "completadas"}
           className={cn(
             "flex items-center gap-2 px-5 py-2.5 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all",
             filter === "completadas"

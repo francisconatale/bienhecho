@@ -33,7 +33,7 @@ export function NuevoTrabajoWizard() {
           {question.hint}
         </p>
 
-        <div className="flex-1 space-y-3">
+        <div className="flex-1 space-y-3" aria-live="polite">
           {currentQ === 0 && (
             <StepCliente
               clients={state.clients}

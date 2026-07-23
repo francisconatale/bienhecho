@@ -26,7 +26,7 @@ function VisitCard({ visit, jobInfo, onToggleStatus, onEdit, onDelete }: {
   return (
     <div className="px-6 py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors">
       <div className="flex items-start gap-4">
-        <button onClick={onToggleStatus} className="mt-1 shrink-0" title="Cambiar estado">
+        <button onClick={onToggleStatus} className="mt-1 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 rounded-full" aria-label={`Estado actual: ${visit.estado}. Cambiar estado`}>
           <div
             className={cn(
               "w-4 h-4 rounded-full border-2 transition-all",
@@ -60,7 +60,8 @@ function VisitCard({ visit, jobInfo, onToggleStatus, onEdit, onDelete }: {
         <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={onEdit}
-            className="w-8 h-8 rounded-xl hover:bg-outline-variant/10 flex items-center justify-center transition-colors text-on-surface-variant hover:text-primary"
+            aria-label={`Editar visita ${jobInfo.titulo || ""}`}
+            className="w-8 h-8 rounded-xl hover:bg-outline-variant/10 flex items-center justify-center transition-colors text-on-surface-variant hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
@@ -68,7 +69,8 @@ function VisitCard({ visit, jobInfo, onToggleStatus, onEdit, onDelete }: {
           </button>
           <button
             onClick={onDelete}
-            className="w-8 h-8 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center justify-center transition-colors text-on-surface-variant hover:text-red-500"
+            aria-label={`Eliminar visita ${jobInfo.titulo || ""}`}
+            className="w-8 h-8 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center justify-center transition-colors text-on-surface-variant hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
           >
             <Trash2 className="w-3.5 h-3.5" strokeWidth={2} />
           </button>
