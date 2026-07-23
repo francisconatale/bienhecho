@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { tasksService } from "@/services";
 import { TaskDetailPanel } from "@/app/(dashboard)/trabajos/[id]/components/task-detail-panel";
+import { TareaDetailSkeleton } from "@/components/ui/skeletons";
 
 interface TareaPageProps {
   params: Promise<{ id: string }>;
@@ -13,8 +14,12 @@ interface TareaPageProps {
 export default function TareaPage({ params }: TareaPageProps) {
   const { id } = React.use(params);
   const router = useRouter();
-  const { data: tasks = [] } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
+  const { data: tasks = [], isLoading } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
   const task = tasks.find((t) => t.id === id);
+
+  if (isLoading) {
+    return <TareaDetailSkeleton />;
+  }
 
   if (!task) {
     return (

@@ -8,6 +8,7 @@ import { useClickOutside } from "@/hooks/use-click-outside";
 import { cn } from "@/lib/utils";
 import { MobilePageHeader } from "@/components/ui/mobile-page-header";
 import { TaskPhotos } from "./task-photos";
+import { TareaDetailSkeleton } from "@/components/ui/skeletons";
 
 interface TaskDetailPanelProps {
   jobId: string;
@@ -17,10 +18,12 @@ interface TaskDetailPanelProps {
 }
 
 export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetailPanelProps) {
-  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-  const { data: tasks = [] } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
-  const { data: visits = [] } = useQuery({ queryKey: ["visits"], queryFn: visitsService.getAll });
-  const { data: visitaTareas = [] } = useQuery({ queryKey: ["visitTasks"], queryFn: visitsService.getVisitaTareas });
+  const { data: jobs = [], isLoading: isJobsLoading } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
+  const { data: tasks = [], isLoading: isTasksLoading } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
+  const { data: visits = [], isLoading: isVisitsLoading } = useQuery({ queryKey: ["visits"], queryFn: visitsService.getAll });
+  const { data: visitaTareas = [], isLoading: isVisitaTareasLoading } = useQuery({ queryKey: ["visitTasks"], queryFn: visitsService.getVisitaTareas });
+
+  const isLoading = isJobsLoading || isTasksLoading || isVisitsLoading || isVisitaTareasLoading;
 
   const queryClient = useQueryClient();
   const updateTaskMutation = useMutation({
@@ -89,6 +92,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
     }
   });
 
+  if (isLoading) return <TareaDetailSkeleton />;
   if (!job || !task) return null;
 
   return (

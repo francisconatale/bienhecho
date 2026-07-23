@@ -253,7 +253,7 @@ export function TrabajoDetail({
                 "order-2 lg:col-start-2 lg:row-span-4", 
                 isEmbedded ? "2xl:sticky 2xl:top-8" : "lg:sticky lg:top-32"
               )}>
-                <div className="relative overflow-hidden bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-500">
+                <div className="relative overflow-hidden bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
                   
                   {/* Progress Section */}
                   <div className="p-4 md:p-5 flex flex-col gap-3">
@@ -272,7 +272,7 @@ export function TrabajoDetail({
                       return (
                         <div className="flex items-center gap-3">
                           <div className="flex-1 h-3 bg-on-surface/5 dark:bg-black/20 rounded-full overflow-hidden relative">
-                            <div className="absolute top-0 left-0 h-full bg-primary transition-all duration-1000 ease-out" style={{ width: `${percentage}%` }} />
+                            <div className="absolute top-0 left-0 h-full bg-primary transition-[width] duration-[600ms] ease-out" style={{ width: `${percentage}%` }} />
                           </div>
                           <span className="text-xs font-bold text-on-surface w-8 text-right">{percentage}%</span>
                         </div>
@@ -311,7 +311,7 @@ export function TrabajoDetail({
                             onClick={handleDownloadPDF}
                             disabled={!hasItemsForBudget || generatingAction !== null}
                             className={cn(
-                              "w-full py-3.5 rounded-xl font-bold text-[13px] uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2",
+                              "w-full py-3.5 rounded-xl font-bold text-[13px] uppercase tracking-wider transition-[background-color,transform] duration-[120ms] flex items-center justify-center gap-2",
                               hasItemsForBudget
                                 ? "bg-primary text-white hover:bg-primary-dark active:scale-[0.98] shadow-sm"
                                 : "bg-surface-variant text-on-surface-variant/70 cursor-not-allowed"
@@ -325,7 +325,7 @@ export function TrabajoDetail({
                         <button
                           onClick={() => { setPdfError(null); downloadPDF(job.id); }}
                           disabled={generatingAction !== null}
-                          className="w-full py-3.5 rounded-xl font-bold text-[13px] uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary-dark active:scale-[0.98] shadow-sm"
+                          className="w-full py-3.5 rounded-xl font-bold text-[13px] uppercase tracking-wider transition-[background-color,transform] duration-[120ms] flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary-dark active:scale-[0.98] shadow-sm"
                         >
                           <FileDown className="w-4 h-4" strokeWidth={2.5} />
                           Ver PDF
@@ -355,7 +355,7 @@ export function TrabajoDetail({
                             }
                             await updateJobMutation.mutateAsync({ id: job.id, data: { estado: "pagado" } });
                           }}
-                          className="mt-3 w-full py-3.5 rounded-xl font-bold text-[13px] uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 bg-primary/10 text-primary hover:bg-primary/20 active:scale-[0.98] disabled:opacity-50"
+                          className="mt-3 w-full py-3.5 rounded-xl font-bold text-[13px] uppercase tracking-wider transition-[background-color,transform] duration-[120ms] flex items-center justify-center gap-2 bg-primary/10 text-primary hover:bg-primary/20 active:scale-[0.98] disabled:opacity-50"
                         >
                           {addCobroMutation.isPending || updateJobMutation.isPending ? (
                             <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.5} />

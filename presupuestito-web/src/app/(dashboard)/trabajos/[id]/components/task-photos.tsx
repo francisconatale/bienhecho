@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { taskPhotosService } from "@/services";
 import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
+import { TareaPhotosSkeleton } from "@/components/ui/skeletons";
 
 interface TaskPhotosProps {
   tareaId: string;
@@ -101,11 +102,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
   }, [viewerPhotoIndex, goToPrev, goToNext]);
 
   if (isLoading) {
-    return (
-      <div className="py-4 text-center">
-        <p className="text-xs text-on-surface-variant/40">Cargando fotos...</p>
-      </div>
-    );
+    return <TareaPhotosSkeleton />;
   }
 
   return (

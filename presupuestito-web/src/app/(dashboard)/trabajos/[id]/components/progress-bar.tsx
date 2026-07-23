@@ -12,7 +12,7 @@ export function ProgressBar({ tasks }: ProgressBarProps) {
   const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
 
   return (
-    <div className="relative overflow-hidden bg-surface/80 rounded-xl p-4 md:p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-3 md:space-y-5 transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+    <div className="relative overflow-hidden bg-surface/80 rounded-xl p-4 md:p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-3 md:space-y-5 transition-shadow duration-[200ms] hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
 
       <div className="relative flex flex-col gap-2 z-10">
         <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
@@ -35,10 +35,10 @@ export function ProgressBar({ tasks }: ProgressBarProps) {
         aria-label={`Progreso: ${percentage}% completado`}
       >
         <div
-          className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-primary-container rounded-full transition-all duration-1000 ease-out"
+          className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-primary-container rounded-full transition-[width] duration-[600ms] ease-out"
           style={{ width: `${percentage}%` }}
         >
-           <div className="absolute inset-0 bg-white/20 w-full animate-[shimmer_2s_infinite] translate-x-[-100%] skew-x-12 mix-blend-overlay" />
+           <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite] mix-blend-overlay" />
         </div>
       </div>
 

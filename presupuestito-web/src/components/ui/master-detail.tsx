@@ -121,7 +121,7 @@ export function MasterDetail<T>({
 
         {/* LIST PANE */}
         <div
-          className={`absolute inset-0 md:relative flex-shrink-0 flex flex-col border-r border-outline-variant/10 bg-transparent md:bg-surface overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] z-10 w-full md:w-[360px] ${
+          className={`absolute inset-0 md:relative flex-shrink-0 flex flex-col border-r border-outline-variant/10 bg-transparent md:bg-surface overflow-hidden transition-transform duration-[280ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] z-10 w-full md:w-[360px] ${
             hasDetail ? "-translate-x-full md:translate-x-0" : "translate-x-0"
           } ${isCollapsed ? "md:!w-[64px]" : ""}`}
         >
@@ -304,7 +304,7 @@ export function MasterDetail<T>({
 
         {/* DETAIL PANE */}
         <div
-          className={`absolute inset-0 md:relative flex-1 flex flex-col bg-transparent min-w-0 transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] z-20 ${
+          className={`absolute inset-0 md:relative flex-1 flex flex-col bg-transparent min-w-0 transition-transform duration-[280ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] z-20 ${
             hasDetail ? "translate-x-0" : "translate-x-full md:translate-x-0"
           } ${hasDetail ? "" : "max-md:pointer-events-none"}`}
         >
@@ -326,7 +326,7 @@ export function MasterDetail<T>({
                 {emptyState || emptyDetail}
               </div>
             )}
-            <div className={`absolute inset-0 flex flex-col z-10 bg-grouped-bg-light transition-opacity duration-300 ${
+            <div className={`absolute inset-0 flex flex-col z-10 bg-grouped-bg-light transition-opacity duration-[200ms] ${
               !hasDetail ? "pointer-events-none" : ""
             }`}>
               {contentToRender && (

@@ -12,7 +12,7 @@ interface TareaItemProps {
 
 export function TareaItem({ task, onToggle, onTogglePriority, onDelete }: TareaItemProps) {
   return (
-    <div className="transition-all group flex items-center gap-4 px-4 py-3 bg-transparent hover:bg-on-surface/5">
+    <div className="transition-[background-color] duration-[120ms] group flex items-center gap-4 px-4 py-3 bg-transparent hover:bg-on-surface/5">
       {/* Top Row: Checkbox & Title */}
       <div className="flex items-center gap-4 flex-1 min-w-0">
         <button
@@ -21,7 +21,7 @@ export function TareaItem({ task, onToggle, onTogglePriority, onDelete }: TareaI
           aria-checked={task.completada}
           aria-label={task.completada ? `Marcar "${task.descripcion}" como pendiente` : `Marcar "${task.descripcion}" como completada`}
           className={cn(
-            "rounded-lg border-2 flex items-center justify-center shrink-0 transition-all active:scale-90 w-6 h-6",
+            "rounded-lg border-2 flex items-center justify-center shrink-0 transition-[background-color,border-color,transform] duration-[100ms] active:scale-90 w-6 h-6",
             task.completada
               ? "bg-emerald-500 border-emerald-500"
               : "border-outline-variant/30 hover:border-primary/50 group-hover:border-primary/40"
@@ -33,7 +33,7 @@ export function TareaItem({ task, onToggle, onTogglePriority, onDelete }: TareaI
         <Link href={`/tareas/${task.id}`} className="flex-1 min-w-0">
           <p
             className={cn(
-              "font-bold transition-all line-clamp-2 text-sm",
+              "font-bold transition-[color,text-decoration-color] duration-[180ms] line-clamp-2 text-sm",
               task.completada
                 ? "text-on-surface-variant/40 line-through"
                 : "text-on-surface"
@@ -66,7 +66,7 @@ export function TareaItem({ task, onToggle, onTogglePriority, onDelete }: TareaI
               title={task.prioridad === "alta" ? "Prioridad Alta" : task.prioridad === "media" ? "Prioridad Media" : "Prioridad Baja"}
               aria-label={`Prioridad actual: ${task.prioridad || "ninguna"}. Cambiar prioridad.`}
               className={cn(
-                "p-1.5 rounded-full transition-all",
+                "p-1.5 rounded-full transition-[background-color,color] duration-[120ms]",
                 task.prioridad === "alta" 
                   ? "text-orange-500 bg-orange-500/10 hover:bg-orange-500/20 opacity-100" 
                   : task.prioridad === "media"

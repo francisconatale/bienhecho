@@ -40,7 +40,7 @@ export function SuccessModal({
             if (onPrimaryClick) onPrimaryClick();
             onClose();
           }}
-          className="w-full h-12 rounded-xl font-bold text-sm text-white bg-primary hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20"
+          className="w-full h-12 rounded-xl font-bold text-sm text-white bg-primary hover:bg-primary-dark transition-[background-color] duration-[120ms] shadow-lg shadow-primary/20"
         >
           {primaryButtonText}
         </button>
@@ -50,7 +50,7 @@ export function SuccessModal({
               if (onSecondaryClick) onSecondaryClick();
               onClose();
             }}
-            className="w-full h-12 rounded-xl font-bold text-sm text-on-surface-variant bg-surface-variant/30 hover:bg-surface-variant/50 transition-colors"
+            className="w-full h-12 rounded-xl font-bold text-sm text-on-surface-variant bg-surface-variant/30 hover:bg-surface-variant/50 transition-[background-color] duration-[120ms]"
           >
             {secondaryButtonText}
           </button>

@@ -66,7 +66,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4 sm:p-6 transition-opacity">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4 sm:p-6 transition-opacity duration-[200ms]">
       <div
         className="fixed inset-0"
         onClick={onClose}
@@ -85,7 +85,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
           <button
             onClick={onClose}
             aria-label="Cerrar"
-            className="p-2 -mr-2 rounded-full hover:bg-outline-variant/10 transition-colors text-on-surface-variant hover:text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="p-2 -mr-2 rounded-full hover:bg-outline-variant/10 transition-[background-color,color] duration-[120ms] text-on-surface-variant hover:text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20"
           >
             <X className="w-5 h-5" />
           </button>
