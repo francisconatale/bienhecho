@@ -7,12 +7,13 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  position?: "auto" | "center";
 }
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-export function Modal({ isOpen, onClose, title, children }: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, position = "auto" }: ModalProps) {
   const previouslyFocused = useRef<HTMLElement | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -66,7 +67,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4 sm:p-6 transition-opacity duration-[200ms]">
+    <div className={`fixed inset-0 z-[100] flex ${position === "center" ? "items-center" : "items-end sm:items-center"} justify-center bg-black/40 sm:p-6 transition-opacity duration-[200ms]`}>
       <div
         className="fixed inset-0"
         onClick={onClose}
@@ -78,20 +79,31 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
         aria-modal="true"
         aria-labelledby="modal-title"
         onKeyDown={handleKeyDown}
-        className="relative w-full max-w-lg max-h-[90vh] sm:max-h-[85vh] bg-surface/90 dark:bg-surface/80 backdrop-blur-xl rounded-3xl shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-200 border border-outline-variant/15"
+        className={
+          "relative w-full max-h-[95dvh] bg-surface/95 dark:bg-surface/90 backdrop-blur-xl shadow-2xl flex flex-col " +
+          (position === "center"
+            ? "rounded-3xl border border-outline-variant/15 animate-in fade-in zoom-in-95 duration-200 max-w-lg max-h-[85vh] m-4 sm:m-0"
+            : "rounded-t-[28px] rounded-b-none sm:rounded-3xl border-t sm:border border-outline-variant/15 animate-in slide-in-from-bottom-full sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 sm:duration-200 sm:max-w-lg sm:max-h-[85vh]")
+        }
       >
-        <div className="flex items-center justify-between px-5 sm:px-6 pt-6 pb-2 shrink-0">
+        {position !== "center" && (
+          <div className="w-full flex justify-center pt-3 pb-1 sm:hidden shrink-0">
+            <div className="w-10 h-1.5 rounded-full bg-outline-variant/30" />
+          </div>
+        )}
+        
+        <div className={`flex items-center justify-between px-5 sm:px-6 pb-2 shrink-0 ${position === "center" ? "pt-6" : "pt-3 sm:pt-6"}`}>
           <h2 id="modal-title" className="text-xl font-bold text-on-surface tracking-tight">{title}</h2>
           <button
             onClick={onClose}
             aria-label="Cerrar"
-            className="p-2 -mr-2 rounded-full hover:bg-outline-variant/10 transition-[background-color,color] duration-[120ms] text-on-surface-variant hover:text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="p-2 -mr-2 rounded-full hover:bg-outline-variant/10 transition-[background-color,color] duration-[120ms] text-on-surface-variant hover:text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 bg-surface/50 sm:bg-transparent"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
         
-        <div className="px-5 sm:px-6 pb-6 pt-2 overflow-y-auto custom-scrollbar">
+        <div className="px-5 sm:px-6 pb-8 sm:pb-6 pt-2 overflow-y-auto custom-scrollbar flex-1 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:pb-6">
           {children}
         </div>
       </div>

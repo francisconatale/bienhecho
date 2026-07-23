@@ -25,7 +25,7 @@ export function ConfirmModal({
   isLoading = false,
 }: ConfirmModalProps) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={title}>
+    <Modal isOpen={isOpen} onClose={onClose} title={title} position="center">
       <div className="flex flex-col items-center text-center space-y-4 pt-4 pb-2">
         <div
           className={`p-4 rounded-full ${

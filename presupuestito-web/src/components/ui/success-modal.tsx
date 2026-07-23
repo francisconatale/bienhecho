@@ -23,7 +23,7 @@ export function SuccessModal({
   onSecondaryClick,
 }: SuccessModalProps) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="">
+    <Modal isOpen={isOpen} onClose={onClose} title="" position="center">
       <div className="flex flex-col items-center text-center space-y-4 pt-4 pb-2">
         <div className="p-4 rounded-full bg-primary/10 text-primary">
           <CheckCircle2 className="w-12 h-12" />

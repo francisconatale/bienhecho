@@ -169,7 +169,7 @@ export function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCa
       )}
 
       {/* Actions */}
-      <div className="flex gap-2 pt-2">
+      <div className="sticky bottom-0 bg-surface/95 dark:bg-surface/90 backdrop-blur-xl border-t border-outline-variant/10 -mx-5 px-5 sm:-mx-6 sm:px-6 py-4 flex gap-2 z-10 -mb-8 sm:-mb-6">
         <button
           type="button"
           onClick={onCancel}
@@ -181,7 +181,7 @@ export function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCa
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex-1 h-11 rounded-xl font-bold text-xs text-white bg-primary hover:bg-primary-dark transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+          className="flex-1 h-11 rounded-xl font-bold text-xs text-white bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {isSubmitting && (
             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

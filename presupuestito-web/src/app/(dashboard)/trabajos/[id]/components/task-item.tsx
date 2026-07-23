@@ -85,10 +85,10 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
             onClick={() => onSelect?.(task.id)}
             className="flex-1 text-left cursor-pointer min-w-0"
           >
-            <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
+            <div className="flex flex-col md:flex-row md:items-start gap-1.5 md:gap-2">
               <p
                 className={cn(
-                  "text-[14px] font-bold transition-all duration-300 truncate",
+                  "text-[14px] font-bold transition-all duration-300 break-words",
                   task.completada
                     ? "text-on-surface-variant/40 line-through"
                     : "text-on-surface group-hover:text-primary"
@@ -97,7 +97,7 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
                 {task.descripcion}
               </p>
               {task.prioridad && (
-                <span className={cn("text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0 w-max", PRIORITY_BADGE[task.prioridad])}>
+                <span className={cn("text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0 w-max md:mt-0.5", PRIORITY_BADGE[task.prioridad])}>
                   {task.prioridad}
                 </span>
               )}
