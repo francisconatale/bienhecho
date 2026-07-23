@@ -188,6 +188,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
         >
           <button
             onClick={closeViewer}
+            aria-label="Cerrar visor de fotos"
             className="absolute top-4 right-4 p-2 bg-white/10 rounded-full hover:bg-white/20 transition-all z-10"
           >
             <X className="w-6 h-6 text-white" />
@@ -199,6 +200,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
                 e.stopPropagation();
                 goToPrev();
               }}
+              aria-label="Foto anterior"
               className="absolute left-4 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-all z-10"
             >
               <ChevronLeft className="w-6 h-6 text-white" />
@@ -218,6 +220,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
                 e.stopPropagation();
                 goToNext();
               }}
+              aria-label="Foto siguiente"
               className="absolute right-4 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-all z-10"
             >
               <ChevronRight className="w-6 h-6 text-white" />

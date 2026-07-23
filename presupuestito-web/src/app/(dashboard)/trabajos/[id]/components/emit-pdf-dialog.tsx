@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, Loader2 } from 'lucide-react';
 
 export function EmitPdfDialog({
@@ -14,15 +14,25 @@ export function EmitPdfDialog({
   onGuardar: () => void;
   onEmitir: () => void;
 }) {
+  useEffect(() => {
+    if (!show) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [show, onClose]);
+
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="emit-pdf-title" onClick={onClose}>
       <div className="bg-surface/90 dark:bg-surface/70 backdrop-blur-xl rounded-xl p-6 border border-white/20 dark:border-white/5 shadow-[0_32px_64px_rgba(0,0,0,0.3)] max-w-sm w-full mx-4 space-y-4" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-on-surface">¿Emitir presupuesto?</h3>
+          <h3 id="emit-pdf-title" className="text-lg font-bold text-on-surface">¿Emitir presupuesto?</h3>
           <button
             onClick={onClose}
+            aria-label="Cerrar"
             className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-on-surface/10 text-on-surface-variant transition-all cursor-pointer"
           >
             <X className="w-4 h-4" />

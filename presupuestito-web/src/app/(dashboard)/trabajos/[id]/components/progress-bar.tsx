@@ -26,7 +26,14 @@ export function ProgressBar({ tasks }: ProgressBarProps) {
         </div>
       </div>
 
-      <div className="relative w-full h-4 bg-on-surface/5 dark:bg-black/20 rounded-full overflow-hidden shadow-inner z-10">
+      <div
+        className="relative w-full h-4 bg-on-surface/5 dark:bg-black/20 rounded-full overflow-hidden shadow-inner z-10"
+        role="progressbar"
+        aria-valuenow={percentage}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`Progreso: ${percentage}% completado`}
+      >
         <div
           className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-primary-container rounded-full transition-all duration-1000 ease-out"
           style={{ width: `${percentage}%` }}

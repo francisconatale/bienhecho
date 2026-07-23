@@ -19,10 +19,16 @@ interface TaskListProps {
 
 export function TaskList({ jobId, isJobPaid, onSelectTask }: TaskListProps) {
   const queryClient = useQueryClient();
-  const { data: tasks = [], isLoading } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
+  const { data: jobTasksUnsorted = [], isLoading } = useQuery({ 
+    queryKey: ["tasks", jobId], 
+    queryFn: () => tasksService.getByJobId(jobId) 
+  });
   const createTaskMutation = useMutation({
     mutationFn: tasksService.create,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks", jobId] });
+      queryClient.invalidateQueries({ queryKey: ["tasks"] }); // For global tasks list
+    },
   });
   const [isAdding, setIsAdding] = useState(false);
   const [showAll, setShowAll] = useState(false);
@@ -36,8 +42,7 @@ export function TaskList({ jobId, isJobPaid, onSelectTask }: TaskListProps) {
     }
   };
 
-  const jobTasks = tasks
-    .filter((t) => t.trabajo_id === jobId)
+  const jobTasks = [...jobTasksUnsorted]
     .sort((a, b) => {
       const scoreA = getPriorityScore(a.prioridad);
       const scoreB = getPriorityScore(b.prioridad);
