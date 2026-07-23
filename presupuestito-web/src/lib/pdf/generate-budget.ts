@@ -343,7 +343,6 @@ export async function generateBudgetPDF({
   doc.setTextColor(...textMuted);
   doc.text("Generado con Presupuestito", margin, footerY);
 
-  const timestamp = Date.now();
-  const fileName = `presupuesto-${client.nombre.replace(/\s+/g, "-").toLowerCase()}-${timestamp}.pdf`;
-  doc.save(fileName);
+  const pdfBlobUrl = doc.output("bloburl");
+  window.open(pdfBlobUrl.toString(), "_blank");
 }
