@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
 interface ModalProps {
@@ -16,7 +16,6 @@ const FOCUSABLE =
 export function Modal({ isOpen, onClose, title, children, position = "auto" }: ModalProps) {
   const previouslyFocused = useRef<HTMLElement | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
-  const [viewportHeight, setViewportHeight] = useState("100dvh");
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -47,16 +46,6 @@ export function Modal({ isOpen, onClose, title, children, position = "auto" }: M
   );
 
   useEffect(() => {
-    if (!window.visualViewport) return;
-    const updateViewport = () => {
-      setViewportHeight(`${window.visualViewport!.height}px`);
-    };
-    window.visualViewport.addEventListener("resize", updateViewport);
-    updateViewport();
-    return () => window.visualViewport?.removeEventListener("resize", updateViewport);
-  }, []);
-
-  useEffect(() => {
     if (isOpen) {
       previouslyFocused.current = document.activeElement as HTMLElement;
       document.body.style.overflow = "hidden";
@@ -79,8 +68,7 @@ export function Modal({ isOpen, onClose, title, children, position = "auto" }: M
 
   return createPortal(
     <div 
-      className={`fixed top-0 left-0 right-0 z-[100] flex ${position === "center" ? "items-center" : "items-end sm:items-center"} justify-center bg-black/40 sm:p-6 transition-opacity duration-[200ms]`}
-      style={{ height: viewportHeight }}
+      className={`fixed inset-0 z-[100] flex ${position === "center" ? "items-center" : "items-end sm:items-center"} justify-center bg-black/40 sm:p-6 transition-opacity duration-[200ms]`}
     >
       <div
         className="absolute inset-0"
