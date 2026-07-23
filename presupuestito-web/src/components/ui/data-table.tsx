@@ -23,6 +23,7 @@ interface DataTableProps<T> {
   topContent?: ReactNode;
   footerRow?: ReactNode;
   renderRow?: (item: T) => ReactNode;
+  rowLabel?: (item: T) => string;
 }
 
 export function DataTable<T>({
@@ -37,6 +38,7 @@ export function DataTable<T>({
   topContent,
   footerRow,
   renderRow,
+  rowLabel,
 }: DataTableProps<T>) {
   return (
     <div className="bg-surface/80 dark:bg-surface/50 backdrop-blur-sm rounded-xl overflow-hidden border border-outline-variant/15 shadow-sm">
@@ -54,6 +56,7 @@ export function DataTable<T>({
       {topContent}
 
       <table className="w-full">
+        {title && <caption className="sr-only">{title}</caption>}
         <thead className="hidden md:table-header-group">
           <tr className="border-b border-outline-variant/20 bg-surface-variant/20">
             {columns.map((col, i) => (
@@ -93,7 +96,7 @@ export function DataTable<T>({
               <tr
                 key={keyExtractor(item)}
                 className={[
-                  "group transition-colors",
+                  "group transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 rounded-xl",
                   onRowClick && "cursor-pointer hover:bg-primary/5",
                 ].filter(Boolean).join(" ")}
                 {...(onRowClick
@@ -102,7 +105,8 @@ export function DataTable<T>({
                       onKeyDown: (e: React.KeyboardEvent) =>
                         e.key === "Enter" && onRowClick(item),
                       tabIndex: 0,
-                      role: "link",
+                      role: "button",
+                      "aria-label": rowLabel ? `Ver detalle de ${rowLabel(item)}` : undefined,
                     }
                   : {})}
               >

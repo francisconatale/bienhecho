@@ -15,7 +15,8 @@ function NavItem({ icon, label, href, active }: NavItemProps) {
   return (
     <Link
       href={href}
-      className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all text-[13px] font-semibold tracking-wide ${
+      aria-current={active ? "page" : undefined}
+      className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all text-[13px] font-semibold tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 ${
         active
           ? "bg-primary/10 text-primary border border-primary/20 shadow-sm"
           : "text-on-surface-variant hover:bg-outline-variant/10 hover:text-on-surface border border-transparent"
@@ -44,7 +45,7 @@ export function TopNav() {
   const isAjustesActive = pathname.startsWith("/ajustes");
 
   return (
-    <nav className="hidden md:flex sticky top-0 z-50 h-16 items-center justify-between border-b border-outline-variant/10 bg-surface px-6 transition-all">
+    <nav aria-label="Navegación principal" className="hidden md:flex sticky top-0 z-50 h-16 items-center justify-between border-b border-outline-variant/10 bg-surface px-6 transition-all">
       <div className="flex items-center gap-6">
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-8 h-8 rounded-[12px] bg-primary flex items-center justify-center text-white shadow-sm shadow-primary/20 group-hover:scale-105 transition-transform">

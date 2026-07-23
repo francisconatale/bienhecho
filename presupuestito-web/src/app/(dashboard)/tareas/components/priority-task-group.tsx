@@ -70,10 +70,15 @@ export function PriorityTaskGroup({ title, tasks, viewMode = "list", onToggle, o
 
   return (
     <div className={cn(
-      "flex flex-col bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm transition-all",
-      viewMode === "board" ? "h-full" : "mb-6 last:mb-0"
+      "flex flex-col overflow-hidden transition-all",
+      viewMode === "board" 
+        ? "bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl border border-outline-variant/20 shadow-sm h-full" 
+        : "mb-6 last:mb-0"
     )}>
-      <div className="flex items-center justify-between gap-4 px-4 py-4 border-b border-outline-variant/10 bg-surface/50 shrink-0">
+      <div className={cn(
+        "flex items-center justify-between gap-4 px-4 py-3 shrink-0",
+        viewMode === "board" ? "border-b border-outline-variant/10 bg-surface/50 py-4" : ""
+      )}>
         <h3 className="text-[13px] font-bold text-on-surface-variant uppercase tracking-widest">
           {title}
         </h3>

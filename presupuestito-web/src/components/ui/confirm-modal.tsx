@@ -30,9 +30,9 @@ export function ConfirmModal({
         <div
           className={`p-4 rounded-full ${
             variant === "danger"
-              ? "bg-red-500/10 text-red-500"
+              ? "bg-error/10 text-error"
               : variant === "warning"
-              ? "bg-yellow-500/10 text-yellow-500"
+              ? "bg-accent-dark/10 text-accent-dark"
               : "bg-primary/10 text-primary"
           }`}
         >
@@ -47,7 +47,7 @@ export function ConfirmModal({
         <button
           onClick={onClose}
           disabled={isLoading}
-          className="flex-1 px-4 py-3 rounded-xl font-bold text-sm text-on-surface-variant bg-surface-variant/30 hover:bg-surface-variant/50 transition-colors disabled:opacity-50"
+          className="flex-1 px-4 py-3 rounded-xl font-bold text-sm text-on-surface-variant bg-surface-variant/30 hover:bg-surface-variant/50 transition-colors disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary/20"
         >
           {cancelText}
         </button>
@@ -58,11 +58,11 @@ export function ConfirmModal({
             }
           }}
           disabled={isLoading}
-          className={`flex-1 px-4 py-3 rounded-xl font-bold text-sm text-white transition-colors shadow-lg flex items-center justify-center gap-2 disabled:opacity-70 ${
+          className={`flex-1 px-4 py-3 rounded-xl font-bold text-sm text-white transition-colors shadow-lg flex items-center justify-center gap-2 disabled:opacity-70 focus-visible:ring-2 focus-visible:ring-primary/20 ${
             variant === "danger"
-              ? "bg-red-500 hover:bg-red-600 shadow-red-500/20"
+              ? "bg-error hover:brightness-110 shadow-red-500/20"
               : variant === "warning"
-              ? "bg-yellow-500 hover:bg-yellow-600 shadow-yellow-500/20"
+              ? "bg-accent-dark hover:brightness-110 shadow-yellow-500/20"
               : "bg-primary hover:bg-primary-dark shadow-primary/20"
           }`}
         >

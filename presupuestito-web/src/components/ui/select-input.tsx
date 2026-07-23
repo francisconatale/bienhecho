@@ -44,6 +44,7 @@ export function SelectInput({
       onValueChange={(v) => onValueChange(v === CLEAR_VALUE ? "" : v)}
     >
       <SelectTrigger
+        aria-label={placeholder}
         className={cn(
           "bg-grouped-bg-light border border-outline-variant/20 rounded-xl text-on-surface font-semibold shadow-none focus:ring-2 focus:ring-primary/20",
           sizeClasses[size],

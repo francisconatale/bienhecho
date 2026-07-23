@@ -48,7 +48,7 @@ export function ListItem({
     </>
   );
 
-  const baseClasses = `w-full flex items-center gap-4 px-5 py-4 border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 hover:bg-black/5 dark:hover:bg-white/[0.03] transition-all duration-300 text-left group ${className}`;
+  const baseClasses = `w-full flex items-center gap-4 px-5 py-4 border-b border-outline-variant/15 last:border-0 hover:bg-on-surface/5 transition-all duration-300 text-left group ${className}`;
 
   if (href) {
     return (

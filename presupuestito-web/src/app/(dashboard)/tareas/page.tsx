@@ -124,7 +124,11 @@ export default function TareasPage() {
         {isLoading ? (
           <TareasSkeletonContent />
         ) : (
-          <div className={cn("flex flex-col w-full animate-in fade-in slide-in-from-bottom-2 duration-500", isSpecialized ? "px-4 md:px-0" : "")}>
+          <div className={cn(
+            "flex flex-col w-full animate-in fade-in slide-in-from-bottom-2 duration-500", 
+            isSpecialized ? "px-4 md:px-0" : "",
+            viewMode === "list" && "max-w-4xl mx-auto"
+          )}>
             <div className="space-y-6">
               {!isSpecialized && (
                 <div className="flex items-center justify-between">

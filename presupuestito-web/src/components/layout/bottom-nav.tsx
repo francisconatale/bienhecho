@@ -19,8 +19,10 @@ function NavItem({ icon, label, href, active }: NavItemProps) {
 
   return (
     <Link
-      className={`flex flex-col items-center justify-center transition-all ${activeClasses}`}
+      className={`flex flex-col items-center justify-center transition-all ${activeClasses} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2`}
       href={href}
+      aria-current={active ? "page" : undefined}
+      aria-label={label}
     >
       <div
         className={`${active ? "bg-primary/10 border border-primary/20" : "bg-transparent border border-transparent"} rounded-xl p-2 transition-all duration-300`}
@@ -64,7 +66,7 @@ export function BottomNav() {
         isVisible ? "translate-y-0 opacity-100" : "translate-y-24 opacity-0"
       }`}
     >
-      <nav className="flex justify-between items-center px-2 py-1.5 bg-surface/95 backdrop-blur-xl border border-outline-variant/20 rounded-full shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]">
+      <nav aria-label="Navegación principal" className="flex justify-between items-center px-2 py-1.5 bg-surface/95 backdrop-blur-xl border border-outline-variant/20 rounded-full shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]">
         <NavItem
         icon={<LayoutDashboard className="w-5 h-5" strokeWidth={2} />}
         label="Dashboard"
