@@ -39,8 +39,16 @@ export function MasterDetailSkeleton() {
       </div>
 
       {/* Detail Pane Skeleton (Desktop only) */}
-      <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-grouped-bg-light md:bg-transparent z-0">
-        <div className="w-12 h-12 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
+      <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-grouped-bg-light md:bg-transparent z-0 p-8">
+        <div className="w-full max-w-md space-y-4">
+          <div className="w-16 h-16 rounded-xl bg-outline-variant/10 animate-pulse" />
+          <div className="w-48 h-5 bg-outline-variant/10 rounded animate-pulse" />
+          <div className="w-32 h-4 bg-outline-variant/10 rounded animate-pulse" />
+          <div className="space-y-2">
+            <div className="w-full h-3 bg-outline-variant/10 rounded animate-pulse" />
+            <div className="w-2/3 h-3 bg-outline-variant/10 rounded animate-pulse" />
+          </div>
+        </div>
       </div>
     </div>
   );

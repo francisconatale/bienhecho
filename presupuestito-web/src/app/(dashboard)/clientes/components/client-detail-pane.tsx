@@ -349,9 +349,19 @@ export function ClientDetailPane({
 
             if (isLoading) {
               return (
-                <div className="flex flex-col items-center justify-center p-8 border border-outline-variant/20 rounded-xl bg-surface/50">
-                  <div className="w-8 h-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin mb-4" />
-                  <p className="text-sm font-medium text-on-surface-variant/70">Cargando trabajos...</p>
+                <div className="p-8 border border-outline-variant/20 rounded-xl bg-surface/50">
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-outline-variant/10 animate-pulse shrink-0" />
+                        <div className="flex-1 space-y-2">
+                          <div className="w-3/4 h-4 bg-outline-variant/10 rounded animate-pulse" />
+                          <div className="w-1/2 h-3 bg-outline-variant/10 rounded animate-pulse" />
+                        </div>
+                        <div className="w-20 h-6 bg-outline-variant/10 rounded-lg animate-pulse" />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               );
             }

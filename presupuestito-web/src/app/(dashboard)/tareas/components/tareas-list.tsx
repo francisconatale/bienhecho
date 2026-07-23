@@ -22,18 +22,17 @@ interface TareasListProps {
   onToggle: (taskId: string, current: boolean) => void;
   onTogglePriority: (taskId: string, currentPriority: string | null) => void;
   onDelete: (taskId: string) => void;
-  viewMode?: "list" | "board";
   pag: any;
 }
 
-export function TareasList({ groupedTasks, categoryCounts, filter, category, setCategory, viewMode = "list", onToggle, onTogglePriority, onDelete, pag }: TareasListProps) {
+export function TareasList({ groupedTasks, categoryCounts, filter, category, setCategory, onToggle, onTogglePriority, onDelete, pag }: TareasListProps) {
   const { alta, media, baja, completadas } = groupedTasks;
   const isResumen = category === "resumen";
   const activeTasks = category === "alta" ? alta : category === "media" ? media : baja;
 
   if (filter === "completadas") {
     if (completadas.length === 0) return <TareasEmpty filter={filter} />;
-    return <PriorityTaskGroup title="Completadas" tasks={completadas} viewMode={viewMode} onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />;
+    return <PriorityTaskGroup title="Completadas" tasks={completadas} onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />;
   }
 
   const hasPending = categoryCounts.alta > 0 || categoryCounts.media > 0 || categoryCounts.baja > 0;
@@ -41,10 +40,7 @@ export function TareasList({ groupedTasks, categoryCounts, filter, category, set
     return <TareasEmpty filter={filter} />;
   }
 
-  // Si estamos en una vista especializada, renderizamos solo los items de esa categoría,
-  // sin agrupadores extra (ya que el título de la página cumple esa función).
   if (!isResumen) {
-    
     if (activeTasks.length === 0) {
       return (
         <div className="flex flex-col items-center justify-center py-12 px-4 border-2 border-dashed border-outline-variant/10 rounded-xl">
@@ -53,12 +49,13 @@ export function TareasList({ groupedTasks, categoryCounts, filter, category, set
       );
     }
 
-    // Al tocar "ver más", el usuario quiere ver siempre la grilla cuadriculada
     return (
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {pag.paginatedItems.map(task => (
-            <TareaItem key={task.id} task={task} viewMode="board" onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
+            <div key={task.id} className="bg-surface rounded-2xl border border-outline-variant/10 shadow-sm overflow-hidden h-full">
+              <TareaItem task={task} onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
+            </div>
           ))}
         </div>
         <div className="pb-8">
@@ -74,21 +71,11 @@ export function TareasList({ groupedTasks, categoryCounts, filter, category, set
     );
   }
 
-  if (viewMode === "board") {
-    return (
-      <div className="hidden md:grid grid-cols-3 gap-6 items-start">
-        <PriorityTaskGroup title="Hoy" tasks={alta} totalCount={categoryCounts.alta} isResumen={isResumen} onViewAll={() => setCategory("alta")} viewMode="board" onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
-        <PriorityTaskGroup title="Próximamente" tasks={media} totalCount={categoryCounts.media} isResumen={isResumen} onViewAll={() => setCategory("media")} viewMode="board" onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
-        <PriorityTaskGroup title="Sin apuro" tasks={baja} totalCount={categoryCounts.baja} isResumen={isResumen} onViewAll={() => setCategory("baja")} viewMode="board" onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
-      </div>
-    );
-  }
-
   return (
-    <div>
-      <PriorityTaskGroup title="Hoy" tasks={alta} totalCount={categoryCounts.alta} isResumen={isResumen} onViewAll={() => setCategory("alta")} viewMode="list" onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
-      <PriorityTaskGroup title="Próximamente" tasks={media} totalCount={categoryCounts.media} isResumen={isResumen} onViewAll={() => setCategory("media")} viewMode="list" onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
-      <PriorityTaskGroup title="Sin apuro" tasks={baja} totalCount={categoryCounts.baja} isResumen={isResumen} onViewAll={() => setCategory("baja")} viewMode="list" onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
+    <div className="flex flex-col gap-6 w-full">
+      <PriorityTaskGroup title="Hoy" tasks={alta} totalCount={categoryCounts.alta} isResumen={isResumen} onViewAll={() => setCategory("alta")} onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
+      <PriorityTaskGroup title="Próximamente" tasks={media} totalCount={categoryCounts.media} isResumen={isResumen} onViewAll={() => setCategory("media")} onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
+      <PriorityTaskGroup title="Sin apuro" tasks={baja} totalCount={categoryCounts.baja} isResumen={isResumen} onViewAll={() => setCategory("baja")} onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
     </div>
   );
 }

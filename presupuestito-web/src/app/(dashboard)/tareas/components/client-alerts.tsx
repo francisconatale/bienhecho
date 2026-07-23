@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { AlertCircle, Clock } from "lucide-react";
 import { useClientAlerts } from "../hooks/use-client-alerts";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export function ClientAlerts() {
   const [mounted, setMounted] = useState(false);
@@ -14,7 +13,7 @@ export function ClientAlerts() {
   if (!mounted) {
     return (
       <div className="h-[72px] rounded-2xl bg-surface/10 border border-outline-variant/5 flex items-center justify-center">
-        <LoadingSpinner />
+        <div className="w-16 h-4 bg-outline-variant/10 rounded animate-pulse" />
       </div>
     );
   }

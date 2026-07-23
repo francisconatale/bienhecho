@@ -6,3 +6,4 @@ export { PagosSkeleton } from "./pagos-skeleton";
 export { AjustesSkeleton } from "./ajustes-skeleton";
 export { CuentaCorrienteSkeleton } from "./cuenta-corriente-skeleton";
 export { MaterialesSkeleton } from "./materiales-skeleton";
+export { MasterDetailSkeleton } from "./master-detail-skeleton";

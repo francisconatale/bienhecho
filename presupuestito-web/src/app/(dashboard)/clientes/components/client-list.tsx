@@ -6,7 +6,7 @@ import { MasterDetail } from "@/components/ui/master-detail";
 import { MobileHeaderActions } from "@/components/ui/mobile-header-actions";
 import { ClientDetailPane } from "./client-detail-pane";
 import { ClientItem } from "./client-item";
-import { MasterDetailSkeleton } from "@/components/ui/master-detail-skeleton";
+import { MasterDetailSkeleton } from "@/components/ui/skeletons";
 import { useClients } from "../hooks/use-clients";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 

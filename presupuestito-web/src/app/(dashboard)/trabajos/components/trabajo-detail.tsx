@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { MobilePageHeader } from "@/components/ui/mobile-page-header";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import { TrabajoDetailSkeleton } from "@/components/ui/skeletons";
 import dynamic from "next/dynamic";
 import { useTrabajoDetail } from "../[id]/hooks/use-trabajo-detail";
 import { JobSummaryCards } from "../[id]/components/job-summary-cards";
@@ -148,11 +149,7 @@ export function TrabajoDetail({
 
   if (!job) {
     if (isLoadingJob) {
-      return (
-        <div className="flex-1 min-h-screen flex items-center justify-center">
-          <div className="w-8 h-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-        </div>
-      );
+      return <TrabajoDetailSkeleton isEmbedded={isEmbedded} />;
     }
     if (isEmbedded) return null;
     notFound();

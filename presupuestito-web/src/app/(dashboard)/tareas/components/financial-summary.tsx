@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { FileText } from "lucide-react";
 import { useFinancialSummary } from "../hooks/use-financial-summary";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export function FinancialSummary() {
   const [mounted, setMounted] = useState(false);
@@ -14,7 +13,7 @@ export function FinancialSummary() {
   if (!mounted) {
     return (
       <div className="bg-surface/10 border border-outline-variant/5 rounded-2xl h-12 flex items-center justify-center">
-        <LoadingSpinner />
+        <div className="w-48 h-4 bg-outline-variant/10 rounded animate-pulse" />
       </div>
     );
   }

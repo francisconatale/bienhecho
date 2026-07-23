@@ -16,9 +16,19 @@ export function ClientJobsCard({ clientId }: { clientId: string }) {
   
   if (isLoading) {
     return (
-      <div className="relative bg-surface/40 dark:bg-surface/10 backdrop-blur-2xl rounded-xl p-8 md:p-10 border border-white/30 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex flex-col items-center justify-center min-h-[200px]">
-        <div className="w-8 h-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin mb-4" />
-        <p className="text-sm font-medium text-on-surface-variant/70">Cargando trabajos...</p>
+      <div className="relative bg-surface/40 dark:bg-surface/10 backdrop-blur-2xl rounded-xl p-8 md:p-10 border border-white/30 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.08)] min-h-[200px]">
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex items-center gap-4 py-4">
+              <div className="w-2 h-2 rounded-full bg-outline-variant/10 shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="w-3/4 h-4 bg-outline-variant/10 rounded animate-pulse" />
+                <div className="w-1/3 h-3 bg-outline-variant/10 rounded animate-pulse" />
+              </div>
+              <div className="w-9 h-9 rounded-full bg-outline-variant/10 animate-pulse shrink-0" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

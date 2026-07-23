@@ -25,11 +25,7 @@ function MaterialesPageInner({ id }: MaterialesPageInnerProps) {
   });
 
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[40vh] bg-transparent">
-        <div className="w-10 h-10 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
-      </div>
-    );
+    return <MaterialesSkeleton />;
   }
 
   if (!job) {

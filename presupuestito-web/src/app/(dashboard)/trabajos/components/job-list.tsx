@@ -12,7 +12,7 @@ import { TrabajoDetail } from "./trabajo-detail";
 import { JobStatusSelector } from "../[id]/components/job-status";
 import { MobileHeaderActions } from "@/components/ui/mobile-header-actions";
 import { MasterDetail } from "@/components/ui/master-detail";
-import { MasterDetailSkeleton } from "@/components/ui/master-detail-skeleton";
+import { MasterDetailSkeleton } from "@/components/ui/skeletons";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 import { AuroraBackground } from "@/components/ui/aurora-background";

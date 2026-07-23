@@ -7,8 +7,6 @@ interface TareasFilterProps {
   setFilter: (f: FilterType) => void;
   pendingCount: number;
   completedCount: number;
-  viewMode?: "list" | "board";
-  setViewMode?: (mode: "list" | "board") => void;
 }
 
 export function TareasFilter({
@@ -16,11 +14,9 @@ export function TareasFilter({
   setFilter,
   pendingCount,
   completedCount,
-  viewMode = "list",
-  setViewMode,
 }: TareasFilterProps) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div className="flex flex-wrap items-center justify-between gap-4">
       <div className="flex gap-2">
         <button
           onClick={() => setFilter("pendientes")}

@@ -26,9 +26,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-xl focus:font-bold">
-        Saltar al contenido
-      </a>
+
       <div aria-hidden="true" className="fixed inset-0 pointer-events-none z-[-1] opacity-[0.04] mix-blend-overlay bg-[url('/noise.svg')] bg-repeat" />
       <div aria-hidden="true" className="fixed inset-0 pointer-events-none z-[-2] overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[55%] h-[55%] rounded-full bg-primary/10 blur-[130px]" />
@@ -36,7 +34,7 @@ export default function DashboardPage() {
       </div>
 
       <main id="main-content">
-        <div className="md:hidden flex flex-col px-4 pt-14 pb-28 space-y-5 animate-page-in">
+        <div className="md:hidden flex flex-col px-4 pt-14 pb-28 space-y-5">
           <div className="pt-4">
             <h1 className="text-[32px] font-bold tracking-tight text-on-surface leading-tight">
               ¡Hola, {displayName}!
@@ -49,7 +47,7 @@ export default function DashboardPage() {
           <ActivityList pagination={pagination} />
         </div>
 
-        <div className="hidden md:flex flex-col px-10 xl:px-16 pt-12 pb-16 gap-8 w-full max-w-[1400px] mx-auto animate-page-in">
+        <div className="hidden md:flex flex-col px-10 xl:px-16 pt-12 pb-16 gap-8 w-full max-w-[1400px] mx-auto">
           <div className="flex items-center justify-between gap-6 pt-4">
             <h1 className="text-[48px] lg:text-[56px] font-bold tracking-tight text-on-surface leading-none">
               ¡Hola, {displayName}!

@@ -10,8 +10,6 @@ import { cn } from "@/lib/utils";
 import { TareasSkeletonContent } from "@/components/ui/skeletons";
 
 export default function TareasPage() {
-  const [viewMode, setViewMode] = useState<"list" | "board">("list");
-
   const {
     isLoading,
     filter,
@@ -90,32 +88,14 @@ export default function TareasPage() {
           </div>
           
           <div className="flex items-center gap-3">
-            {!isSpecialized && filter !== "completadas" && (
-              <div className="hidden lg:flex bg-surface/50 backdrop-blur-xl border border-outline-variant/20 p-1.5 rounded-xl shadow-sm">
-                <button
-                  onClick={() => setViewMode("list")}
-                  className={cn(
-                    "px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold transition-all",
-                    viewMode === "list"
-                      ? "bg-primary/10 text-primary shadow-sm"
-                      : "text-on-surface-variant hover:text-on-surface hover:bg-surface"
-                  )}
-                >
-                  <LayoutList className="w-4 h-4" />
-                  <span>Lista</span>
-                </button>
-                <button
-                  onClick={() => setViewMode("board")}
-                  className={cn(
-                    "px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold transition-all",
-                    viewMode === "board"
-                      ? "bg-primary/10 text-primary shadow-sm"
-                      : "text-on-surface-variant hover:text-on-surface hover:bg-surface"
-                  )}
-                >
-                  <LayoutGrid className="w-4 h-4" />
-                  <span>Tablero</span>
-                </button>
+            {!isSpecialized && (
+              <div className="hidden md:block">
+                <TareasFilter
+                  filter={filter}
+                  setFilter={setFilter}
+                  pendingCount={pendingCount}
+                  completedCount={completedCount}
+                />
               </div>
             )}
           </div>
@@ -125,45 +105,20 @@ export default function TareasPage() {
           <TareasSkeletonContent />
         ) : (
           <div className={cn(
-            "flex flex-col w-full animate-in fade-in slide-in-from-bottom-2 duration-500", 
-            isSpecialized ? "px-4 md:px-0" : "",
-            viewMode === "list" && "max-w-4xl mx-auto"
+            "flex flex-col w-full", 
+            isSpecialized ? "px-4 md:px-0" : ""
           )}>
             <div className="space-y-6">
               {!isSpecialized && (
-                <div className="flex items-center justify-between">
-                  <TareasFilter
-                    filter={filter}
-                    setFilter={setFilter}
-                    pendingCount={pendingCount}
-                    completedCount={completedCount}
-                    viewMode={viewMode}
-                    setViewMode={setViewMode}
-                  />
-                  
-                  {/* View mode switch para pantallas medianas (md a lg) */}
-                  {filter !== "completadas" && (
-                    <div className="hidden md:flex lg:hidden bg-surface/50 backdrop-blur-xl border border-outline-variant/20 p-1 rounded-xl shadow-sm mb-6">
-                      <button
-                        onClick={() => setViewMode("list")}
-                        className={cn(
-                          "p-2 rounded-[12px] transition-all",
-                          viewMode === "list" ? "bg-primary/10 text-primary" : "text-on-surface-variant"
-                        )}
-                      >
-                        <LayoutList className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => setViewMode("board")}
-                        className={cn(
-                          "p-2 rounded-[12px] transition-all",
-                          viewMode === "board" ? "bg-primary/10 text-primary" : "text-on-surface-variant"
-                        )}
-                      >
-                        <LayoutGrid className="w-4 h-4" />
-                      </button>
-                    </div>
-                  )}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="md:hidden w-full">
+                    <TareasFilter
+                      filter={filter}
+                      setFilter={setFilter}
+                      pendingCount={pendingCount}
+                      completedCount={completedCount}
+                    />
+                  </div>
                 </div>
               )}
 
@@ -173,7 +128,6 @@ export default function TareasPage() {
                 filter={filter}
                 category={category}
                 setCategory={setCategory}
-                viewMode={viewMode}
                 onToggle={toggleTask}
                 onTogglePriority={togglePriority}
                 onDelete={deleteTask}

@@ -56,7 +56,7 @@ export function BottomNav() {
   }, [lastScrollY]);
 
   // Ocultar completamente la barra de navegación en ciertas páginas
-  if (pathname === "/landing" || pathname === "/trabajos/nuevo" || pathname === "/design-lab") {
+  if (pathname === "/landing" || pathname === "/trabajos/nuevo") {
     return null;
   }
 
