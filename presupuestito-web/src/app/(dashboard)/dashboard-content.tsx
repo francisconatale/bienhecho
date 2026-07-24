@@ -38,26 +38,13 @@ export function DashboardContent() {
     alerts,
   } = useDashboard();
 
-  const displayName = profile?.nombre || "Francisco";
+  const displayName = profile?.nombre || "";
 
   if (isLoading) {
     return (
-      <>
-        <BackgroundEffects />
-        <main id="main-content">
-          <div className="md:hidden flex flex-col px-4 pt-14 pb-28 space-y-5">
-            <div className="pt-4">
-              <Greeting displayName={displayName} className="text-[32px] font-bold tracking-tight text-on-surface leading-tight" />
-            </div>
-          </div>
-          <div className="hidden md:flex flex-col px-10 xl:px-16 pt-12 pb-16 gap-8 w-full max-w-[1400px] mx-auto">
-            <div className="flex items-center justify-between gap-6 pt-4">
-              <Greeting displayName={displayName} className="text-[48px] lg:text-[56px] font-bold tracking-tight text-on-surface leading-none" />
-            </div>
-          </div>
-          <DashboardSkeleton />
-        </main>
-      </>
+      <main id="main-content">
+        <DashboardSkeleton />
+      </main>
     );
   }
 
