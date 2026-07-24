@@ -1,6 +1,8 @@
 "use client";
 
 import { generateBudgetPDF } from "@/lib/pdf/generate-budget";
+import type { PDFData } from "@/lib/pdf/generate-budget";
+import type { PDFParams } from "@/lib/pdf/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { jobsService, clientsService, tasksService, materialsService } from "@/services";
 import { storageService } from "@/services/storage.service";
@@ -10,7 +12,7 @@ export function useBudgetPDF() {
   const queryClient = useQueryClient();
   const { profile } = useProfile();
 
-  const downloadPDF = async (jobId: string) => {
+  const getBudgetData = async (jobId: string): Promise<PDFData> => {
     const jobs = await queryClient.fetchQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
     const clients = await queryClient.fetchQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
     
@@ -44,14 +46,13 @@ export function useBudgetPDF() {
       logo_url: profile?.logo_path ? storageService.getPublicUrl(profile.logo_path) : undefined,
     };
 
-    generateBudgetPDF({
-      client,
-      job,
-      tasks: jobTasks,
-      materiales: jobMateriales,
-      userProfile,
-    });
+    return { client, job, tasks: jobTasks, materiales: jobMateriales, userProfile };
   };
 
-  return { downloadPDF };
+  const downloadPDF = async (jobId: string, params?: PDFParams) => {
+    const data = await getBudgetData(jobId);
+    await generateBudgetPDF(data, params);
+  };
+
+  return { downloadPDF, getBudgetData };
 }

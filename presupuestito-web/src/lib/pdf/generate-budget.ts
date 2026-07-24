@@ -1,6 +1,10 @@
 import type { Client, Job, Task, Material } from "@/types";
+import type { PDFParams } from "./types";
+import { DEFAULT_PDF_PARAMS } from "./types";
+import { derivePDFColors } from "./derivePDFColors";
+import { LAYOUT, buildItemsList } from "./budget-layout";
 
-interface PDFData {
+export interface PDFData {
   client: Client;
   job: Job;
   tasks: Task[];
@@ -53,13 +57,16 @@ async function createDocWithInter(): Promise<InstanceType<Awaited<typeof import(
   return doc;
 }
 
-export async function generateBudgetPDF({
-  client,
-  job,
-  tasks,
-  materiales,
-  userProfile,
-}: PDFData): Promise<void> {
+export async function generateBudgetPDF(
+  {
+    client,
+    job,
+    tasks,
+    materiales,
+    userProfile,
+  }: PDFData,
+  params?: PDFParams
+): Promise<void> {
   const [{ default: jsPDF }, autoTable] = await Promise.all([
     import("jspdf"),
     import("jspdf-autotable"),
@@ -68,14 +75,11 @@ export async function generateBudgetPDF({
   const doc = await createDocWithInter();
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 14; // Achicado de 16 a 14 para ganar espacio
-  
-  // Colors based on globals.css
-  const primary: [number, number, number] = [61, 139, 110]; // #3D8B6E
-  const onPrimary: [number, number, number] = [255, 255, 255]; // #FFFFFF
-  const onSurface: [number, number, number] = [26, 48, 32]; // #1A3020
-  const onSurfaceVariant: [number, number, number] = [61, 96, 72]; // #3D6048
-  const outlineVariant: [number, number, number] = [181, 208, 188]; // #B5D0BC
+  const { margin, headerHeight, footerHeight } = LAYOUT;
+
+  const effectiveParams = params ?? DEFAULT_PDF_PARAMS;
+  const colors = derivePDFColors(effectiveParams.primaryColor);
+  const { primary, onPrimary, onSurface, onSurfaceVariant, outlineVariant } = colors;
   
   let currentY = 0;
   
@@ -108,18 +112,17 @@ export async function generateBudgetPDF({
     }
   }
 
-  // Header (Más compacto)
-  const headerHeight = 28; // Achicado de 35 a 28
+  // Header
   doc.setFillColor(...primary);
   doc.rect(0, 0, pageWidth, headerHeight, "F");
   
-  // Center logo in the header
+  // Logo in the header (centered, size adjustable)
   if (logoBase64 && logoFormat) {
     try {
       const props = doc.getImageProperties(logoBase64);
-      const maxHeight = 20; // Achicado para el header más chico
-      const maxWidth = 45; 
-      
+      const scale = effectiveParams.logoScale;
+      const maxHeight = LAYOUT.logoMaxHeight * scale;
+      const maxWidth = LAYOUT.logoMaxWidth * scale;
       const ratio = Math.min(maxWidth / props.width, maxHeight / props.height);
       const finalWidth = props.width * ratio;
       const finalHeight = props.height * ratio;
@@ -129,7 +132,7 @@ export async function generateBudgetPDF({
       
       doc.addImage(logoBase64, logoFormat, logoX, logoY, finalWidth, finalHeight);
     } catch (e) {
-      const logoSize = 16;
+      const logoSize = LAYOUT.fallbackLogoSize * effectiveParams.logoScale;
       doc.addImage(logoBase64, logoFormat, (pageWidth - logoSize) / 2, (headerHeight - logoSize) / 2, logoSize, logoSize);
     }
   }
@@ -139,24 +142,24 @@ export async function generateBudgetPDF({
   // Sender info (Left)
   const senderName = userProfile.company || userProfile.name || "Sin nombre";
   doc.setFont("Inter", "bold");
-  doc.setFontSize(18); // de 22 a 18
+  doc.setFontSize(LAYOUT.senderNameFontSize);
   doc.text(senderName, margin, 15);
   
   if (userProfile.trade) {
     doc.setFont("Inter", "normal");
-    doc.setFontSize(9);
+    doc.setFontSize(LAYOUT.tradeFontSize);
     doc.setTextColor(230, 245, 235);
     doc.text(userProfile.trade, margin, 21);
   }
   
   // Invoice info (Right)
   doc.setFont("Inter", "bold");
-  doc.setFontSize(7);
+  doc.setFontSize(LAYOUT.labelFontSize);
   doc.setTextColor(230, 245, 235);
-  doc.text("PRESUPUESTO", pageWidth - margin, 10, { align: "right", charSpace: 1 });
+  doc.text("PRESUPUESTO", pageWidth - margin, 10, { align: "right", charSpace: LAYOUT.labelCharSpace });
   
   doc.setTextColor(...onPrimary);
-  doc.setFontSize(12);
+  doc.setFontSize(LAYOUT.invoiceIdFontSize);
   const invoiceId = job.id ? job.id.substring(0, 6).toUpperCase() : "000000";
   doc.text(`#${invoiceId}`, pageWidth - margin, 16, { align: "right" });
   
@@ -166,103 +169,92 @@ export async function generateBudgetPDF({
     year: "numeric",
   });
   doc.setFont("Inter", "normal");
-  doc.setFontSize(9);
+  doc.setFontSize(LAYOUT.dateFontSize);
   doc.setTextColor(230, 245, 235);
   doc.text(dateStr, pageWidth - margin, 22, { align: "right" });
   
-  currentY = headerHeight + 8; // Espaciado reducido
+  currentY = headerHeight + LAYOUT.headerPadding;
   
   // Separator
   const drawSeparator = (yPos: number) => {
     doc.setDrawColor(...outlineVariant);
-    doc.setLineWidth(0.2);
+    doc.setLineWidth(LAYOUT.separatorLineWidth);
     doc.line(margin, yPos, pageWidth - margin, yPos);
   };
   
   drawSeparator(currentY);
-  currentY += 8; // de 12 a 8
+  currentY += LAYOUT.sectionGap;
   
   // Client & Sender blocks (De / Para)
   const colWidth = (pageWidth - margin * 2) / 2;
   
   // DE column
   doc.setFont("Inter", "bold");
-  doc.setFontSize(7);
+  doc.setFontSize(LAYOUT.deParaTitleFontSize);
   doc.setTextColor(...onSurfaceVariant);
-  doc.text("DE", margin, currentY, { charSpace: 1 });
+  doc.text("DE", margin, currentY, { charSpace: LAYOUT.labelCharSpace });
   
-  currentY += 5; // de 6 a 5
-  doc.setFontSize(12); // de 14 a 12
+  currentY += LAYOUT.deParaLineGap;
+  doc.setFontSize(LAYOUT.deParaNameFontSize);
   doc.setTextColor(...onSurface);
   doc.text(senderName, margin, currentY);
   
   doc.setFont("Inter", "normal");
-  doc.setFontSize(9);
+  doc.setFontSize(LAYOUT.deParaInfoFontSize);
   doc.setTextColor(...onSurfaceVariant);
-  let senderInfoY = currentY + 5;
+  let senderInfoY = currentY + LAYOUT.deParaLineGap;
   if (userProfile.address) {
     doc.text(userProfile.address, margin, senderInfoY);
-    senderInfoY += 4;
+    senderInfoY += LAYOUT.infoLineGap;
   }
   if (userProfile.phone) {
     doc.text(userProfile.phone, margin, senderInfoY);
-    senderInfoY += 4;
+    senderInfoY += LAYOUT.infoLineGap;
   }
   if (userProfile.cuit) {
     doc.text(`CUIT: ${userProfile.cuit}`, margin, senderInfoY);
-    senderInfoY += 4;
+    senderInfoY += LAYOUT.infoLineGap;
   }
   
   // PARA column
-  let paraY = currentY - 5;
+  let paraY = currentY - LAYOUT.deParaLineGap;
   doc.setFont("Inter", "bold");
-  doc.setFontSize(7);
+  doc.setFontSize(LAYOUT.deParaTitleFontSize);
   doc.setTextColor(...onSurfaceVariant);
-  doc.text("PARA", margin + colWidth, paraY, { charSpace: 1 });
+  doc.text("PARA", margin + colWidth, paraY, { charSpace: LAYOUT.labelCharSpace });
   
-  paraY += 5;
-  doc.setFontSize(12);
+  paraY += LAYOUT.deParaLineGap;
+  doc.setFontSize(LAYOUT.deParaNameFontSize);
   doc.setTextColor(...onSurface);
   doc.text(client.nombre || "Cliente sin nombre", margin + colWidth, paraY);
   
   doc.setFont("Inter", "normal");
-  doc.setFontSize(9);
+  doc.setFontSize(LAYOUT.deParaInfoFontSize);
   doc.setTextColor(...onSurfaceVariant);
-  let clientInfoY = paraY + 5;
+  let clientInfoY = paraY + LAYOUT.deParaLineGap;
   if (client.direccion) {
     doc.text(client.direccion, margin + colWidth, clientInfoY);
-    clientInfoY += 4;
+    clientInfoY += LAYOUT.infoLineGap;
   }
   if (client.telefono) {
     doc.text(client.telefono, margin + colWidth, clientInfoY);
-    clientInfoY += 4;
+    clientInfoY += LAYOUT.infoLineGap;
   }
   
-  currentY = Math.max(senderInfoY, clientInfoY) + 6; // de 8 a 6
+  currentY = Math.max(senderInfoY, clientInfoY) + LAYOUT.tightSectionGap;
   
   drawSeparator(currentY);
-  currentY += 8; // de 12 a 8
+  currentY += LAYOUT.sectionGap;
   
   // Items
   checkPageBreak(25);
   doc.setFont("Inter", "bold");
-  doc.setFontSize(7);
+  doc.setFontSize(LAYOUT.descriptionLabelFontSize);
   doc.setTextColor(...onSurfaceVariant);
-  doc.text("DESCRIPCIÓN", margin, currentY, { charSpace: 1 });
-  currentY += 3; // de 4 a 3
+  doc.text("DESCRIPCIÓN", margin, currentY, { charSpace: LAYOUT.labelCharSpace });
+  currentY += LAYOUT.itemRowGap;
   
-  const allItems = [
-    ...(tasks || []).map(t => ({
-      desc: t.descripcion,
-      qty: t.cantidad || 1,
-      total: t.precio || 0
-    })),
-    ...(materiales || []).map(m => ({
-      desc: m.nombre_material,
-      qty: m.cantidad || 1,
-      total: m.subtotal || 0
-    }))
-  ];
+  const allItems = buildItemsList(tasks, materiales);
   
   autoTable.default(doc, {
     startY: currentY,
@@ -275,19 +267,18 @@ export async function generateBudgetPDF({
     ]),
     theme: "plain",
     styles: {
-      cellPadding: { top: 2, bottom: 2, left: 0, right: 0 }, // Reducido de 4 a 2
+      cellPadding: { top: 2, bottom: 2, left: 0, right: 0 },
       font: "Inter",
     },
     columnStyles: {
-      0: { cellWidth: colWidth * 1.3, halign: "left", textColor: onSurface, fontSize: 10, fontStyle: "normal" }, // de 11 a 10
-      1: { halign: "right", textColor: onSurfaceVariant, fontSize: 9 }, // de 10 a 9
-      2: { halign: "right", textColor: onSurface, fontStyle: "bold", fontSize: 10 } // de 11 a 10
+      0: { cellWidth: colWidth * 1.3, halign: "left", textColor: onSurface, fontSize: LAYOUT.itemDescFontSize, fontStyle: "normal" },
+      1: { halign: "right", textColor: onSurfaceVariant, fontSize: LAYOUT.itemQtyFontSize },
+      2: { halign: "right", textColor: onSurface, fontStyle: "bold", fontSize: LAYOUT.itemTotalFontSize }
     },
     didDrawCell: (data) => {
-      // Draw border bottom except last row
       if (data.row.index < allItems.length - 1 && data.cell.section === 'body') {
         doc.setDrawColor(...outlineVariant);
-        doc.setLineWidth(0.1);
+        doc.setLineWidth(LAYOUT.cellLineWidth);
         doc.line(
           data.cell.x,
           data.cell.y + data.cell.height,
@@ -298,33 +289,32 @@ export async function generateBudgetPDF({
     }
   });
 
-  currentY = (doc as any).lastAutoTable.finalY + 6; // de 8 a 6
+  currentY = (doc as any).lastAutoTable.finalY + LAYOUT.tightSectionGap;
   
   drawSeparator(currentY);
-  currentY += 8; // de 12 a 8
+  currentY += LAYOUT.sectionGap;
   
   // Observations
   if (job.descripcion) {
-    checkPageBreak(30); // de 40 a 30
+    checkPageBreak(30);
     doc.setFont("Inter", "bold");
-    doc.setFontSize(7);
+    doc.setFontSize(LAYOUT.observationsLabelFontSize);
     doc.setTextColor(...onSurfaceVariant);
-    doc.text("OBSERVACIONES", margin, currentY, { charSpace: 1 });
-    currentY += 6; // de 8 a 6
+    doc.text("OBSERVACIONES", margin, currentY, { charSpace: LAYOUT.labelCharSpace });
+    currentY += LAYOUT.tightSectionGap;
     
     doc.setFont("Inter", "normal");
-    doc.setFontSize(9); // de 10 a 9
+    doc.setFontSize(LAYOUT.observationsTextFontSize);
     doc.setTextColor(...onSurfaceVariant);
     const obsLines = doc.splitTextToSize(job.descripcion, pageWidth - margin * 2);
     doc.text(obsLines, margin, currentY);
-    currentY += obsLines.length * 4 + 4; // Menos interlineado
+    currentY += obsLines.length * 4 + 4;
     
     drawSeparator(currentY);
-    currentY += 8; // de 12 a 8
+    currentY += LAYOUT.sectionGap;
   }
 
   // Footer / Total
-  const footerHeight = 30; // de 40 a 30
   
   // Only add a new page if the content overlaps with the fixed footer area
   if (currentY + footerHeight + 10 > pageHeight) {
@@ -339,16 +329,16 @@ export async function generateBudgetPDF({
   doc.rect(0, finalFooterY, pageWidth, footerHeight, "F");
   
   doc.setFont("Inter", "normal");
-  doc.setFontSize(7);
+  doc.setFontSize(LAYOUT.dateFontSize);
   doc.setTextColor(230, 245, 235);
   doc.text("presupuestito.com", margin, finalFooterY + footerHeight - 10);
   
   doc.setFont("Inter", "bold");
-  doc.setFontSize(9);
-  doc.text("TOTAL", pageWidth - margin, finalFooterY + 12, { align: "right", charSpace: 1 });
+  doc.setFontSize(LAYOUT.totalLabelFontSize);
+  doc.text("TOTAL", pageWidth - margin, finalFooterY + 12, { align: "right", charSpace: LAYOUT.labelCharSpace });
   
   const finalTotal = allItems.reduce((acc, i) => acc + i.total, 0);
-  doc.setFontSize(22); // de 28 a 22
+  doc.setFontSize(LAYOUT.totalAmountFontSize);
   doc.setTextColor(...onPrimary);
   doc.text(`$${finalTotal.toLocaleString("es-AR")}`, pageWidth - margin, finalFooterY + 22, { align: "right" });
   

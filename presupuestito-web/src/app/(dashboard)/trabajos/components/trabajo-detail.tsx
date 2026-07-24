@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ChevronLeft, FileDown, Hammer, Wallet, CheckCircle, X, Loader2 } from "lucide-react";
+import { ChevronLeft, FileDown, Hammer, Wallet, CheckCircle, X, Loader2, Palette } from "lucide-react";
 import Link from "next/link";
 import { notFound, useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { jobsService } from "@/services";
-import { useBudgetPDF } from "@/hooks/use-budget-pdf";
+import { useProfile } from "@/hooks/use-profile";
+import { storageService } from "@/services/storage.service";
+import type { PDFData } from "@/lib/pdf/generate-budget";
+import type { PDFParams } from "@/lib/pdf/types";
+import { PDFPreviewModal } from "@/components/budgets/PDFPreviewModal";
 
 import { ProgressBar } from "../[id]/components/progress-bar";
 import { TaskList } from "../[id]/components/task-list";
@@ -77,7 +81,12 @@ export function TrabajoDetail({
     downloadPDF 
   } = useTrabajoDetail(id);
 
+  const { profile } = useProfile();
+
   const [isHeaderEditing, setIsHeaderEditing] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewData, setPreviewData] = useState<PDFData | null>(null);
+  const [pdfDownloading, setPdfDownloading] = useState(false);
   const [headerHasChanges, setHeaderHasChanges] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
@@ -108,13 +117,65 @@ export function TrabajoDetail({
     }
   }, [taskParam, jobTasks, id, pathname, router, searchParams]);
 
-  const { totalMateriales } = useMaterials(id);
+  const { materiales: jobMateriales, totalMateriales } = useMaterials(id);
   const [ConfirmDialog, confirm] = useConfirm();
 
   const handleDownloadPDF = () => {
     setPdfError(null);
     setShowPdfDialog(true);
   };
+
+  const handlePersonalizarPDF = () => {
+    if (!job || !client) {
+      setPdfError("Trabajo o cliente no encontrado");
+      return;
+    }
+    const jobTasksWithPrice = jobTasks
+      .filter((t) => t.precio !== null)
+      .sort((a, b) => a.orden - b.orden);
+    if (jobTasksWithPrice.length === 0 && jobMateriales.length === 0) {
+      setPdfError("No hay tareas con precio ni materiales para generar el presupuesto");
+      return;
+    }
+    const data: PDFData = {
+      client,
+      job,
+      tasks: jobTasksWithPrice,
+      materiales: jobMateriales,
+      userProfile: {
+        name: profile?.nombre || "Prestador de Servicios",
+        company: profile?.nombre || "Mi Empresa",
+        address: profile?.direccion || "Domicilio Comercial S/D",
+        cuit: "00-00000000-0",
+        matricula: profile?.numero_matricula,
+        trade: job.titulo || profile?.rubro || "Servicios Profesionales",
+        logo_url: profile?.logo_path ? storageService.getPublicUrl(profile.logo_path) : undefined,
+      },
+    };
+    setPreviewData(data);
+    setShowPreviewModal(true);
+  };
+
+  const handleDownloadWithParams = useCallback(async (params: PDFParams) => {
+    setPdfDownloading(true);
+    try {
+      await downloadPDF(id, params);
+    } finally {
+      setPdfDownloading(false);
+    }
+    setShowPreviewModal(false);
+    setPreviewData(null);
+  }, [id, downloadPDF]);
+
+  const handleVerPDF = useCallback(async () => {
+    setPdfError(null);
+    setPdfDownloading(true);
+    try {
+      await downloadPDF(job.id);
+    } finally {
+      setPdfDownloading(false);
+    }
+  }, [job, downloadPDF]);
 
   const handleDeleteJob = useCallback(() => {
     if (!job) return;
@@ -320,16 +381,33 @@ export function TrabajoDetail({
                             <FileDown className="w-4 h-4" strokeWidth={2.5} />
                             Generar Presupuesto
                           </button>
+                          <button
+                            onClick={handlePersonalizarPDF}
+                            disabled={!hasItemsForBudget || generatingAction !== null}
+                            className="w-full py-3 rounded-xl font-bold text-[12px] uppercase tracking-wider transition-[background-color,transform] duration-[120ms] flex items-center justify-center gap-2 bg-on-surface/5 text-on-surface-variant hover:bg-on-surface/10 active:scale-[0.98] cursor-pointer mt-2"
+                          >
+                            <Palette className="w-3.5 h-3.5" strokeWidth={2.5} />
+                            Personalizar PDF
+                          </button>
                         </>
                       ) : (
-                        <button
-                          onClick={() => { setPdfError(null); downloadPDF(job.id); }}
-                          disabled={generatingAction !== null}
-                          className="w-full py-3.5 rounded-xl font-bold text-[13px] uppercase tracking-wider transition-[background-color,transform] duration-[120ms] flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary-dark active:scale-[0.98] shadow-sm"
-                        >
-                          <FileDown className="w-4 h-4" strokeWidth={2.5} />
-                          Ver PDF
-                        </button>
+                        <div className="flex flex-col gap-2">
+                          <button
+                            onClick={handleVerPDF}
+                            disabled={generatingAction !== null || pdfDownloading}
+                            className="w-full py-3.5 rounded-xl font-bold text-[13px] uppercase tracking-wider transition-[background-color,transform] duration-[120ms] flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary-dark active:scale-[0.98] shadow-sm"
+                          >
+                            {pdfDownloading ? <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.5} /> : <FileDown className="w-4 h-4" strokeWidth={2.5} />}
+                            {pdfDownloading ? "Generando..." : "Ver PDF"}
+                          </button>
+                          <button
+                            onClick={handlePersonalizarPDF}
+                            className="w-full py-3 rounded-xl font-bold text-[12px] uppercase tracking-wider transition-[background-color,transform] duration-[120ms] flex items-center justify-center gap-2 bg-on-surface/5 text-on-surface-variant hover:bg-on-surface/10 active:scale-[0.98] cursor-pointer"
+                          >
+                            <Palette className="w-3.5 h-3.5" strokeWidth={2.5} />
+                            Personalizar PDF
+                          </button>
+                        </div>
                       )}
                       
                       {pdfError && (
@@ -391,6 +469,14 @@ export function TrabajoDetail({
         onGuardar={handleGuardarPdf}
         onEmitir={handleEmitPresupuesto}
       />
+      {showPreviewModal && previewData && (
+        <PDFPreviewModal
+          data={previewData}
+          onCancel={() => { setShowPreviewModal(false); setPreviewData(null); }}
+          onDownload={handleDownloadWithParams}
+          loading={pdfDownloading}
+        />
+      )}
       <ConfirmDialog />
     </div>
   );

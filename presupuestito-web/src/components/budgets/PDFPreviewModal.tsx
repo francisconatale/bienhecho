@@ -1,0 +1,96 @@
+"use client";
+
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { Modal } from "@/components/ui/modal";
+import { BudgetPreview } from "./BudgetPreview";
+import type { PDFData } from "@/lib/pdf/generate-budget";
+import type { PDFParams } from "@/lib/pdf/types";
+import { DEFAULT_PDF_PARAMS } from "@/lib/pdf/types";
+
+interface PDFPreviewModalProps {
+  data: PDFData;
+  onDownload: (params: PDFParams) => void;
+  onCancel: () => void;
+  loading?: boolean;
+}
+
+export function PDFPreviewModal({ data, onDownload, onCancel, loading = false }: PDFPreviewModalProps) {
+  const [params, setParams] = useState<PDFParams>(DEFAULT_PDF_PARAMS);
+
+  const hasLogo = !!data.userProfile.logo_url;
+
+  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setParams(prev => ({ ...prev, primaryColor: e.target.value }));
+  };
+
+  const handleLogoScaleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setParams(prev => ({ ...prev, logoScale: parseFloat(e.target.value) }));
+  };
+
+  return (
+    <Modal isOpen={true} onClose={onCancel} title="Personalizar PDF" position="center">
+      <div className="flex flex-col gap-4">
+        {/* Controls */}
+        <div className="flex items-center gap-6 flex-wrap">
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">
+              Color
+            </label>
+            <input
+              type="color"
+              value={params.primaryColor}
+              onChange={handleColorChange}
+              className="w-9 h-9 rounded-lg border border-outline-variant/20 cursor-pointer bg-transparent p-0.5"
+            />
+          </div>
+
+          {hasLogo && (
+            <div className="flex items-center gap-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">
+                Logo
+              </label>
+              <input
+                type="range"
+                min="0.5"
+                max="1.5"
+                step="0.1"
+                value={params.logoScale}
+                onChange={handleLogoScaleChange}
+                className="w-20 accent-[#3D8B6E] cursor-pointer"
+              />
+              <span className="text-xs font-bold text-on-surface-variant w-6 text-right">
+                {Math.round(params.logoScale * 100)}%
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Preview */}
+        <div className="border border-outline-variant/20 rounded-xl overflow-hidden shadow-sm">
+          <div className="max-h-[60vh] overflow-y-auto custom-scrollbar">
+            <BudgetPreview data={data} params={params} />
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-2 pt-1">
+          <button
+            onClick={onCancel}
+            className="flex-1 px-4 py-3 rounded-xl bg-on-surface/5 text-on-surface font-bold text-sm hover:bg-on-surface/10 transition-all active:scale-[0.98] cursor-pointer"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={() => onDownload(params)}
+            disabled={loading}
+            className="flex-1 px-4 py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-dark transition-all active:scale-[0.98] shadow-sm disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
+          >
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+            {loading ? "Generando..." : "Descargar PDF"}
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
