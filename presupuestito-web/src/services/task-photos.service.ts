@@ -1,22 +1,16 @@
 import { TaskPhoto } from "@/types";
-import { createClient } from "@/utils/supabase/client";
+import { requireAuth } from "@/utils/supabase/require-auth";
 
 export const taskPhotosService = {
   getByTaskId: async (taskId: string): Promise<TaskPhoto[]> => {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("No authenticated user");
+    const { supabase, user } = await requireAuth();
     const { data, error } = await supabase.from("task_photos").select("*").eq("tarea_id", taskId).eq("user_id", user.id).order("orden", { ascending: true });
     if (error) throw new Error(error.message);
     return data as TaskPhoto[];
   },
 
   uploadFile: async (file: File): Promise<string> => {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("No authenticated user");
+    const { supabase, user } = await requireAuth();
 
     const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
     const allowedExtensions = ["jpg", "jpeg", "png", "webp"];
@@ -47,10 +41,7 @@ export const taskPhotosService = {
   },
 
   create: async (photoData: Omit<TaskPhoto, "id" | "created_at" | "user_id">): Promise<TaskPhoto> => {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("No authenticated user");
+    const { supabase, user } = await requireAuth();
 
     const { data, error } = await supabase
       .from("task_photos")
@@ -61,21 +52,8 @@ export const taskPhotosService = {
     return data as TaskPhoto;
   },
 
-  update: async (id: string, photoData: Partial<TaskPhoto>): Promise<TaskPhoto> => {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("No authenticated user");
-    const { data, error } = await supabase.from("task_photos").update(photoData).eq("id", id).eq("user_id", user.id).select().single();
-    if (error) throw new Error(error.message);
-    return data as TaskPhoto;
-  },
-
   delete: async (id: string, photoUrl?: string): Promise<void> => {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("No authenticated user");
+    const { supabase, user } = await requireAuth();
 
     if (photoUrl) {
       try {
@@ -94,4 +72,3 @@ export const taskPhotosService = {
     if (error) throw new Error(error.message);
   },
 };
-

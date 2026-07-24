@@ -1,84 +1,71 @@
 import { Job } from "@/types";
-import { createClient } from "@/utils/supabase/client";
+import { requireAuth } from "@/utils/supabase/require-auth";
 
 export const jobsService = {
   getAll: async (): Promise<Job[]> => {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("No authenticated user");
-    const { data, error } = await supabase.from("trabajos").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
+    const { supabase, user } = await requireAuth();
+    const { data, error } = await supabase.from("trabajos").select("*, clientes(nombre)").eq("user_id", user.id).order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
     return data as Job[];
   },
 
-  
-  getDashboardStats: async (): Promise<{ totalJobs: number; totalToInvoice: number }> => {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("No authenticated user");
+  getDashboardStats: async () => {
+    const { supabase, user } = await requireAuth();
 
-    const { data, error, count } = await supabase
-      .from("trabajos")
-      .select("presupuesto", { count: "exact" })
-      .eq("user_id", user.id);
+    const [jobsResult, tasksResult] = await Promise.all([
+      supabase.from("trabajos").select("id, estado, presupuesto").eq("user_id", user.id),
+      supabase.from("tareas").select("id, completada").eq("user_id", user.id),
+    ]);
 
-    if (error) throw new Error(error.message);
+    if (jobsResult.error) throw new Error(jobsResult.error.message);
+    if (tasksResult.error) throw new Error(tasksResult.error.message);
 
-    const totalToInvoice = (data || []).reduce((acc, row) => acc + (row.presupuesto || 0), 0);
-    return { totalJobs: count || 0, totalToInvoice };
+    const jobs = jobsResult.data || [];
+    const tasks = tasksResult.data || [];
+
+    const totalToInvoice = jobs
+      .filter((j: any) => j.estado !== "pagado")
+      .reduce((sum: number, j: any) => sum + (j.presupuesto || 0), 0);
+
+    return { totalJobs: jobs.length, totalToInvoice };
   },
 
-  getPaginated: async (
-    page: number = 1,
-    pageSize: number = 10,
-    search?: string
-  ): Promise<{ data: (Job & { clientes: { nombre: string } | null })[]; total: number }> => {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("No authenticated user");
+  getPaginated: async (page: number = 1, pageSize: number = 10, filter?: string) => {
+    const { supabase, user } = await requireAuth();
 
     let query = supabase
       .from("trabajos")
       .select("*, clientes(nombre)", { count: "exact" })
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
+      .eq("user_id", user.id);
 
-    if (search) {
-      // Supabase JS allows filtering by joined table columns if they are referenced
-      query = query.or(`titulo.ilike.%${search}%,clientes.nombre.ilike.%${search}%`);
+    if (filter && filter !== "todos") {
+      query = query.eq("estado", filter);
     }
+
+    query = query.order("created_at", { ascending: false });
 
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
     const { data, error, count } = await query.range(from, to);
-
     if (error) throw new Error(error.message);
-    return { data: data as any[], total: count || 0 };
+
+    return { data: data || [], total: count || 0 };
   },
 
-  getById: async (id: string): Promise<Job> => {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("No authenticated user");
-    const { data, error } = await supabase.from("trabajos").select("*").eq("id", id).eq("user_id", user.id).single();
+  getById: async (id: string): Promise<Job | null> => {
+    const { supabase, user } = await requireAuth();
+    const { data, error } = await supabase.from("trabajos").select("*, clientes(nombre)").eq("id", id).eq("user_id", user.id).single();
     if (error) throw new Error(error.message);
     return data as Job;
   },
 
-  create: async (jobData: Omit<Job, "id" | "created_at" | "estado" | "user_id">): Promise<Job> => {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("No authenticated user");
+  create: async (jobData: Omit<Job, "id" | "created_at" | "user_id">): Promise<Job> => {
+    const { supabase, user } = await requireAuth();
 
     const { data, error } = await supabase
       .from("trabajos")
-      .insert({ ...jobData, user_id: user.id, estado: "borrador" })
+      .insert({ ...jobData, user_id: user.id })
       .select()
       .single();
     if (error) throw new Error(error.message);
@@ -86,20 +73,14 @@ export const jobsService = {
   },
 
   update: async (id: string, jobData: Partial<Job>): Promise<Job> => {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("No authenticated user");
+    const { supabase, user } = await requireAuth();
     const { data, error } = await supabase.from("trabajos").update(jobData).eq("id", id).eq("user_id", user.id).select().single();
     if (error) throw new Error(error.message);
     return data as Job;
   },
 
   delete: async (id: string): Promise<void> => {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("No authenticated user");
+    const { supabase, user } = await requireAuth();
     const { error } = await supabase.from("trabajos").delete().eq("id", id).eq("user_id", user.id);
     if (error) throw new Error(error.message);
   },

@@ -1,48 +1,41 @@
-import { createClient } from "@/utils/supabase/client";
+import { requireAuth } from "@/utils/supabase/require-auth";
 
 export const storageService = {
-  async uploadCompanyLogo(
-    userId: string,
-    file: File
-  ): Promise<{ path: string; error: Error | null }> {
-    const supabase = createClient();
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${Date.now()}.${fileExt}`;
-    // Path structure: [user_id]/[timestamp].[ext]
-    const filePath = `${userId}/${fileName}`;
+  uploadCompanyLogo: async (userId: string, file: File): Promise<{ path: string; error: null } | { path: null; error: Error }> => {
+    const { supabase } = await requireAuth();
+
+    const fileName = `${userId}/logo.${file.name.split('.').pop()}`;
 
     const { data, error } = await supabase.storage
-      .from("company-logos")
-      .upload(filePath, file, {
-        upsert: true,
+      .from('company-logos')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: true
       });
 
-    if (error) {
-      return { path: "", error: new Error(error.message) };
-    }
+    if (error) return { path: null, error };
 
-    return { path: data.path, error: null };
+    return { path: data?.path || fileName, error: null };
   },
 
-  async deleteCompanyLogo(path: string): Promise<{ error: Error | null }> {
-    const supabase = createClient();
+  deleteCompanyLogo: async (logoPath: string): Promise<{ error: null } | { error: Error }> => {
+    const { supabase } = await requireAuth();
+
     const { error } = await supabase.storage
-      .from("company-logos")
-      .remove([path]);
-      
-    if (error) {
-      return { error: new Error(error.message) };
-    }
+      .from('company-logos')
+      .remove([logoPath]);
+
+    if (error) return { error };
+
     return { error: null };
   },
 
-  getPublicUrl(path: string): string {
+  getPublicUrl: (path: string): string => {
+    const { createClient } = require("@/utils/supabase/client");
     const supabase = createClient();
-    const { data } = supabase.storage
-      .from("company-logos")
+    const { data: { publicUrl } } = supabase.storage
+      .from('company-logos')
       .getPublicUrl(path);
-      
-    return data.publicUrl;
+    return publicUrl;
   },
 };
-

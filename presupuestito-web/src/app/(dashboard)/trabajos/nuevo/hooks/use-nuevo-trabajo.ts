@@ -67,6 +67,7 @@ export function useNuevoTrabajo() {
         direccion: direccion.trim(),
         descripcion: descripcion.trim() || undefined,
         presupuesto: presupuesto ? Number(presupuesto) : 0,
+        estado: "borrador",
         fecha_inicio: fechaInicio || undefined,
         fecha_fin_estimada: fechaFinEstimada || undefined,
       });
