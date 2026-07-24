@@ -6,7 +6,7 @@ import { AuroraBackground } from "@/components/ui/aurora-background";
 import { CuentaCorrientePageClient } from "./page-client";
 
 export const metadata: Metadata = {
-  title: "Cuenta Corriente - Presupuestito",
+  title: "Cuenta Corriente",
   description: "Movimientos y saldo del cliente",
 };
 

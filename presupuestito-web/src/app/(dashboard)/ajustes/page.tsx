@@ -7,7 +7,7 @@ import { PreferencesSection } from "./components/preferences-section";
 import { AccountActionsSection } from "./components/account-actions-section";
 
 export const metadata: Metadata = {
-  title: "Presupuestito - Ajustes",
+  title: "Ajustes",
   description: "Configurá tu cuenta y preferencias",
 };
 

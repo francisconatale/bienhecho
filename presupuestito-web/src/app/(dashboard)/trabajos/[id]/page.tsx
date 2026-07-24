@@ -1,18 +1,16 @@
-"use client";
+import type { Metadata } from "next";
+import { TrabajoDetailContent } from "./trabajo-detail-content";
 
-import React, { Suspense } from "react";
-import { TrabajoDetail } from "../components/trabajo-detail";
-import { TrabajoDetailSkeleton } from "@/components/ui/skeletons";
+export const metadata: Metadata = {
+  title: "Detalle de Trabajo",
+  description: "Información detallada del trabajo, materiales y pagos",
+};
 
 interface TrabajoPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default function TrabajoPage({ params }: TrabajoPageProps) {
-  const { id } = React.use(params);
-  return (
-    <Suspense fallback={<TrabajoDetailSkeleton />}>
-      <TrabajoDetail id={id} />
-    </Suspense>
-  );
+export default async function TrabajoPage({ params }: TrabajoPageProps) {
+  const { id } = await params;
+  return <TrabajoDetailContent id={id} />;
 }

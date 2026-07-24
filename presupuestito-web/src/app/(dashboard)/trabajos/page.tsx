@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { JobList } from "./components/job-list";
 
 export const metadata: Metadata = {
-  title: "Presupuestito - Trabajos",
+  title: "Trabajos",
   description: "Gestioná tus proyectos y presupuestos activos",
 };
 

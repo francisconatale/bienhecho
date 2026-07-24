@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ClientList } from "./components/client-list";
 
 export const metadata: Metadata = {
-  title: "Presupuestito - Clientes",
+  title: "Clientes",
   description: "Gestioná tus clientes y presupuestos",
 };
 

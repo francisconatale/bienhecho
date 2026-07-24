@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { TopNav } from "@/components/layout/top-nav";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default async function DashboardLayout({
   children,
