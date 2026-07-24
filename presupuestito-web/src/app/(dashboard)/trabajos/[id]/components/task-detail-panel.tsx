@@ -22,7 +22,7 @@ interface TaskDetailPanelProps {
   onDelete?: () => void;
 }
 
-export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetailPanelProps) {
+export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: TaskDetailPanelProps) {
   const { data: jobs = [], isLoading: isJobsLoading } = useQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll });
   const { data: tasks = [], isLoading: isTasksLoading } = useQuery({ queryKey: ["tasks"], queryFn: tasksService_getAll });
   const { data: visits = [], isLoading: isVisitsLoading } = useQuery({ queryKey: ["visits"], queryFn: visitsService_getAll });

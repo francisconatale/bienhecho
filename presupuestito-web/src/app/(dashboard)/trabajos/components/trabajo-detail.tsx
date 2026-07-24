@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, FileDown, Hammer, Wallet, CheckCircle, X, Loader2, Palette } from "lucide-react";
 import Link from "next/link";
 import { notFound, useSearchParams, useRouter, usePathname } from "next/navigation";
@@ -109,17 +109,25 @@ export function TrabajoDetail({
   const from = searchParams.get("from");
 
   const taskParam = searchParams.get("task");
-  const initialTaskHandled = useRef(false);
   useEffect(() => {
-    if (initialTaskHandled.current) return;
     if (taskParam && jobTasks.some((t) => t.id === taskParam && t.trabajo_id === id)) {
       setSelectedTaskId(taskParam);
-      initialTaskHandled.current = true;
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete("task");
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    } else if (!taskParam) {
+      setSelectedTaskId(null);
     }
-  }, [taskParam, jobTasks, id, pathname, router, searchParams]);
+  }, [taskParam, jobTasks, id]);
+
+  const handleTaskSelect = (taskId: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("task", taskId);
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  const handleTaskClose = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("task");
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   const { materiales: jobMateriales, totalMateriales } = useMaterials(id);
   const [ConfirmDialog, confirm] = useConfirm();
@@ -264,8 +272,8 @@ export function TrabajoDetail({
           <TaskDetailPanel
             jobId={job.id}
             taskId={selectedTaskId}
-            onBack={() => setSelectedTaskId(null)}
-            onDelete={() => setSelectedTaskId(null)}
+            onBack={handleTaskClose}
+            onDelete={handleTaskClose}
           />
         </div>
       )}
@@ -289,8 +297,8 @@ export function TrabajoDetail({
               <TaskDetailPanel
                 jobId={job.id}
                 taskId={selectedTaskId}
-                onBack={() => setSelectedTaskId(null)}
-                onDelete={() => setSelectedTaskId(null)}
+                onBack={handleTaskClose}
+                onDelete={handleTaskClose}
               />
             </div>
           ) : (
@@ -464,7 +472,7 @@ export function TrabajoDetail({
 
               {/* Item 4: Task List (Left column on desktop, 4th on mobile) */}
               <div className="order-4 lg:col-start-1 mt-1 md:mt-4">
-                <TaskList jobId={job.id} isJobPaid={job.estado === "pagado"} onSelectTask={setSelectedTaskId} />
+                <TaskList jobId={job.id} isJobPaid={job.estado === "pagado"} onSelectTask={handleTaskSelect} />
               </div>
             </>
           )}
