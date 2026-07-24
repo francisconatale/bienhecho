@@ -45,21 +45,26 @@ export function LoginForm() {
         <div className="absolute top-0 left-0 w-full h-[250px] bg-gradient-to-b from-primary-container/80 to-surface opacity-80 pointer-events-none lg:hidden" />
         
         <div className="relative z-10 flex flex-col lg:h-full lg:justify-between">
-          <Image src="/icon.svg" alt="Bien Hecho" width={48} height={48} className="mb-8 lg:w-14 lg:h-14" />
+          {/* Logo Desktop */}
+          <Image src="/icon.svg" alt="Bien Hecho" width={56} height={56} className="hidden lg:block mb-8" />
           
-          {/* Textos Mobile */}
-          <div className="lg:hidden">
-            <h1 className="text-3xl font-bold text-on-surface tracking-tight mb-2">Bienvenido</h1>
-            <p className="text-sm font-medium text-on-surface-variant mb-6">Ingresá para gestionar tus presupuestos.</p>
+          {/* Textos Mobile con Logo a la derecha */}
+          <div className="lg:hidden flex items-start justify-between mb-6 gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-on-surface tracking-tight mb-1">Iniciar Sesión</h1>
+              <p className="text-sm font-medium text-on-surface-variant">Ingresá tus credenciales para continuar.</p>
+            </div>
+            <Image src="/icon.svg" alt="Bien Hecho" width={48} height={48} className="shrink-0" />
           </div>
 
           {/* Textos Desktop */}
           <div className="hidden lg:block">
             <h2 className="text-4xl font-bold tracking-tight text-on-primary-container leading-tight mb-4">
-              Simplificando<br/>la gestión de<br/><span className="text-primary-dark italic">tu oficio.</span>
+              Diseñado para<br/>
+              simplificar <span className="text-primary-dark italic font-medium">tu oficio.</span>
             </h2>
             <p className="text-on-surface-variant font-medium text-lg max-w-sm">
-              Presupuestos, clientes y obras en una plataforma pensada para tu tranquilidad.
+              Gestión de presupuestos, clientes y obras en una plataforma pensada para tu tranquilidad.
             </p>
           </div>
         </div>

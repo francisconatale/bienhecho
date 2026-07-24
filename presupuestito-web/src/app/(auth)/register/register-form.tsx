@@ -66,12 +66,16 @@ export function RegisterForm() {
         <div className="absolute top-0 left-0 w-full h-[250px] bg-gradient-to-b from-secondary-container/80 to-surface opacity-80 pointer-events-none lg:hidden" />
         
         <div className="relative z-10 flex flex-col lg:h-full lg:justify-between">
-          <Image src="/icon.svg" alt="Bien Hecho" width={48} height={48} className="mb-8 lg:w-14 lg:h-14" />
+          {/* Logo Desktop */}
+          <Image src="/icon.svg" alt="Bien Hecho" width={56} height={56} className="hidden lg:block mb-8" />
           
-          {/* Textos Mobile */}
-          <div className="lg:hidden">
-            <h1 className="text-3xl font-bold text-on-surface tracking-tight mb-2">Crear cuenta</h1>
-            <p className="text-sm font-medium text-on-surface-variant mb-6">El primer paso para hacerlo Bien Hecho.</p>
+          {/* Textos Mobile con Logo a la izquierda */}
+          <div className="lg:hidden flex items-start mb-6 gap-4">
+            <Image src="/icon.svg" alt="Bien Hecho" width={48} height={48} className="shrink-0" />
+            <div>
+              <h1 className="text-3xl font-bold text-on-surface tracking-tight mb-1">Crear cuenta</h1>
+              <p className="text-sm font-medium text-on-surface-variant">Completá tus datos y empezá a gestionar hoy.</p>
+            </div>
           </div>
 
           {/* Textos Desktop */}
