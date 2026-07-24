@@ -7,6 +7,7 @@ import { BudgetPreview } from "./BudgetPreview";
 import type { PDFData } from "@/lib/pdf/generate-budget";
 import type { PDFParams } from "@/lib/pdf/types";
 import { DEFAULT_PDF_PARAMS } from "@/lib/pdf/types";
+import { ColorPicker } from "@/components/ui/color-picker";
 
 interface PDFPreviewModalProps {
   data: PDFData;
@@ -20,12 +21,12 @@ export function PDFPreviewModal({ data, onDownload, onCancel, loading = false }:
 
   const hasLogo = !!data.userProfile.logo_url;
 
-  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setParams(prev => ({ ...prev, primaryColor: e.target.value }));
+  const handleColorChange = (color: string) => {
+    setParams(prev => ({ ...prev, primaryColor: color }));
   };
 
-  const handleSecondaryColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setParams(prev => ({ ...prev, secondaryColor: e.target.value }));
+  const handleSecondaryColorChange = (color: string) => {
+    setParams(prev => ({ ...prev, secondaryColor: color }));
   };
 
   const handleLogoScaleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,11 +61,9 @@ export function PDFPreviewModal({ data, onDownload, onCancel, loading = false }:
             <label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">
               {params.colorMode === "gradient" ? "Desde" : "Color"}
             </label>
-            <input
-              type="color"
-              value={params.primaryColor}
+            <ColorPicker
+              color={params.primaryColor}
               onChange={handleColorChange}
-              className="w-9 h-9 rounded-lg border border-outline-variant/20 cursor-pointer bg-transparent p-0.5"
             />
           </div>
           {params.colorMode === "gradient" && (
@@ -72,11 +71,9 @@ export function PDFPreviewModal({ data, onDownload, onCancel, loading = false }:
               <label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">
                 Hasta
               </label>
-              <input
-                type="color"
-                value={params.secondaryColor ?? "#FF9F43"}
+              <ColorPicker
+                color={params.secondaryColor ?? "#FF9F43"}
                 onChange={handleSecondaryColorChange}
-                className="w-9 h-9 rounded-lg border border-outline-variant/20 cursor-pointer bg-transparent p-0.5"
               />
             </div>
           )}

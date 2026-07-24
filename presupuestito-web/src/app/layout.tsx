@@ -45,6 +45,9 @@ export const metadata: Metadata = {
       "Gestioná y facturá tus trabajos, clientes y presupuestos en un solo lugar.",
     images: ["/og-image.png"],
   },
+  verification: {
+    google: "HgfWs0opdYsJnLxJKTBmcg5x67klCbQf0ITXWpg52Ew",
+  },
 };
 
 export const viewport: Viewport = {
