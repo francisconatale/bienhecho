@@ -16,6 +16,7 @@ import { MasterDetailSkeleton } from "@/components/ui/skeletons";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import { useDebounce } from "@/hooks/use-debounce";
 
 function formatCurrency(amount: number): string {
   if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
@@ -66,12 +67,14 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
 
   const [page, setPage] = useState(1);
   const pageSize = 10;
-  const deferredSearch = useDeferredValue(search);
+  
+  // Use debounce to prevent querying the server on every keystroke
+  const debouncedSearch = useDebounce(search, 300);
 
   const { data, isLoading } = useQuery({ 
-    queryKey: ["jobs", "paginated", page, pageSize, deferredSearch], 
-    queryFn: () => jobsService_getPaginated(page, pageSize, deferredSearch),
-    initialData: page === 1 && deferredSearch === "" ? initialData : undefined,
+    queryKey: ["jobs", "paginated", page, pageSize, debouncedSearch], 
+    queryFn: () => jobsService_getPaginated(page, pageSize, debouncedSearch),
+    initialData: page === 1 && debouncedSearch === "" ? initialData : undefined,
     placeholderData: keepPreviousData,
   });
 
@@ -101,7 +104,7 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
   
   useEffect(() => {
     setPage(1);
-  }, [deferredSearch]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const selected = jobs.find((j) => j.id === selectedId) || null;
 

@@ -39,7 +39,7 @@ export const jobsService = {
       .eq("user_id", user.id);
 
     if (filter && filter !== "todos") {
-      query = query.eq("estado", filter);
+      query = query.ilike("titulo", `%${filter}%`);
     }
 
     query = query.order("created_at", { ascending: false });
