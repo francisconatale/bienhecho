@@ -26,9 +26,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_AR",
     siteName: "Bien Hecho",
-    title: "Bien Hecho — Gestión para tus trabajos",
+    title: "Bien Hecho — Gestioná y facturá tus trabajos",
     description:
-      "Gestioná tus trabajos, clientes y presupuestos en un solo lugar.",
+      "Gestioná y facturá tus trabajos, clientes y presupuestos en un solo lugar.",
     images: [
       {
         url: "/og-image.png",
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bien Hecho — Gestión para tus trabajos",
+    title: "Bien Hecho — Gestioná y facturá tus trabajos",
     description:
-      "Gestioná tus trabajos, clientes y presupuestos en un solo lugar.",
+      "Gestioná y facturá tus trabajos, clientes y presupuestos en un solo lugar.",
     images: ["/og-image.png"],
   },
 };

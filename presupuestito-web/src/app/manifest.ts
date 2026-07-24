@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Bien Hecho — Gestión para tus trabajos",
+    name: "Bien Hecho — Gestioná y facturá tus trabajos",
     short_name: "Bien Hecho",
     description:
-      "Gestioná tus trabajos, clientes y presupuestos en un solo lugar.",
+      "Gestioná y facturá tus trabajos, clientes y presupuestos en un solo lugar.",
     start_url: "/",
     display: "standalone",
     background_color: "#E8F2EB",
