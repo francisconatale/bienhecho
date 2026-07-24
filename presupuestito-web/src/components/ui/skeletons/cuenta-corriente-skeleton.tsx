@@ -2,7 +2,7 @@ export function MetricasCuentaSkeleton() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {[1, 2, 3, 4].map((i) => (
-        <div key={i} className="bg-surface/60 backdrop-blur-xl rounded-xl border border-outline-variant/15 p-4">
+        <div key={i} className="bg-surface/60  rounded-xl border border-outline-variant/15 p-4">
           <div className="w-16 h-3 bg-outline-variant/10 rounded animate-pulse mb-2" />
           <div className="w-20 h-7 bg-outline-variant/10 rounded animate-pulse" />
         </div>
@@ -13,7 +13,7 @@ export function MetricasCuentaSkeleton() {
 
 export function TransaccionesListSkeleton() {
   return (
-    <div className="bg-surface/60 backdrop-blur-xl rounded-xl border border-outline-variant/15 shadow-sm overflow-hidden">
+    <div className="bg-surface/60  rounded-xl border border-outline-variant/15 shadow-sm overflow-hidden">
       <div className="p-4 border-b border-outline-variant/10">
         <div className="w-36 h-5 bg-outline-variant/10 rounded animate-pulse" />
       </div>

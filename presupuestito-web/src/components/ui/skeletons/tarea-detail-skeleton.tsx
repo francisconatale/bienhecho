@@ -65,7 +65,7 @@ export function TareaDetailSkeleton() {
   return (
     <>
       {/* Mobile: header with back */}
-      <div className="md:hidden h-[60px] w-full border-b border-outline-variant/10 bg-surface/80 backdrop-blur-md px-4 flex items-center">
+      <div className="md:hidden h-[60px] w-full border-b border-outline-variant/10 bg-surface/80  px-4 flex items-center">
         <div className="w-20 h-5 bg-outline-variant/10 rounded animate-pulse" />
       </div>
 

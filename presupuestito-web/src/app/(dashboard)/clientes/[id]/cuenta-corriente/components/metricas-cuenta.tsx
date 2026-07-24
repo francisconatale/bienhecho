@@ -41,7 +41,7 @@ export function MetricasCuenta({ clienteId }: { clienteId: string }) {
           </div>
           
           <div className={cn(
-            "absolute -right-12 -bottom-12 w-40 h-40 rounded-full blur-2xl pointer-events-none transition-transform duration-500",
+            "absolute -right-12 -bottom-12 w-40 h-40 rounded-full blur-2xl pointer-events-none transition-transform duration-300",
             deudaTotal > 0 ? "bg-error/10" : deudaTotal < 0 ? "bg-success/10" : "bg-primary/10",
             "group-hover:scale-110"
           )} />

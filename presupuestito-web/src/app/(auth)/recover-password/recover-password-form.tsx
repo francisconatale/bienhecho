@@ -59,7 +59,7 @@ export function RecoverPasswordForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="tu@email.com"
-                  className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl pl-12 pr-6 py-4 text-base font-semibold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-2xl pl-12 pr-6 py-4 text-base font-semibold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-colors"
                 />
               </div>
             </div>
@@ -68,7 +68,7 @@ export function RecoverPasswordForm() {
           <button
             type="submit"
             disabled={loading || !email}
-            className="w-full py-4 rounded-2xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/25 hover:brightness-110 disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-[0.98] flex items-center justify-center gap-3"
+            className="w-full py-4 rounded-2xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/25 hover:brightness-110 disabled:opacity-30 disabled:pointer-events-none transition-transform active:scale-[0.98] flex items-center justify-center gap-3"
           >
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />

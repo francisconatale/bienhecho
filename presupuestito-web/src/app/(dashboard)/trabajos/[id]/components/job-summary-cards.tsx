@@ -22,7 +22,7 @@ export function JobSummaryCards({
       <Link 
         href={`/trabajos/${jobId}/materiales${from ? `?from=${from}` : ""}`} 
         onClick={() => pushHistory(window.location.pathname + window.location.search)}
-        className="group relative overflow-hidden bg-surface rounded-xl p-4 md:p-5 transition-all duration-300 hover:shadow-md border border-outline-variant/10 shadow-sm flex flex-col gap-2"
+        className="group relative overflow-hidden bg-surface rounded-xl p-4 md:p-5 transition-shadow duration-300 hover:shadow-md border border-outline-variant/10 shadow-sm flex flex-col gap-2"
       >
         <div className="relative z-10 flex items-center justify-between">
           <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">
@@ -43,7 +43,7 @@ export function JobSummaryCards({
       <Link 
         href={`/trabajos/${jobId}/pagos`} 
         onClick={() => pushHistory(window.location.pathname + window.location.search)}
-        className="group relative overflow-hidden bg-surface rounded-xl p-4 md:p-5 transition-all duration-300 hover:shadow-md border border-outline-variant/10 shadow-sm flex flex-col gap-2"
+        className="group relative overflow-hidden bg-surface rounded-xl p-4 md:p-5 transition-shadow duration-300 hover:shadow-md border border-outline-variant/10 shadow-sm flex flex-col gap-2"
       >
         <div className="relative z-10 flex items-center justify-between">
           <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">

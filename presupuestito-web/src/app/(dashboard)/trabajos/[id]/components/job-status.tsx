@@ -83,7 +83,7 @@ export function JobStatusSelector({ job }: JobStatusProps) {
         aria-expanded={isOpen}
         aria-haspopup="true"
         className={cn(
-          "text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest transition-all active:scale-95",
+          "text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest transition-transform active:scale-95",
           STATUS_COLORS[job.estado]
         )}
       >
@@ -99,7 +99,7 @@ export function JobStatusSelector({ job }: JobStatusProps) {
               role="menuitem"
               aria-label={STATUS_LABELS[status]}
               className={cn(
-                "w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold transition-all",
+                "w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold transition-colors",
                 status === job.estado
                   ? "bg-primary/10 text-primary"
                   : "text-on-surface hover:bg-on-surface/5",

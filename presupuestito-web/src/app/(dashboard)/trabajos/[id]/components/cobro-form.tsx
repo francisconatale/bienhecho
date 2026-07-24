@@ -52,7 +52,7 @@ export function CobroForm({ initialData, onSave, onCancel }: CobroFormProps) {
         <button
           onClick={onCancel}
           aria-label="Cerrar formulario de cobro"
-          className="p-1 rounded-lg hover:bg-on-surface/5 text-on-surface-variant/40 transition-all"
+          className="p-1 rounded-lg hover:bg-on-surface/5 text-on-surface-variant/40 transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
@@ -68,7 +68,7 @@ export function CobroForm({ initialData, onSave, onCancel }: CobroFormProps) {
           min={0.01}
           step="any"
           autoFocus
-          className="w-1/2 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+          className="w-1/2 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-colors"
         />
         <input
           type="date"
@@ -76,7 +76,7 @@ export function CobroForm({ initialData, onSave, onCancel }: CobroFormProps) {
           onChange={(e) => setFechaCobro(e.target.value)}
           onKeyDown={handleKeyDown}
           required
-          className="w-1/2 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+          className="w-1/2 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-colors"
         />
       </div>
 
@@ -85,7 +85,7 @@ export function CobroForm({ initialData, onSave, onCancel }: CobroFormProps) {
           value={formaPago}
           onChange={(e) => setFormaPago(e.target.value)}
           aria-label="Forma de pago"
-          className="w-1/2 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all appearance-none"
+          className="w-1/2 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-colors appearance-none"
         >
           <option value="">Forma de pago</option>
           <option value="Efectivo">Efectivo</option>
@@ -100,14 +100,14 @@ export function CobroForm({ initialData, onSave, onCancel }: CobroFormProps) {
           onChange={(e) => setNotas(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Notas (opcional)"
-          className="w-1/2 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+          className="w-1/2 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-colors"
         />
       </div>
 
       <div className="flex gap-2 pt-1">
         <button
           onClick={onCancel}
-          className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
+          className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
         >
           Cancelar
         </button>
@@ -115,7 +115,7 @@ export function CobroForm({ initialData, onSave, onCancel }: CobroFormProps) {
           onClick={handleSave}
           disabled={!canSave}
           className={cn(
-            "flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2",
+            "flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2",
             canSave
               ? "bg-on-surface text-surface shadow-lg shadow-black/10 hover:bg-on-surface-variant"
               : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"

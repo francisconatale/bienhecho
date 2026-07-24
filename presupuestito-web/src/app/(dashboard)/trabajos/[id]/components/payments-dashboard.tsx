@@ -37,7 +37,7 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
   return (
     <div className="space-y-6 mt-8 relative z-10">
       {/* Saldo Pendiente Card */}
-      <div className="relative overflow-hidden bg-primary/10 dark:bg-primary/5 bg-surface/80 rounded-xl p-6 border border-primary/20 shadow-[0_8px_32px_rgba(61,139,110,0.1)] transition-all duration-500">
+      <div className="relative overflow-hidden bg-primary/10 dark:bg-primary/5 bg-surface/80 rounded-xl p-6 border border-primary/20 shadow-[0_8px_32px_rgba(61,139,110,0.1)] transition-colors transition-shadow duration-300">
         <div className="relative flex flex-col gap-1 z-10">
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/70">
             Saldo Pendiente
@@ -63,7 +63,7 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
           <button
             onClick={() => setIsAddingCobro(true)}
             aria-label="Registrar nuevo cobro"
-            className="group flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] border border-primary/30 hover:border-primary bg-primary/10 transition-all duration-300 text-[10px] font-bold text-primary uppercase tracking-wider active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
+            className="group flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] border border-primary/30 hover:border-primary bg-primary/10 transition-colors transition-transform duration-300 text-[10px] font-bold text-primary uppercase tracking-wider active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
           >
             <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90 duration-300" strokeWidth={2.5} />
             Registrar Cobro

@@ -29,7 +29,7 @@ function VisitCard({ visit, jobInfo, onToggleStatus, onEdit, onDelete }: {
         <button onClick={onToggleStatus} className="mt-1 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 rounded-full" aria-label={`Estado actual: ${visit.estado}. Cambiar estado`}>
           <div
             className={cn(
-              "w-4 h-4 rounded-full border-2 transition-all",
+              "w-4 h-4 rounded-full border-2 transition-colors",
               visit.estado === "planificada" && "border-accent-dark",
               visit.estado === "realizada" && "border-success bg-success",
               visit.estado === "cancelada" && "border-outline-variant bg-outline-variant/30"

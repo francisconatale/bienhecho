@@ -41,14 +41,14 @@ export function AgendaContent() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   return (
-    <main className="flex-1 pb-32 w-full pt-10 transition-all max-w-[1400px] mx-auto px-4 md:px-8 lg:px-10 xl:px-16">
+    <main className="flex-1 pb-32 w-full pt-10 max-w-[1400px] mx-auto px-4 md:px-8 lg:px-10 xl:px-16">
       <PageHeader
         title="Agenda"
         description="Gestioná las visitas a obra."
         action={
           <button
             onClick={() => actions.setShowNewModal(true)}
-            className="h-12 px-5 rounded-2xl bg-primary text-white font-bold text-sm inline-flex items-center gap-2 hover:bg-primary-dark active:scale-[0.98] transition-all shadow-lg shadow-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
+            className="h-12 px-5 rounded-2xl bg-primary text-white font-bold text-sm inline-flex items-center gap-2 hover:bg-primary-dark active:scale-[0.98] transition-colors transition-transform shadow-lg shadow-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
             aria-label="Crear nueva visita"
           >
             <Plus className="w-4 h-4" strokeWidth={2.5} />

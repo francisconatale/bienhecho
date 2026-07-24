@@ -103,7 +103,7 @@ export function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCa
             type="time"
             value={horaInicio}
             onChange={(e) => setHoraInicio(e.target.value)}
-            className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-xl px-3.5 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+            className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-xl px-3.5 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
           />
         </div>
         <div>
@@ -114,7 +114,7 @@ export function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCa
             type="time"
             value={horaFin}
             onChange={(e) => setHoraFin(e.target.value)}
-            className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-xl px-3.5 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+            className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-xl px-3.5 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
           />
         </div>
       </div>
@@ -131,7 +131,7 @@ export function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCa
               type="button"
               onClick={() => setEstado(s.value)}
               className={cn(
-                "flex-1 py-2 rounded-xl text-xs font-bold border transition-all",
+                "flex-1 py-2 rounded-xl text-xs font-bold border transition-colors",
                 estado === s.value
                   ? "border-primary bg-primary/10 text-primary"
                   : "border-outline-variant/20 text-on-surface-variant hover:border-primary/30"
@@ -153,7 +153,7 @@ export function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCa
           onChange={(e) => setNotas(e.target.value)}
           rows={3}
           placeholder="Comentarios sobre la visita..."
-          className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-xl px-3.5 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+          className="w-full bg-grouped-bg-light border border-outline-variant/20 rounded-xl px-3.5 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors resize-none"
         />
       </div>
 

@@ -86,16 +86,16 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
   });
 
   return (
-    <div className="group relative transition-all duration-500">
+    <div className="group relative transition-opacity duration-300">
       
       <div className="relative z-10 space-y-4 md:space-y-3">
         {isEditing ? (
-          <div ref={editRef} className="space-y-4 md:space-y-3 relative transition-all">
+          <div ref={editRef} className="space-y-4 md:space-y-3 relative transition-opacity">
           <div className="space-y-1.5 md:space-y-1">
             <input 
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
-              className="text-2xl md:text-3xl font-bold text-on-surface tracking-tight bg-transparent border-b border-outline-variant/30 focus:border-primary outline-none transition-all py-1 w-full"
+              className="text-2xl md:text-3xl font-bold text-on-surface tracking-tight bg-transparent border-b border-outline-variant/30 focus:border-primary outline-none transition-colors py-1 w-full"
               autoFocus
               placeholder="Título del trabajo"
             />
@@ -112,7 +112,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
             onChange={(e) => setDescripcion(e.target.value)}
             placeholder="Descripción (opcional)"
             rows={2}
-            className="w-full text-sm text-on-surface-variant/80 font-medium leading-relaxed bg-transparent border-b border-outline-variant/30 focus:border-primary outline-none transition-all py-1 resize-none"
+            className="w-full text-sm text-on-surface-variant/80 font-medium leading-relaxed bg-transparent border-b border-outline-variant/30 focus:border-primary outline-none transition-colors py-1 resize-none"
           />
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
@@ -122,7 +122,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
                 value={direccion}
                 onChange={(e) => setDireccion(e.target.value)}
                 placeholder="Dirección..."
-                className="bg-transparent border-b border-outline-variant/30 focus:border-primary outline-none transition-all py-0.5 w-40"
+                className="bg-transparent border-b border-outline-variant/30 focus:border-primary outline-none transition-colors py-0.5 w-40"
               />
             </div>
 
@@ -133,7 +133,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
                 type="date"
                 value={fechaInicio}
                 onChange={(e) => setFechaInicio(e.target.value)}
-                className="bg-transparent border-b border-outline-variant/30 focus:border-primary outline-none transition-all py-0.5 text-sm"
+                className="bg-transparent border-b border-outline-variant/30 focus:border-primary outline-none transition-colors py-0.5 text-sm"
               />
             </div>
 
@@ -144,16 +144,16 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
                 type="date"
                 value={fechaFin}
                 onChange={(e) => setFechaFin(e.target.value)}
-                className="bg-transparent border-b border-outline-variant/30 focus:border-primary outline-none transition-all py-0.5 text-sm"
+                className="bg-transparent border-b border-outline-variant/30 focus:border-primary outline-none transition-colors py-0.5 text-sm"
               />
             </div>
           </div>
 
           <div className="hidden md:flex justify-end gap-2 pt-2 md:pt-3">
-            <button onClick={handleCancel} data-job-header-cancel className="px-4 py-2 rounded-xl text-xs font-bold bg-on-surface/5 text-on-surface hover:bg-on-surface/10 transition-all">
+            <button onClick={handleCancel} data-job-header-cancel className="px-4 py-2 rounded-xl text-xs font-bold bg-on-surface/5 text-on-surface hover:bg-on-surface/10 transition-colors">
               Cancelar
             </button>
-            <button onClick={handleSave} data-job-header-save disabled={!titulo.trim()} className="px-4 py-2 rounded-xl text-xs font-bold bg-primary text-white hover:bg-primary-dark transition-all disabled:opacity-50 flex items-center gap-1.5">
+            <button onClick={handleSave} data-job-header-save disabled={!titulo.trim()} className="px-4 py-2 rounded-xl text-xs font-bold bg-primary text-white hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" strokeWidth={3} />
               Guardar
             </button>
@@ -189,7 +189,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
               {job.estado !== "pagado" && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-primary hover:bg-primary/10 transition-all hidden md:flex active:scale-95 shrink-0 cursor-pointer"
+                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-primary hover:bg-primary/10 transition-colors transition-transform hidden md:flex active:scale-95 shrink-0 cursor-pointer"
                   title="Editar información del trabajo"
                 >
                   <Pencil className="w-4 h-4" />
@@ -198,7 +198,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
               {job.estado === "borrador" && (
                 <button
                   onClick={() => document.dispatchEvent(new CustomEvent('delete-job', { detail: job.id }))}
-                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-red-500 hover:bg-red-500/10 transition-all hidden md:flex active:scale-95 shrink-0 cursor-pointer"
+                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-red-500 hover:bg-red-500/10 transition-colors transition-transform hidden md:flex active:scale-95 shrink-0 cursor-pointer"
                   title="Eliminar trabajo"
                 >
                   <Trash2 className="w-4 h-4" />

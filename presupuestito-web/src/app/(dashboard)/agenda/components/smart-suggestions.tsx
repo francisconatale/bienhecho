@@ -51,7 +51,7 @@ export function SmartSuggestions() {
               
               <button
                 onClick={() => setSelectedSuggestion(sug)}
-                className="mt-4 w-full h-9 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-orange-500 hover:text-white transition-all active:scale-95"
+                className="mt-4 w-full h-9 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-orange-500 hover:text-white transition-colors transition-transform active:scale-95"
               >
                 <Plus className="w-3.5 h-3.5" strokeWidth={3} />
                 Agendar Visita

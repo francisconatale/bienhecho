@@ -56,7 +56,7 @@ export function CalendarMonth({ year, month, selectedDay, onSelectDay, dayBadge 
               key={day}
               onClick={() => onSelectDay?.(day)}
               className={cn(
-                "aspect-square rounded-2xl flex flex-col items-center justify-center gap-0.5 transition-all text-[13px] font-semibold relative cursor-pointer",
+                "aspect-square rounded-2xl flex flex-col items-center justify-center gap-0.5 transition-colors text-[13px] font-semibold relative cursor-pointer",
                 selected
                   ? "bg-primary text-white shadow-sm shadow-primary/20"
                   : today
@@ -99,7 +99,7 @@ export function CalendarStrip({ year, month, selectedDay, onSelectDay, dayBadge 
             key={dDay}
             onClick={() => onSelectDay?.(dYear, dMonth, dDay)}
             className={cn(
-              "snap-center shrink-0 w-12 h-14 rounded-2xl flex flex-col items-center justify-center gap-1 transition-all relative cursor-pointer",
+              "snap-center shrink-0 w-12 h-14 rounded-2xl flex flex-col items-center justify-center gap-1 transition-colors relative cursor-pointer",
               selected
                 ? "bg-primary text-white shadow-sm shadow-primary/20"
                 : today

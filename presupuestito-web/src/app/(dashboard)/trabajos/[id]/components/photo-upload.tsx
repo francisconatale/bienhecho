@@ -70,7 +70,7 @@ export function PhotoUpload({ tareaId, onSave, onCancel, isSaving = false }: Pho
         </span>
         <button
           onClick={onCancel}
-          className="p-1 rounded-lg hover:bg-on-surface/5 text-on-surface-variant/40 transition-all"
+          className="p-1 rounded-lg hover:bg-on-surface/5 text-on-surface-variant/40 transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
@@ -107,7 +107,7 @@ export function PhotoUpload({ tareaId, onSave, onCancel, isSaving = false }: Pho
             placeholder="Descripción de la foto..."
             rows={2}
             maxLength={500}
-            className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none"
+            className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-colors resize-none"
           />
         </div>
       )}
@@ -120,7 +120,7 @@ export function PhotoUpload({ tareaId, onSave, onCancel, isSaving = false }: Pho
         <button
           onClick={onCancel}
           disabled={isSaving}
-          className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Cancelar
         </button>
@@ -128,7 +128,7 @@ export function PhotoUpload({ tareaId, onSave, onCancel, isSaving = false }: Pho
           onClick={handleSave}
           disabled={!file || isSaving}
           className={cn(
-            "flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2",
+            "flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors transition-transform active:scale-95 flex items-center justify-center gap-2",
             file
               ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark"
               : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed",

@@ -95,7 +95,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: Ta
           placeholder="Ej: Instalar artefacto de luz..."
           autoFocus
           maxLength={300}
-          className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+          className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-colors"
         />
       </div>
 
@@ -110,7 +110,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: Ta
             placeholder="1"
             min={0.01}
             step="0.01"
-            className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+            className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-colors"
           />
         </div>
         <div className="space-y-1.5 flex-1">
@@ -122,7 +122,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: Ta
             onKeyDown={handleKeyDown}
             placeholder="Opcional"
             min={0}
-            className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+            className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-colors"
           />
         </div>
       </div>
@@ -143,7 +143,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: Ta
               type="button"
               onClick={() => setPrioridad(prioridad === p.value ? undefined : p.value)}
               className={cn(
-                "flex-1 py-2.5 rounded-xl border transition-all active:scale-95",
+                "flex-1 py-2.5 rounded-xl border transition-transform active:scale-95",
                 prioridad === p.value
                   ? p.color
                   : "bg-on-surface/5 text-on-surface-variant/50 border-outline-variant/15 hover:bg-on-surface/10"
@@ -164,7 +164,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: Ta
             type="date"
             value={fechaVencimiento}
             onChange={(e) => setFechaVencimiento(e.target.value)}
-            className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl pl-10 pr-4 py-3 text-sm font-bold text-on-surface outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all [color-scheme:light] dark:[color-scheme:dark]"
+            className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl pl-10 pr-4 py-3 text-sm font-bold text-on-surface outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-colors [color-scheme:light] dark:[color-scheme:dark]"
           />
         </div>
         <p className="text-[10px] text-on-surface-variant/40">Fecha límite — opcional</p>
@@ -174,7 +174,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: Ta
         <button
           onClick={onCancel}
           disabled={isSaving}
-          className="flex-1 py-3 rounded-full bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 py-3 rounded-full bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Cancelar
         </button>
@@ -182,7 +182,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: Ta
           onClick={handleSave}
           disabled={!canSave || isSaving}
           className={cn(
-            "flex-1 py-3 rounded-full font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2",
+            "flex-1 py-3 rounded-full font-black text-[10px] uppercase tracking-widest transition-colors transition-transform active:scale-95 flex items-center justify-center gap-2",
             canSave
               ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark"
               : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed",

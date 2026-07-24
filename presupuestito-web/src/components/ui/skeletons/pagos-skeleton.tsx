@@ -21,7 +21,7 @@ export function PagosSkeleton() {
         {/* Payment summary cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-surface/60 backdrop-blur-xl rounded-xl border border-outline-variant/15 p-5 shadow-sm">
+            <div key={i} className="bg-surface/60  rounded-xl border border-outline-variant/15 p-5 shadow-sm">
               <div className="w-20 h-3 bg-outline-variant/10 rounded animate-pulse mb-3" />
               <div className="w-24 h-8 bg-outline-variant/10 rounded animate-pulse" />
             </div>
@@ -29,7 +29,7 @@ export function PagosSkeleton() {
         </div>
 
         {/* Payments list */}
-        <div className="bg-surface/60 backdrop-blur-xl rounded-xl border border-outline-variant/15 shadow-sm overflow-hidden">
+        <div className="bg-surface/60  rounded-xl border border-outline-variant/15 shadow-sm overflow-hidden">
           <div className="p-4 border-b border-outline-variant/10">
             <div className="w-40 h-5 bg-outline-variant/10 rounded animate-pulse" />
           </div>

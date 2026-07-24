@@ -114,7 +114,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
         {photos.length < MAX_PHOTOS && (
           <button
             onClick={() => setShowUploadForm(true)}
-            className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-primary/20 transition-all active:scale-95"
+            className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-primary/20 transition-colors transition-transform active:scale-95"
           >
             <Plus className="w-3 h-3" strokeWidth={3} />
             Agregar
@@ -136,13 +136,13 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
           {photos.map((photo, index) => (
             <div
               key={photo.id}
-              className="relative group rounded-2xl overflow-hidden bg-on-surface/5 cursor-pointer shadow-sm hover:shadow-md transition-all duration-300"
+              className="relative group rounded-2xl overflow-hidden bg-on-surface/5 cursor-pointer shadow-sm hover:shadow-md transition-shadow duration-300"
               onClick={() => openViewer(index)}
             >
               <img
                 src={photo.url}
                 alt={photo.descripcion || "Foto de tarea"}
-                className="w-full h-32 sm:h-40 md:h-48 object-cover transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-32 sm:h-40 md:h-48 object-cover transition-transform duration-300 group-hover:scale-105"
               />
               {photo.descripcion && (
                 <p className="px-2 py-1 text-[10px] font-medium text-on-surface-variant/60 truncate">
@@ -186,7 +186,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
           <button
             onClick={closeViewer}
             aria-label="Cerrar visor de fotos"
-            className="absolute top-4 right-4 p-2 bg-white/10 rounded-full hover:bg-white/20 transition-all z-10"
+            className="absolute top-4 right-4 p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors z-10"
           >
             <X className="w-6 h-6 text-white" />
           </button>
@@ -198,7 +198,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
                 goToPrev();
               }}
               aria-label="Foto anterior"
-              className="absolute left-4 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-all z-10"
+              className="absolute left-4 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors z-10"
             >
               <ChevronLeft className="w-6 h-6 text-white" />
             </button>
@@ -218,7 +218,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
                 goToNext();
               }}
               aria-label="Foto siguiente"
-              className="absolute right-4 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-all z-10"
+              className="absolute right-4 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors z-10"
             >
               <ChevronRight className="w-6 h-6 text-white" />
             </button>

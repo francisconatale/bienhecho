@@ -52,7 +52,7 @@ export function PDFPreviewModal({ data, onDownload, onCancel, loading = false }:
             </label>
             <button
               onClick={handleModeToggle}
-              className="text-xs font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg bg-on-surface/5 text-on-surface-variant hover:bg-on-surface/10 transition-all active:scale-[0.98] cursor-pointer"
+              className="text-xs font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg bg-on-surface/5 text-on-surface-variant hover:bg-on-surface/10 transition-colors transition-transform active:scale-[0.98] cursor-pointer"
             >
               {params.colorMode === "solid" ? "Sólido" : "Degradado"}
             </button>
@@ -109,14 +109,14 @@ export function PDFPreviewModal({ data, onDownload, onCancel, loading = false }:
         <div className="flex gap-2 pt-1 order-3">
           <button
             onClick={onCancel}
-            className="flex-1 px-4 py-3 rounded-xl bg-on-surface/5 text-on-surface font-bold text-sm hover:bg-on-surface/10 transition-all active:scale-[0.98] cursor-pointer"
+            className="flex-1 px-4 py-3 rounded-xl bg-on-surface/5 text-on-surface font-bold text-sm hover:bg-on-surface/10 transition-colors transition-transform active:scale-[0.98] cursor-pointer"
           >
             Cancelar
           </button>
           <button
             onClick={() => onDownload(params)}
             disabled={loading}
-            className="flex-1 px-4 py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-dark transition-all active:scale-[0.98] shadow-sm disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
+            className="flex-1 px-4 py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-dark transition-colors transition-transform active:scale-[0.98] shadow-sm disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
             {loading ? "Generando..." : "Descargar PDF"}

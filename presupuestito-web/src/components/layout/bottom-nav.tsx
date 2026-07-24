@@ -3,7 +3,7 @@
 import { LayoutDashboard, Users, Settings, CheckSquare, Calendar, Briefcase } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -19,13 +19,13 @@ function NavItem({ icon, label, href, active }: NavItemProps) {
 
   return (
     <Link
-      className={`flex flex-col items-center justify-center transition-all ${activeClasses} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2`}
+      className={`flex flex-col items-center justify-center transition-colors ${activeClasses} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2`}
       href={href}
       aria-current={active ? "page" : undefined}
       aria-label={label}
     >
       <div
-        className={`${active ? "bg-primary/10 border border-primary/20" : "bg-transparent border border-transparent"} rounded-xl p-2 transition-all duration-300`}
+        className={`${active ? "bg-primary/10 border border-primary/20" : "bg-transparent border border-transparent"} rounded-xl p-2 transition-colors duration-300`}
       >
         {icon}
       </div>
@@ -36,24 +36,19 @@ function NavItem({ icon, label, href, active }: NavItemProps) {
 export function BottomNav() {
   const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollYRef = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
-      // Mostrar al hacer scroll up, ocultar al hacer scroll down (pasando un umbral mínimo de 50px)
-      if (currentScrollY > lastScrollY && currentScrollY > 50) {
-        setIsVisible(false);
-      } else {
-        setIsVisible(true);
-      }
-      setLastScrollY(currentScrollY);
+      const goingDown = currentScrollY > lastScrollYRef.current && currentScrollY > 50;
+      lastScrollYRef.current = currentScrollY;
+      setIsVisible(prev => (goingDown ? false : true));
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   // Ocultar completamente la barra de navegación en ciertas páginas
   if (pathname === "/landing" || pathname === "/trabajos/nuevo") {
@@ -62,11 +57,11 @@ export function BottomNav() {
 
   return (
     <div
-      className={`fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm z-50 transition-all duration-300 ease-in-out md:hidden ${
+      className={`fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm z-50 transition-transform transition-opacity duration-300 ease-in-out md:hidden ${
         isVisible ? "translate-y-0 opacity-100" : "translate-y-24 opacity-0"
       }`}
     >
-      <nav aria-label="Navegación principal" className="flex justify-between items-center px-2 py-1.5 bg-surface/95 backdrop-blur-xl border border-outline-variant/20 rounded-full shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]">
+      <nav aria-label="Navegación principal" className="flex justify-between items-center px-2 py-1.5 bg-surface/98 border border-outline-variant/20 rounded-full shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]">
         <NavItem
         icon={<LayoutDashboard className="w-5 h-5" strokeWidth={2} />}
         label="Dashboard"

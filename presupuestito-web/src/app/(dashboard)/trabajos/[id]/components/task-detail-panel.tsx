@@ -131,7 +131,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
               </h1>
               <button
                 onClick={() => setIsEditing(true)}
-                className="hidden md:flex p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-primary hover:bg-primary/10 transition-all opacity-0 group-hover:opacity-100 active:scale-95 shrink-0"
+                className="hidden md:flex p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-primary hover:bg-primary/10 transition-colors transition-transform opacity-0 group-hover:opacity-100 active:scale-95 shrink-0"
                 title="Editar tarea"
               >
                 <Pencil className="w-4 h-4" />
@@ -143,7 +143,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
               onChange={(e) => setDescripcion(e.target.value)}
               placeholder="Descripción de la tarea"
               rows={2}
-              className="w-full bg-transparent border-b border-outline-variant/30 text-2xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter placeholder:text-on-surface-variant/25 outline-none focus:border-primary transition-all resize-none py-1"
+              className="w-full bg-transparent border-b border-outline-variant/30 text-2xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter placeholder:text-on-surface-variant/25 outline-none focus:border-primary transition-colors resize-none py-1"
               autoFocus
             />
           )}
@@ -152,7 +152,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
             <button
               onClick={() => !isEditing && updateTaskMutation.mutateAsync({ id: task.id, data: { completada: !task.completada }})}
               className={cn(
-                "relative overflow-hidden p-4 md:p-5 rounded-xl text-left transition-[background-color,border-color,box-shadow] duration-500 flex flex-col gap-2 group select-none",
+                "relative overflow-hidden p-4 md:p-5 rounded-xl text-left transition-[background-color,border-color,box-shadow] duration-300 flex flex-col gap-2 group select-none",
                 task.completada
                   ? "bg-primary/10 hover:bg-primary/15 border border-primary/20 shadow-inner"
                   : "bg-surface/40 dark:bg-surface/10 hover:bg-surface/60 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-lg"
@@ -188,7 +188,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
                 updateTaskMutation.mutateAsync({ id: task.id, data: { prioridad: next }});
               }}
               className={cn(
-                "relative overflow-hidden p-4 md:p-5 rounded-xl text-left transition-[background-color,border-color,box-shadow] duration-500 flex flex-col gap-2 group select-none",
+                "relative overflow-hidden p-4 md:p-5 rounded-xl text-left transition-[background-color,border-color,box-shadow] duration-300 flex flex-col gap-2 group select-none",
                 task.prioridad === "alta"
                   ? "bg-orange-500/10 hover:bg-orange-500/15 border border-orange-500/20 shadow-inner"
                   : task.prioridad === "media"
@@ -205,7 +205,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
               <div className="relative z-10 flex items-center gap-3 mt-1">
                 <div
                   className={cn(
-                    "w-7 h-7 rounded-[10px] border-[2.5px] flex items-center justify-center shrink-0 transition-all duration-300 group-active:scale-75",
+                    "w-7 h-7 rounded-[10px] border-[2.5px] flex items-center justify-center shrink-0 transition-colors transition-transform duration-300 group-active:scale-75",
                     task.prioridad === "alta"
                       ? "bg-orange-500 border-orange-500 shadow-[0_0_16px_rgba(249,115,22,0.4)]"
                       : task.prioridad === "media"
@@ -252,7 +252,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
                           type="number"
                           value={cantidad}
                           onChange={(e) => setCantidad(e.target.value)}
-                          className="w-full bg-transparent border-b-2 border-outline-variant/30 py-1 text-lg font-bold text-on-surface outline-none focus:border-primary transition-all"
+                          className="w-full bg-transparent border-b-2 border-outline-variant/30 py-1 text-lg font-bold text-on-surface outline-none focus:border-primary transition-colors"
                         />
                       </div>
                       <div className="flex-1 relative">
@@ -262,7 +262,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
                           type="number"
                           value={precioUnitario}
                           onChange={(e) => setPrecioUnitario(e.target.value)}
-                          className="w-full bg-transparent border-b-2 border-outline-variant/30 pl-4 py-1 text-lg font-bold text-on-surface outline-none focus:border-primary transition-all"
+                          className="w-full bg-transparent border-b-2 border-outline-variant/30 pl-4 py-1 text-lg font-bold text-on-surface outline-none focus:border-primary transition-colors"
                         />
                       </div>
                     </div>
@@ -279,7 +279,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
         </div>
 
         {taskProgresses.length > 0 && (
-          <div className="relative bg-surface/80 rounded-xl p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-5 transition-shadow duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+          <div className="relative bg-surface/80 rounded-xl p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-5 transition-shadow duration-300 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
             <div className="relative z-10 flex items-center justify-between">
               <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
                 Historial de Avance
@@ -307,7 +307,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
           </div>
         )}
 
-        <div className="relative bg-surface/80 rounded-xl p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-shadow duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
+        <div className="relative bg-surface/80 rounded-xl p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-6 transition-shadow duration-300 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
 
           <div className="relative z-10">
             <TaskPhotos tareaId={task.id} />

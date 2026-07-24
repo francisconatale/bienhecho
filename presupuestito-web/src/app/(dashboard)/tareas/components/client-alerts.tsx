@@ -20,7 +20,7 @@ export function ClientAlerts() {
 
   if (alerts.length === 0) {
     return (
-      <section className="transition-all w-full flex flex-col">
+      <section className="w-full flex flex-col">
         <h2 className="text-[10px] md:text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-3 px-1">
           Alertas
         </h2>
@@ -32,7 +32,7 @@ export function ClientAlerts() {
   }
 
   return (
-    <section className="transition-all w-full flex flex-col">
+    <section className="w-full flex flex-col">
       <h2 className="text-[10px] md:text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-3 px-1">
         Alertas
       </h2>
@@ -40,7 +40,7 @@ export function ClientAlerts() {
       {alerts.map((alert) => (
         <div
           key={alert.id}
-          className={`flex items-center gap-3 p-3.5 rounded-xl bg-surface/60 backdrop-blur-xl shadow-sm transition-all hover:bg-surface/80 border ${
+          className={`flex items-center gap-3 p-3.5 rounded-xl bg-surface/60 backdrop-blur-xl shadow-sm transition-colors hover:bg-surface/80 border ${
             alert.tipo === "borrador"
               ? "border-amber-500/20"
               : "border-red-500/20"

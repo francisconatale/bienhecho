@@ -1,7 +1,7 @@
 export function AjustesSkeleton() {
   return (
     <div className="relative w-full min-h-screen">
-      <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-16 pb-32 w-full transition-all">
+      <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-16 pb-32 w-full">
         <div className="max-w-7xl mx-auto mb-8 pl-1">
           <div className="w-32 h-10 bg-outline-variant/10 rounded-xl animate-pulse" />
         </div>
@@ -25,7 +25,7 @@ export function AjustesSkeleton() {
 
 function SectionSkeleton({ rows = 3 }: { rows?: number }) {
   return (
-    <div className="bg-surface/60 backdrop-blur-xl rounded-2xl border border-outline-variant/15 p-6 shadow-sm">
+    <div className="bg-surface/60  rounded-2xl border border-outline-variant/15 p-6 shadow-sm">
       <div className="w-36 h-5 bg-outline-variant/10 rounded animate-pulse mb-5" />
       <div className="space-y-4">
         {Array.from({ length: rows }).map((_, i) => (

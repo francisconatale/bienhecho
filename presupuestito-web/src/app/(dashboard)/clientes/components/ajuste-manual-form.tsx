@@ -74,7 +74,7 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
           <button
             onClick={() => setShowConfirm(false)}
             disabled={isSubmitting}
-            className="p-1 rounded-lg hover:bg-on-surface/5 text-on-surface-variant/40 transition-all cursor-pointer disabled:opacity-50"
+            className="p-1 rounded-lg hover:bg-on-surface/5 text-on-surface-variant/40 transition-colors cursor-pointer disabled:opacity-50"
           >
             <X className="w-4 h-4" />
           </button>
@@ -91,14 +91,14 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
           <button
             onClick={() => setShowConfirm(false)}
             disabled={isSubmitting}
-            className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95 cursor-pointer disabled:opacity-50"
+            className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 cursor-pointer disabled:opacity-50"
           >
             Cancelar
           </button>
           <button
             onClick={handleConfirm}
             disabled={isSubmitting}
-            className="flex-1 py-2.5 rounded-xl bg-amber-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-amber-700 transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
+            className="flex-1 py-2.5 rounded-xl bg-amber-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-amber-700 transition-colors transition-transform active:scale-95 shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
           >
             {isSubmitting && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
             Confirmar
@@ -116,7 +116,7 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
         </span>
         <button
           onClick={onClose}
-          className="p-1 rounded-lg hover:bg-on-surface/5 text-on-surface-variant/40 transition-all cursor-pointer"
+          className="p-1 rounded-lg hover:bg-on-surface/5 text-on-surface-variant/40 transition-colors cursor-pointer"
         >
           <X className="w-4 h-4" />
         </button>
@@ -128,7 +128,7 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
           onChange={(e) => setTipo(e.target.value as "cargo" | "abono")}
           onKeyDown={handleKeyDown}
           aria-label="Tipo de ajuste"
-          className="w-1/2 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all appearance-none cursor-pointer"
+          className="w-1/2 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-colors appearance-none cursor-pointer"
         >
           <option value="cargo">Cargo</option>
           <option value="abono">Abono</option>
@@ -143,7 +143,7 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
           step="any"
           autoFocus
           aria-label="Monto del ajuste"
-          className="w-1/2 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+          className="w-1/2 bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-colors"
         />
       </div>
 
@@ -154,13 +154,13 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
         onKeyDown={handleKeyDown}
         placeholder="Concepto del ajuste"
         aria-label="Concepto del ajuste"
-        className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+        className="w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-bold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-colors"
       />
 
       <div className="flex gap-2 pt-1">
         <button
           onClick={onClose}
-          className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-all active:scale-95 cursor-pointer"
+          className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 cursor-pointer"
         >
           Cancelar
         </button>
@@ -168,7 +168,7 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
           onClick={handleSubmit}
           disabled={!canSave}
           className={cn(
-            "flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95",
+            "flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors transition-transform active:scale-95",
             canSave
               ? "bg-on-surface text-surface shadow-lg shadow-black/10 hover:bg-on-surface-variant cursor-pointer"
               : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"

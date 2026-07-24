@@ -52,7 +52,7 @@ export function MaterialItem({ material, jobId }: MaterialItemProps) {
         
         {/* Name */}
         <div className="flex-1 min-w-0 pr-4">
-          <p className="text-[14px] font-bold transition-all duration-300 text-on-surface cursor-default select-none truncate">
+          <p className="text-[14px] font-bold transition-colors duration-300 text-on-surface cursor-default select-none truncate">
             {material.nombre_material}
           </p>
           {/* Mobile details */}
@@ -82,18 +82,18 @@ export function MaterialItem({ material, jobId }: MaterialItemProps) {
         </div>
 
         {/* Actions */}
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10 flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 translate-x-0 md:translate-x-2 md:group-hover:translate-x-0">
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10 flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity transition-transform duration-300 translate-x-0 md:translate-x-2 md:group-hover:translate-x-0">
           <button
             onClick={() => setIsEditing(true)}
             aria-label={`Editar ${material.nombre_material}`}
-            className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 active:scale-90"
+            className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors transition-transform duration-300 active:scale-90"
           >
             <Edit2 className="w-4 h-4" />
           </button>
           <button
             onClick={handleDelete}
             aria-label={`Eliminar ${material.nombre_material}`}
-            className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 active:scale-90"
+            className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-colors transition-transform duration-300 active:scale-90"
           >
             <Trash2 className="w-4 h-4" />
           </button>

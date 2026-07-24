@@ -108,7 +108,7 @@ export function ProfilePicture() {
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
-          className="text-primary font-semibold text-sm hover:underline transition-all select-none disabled:opacity-50"
+          className="text-primary font-semibold text-sm hover:underline transition-colors select-none disabled:opacity-50"
         >
           {isUploading ? "Subiendo..." : "Cambiar foto"}
         </button>
@@ -118,7 +118,7 @@ export function ProfilePicture() {
             type="button"
             onClick={handleDelete}
             disabled={isUploading}
-            className="text-red-500 flex items-center gap-1 text-xs font-medium hover:underline transition-all select-none disabled:opacity-50"
+            className="text-red-500 flex items-center gap-1 text-xs font-medium hover:underline transition-colors select-none disabled:opacity-50"
           >
             <Trash2 className="w-3 h-3" />
             Eliminar foto

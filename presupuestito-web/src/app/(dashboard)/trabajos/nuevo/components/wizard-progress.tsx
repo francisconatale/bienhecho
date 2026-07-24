@@ -17,7 +17,7 @@ export function WizardProgress({ currentQ }: Props) {
       {questions.map((q, i) => (
         <div
           key={q.id}
-          className={`h-1 flex-1 rounded-full transition-all duration-500 ${
+          className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
             i <= currentQ ? "bg-primary" : "bg-on-surface/10"
           }`}
         />

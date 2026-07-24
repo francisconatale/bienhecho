@@ -19,7 +19,7 @@ export function MaterialesSkeleton() {
         </div>
 
         {/* Add material form */}
-        <div className="bg-surface/60 backdrop-blur-xl rounded-xl border border-outline-variant/15 p-5 shadow-sm">
+        <div className="bg-surface/60  rounded-xl border border-outline-variant/15 p-5 shadow-sm">
           <div className="flex gap-3">
             <div className="flex-1 h-10 bg-outline-variant/10 rounded-lg animate-pulse" />
             <div className="w-24 h-10 bg-outline-variant/10 rounded-lg animate-pulse" />
@@ -30,7 +30,7 @@ export function MaterialesSkeleton() {
         {/* Materials list */}
         <div className="space-y-3">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="flex items-center gap-3 p-4 bg-surface/60 backdrop-blur-xl rounded-xl border border-outline-variant/15 shadow-sm">
+            <div key={i} className="flex items-center gap-3 p-4 bg-surface/60  rounded-xl border border-outline-variant/15 shadow-sm">
               <div className="w-10 h-10 rounded-xl bg-outline-variant/10 animate-pulse shrink-0" />
               <div className="flex-1 space-y-1.5">
                 <div className="w-2/3 h-3.5 bg-outline-variant/10 rounded animate-pulse" />

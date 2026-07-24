@@ -28,7 +28,7 @@ export function TrabajoDetailSkeleton({ isEmbedded = false }: { isEmbedded?: boo
 
           {/* Item 2: Sidebar / Totals */}
           <div className="order-2 lg:col-start-2 lg:row-span-4 lg:sticky lg:top-32">
-            <div className="bg-surface/70 backdrop-blur-xl rounded-xl border border-outline-variant/20 shadow-sm p-4 md:p-5 flex flex-col gap-6">
+            <div className="bg-surface/70  rounded-xl border border-outline-variant/20 shadow-sm p-4 md:p-5 flex flex-col gap-6">
               
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
@@ -70,7 +70,7 @@ export function TrabajoDetailSkeleton({ isEmbedded = false }: { isEmbedded?: boo
           <div className="order-3 lg:col-start-1 mt-0 md:mt-2">
             <div className="grid grid-cols-2 gap-3 md:gap-6">
               {[1, 2].map((i) => (
-                <div key={i} className="bg-surface/60 backdrop-blur-xl rounded-xl border border-outline-variant/15 p-4 md:p-5 h-[120px] shadow-sm flex flex-col justify-between">
+                <div key={i} className="bg-surface/60  rounded-xl border border-outline-variant/15 p-4 md:p-5 h-[120px] shadow-sm flex flex-col justify-between">
                   <div className="w-20 h-3 bg-outline-variant/10 rounded animate-pulse" />
                   <div className="w-24 h-7 bg-outline-variant/10 rounded-lg animate-pulse" />
                 </div>

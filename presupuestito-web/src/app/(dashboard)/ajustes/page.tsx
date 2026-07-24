@@ -35,7 +35,7 @@ export default function AjustesPage() {
     <div className="relative w-full min-h-screen">
       <AuroraBackground preset="ajustes" />
 
-      <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-16 pb-32 w-full transition-all">
+      <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-16 pb-32 w-full">
         <div className="max-w-7xl mx-auto mb-8 pl-1">
           <h1 className="text-[38px] leading-tight font-extrabold text-on-surface tracking-tight">
             Ajustes

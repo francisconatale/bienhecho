@@ -35,10 +35,10 @@ export function ProgressBar({ tasks }: ProgressBarProps) {
         aria-label={`Progreso: ${percentage}% completado`}
       >
         <div
-          className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-primary-container rounded-full transition-[width] duration-[600ms] ease-out"
-          style={{ width: `${percentage}%` }}
+          className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-primary-container rounded-full transition-transform duration-[600ms] ease-out origin-left"
+          style={{ transform: `scaleX(${percentage / 100})` }}
         >
-           <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite] mix-blend-overlay" />
+
         </div>
       </div>
 

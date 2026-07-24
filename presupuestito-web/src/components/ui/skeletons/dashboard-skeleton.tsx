@@ -49,7 +49,7 @@ function SkeletonStatCards({ row = false }: { row?: boolean }) {
       {[1, 2].map((i) => (
         <div
           key={i}
-          className={`${row ? "flex-1" : ""} bg-primary/8 dark:bg-primary/10 backdrop-blur-xl rounded-xl border border-primary/20 shadow-sm p-4`}
+          className={`${row ? "flex-1" : ""} bg-primary/8 dark:bg-primary/10  rounded-xl border border-primary/20 shadow-sm p-4`}
         >
           <div className="w-20 h-3 bg-primary/15 rounded animate-pulse mb-3" />
           <div className="w-16 h-8 bg-primary/15 rounded animate-pulse" />
@@ -87,7 +87,7 @@ function SkeletonActivity() {
       <div className="flex items-center justify-between mb-3 px-1">
         <div className="w-32 h-3 bg-outline-variant/10 rounded animate-pulse" />
       </div>
-      <div className="flex flex-col bg-surface/60 backdrop-blur-2xl rounded-xl shadow-sm border border-outline-variant/20 overflow-hidden">
+      <div className="flex flex-col bg-surface/60  rounded-xl shadow-sm border border-outline-variant/20 overflow-hidden">
         {[1, 2, 3, 4, 5].map((i) => (
           <div key={i} className="flex items-center gap-3 p-4 md:p-5 border-b border-outline-variant/5 last:border-0">
             <div className="w-10 h-10 rounded-xl bg-outline-variant/10 animate-pulse shrink-0" />

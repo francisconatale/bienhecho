@@ -212,7 +212,7 @@ export function ClientDetailPane({
                 <button type="button" onClick={() => setIsEditing(false)} className="px-4 py-2 rounded-xl bg-on-surface/5 hover:bg-on-surface/10 text-sm font-bold transition-colors shrink-0">
                   Cancelar
                 </button>
-                <button type="submit" disabled={isLoading} data-client-save className="px-5 py-2 rounded-xl bg-primary text-white hover:bg-primary-dark text-sm font-bold shadow-sm transition-all active:scale-95 shrink-0">
+                <button type="submit" disabled={isLoading} data-client-save className="px-5 py-2 rounded-xl bg-primary text-white hover:bg-primary-dark text-sm font-bold shadow-sm transition-colors transition-transform active:scale-95 shrink-0">
                   {isLoading ? "..." : "Guardar"}
                 </button>
               </>
@@ -233,7 +233,7 @@ export function ClientDetailPane({
         <Link
           href={`/clientes/${client.id}/cuenta-corriente`}
           className={cn(
-            "block rounded-xl p-4 md:p-5 border shadow-sm transition-all active:scale-[0.98] overflow-hidden w-full",
+            "block rounded-xl p-4 md:p-5 border shadow-sm transition-transform active:scale-[0.98] overflow-hidden w-full",
             deudaTotal > 0
               ? "bg-[#FEF2F2] dark:bg-[#DC2626]/10 border-[#FECACA] dark:border-[#DC2626]/20"
               : deudaTotal < 0

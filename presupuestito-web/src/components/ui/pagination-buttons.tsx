@@ -47,7 +47,7 @@ export function PaginationButtons({
   const endItem = Math.min(currentPage * pageSize, totalItems);
 
   const btnBase =
-    "flex items-center justify-center min-w-[36px] h-9 px-3 rounded-[12px] text-[11px] font-bold transition-all duration-200 select-none";
+    "flex items-center justify-center min-w-[36px] h-9 px-3 rounded-[12px] text-[11px] font-bold transition-colors transition-transform duration-200 select-none";
 
   return (
     <div className={cn("flex flex-col items-center gap-3 pt-6", className)}>
