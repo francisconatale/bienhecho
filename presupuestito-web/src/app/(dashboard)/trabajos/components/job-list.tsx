@@ -116,7 +116,7 @@ export function JobList() {
         selectedId={selectedId}
         onSelectedChange={handleSelectedIdChange}
         items={jobs}
-        getItemId={(j) => j.id}
+        getItemId={(j: any) => j.id}
         search={search}
         onSearchChange={setSearch}
         searchPlaceholder="Filtrar trabajos..."
