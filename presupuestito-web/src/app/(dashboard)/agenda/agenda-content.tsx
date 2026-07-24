@@ -36,8 +36,10 @@ const VisitForm = dynamic(
   { ssr: false }
 );
 
-export function AgendaContent() {
-  const { state, actions } = useAgenda();
+import { AgendaInitialData } from "./hooks/use-agenda";
+
+export function AgendaContent({ initialData }: { initialData?: AgendaInitialData }) {
+  const { state, actions } = useAgenda(initialData);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   return (

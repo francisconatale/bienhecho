@@ -6,8 +6,8 @@ import { SectionLabel } from "./section-label";
 import { useProfile } from "@/hooks/use-profile";
 import { useAuth } from "@/contexts/auth-context";
 
-export function AccountSection() {
-  const { profile } = useProfile();
+export function AccountSection({ initialData }: { initialData?: any }) {
+  const { profile } = useProfile(initialData);
   const { user } = useAuth();
 
   const displayName = profile?.nombre || "Prestador de Servicios";

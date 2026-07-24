@@ -22,11 +22,17 @@ export function formatDate(year: number, month: number, day: number) {
   return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
-export function useAgenda() {
+export interface AgendaInitialData {
+  visits?: Visit[];
+  jobs?: any[];
+  clients?: any[];
+}
+
+export function useAgenda(initialData?: AgendaInitialData) {
   const queryClient = useQueryClient();
-  const { data: visits = [], isLoading: isLoadingVisits } = useQuery({ queryKey: ["visits"], queryFn: visitsService_getAll });
-  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll });
-  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService_getAll });
+  const { data: visits = [], isLoading: isLoadingVisits } = useQuery({ queryKey: ["visits"], queryFn: visitsService_getAll, initialData: initialData?.visits });
+  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll, initialData: initialData?.jobs });
+  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService_getAll, initialData: initialData?.clients });
 
   const addVisitMutation = useMutation({
     mutationFn: visitsService_create,

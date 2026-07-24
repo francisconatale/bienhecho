@@ -5,6 +5,7 @@ import { AccountSection } from "./components/account-section";
 import { SubscriptionSection } from "./components/subscription-section";
 import { PreferencesSection } from "./components/preferences-section";
 import { AccountActionsSection } from "./components/account-actions-section";
+import { profileService_get } from "@/actions/profile.actions";
 
 export const metadata: Metadata = {
   title: "Ajustes",
@@ -30,7 +31,9 @@ function SectionFallback() {
   );
 }
 
-export default function AjustesPage() {
+export default async function AjustesPage() {
+  const profile = await profileService_get();
+
   return (
     <div className="relative w-full min-h-screen">
       <AuroraBackground preset="ajustes" />
@@ -44,7 +47,7 @@ export default function AjustesPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl mx-auto items-start">
           <div className="lg:col-span-8 flex flex-col space-y-6">
             <Suspense fallback={<SectionFallback />}>
-              <AccountSection />
+              <AccountSection initialData={profile} />
             </Suspense>
             <Suspense fallback={<SectionFallback />}>
               <PreferencesSection />
