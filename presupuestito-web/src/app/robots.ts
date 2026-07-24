@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/(auth)/", "/(dashboard)/"],
       },
     ],
-    sitemap: "https://bien-hecho.vercel.app/sitemap.xml",
+    sitemap: "https://bienhecho.vercel.app/sitemap.xml",
   };
 }

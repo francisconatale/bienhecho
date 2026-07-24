@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Bien Hecho — CRM para freelancers",
+    name: "Bien Hecho — Gestión para tus trabajos",
     short_name: "Bien Hecho",
     description:
       "Gestioná tus trabajos, clientes y presupuestos en un solo lugar.",
