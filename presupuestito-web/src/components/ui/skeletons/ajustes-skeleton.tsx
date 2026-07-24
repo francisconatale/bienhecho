@@ -1,7 +1,19 @@
 export function AjustesSkeleton() {
   return (
     <div className="relative w-full min-h-screen">
-      <main className="relative flex-1 px-5 md:px-8 lg:px-12 pt-16 pb-32 w-full">
+      {/* Mobile */}
+      <div className="md:hidden flex flex-col px-5 pt-14 pb-28 w-full space-y-6">
+        <div className="w-32 h-10 bg-outline-variant/10 rounded-xl animate-pulse" />
+        
+        <div className="flex flex-col space-y-6">
+          <SectionSkeleton rows={3} />
+          <SectionSkeleton rows={2} />
+          <SectionSkeleton rows={2} />
+        </div>
+      </div>
+
+      {/* Desktop */}
+      <main className="hidden md:block relative flex-1 px-8 lg:px-12 pt-16 pb-32 w-full">
         <div className="max-w-7xl mx-auto mb-8 pl-1">
           <div className="w-32 h-10 bg-outline-variant/10 rounded-xl animate-pulse" />
         </div>
