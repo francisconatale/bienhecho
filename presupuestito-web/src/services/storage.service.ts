@@ -1,4 +1,5 @@
 import { requireAuth } from "@/utils/supabase/require-auth";
+import { createClient } from "@/utils/supabase/client";
 
 export const storageService = {
   uploadCompanyLogo: async (userId: string, file: File): Promise<{ path: string; error: null } | { path: null; error: Error }> => {
@@ -31,7 +32,6 @@ export const storageService = {
   },
 
   getPublicUrl: (path: string): string => {
-    const { createClient } = require("@/utils/supabase/client");
     const supabase = createClient();
     const { data: { publicUrl } } = supabase.storage
       .from('company-logos')

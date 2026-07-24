@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: false,
   allowedDevOrigins: [
     '*.trycloudflare.com',
     '*.loca.lt',

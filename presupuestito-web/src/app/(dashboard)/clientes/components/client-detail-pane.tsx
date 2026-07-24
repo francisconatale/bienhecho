@@ -6,6 +6,7 @@ import { Client, Job } from "@/types";
 import { useClientForm } from "./use-client-form";
 import { useCuentaCorriente } from "@/hooks/use-cuenta-corriente";
 import { createClient } from "@/utils/supabase/client";
+const supabase = createClient();
 
 import { AjusteManualForm } from "./ajuste-manual-form";
 import Link from "next/link";
@@ -62,7 +63,6 @@ export function ClientDetailPane({
   const { data, isLoading } = useQuery({
     queryKey: ["client-data", client.id],
     queryFn: async () => {
-      const supabase = createClient();
       const { data: jobs, error: jobsError } = await supabase
         .from("trabajos")
         .select("*")
