@@ -14,7 +14,7 @@ export function useClients(initialData?: { data: Client[], total: number }) {
 
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
-  const selectedId = searchParams.get("clienteId");
+  const [selectedId, setSelectedId] = useState<string | null>(searchParams.get("clienteId"));
 
   const [showCreationForm, setShowCreationForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -71,13 +71,14 @@ export function useClients(initialData?: { data: Client[], total: number }) {
   useEffect(() => { setIsEditing(false); }, [selectedId]);
 
   const handleSelectedIdChange = (id: string | null) => {
+    setSelectedId(id);
     const params = new URLSearchParams(searchParams.toString());
     if (id) {
       params.set("clienteId", id);
     } else {
       params.delete("clienteId");
     }
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
   };
 
   useEffect(() => {
