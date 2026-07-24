@@ -8,8 +8,9 @@ import { TareasList } from "./components/tareas-list";
 import { ArrowLeft, LayoutList, LayoutGrid } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TareasSkeletonContent } from "@/components/ui/skeletons";
+import { TareasInitialData } from "./hooks/use-tareas";
 
-export function TareasContent() {
+export function TareasContent({ initialData }: { initialData?: TareasInitialData }) {
   const {
     isLoading,
     filter,
@@ -25,7 +26,7 @@ export function TareasContent() {
     deleteTask,
     ConfirmDialog,
     pag,
-  } = useTareas();
+  } = useTareas(initialData);
 
   const isSpecialized = category !== "resumen";
   const specializedTitle = category === "alta" ? "Tareas para Hoy (Urgentes)" 

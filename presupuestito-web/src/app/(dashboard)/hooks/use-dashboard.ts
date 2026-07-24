@@ -8,14 +8,14 @@ import { useServerPagination } from "@/hooks/use-server-pagination";
 import { Job, Client, Task, Visit } from "@/types";
 import { Profile } from "@/services/profile.service";
 
+import { ClientAlert } from "@/app/(dashboard)/tareas/hooks/use-client-alerts";
+
 export interface DashboardInitialData {
   stats?: { totalJobs: number; totalToInvoice: number };
   upcomingVisits?: Visit[];
   paginatedData?: { data: Job[]; total: number };
   profile?: Profile | null;
-  jobs?: Job[];
-  clients?: Client[];
-  tasks?: Task[];
+  alerts?: ClientAlert[];
 }
 
 export function useDashboard(initialData?: DashboardInitialData) {
@@ -41,11 +41,7 @@ export function useDashboard(initialData?: DashboardInitialData) {
   });
 
   const { profile, isLoading: isLoadingProfile } = useProfile(initialData?.profile);
-  const { alerts } = useClientAlerts({
-    jobs: initialData?.jobs,
-    clients: initialData?.clients,
-    tasks: initialData?.tasks,
-  });
+  const { alerts } = useClientAlerts({ alerts: initialData?.alerts });
 
   const totalItems = paginatedData?.total || 0;
   const serverPag = useServerPagination(totalItems, pageSize);

@@ -1,8 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { jobsService_getAll } from "@/actions/jobs.actions";
-import { clientsService_getAll } from "@/actions/clients.actions";
-import { tasksService_getAll } from "@/actions/tasks.actions";
-import { Job, Client, Task } from "@/types";
+import { alertsService_getDashboardAlerts } from "@/actions/alerts.actions";
 
 export interface ClientAlert {
   id: string;
@@ -12,44 +9,12 @@ export interface ClientAlert {
   tipo: "borrador" | "demorado";
 }
 
-export function useClientAlerts(initialData?: { jobs?: Job[], clients?: Client[], tasks?: Task[] }) {
-  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll, initialData: initialData?.jobs });
-  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService_getAll, initialData: initialData?.clients });
-  const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ["tasks"], queryFn: tasksService_getAll, initialData: initialData?.tasks });
-
-  const alerts: ClientAlert[] = [];
-
-  jobs.forEach((job) => {
-    const cliente = clients.find((c) => c.id === job.cliente_id);
-    const nombre = cliente?.nombre || "Cliente desconocido";
-
-    if (job.estado === "borrador") {
-      alerts.push({
-        id: `alert-borrador-${job.id}`,
-        jobId: job.id,
-        clienteNombre: nombre,
-        mensaje: `Te falta emitirle el presupuesto a ${nombre}.`,
-        tipo: "borrador",
-      });
-    }
-
-    if (job.estado === "presupuestado" && job.fecha_inicio) {
-      const today = new Date().toISOString().slice(0, 10);
-      const hasCompletedTasks = tasks.some(
-        (t) => t.trabajo_id === job.id && t.completada
-      );
-
-      if (today > job.fecha_inicio && !hasCompletedTasks) {
-        alerts.push({
-          id: `alert-demorado-${job.id}`,
-          jobId: job.id,
-          clienteNombre: nombre,
-          mensaje: `Trabajo demorado con ${nombre}.`,
-          tipo: "demorado",
-        });
-      }
-    }
+export function useClientAlerts(initialData?: { alerts?: ClientAlert[] }) {
+  const { data: alerts = [], isLoading } = useQuery({ 
+    queryKey: ["dashboardAlerts"], 
+    queryFn: alertsService_getDashboardAlerts,
+    initialData: initialData?.alerts,
   });
 
-  return { alerts, isLoading: isLoadingJobs || isLoadingClients || isLoadingTasks };
+  return { alerts, isLoading };
 }

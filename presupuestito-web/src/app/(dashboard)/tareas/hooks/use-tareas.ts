@@ -8,7 +8,12 @@ import { useServerPagination } from "@/hooks/use-server-pagination";
 export type FilterType = "pendientes" | "completadas";
 export type CategoryType = "resumen" | "alta" | "media" | "baja";
 
-export function useTareas() {
+export interface TareasInitialData {
+  counts?: any;
+  resumen?: any;
+}
+
+export function useTareas(initialData?: TareasInitialData) {
   const queryClient = useQueryClient();
 
   const [filter, setFilter] = useState<FilterType>("pendientes");
@@ -21,6 +26,7 @@ export function useTareas() {
   const { data: counts, isLoading: isLoadingCounts } = useQuery({
     queryKey: ["tasks", "counts"],
     queryFn: tasksService_getCounts,
+    initialData: initialData?.counts,
   });
 
   // 2. Fetch resumen if needed
@@ -29,6 +35,7 @@ export function useTareas() {
     queryFn: tasksService_getResumen,
     enabled: category === "resumen" && filter === "pendientes",
     placeholderData: keepPreviousData,
+    initialData: category === "resumen" && filter === "pendientes" ? initialData?.resumen : undefined,
   });
 
   // 3. Fetch paginated category if needed

@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { DashboardContent } from "./dashboard-content";
 
-import { jobsService_getDashboardStats, jobsService_getPaginated, jobsService_getAll } from "@/actions/jobs.actions";
+import { jobsService_getDashboardStats, jobsService_getPaginated } from "@/actions/jobs.actions";
 import { visitsService_getUpcoming } from "@/actions/visits.actions";
 import { profileService_get } from "@/actions/profile.actions";
-import { clientsService_getAll } from "@/actions/clients.actions";
-import { tasksService_getAll } from "@/actions/tasks.actions";
+import { alertsService_getDashboardAlerts } from "@/actions/alerts.actions";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -18,17 +17,13 @@ export default async function DashboardPage() {
     upcomingVisits,
     paginatedData,
     profile,
-    jobs,
-    clients,
-    tasks
+    alerts
   ] = await Promise.all([
     jobsService_getDashboardStats(),
     visitsService_getUpcoming(),
     jobsService_getPaginated(1, 5, ""),
     profileService_get(),
-    jobsService_getAll(),
-    clientsService_getAll(),
-    tasksService_getAll(),
+    alertsService_getDashboardAlerts(),
   ]);
 
   const initialData = {
@@ -36,9 +31,7 @@ export default async function DashboardPage() {
     upcomingVisits,
     paginatedData,
     profile,
-    jobs,
-    clients,
-    tasks,
+    alerts,
   };
 
   return <DashboardContent initialData={initialData} />;

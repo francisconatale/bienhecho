@@ -6,7 +6,7 @@ import { useServerPagination } from "@/hooks/use-server-pagination";
 import { Client } from "@/types";
 import { useConfirm } from "@/hooks/use-confirm";
 
-export function useClients() {
+export function useClients(initialData?: { data: Client[], total: number }) {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -27,6 +27,7 @@ export function useClients() {
   const { data, isLoading } = useQuery({
     queryKey: ["clients", "paginated", page, pageSize, deferredSearch],
     queryFn: () => clientsService_getPaginated(page, pageSize, deferredSearch),
+    initialData: page === 1 && deferredSearch === "" ? initialData : undefined,
   });
 
   const clients = data?.data || [];

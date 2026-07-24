@@ -25,7 +25,7 @@ function formatCurrency(amount: number): string {
 
 
 
-export function JobList() {
+export function JobList({ initialData }: { initialData?: { data: Job[], total: number } }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -69,7 +69,8 @@ export function JobList() {
 
   const { data, isLoading } = useQuery({ 
     queryKey: ["jobs", "paginated", page, pageSize, search], 
-    queryFn: () => jobsService_getPaginated(page, pageSize, search) 
+    queryFn: () => jobsService_getPaginated(page, pageSize, search),
+    initialData: page === 1 && search === "" ? initialData : undefined,
   });
 
   const jobs = data?.data || [];

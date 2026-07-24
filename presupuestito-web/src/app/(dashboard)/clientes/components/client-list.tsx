@@ -11,7 +11,7 @@ import { useClients } from "../hooks/use-clients";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { Client } from "@/types";
 
-export function ClientList() {
+export function ClientList({ initialData }: { initialData?: { data: Client[], total: number } }) {
   const {
     search,
     setSearch,
@@ -28,7 +28,7 @@ export function ClientList() {
     handleCreationSuccess,
     isLoading,
     ConfirmDialog,
-  } = useClients();
+  } = useClients(initialData);
 
   if (isLoading && filtered.length === 0) {
     return <MasterDetailSkeleton />;
