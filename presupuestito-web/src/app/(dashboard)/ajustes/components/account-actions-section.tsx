@@ -5,16 +5,25 @@ import { useAuth } from "@/contexts/auth-context";
 import { Row } from "./row";
 import { Lock } from "lucide-react";
 import { SectionLabel } from "./section-label";
+import { useConfirm } from "@/hooks/use-confirm";
 
 export function AccountActionsSection() {
   const router = useRouter();
   const { signOut } = useAuth();
+  const [ConfirmDialog, confirm] = useConfirm();
 
   const handleLogout = async () => {
-    if (!window.confirm("¿Cerrar sesión?")) return;
-    await signOut();
-    router.push("/login");
-    router.refresh();
+    confirm({
+      title: "¿Cerrar sesión?",
+      description: "¿Estás seguro que deseas cerrar sesión?",
+      confirmText: "Cerrar sesión",
+      variant: "danger",
+      action: async () => {
+        await signOut();
+        router.push("/login");
+        router.refresh();
+      },
+    });
   };
 
   return (
@@ -32,6 +41,8 @@ export function AccountActionsSection() {
       <div className="bg-surface/80 rounded-xl shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)] border border-error/20 overflow-hidden">
         <Row type="destructive" label="Cerrar Sesión" onClick={handleLogout} />
       </div>
+
+      <ConfirmDialog />
     </section>
   );
 }
