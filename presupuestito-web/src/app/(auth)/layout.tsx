@@ -14,11 +14,9 @@ export default async function AuthLayout({
   const supabase = await createClient();
 
   const {
-    data: { session },
+    data: { user },
     error,
-  } = await supabase.auth.getSession();
-
-  const user = session?.user;
+  } = await supabase.auth.getUser();
 
   if (!error && user) {
     redirect("/");

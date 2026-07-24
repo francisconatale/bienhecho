@@ -27,8 +27,7 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Usamos getSession en lugar de getUser para no saturar la red cuando el token es válido
-  await supabase.auth.getSession();
+  await supabase.auth.getUser();
 
   return supabaseResponse;
 }
