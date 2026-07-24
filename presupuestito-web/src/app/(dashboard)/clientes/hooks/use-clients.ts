@@ -1,6 +1,6 @@
 import { useState, useEffect, useDeferredValue } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { clientsService_getPaginated, clientsService_delete } from "@/actions/clients.actions";
 import { useServerPagination } from "@/hooks/use-server-pagination";
 import { Client } from "@/types";
@@ -28,6 +28,7 @@ export function useClients(initialData?: { data: Client[], total: number }) {
     queryKey: ["clients", "paginated", page, pageSize, deferredSearch],
     queryFn: () => clientsService_getPaginated(page, pageSize, deferredSearch),
     initialData: page === 1 && deferredSearch === "" ? initialData : undefined,
+    placeholderData: keepPreviousData,
   });
 
   const clients = data?.data || [];

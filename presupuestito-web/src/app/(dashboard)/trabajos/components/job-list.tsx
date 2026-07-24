@@ -2,7 +2,7 @@
 
 import { useState, useRef, useMemo, useEffect } from "react";
 import { Briefcase, Pencil, X, Check } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { jobsService_delete, jobsService_getPaginated } from "@/actions/jobs.actions";
 import { Job } from "@/types";
 import { useServerPagination } from "@/hooks/use-server-pagination";
@@ -71,6 +71,7 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
     queryKey: ["jobs", "paginated", page, pageSize, search], 
     queryFn: () => jobsService_getPaginated(page, pageSize, search),
     initialData: page === 1 && search === "" ? initialData : undefined,
+    placeholderData: keepPreviousData,
   });
 
   const jobs = data?.data || [];
