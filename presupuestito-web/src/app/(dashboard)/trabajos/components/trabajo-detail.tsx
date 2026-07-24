@@ -24,7 +24,6 @@ import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { MobilePageHeader } from "@/components/ui/mobile-page-header";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { TrabajoDetailSkeleton } from "@/components/ui/skeletons";
-import dynamic from "next/dynamic";
 import { useTrabajoDetail } from "../[id]/hooks/use-trabajo-detail";
 import { JobSummaryCards } from "../[id]/components/job-summary-cards";
 import { EmitPdfDialog } from "../[id]/components/emit-pdf-dialog";
