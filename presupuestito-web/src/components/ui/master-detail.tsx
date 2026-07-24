@@ -41,6 +41,8 @@ export interface MasterDetailProps<T> {
 
   emptyState?: ReactNode;
   detailAnimationClass?: string;
+  /** Override back button behavior for mobile detail pane */
+  onDetailBack?: () => void;
 }
 
 export function MasterDetail<T>({
@@ -67,6 +69,7 @@ export function MasterDetail<T>({
   renderCreationForm,
   emptyState,
   detailAnimationClass = "animate-fade-in-up",
+  onDetailBack,
 }: MasterDetailProps<T>) {
   const hasDetail = selectedId || showCreationForm;
 
@@ -102,8 +105,13 @@ export function MasterDetail<T>({
         <div className="md:hidden px-4 pt-12 pb-3 absolute top-0 left-0 w-full z-50 flex items-center justify-between bg-transparent pointer-events-none">
           <button
             onClick={() => {
-              if (selectedItem) onSelectedChange(null);
-              else if (showCreationForm && onToggleCreation) onToggleCreation();
+              if (onDetailBack) {
+                onDetailBack();
+              } else if (selectedItem) {
+                onSelectedChange(null);
+              } else if (showCreationForm && onToggleCreation) {
+                onToggleCreation();
+              }
             }}
             className="w-10 h-10 rounded-full bg-surface/50 backdrop-blur-xl border border-outline-variant/20 shadow-sm flex items-center justify-center text-primary cursor-pointer hover:bg-surface transition-colors active:scale-95 pointer-events-auto"
           >

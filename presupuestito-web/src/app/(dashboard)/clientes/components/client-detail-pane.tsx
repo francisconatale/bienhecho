@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, Suspense } from "react";
 import { Pencil, Trash2, Plus, Phone, MapPin, Mail, CalendarDays } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 // No services used anymore
@@ -10,11 +10,11 @@ const supabase = createClient();
 
 import { AjusteManualForm } from "./ajuste-manual-form";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { cn, formatCurrency } from "@/lib/utils";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { DataTable, type Column } from "@/components/ui/data-table";
+import { TrabajoDetail } from "@/app/(dashboard)/trabajos/components/trabajo-detail";
+import { TrabajoDetailSkeleton } from "@/components/ui/skeletons";
 
 export function getStatusColor(estado: string): string {
   switch (estado) {
@@ -48,17 +48,18 @@ export function ClientDetailPane({
   onBack,
   isEditing,
   setIsEditing,
+  selectedJobId,
+  setSelectedJobId,
 }: {
   client: Client;
   onDelete: (c: Client) => void;
   onBack: () => void;
   isEditing: boolean;
   setIsEditing: (v: boolean) => void;
+  selectedJobId: string | null;
+  setSelectedJobId: (id: string | null) => void;
 }) {
-  const [loadingJobId, setLoadingJobId] = useState<string | null>(null);
   const [showAjuste, setShowAjuste] = useState(false);
-  const router = useRouter();
-  const { pushHistory } = useNavigationHistory();
   
   const { data, isLoading } = useQuery({
     queryKey: ["client-data", client.id],
@@ -140,6 +141,19 @@ export function ClientDetailPane({
   const handleSuccess = () => setIsEditing(false);
   const { form, onSubmit, isLoading: isFormLoading } = useClientForm(client, handleSuccess);
   const { register, formState: { errors } } = form;
+
+  // Si hay un trabajo seleccionado, mostrar el TrabajoDetail embebido
+  if (selectedJobId) {
+    return (
+      <Suspense fallback={<TrabajoDetailSkeleton isEmbedded />}>
+        <TrabajoDetail
+          id={selectedJobId}
+          isEmbedded
+          onBack={() => setSelectedJobId(null)}
+        />
+      </Suspense>
+    );
+  }
 
   return (
     <div className="flex-1 overflow-y-auto relative w-full h-full min-h-full flex flex-col">
@@ -376,9 +390,7 @@ export function ClientDetailPane({
                 items={clientJobs}
                 keyExtractor={(job) => job.id}
                 onRowClick={(job) => {
-                  setLoadingJobId(job.id);
-                  pushHistory(window.location.pathname + window.location.search);
-                  router.push(`/trabajos/${job.id}`);
+                  setSelectedJobId(job.id);
                 }}
                 title="Trabajos Activos"
                 emptyMessage="No hay trabajos activos."

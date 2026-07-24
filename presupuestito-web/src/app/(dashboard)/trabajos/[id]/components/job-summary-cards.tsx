@@ -4,6 +4,7 @@ import { Hammer, Wallet } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useMaterials } from '../hooks/use-materials';
 import { usePayments } from '../hooks/use-payments';
+import { useSearchParams } from 'next/navigation';
 
 export function JobSummaryCards({
   jobId,
@@ -16,12 +17,19 @@ export function JobSummaryCards({
 }) {
   const { totalMateriales, materiales } = useMaterials(jobId);
   const { saldoPendiente } = usePayments(jobId);
+  const searchParams = useSearchParams();
+
+  const createQueryString = (name: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set(name, value);
+    return params.toString();
+  };
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
       <Link 
-        href={`/trabajos/${jobId}/materiales${from ? `?from=${from}` : ""}`} 
-        onClick={() => pushHistory(window.location.pathname + window.location.search)}
+        href={`?${createQueryString('view', 'materiales')}`}
+        scroll={false}
         className="group relative overflow-hidden bg-surface rounded-xl p-4 md:p-5 transition-shadow duration-300 hover:shadow-md border border-outline-variant/10 shadow-sm flex flex-col gap-2"
       >
         <div className="relative z-10 flex items-center justify-between">
@@ -41,8 +49,8 @@ export function JobSummaryCards({
       </Link>
 
       <Link 
-        href={`/trabajos/${jobId}/pagos`} 
-        onClick={() => pushHistory(window.location.pathname + window.location.search)}
+        href={`?${createQueryString('view', 'pagos')}`}
+        scroll={false}
         className="group relative overflow-hidden bg-surface rounded-xl p-4 md:p-5 transition-shadow duration-300 hover:shadow-md border border-outline-variant/10 shadow-sm flex flex-col gap-2"
       >
         <div className="relative z-10 flex items-center justify-between">

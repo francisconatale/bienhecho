@@ -28,6 +28,8 @@ import { useTrabajoDetail } from "../[id]/hooks/use-trabajo-detail";
 import { JobSummaryCards } from "../[id]/components/job-summary-cards";
 import { EmitPdfDialog } from "../[id]/components/emit-pdf-dialog";
 import { JobHeader } from "../[id]/components/job-header";
+import { MaterialList } from "../[id]/components/material-list";
+import { PaymentsDashboard } from "../[id]/components/payments-dashboard";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 
@@ -109,6 +111,8 @@ export function TrabajoDetail({
   const from = searchParams.get("from");
 
   const taskParam = searchParams.get("task");
+  const viewParam = searchParams.get("view"); // "materiales" | "pagos"
+  
   useEffect(() => {
     if (taskParam && jobTasks.some((t) => t.id === taskParam && t.trabajo_id === id)) {
       setSelectedTaskId(taskParam);
@@ -116,6 +120,12 @@ export function TrabajoDetail({
       setSelectedTaskId(null);
     }
   }, [taskParam, jobTasks, id]);
+
+  const handleViewClose = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("view");
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   const handleTaskSelect = (taskId: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -277,18 +287,36 @@ export function TrabajoDetail({
           />
         </div>
       )}
+      {/* View overlays (mobile) */}
+      {!selectedTaskId && viewParam && (
+        <div className="fixed inset-0 z-[60] bg-surface overflow-y-auto md:hidden pt-16 px-4 pb-8">
+          <MobilePageHeader 
+            onBack={handleViewClose} 
+            isEditing={false} 
+            onCancel={() => {}} 
+            onSave={() => {}} 
+          />
+          <div className="mt-2 mb-6">
+            <h2 className="text-2xl font-black text-on-surface tracking-tight">
+              {viewParam === "materiales" ? "Materiales" : "Cuentas a Cobrar"}
+            </h2>
+          </div>
+          {viewParam === "materiales" && <MaterialList jobId={job.id} />}
+          {viewParam === "pagos" && <PaymentsDashboard jobId={job.id} />}
+        </div>
+      )}
 
       <main className={cn(
         "relative flex-1 w-full mx-auto",
-        selectedTaskId ? "hidden md:block" : "",
+        (selectedTaskId || viewParam) ? "hidden md:block" : "",
         isEmbedded 
-          ? "px-4 pt-24 pb-28 md:pt-6 md:px-8 max-w-full" 
+          ? "px-4 pt-16 pb-28 md:pt-6 md:px-8 max-w-full" 
           : "px-4 pt-24 pb-28 md:px-8 md:pt-8 md:pb-12 max-w-[1400px] md:mt-0"
       )}>
         <div className={cn(
-          "flex flex-col gap-3 md:gap-6",
-          selectedTaskId ? "lg:grid lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] lg:gap-6 xl:gap-10 lg:items-start" : "lg:grid lg:items-start",
-          !selectedTaskId && (isEmbedded
+          "w-full",
+          (selectedTaskId || viewParam) ? "lg:grid lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] lg:gap-6 xl:gap-10 lg:items-start" : "lg:grid lg:items-start",
+          (!selectedTaskId && !viewParam) && (isEmbedded
             ? "xl:flex xl:flex-col 2xl:grid 2xl:grid-cols-[1fr_300px] gap-6"
             : "lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] lg:gap-6 xl:gap-10")
         )}>
@@ -300,6 +328,34 @@ export function TrabajoDetail({
                 onBack={handleTaskClose}
                 onDelete={handleTaskClose}
               />
+            </div>
+          ) : viewParam === "materiales" ? (
+            <div className="order-1 lg:col-start-1 space-y-6">
+              <div className="hidden md:flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
+                <button onClick={handleViewClose} className="flex items-center gap-1 hover:text-primary transition-colors">
+                  <ChevronLeft className="w-4 h-4" />
+                  Volver al trabajo
+                </button>
+              </div>
+              <div>
+                <h2 className="text-4xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter mb-2">Materiales</h2>
+                <p className="text-sm font-medium text-on-surface-variant/60">Gestión de materiales e insumos</p>
+              </div>
+              <MaterialList jobId={job.id} />
+            </div>
+          ) : viewParam === "pagos" ? (
+            <div className="order-1 lg:col-start-1 space-y-6">
+              <div className="hidden md:flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
+                <button onClick={handleViewClose} className="flex items-center gap-1 hover:text-primary transition-colors">
+                  <ChevronLeft className="w-4 h-4" />
+                  Volver al trabajo
+                </button>
+              </div>
+              <div>
+                <h2 className="text-4xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter mb-2">Cuentas a Cobrar</h2>
+                <p className="text-sm font-medium text-on-surface-variant/60">Gestión de saldo pendiente y cobros recibidos</p>
+              </div>
+              <PaymentsDashboard jobId={job.id} />
             </div>
           ) : (
             <>

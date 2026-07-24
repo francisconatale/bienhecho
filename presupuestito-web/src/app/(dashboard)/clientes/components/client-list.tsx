@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { ArrowLeft, User, Users } from "lucide-react";
 import { ClientForm } from "./client-form";
 import { MasterDetail } from "@/components/ui/master-detail";
@@ -30,6 +31,15 @@ export function ClientList({ initialData }: { initialData?: { data: Client[], to
     ConfirmDialog,
   } = useClients(initialData);
 
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+
+  // Reset selectedJobId when client changes
+  const handleClientChange = (id: string | null) => {
+    setSelectedJobId(null);
+    handleSelectedIdChange(id);
+    setShowCreationForm(false);
+  };
+
   if (isLoading && filtered.length === 0) {
     return <MasterDetailSkeleton />;
   }
@@ -38,7 +48,8 @@ export function ClientList({ initialData }: { initialData?: { data: Client[], to
     <div className="flex flex-col flex-1 bg-transparent relative overflow-hidden">
       <MasterDetail<Client>
         selectedId={selectedId}
-        onSelectedChange={(id) => { handleSelectedIdChange(id); setShowCreationForm(false); }}
+        onSelectedChange={handleClientChange}
+        onDetailBack={selectedJobId ? () => setSelectedJobId(null) : undefined}
         items={filtered as Client[]}
         getItemId={(c) => c.id}
         search={search}
@@ -48,7 +59,7 @@ export function ClientList({ initialData }: { initialData?: { data: Client[], to
         mobileTitle="Clientes"
         mobileDescription="Gestioná tus clientes."
         detailTitle={(client) => client.nombre}
-        detailRightAction={(client) => (
+        detailRightAction={selectedJobId ? undefined : (client) => (
           <MobileHeaderActions
             isEditing={isEditing}
             hasChanges={isEditing}
@@ -98,9 +109,11 @@ export function ClientList({ initialData }: { initialData?: { data: Client[], to
           <ClientDetailPane
             client={client}
             onDelete={handleDelete}
-            onBack={() => handleSelectedIdChange(null)}
+            onBack={() => handleClientChange(null)}
             isEditing={isEditing}
             setIsEditing={setIsEditing}
+            selectedJobId={selectedJobId}
+            setSelectedJobId={setSelectedJobId}
           />
         )}
         emptyDetail={
