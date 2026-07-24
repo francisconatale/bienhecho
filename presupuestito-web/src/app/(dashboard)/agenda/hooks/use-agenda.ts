@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { visitsService, jobsService, clientsService } from "@/services";
+import { visitsService } from "@/services/visits.service";
+import { jobsService } from "@/services/jobs.service";
+import { clientsService } from "@/services/clients.service";;
 import { Visit, VisitStatus } from "@/types";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";

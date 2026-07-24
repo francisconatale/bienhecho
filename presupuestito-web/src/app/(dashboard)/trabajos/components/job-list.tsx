@@ -3,7 +3,8 @@
 import { useState, useRef, useMemo, useEffect } from "react";
 import { Briefcase, Pencil, X, Check } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { jobsService, clientsService } from "@/services";
+import { jobsService } from "@/services/jobs.service";
+import { clientsService } from "@/services/clients.service";;
 import { Job } from "@/types";
 import { useServerPagination } from "@/hooks/use-server-pagination";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";

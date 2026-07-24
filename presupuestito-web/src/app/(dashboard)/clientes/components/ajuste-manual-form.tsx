@@ -4,7 +4,7 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { transaccionesService } from "@/services";
+import { transaccionesService } from "@/services/transacciones.service";;
 interface AjusteManualFormProps {
   clienteId: string;
   onClose: () => void;

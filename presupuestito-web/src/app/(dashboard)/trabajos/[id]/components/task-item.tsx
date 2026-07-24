@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Check, Trash2, Pencil } from "lucide-react";
 import { Task } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { tasksService } from "@/services";
+import { tasksService } from "@/services/tasks.service";;
 import { TaskForm } from "./task-form";
 import { Modal } from "@/components/ui/modal";
 import { cn } from "@/lib/utils";

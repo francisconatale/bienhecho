@@ -4,7 +4,10 @@ import { generateBudgetPDF } from "@/lib/pdf/generate-budget";
 import type { PDFData } from "@/lib/pdf/generate-budget";
 import type { PDFParams } from "@/lib/pdf/types";
 import { useQueryClient } from "@tanstack/react-query";
-import { jobsService, clientsService, tasksService, materialsService } from "@/services";
+import { jobsService } from "@/services/jobs.service";
+import { clientsService } from "@/services/clients.service";
+import { tasksService } from "@/services/tasks.service";
+import { materialsService } from "@/services/materials.service";;
 import { storageService } from "@/services/storage.service";
 import { useProfile } from "@/hooks/use-profile";
 

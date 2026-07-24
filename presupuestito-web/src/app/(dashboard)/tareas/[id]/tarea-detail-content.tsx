@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { tasksService } from "@/services";
+import { tasksService } from "@/services/tasks.service";;
 import { TaskDetailPanel } from "@/app/(dashboard)/trabajos/[id]/components/task-detail-panel";
 import { TareaDetailSkeleton } from "@/components/ui/skeletons";
 

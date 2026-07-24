@@ -3,7 +3,7 @@ import { ChevronLeft, FileDown, Hammer, Wallet, CheckCircle, X, Loader2, Palette
 import Link from "next/link";
 import { notFound, useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { jobsService } from "@/services";
+import { jobsService } from "@/services/jobs.service";;
 import { useProfile } from "@/hooks/use-profile";
 import { storageService } from "@/services/storage.service";
 import type { PDFData } from "@/lib/pdf/generate-budget";
@@ -187,7 +187,7 @@ export function TrabajoDetail({
       action: async () => {
         // jobsService is imported through useTrabajoDetail or directly. But here we don't need jobsService if we use deleteJobMutation. Actually we still need jobsService. Let me just use jobsService.delete(job.id) directly. 
         // Oh wait, I didn't export deleteJobMutation in useTrabajoDetail? I did, but I didn't extract it from the hook here. Let's just import jobsService if not present. It is not in imports since I removed it. I will restore it in a sec if needed, wait, I didn't remove it from imports, I removed the whole line.
-        // Wait, the hook has deleteJobMutation, I'll use it or add it later. I will just leave the delete logic unchanged since it works but needs jobsService, which I might have removed. I'll add `import { jobsService } from "@/services"` at the top.
+        // Wait, the hook has deleteJobMutation, I'll use it or add it later. I will just leave the delete logic unchanged since it works but needs jobsService, which I might have removed. I'll add `import { jobsService } from "@/services/jobs.service";` at the top.
         await jobsService.delete(job.id);
         queryClient.invalidateQueries({ queryKey: ["jobs"] });
         toast.success("Trabajo eliminado correctamente");

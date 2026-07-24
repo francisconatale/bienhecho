@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { jobsService } from "@/services";
+import { jobsService } from "@/services/jobs.service";;
 import { Client } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 import { useCuentaCorriente } from "@/hooks/use-cuenta-corriente";

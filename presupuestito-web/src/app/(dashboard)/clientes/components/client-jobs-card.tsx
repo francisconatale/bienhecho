@@ -2,7 +2,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ExternalLink, ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { jobsService } from "@/services";
+import { jobsService } from "@/services/jobs.service";;
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { cn, formatCurrency } from "@/lib/utils";
 import { getStatusColor } from "./client-detail-pane"; // We'll keep it there to avoid circular dependencies if used elsewhere

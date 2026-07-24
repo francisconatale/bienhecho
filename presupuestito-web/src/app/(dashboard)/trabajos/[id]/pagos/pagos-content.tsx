@@ -5,7 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import { notFound, useRouter } from "next/navigation";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { useQuery } from "@tanstack/react-query";
-import { jobsService } from "@/services";
+import { jobsService } from "@/services/jobs.service";;
 import { PaymentsDashboard } from "../components/payments-dashboard";
 import { PagosSkeleton } from "@/components/ui/skeletons";
 

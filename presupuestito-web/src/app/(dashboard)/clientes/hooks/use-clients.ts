@@ -1,7 +1,7 @@
 import { useState, useEffect, useDeferredValue } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { clientsService } from "@/services";
+import { clientsService } from "@/services/clients.service";;
 import { useServerPagination } from "@/hooks/use-server-pagination";
 import { Client } from "@/types";
 import { useConfirm } from "@/hooks/use-confirm";

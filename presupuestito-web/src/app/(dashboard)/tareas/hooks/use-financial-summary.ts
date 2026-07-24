@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { jobsService, tasksService } from "@/services";
+import { jobsService } from "@/services/jobs.service";
+import { tasksService } from "@/services/tasks.service";;
 export function useFinancialSummary() {
   const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
   const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });

@@ -1,5 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { tasksService, jobsService, clientsService, visitsService } from "@/services";
+import { tasksService } from "@/services/tasks.service";
+import { jobsService } from "@/services/jobs.service";
+import { clientsService } from "@/services/clients.service";
+import { visitsService } from "@/services/visits.service";;
 import { Task, Job, Visit } from "@/types";
 
 export interface AgendaSuggestion {

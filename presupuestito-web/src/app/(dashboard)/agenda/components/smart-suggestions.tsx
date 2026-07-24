@@ -4,7 +4,9 @@ import { VisitForm } from "./visit-form";
 import { Modal } from "@/components/ui/modal";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { jobsService, clientsService, visitsService } from "@/services";
+import { jobsService } from "@/services/jobs.service";
+import { clientsService } from "@/services/clients.service";
+import { visitsService } from "@/services/visits.service";;
 
 export function SmartSuggestions() {
   const queryClient = useQueryClient();

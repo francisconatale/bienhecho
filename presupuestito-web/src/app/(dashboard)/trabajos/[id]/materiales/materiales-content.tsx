@@ -5,7 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { useQuery } from "@tanstack/react-query";
-import { jobsService } from "@/services";
+import { jobsService } from "@/services/jobs.service";;
 import { MaterialList } from "../components/material-list";
 import { getBackUrl } from "./navigation";
 import { MaterialesSkeleton } from "@/components/ui/skeletons";

@@ -7,7 +7,7 @@ import { TaskPhoto } from "@/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { PhotoUpload } from "./photo-upload";
 import { cn } from "@/lib/utils";
-import { taskPhotosService } from "@/services";
+import { taskPhotosService } from "@/services/task-photos.service";;
 import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
 import { TareaPhotosSkeleton } from "@/components/ui/skeletons";

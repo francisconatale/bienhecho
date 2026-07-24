@@ -3,7 +3,9 @@
 import React, { useState, useRef } from "react";
 import { ChevronLeft, Pencil, Check, CalendarDays, ClipboardList, Flame } from "lucide-react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { jobsService, tasksService, visitsService } from "@/services";
+import { jobsService } from "@/services/jobs.service";
+import { tasksService } from "@/services/tasks.service";
+import { visitsService } from "@/services/visits.service";;
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { cn } from "@/lib/utils";
 import { MobilePageHeader } from "@/components/ui/mobile-page-header";

@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 import { z } from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { cobrosService, materialsService, jobsService } from "@/services";
+import { cobrosService } from "@/services/cobros.service";
+import { materialsService } from "@/services/materials.service";
+import { jobsService } from "@/services/jobs.service";;
 import { Cobro } from "@/types";
 import { toast } from "sonner";
 

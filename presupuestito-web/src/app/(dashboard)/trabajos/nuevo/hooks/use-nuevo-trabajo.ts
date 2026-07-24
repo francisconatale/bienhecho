@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { clientsService, jobsService } from "@/services";
+import { clientsService } from "@/services/clients.service";
+import { jobsService } from "@/services/jobs.service";;
 import { toast } from "sonner";
 export const questions = [
   { id: "cliente", question: "¿Para qué cliente es este trabajo?", hint: "Seleccioná un cliente existente" },

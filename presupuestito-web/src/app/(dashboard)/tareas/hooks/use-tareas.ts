@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
-import { tasksService } from "@/services";
+import { tasksService } from "@/services/tasks.service";;
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 import { useServerPagination } from "@/hooks/use-server-pagination";

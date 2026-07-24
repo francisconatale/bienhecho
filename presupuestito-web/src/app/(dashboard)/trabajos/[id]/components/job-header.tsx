@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { User, Calendar, MapPin, Pencil, Check, Trash2 } from "lucide-react";
 import { Job, Client } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { jobsService } from "@/services";
+import { jobsService } from "@/services/jobs.service";;
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { cn } from "@/lib/utils";
 

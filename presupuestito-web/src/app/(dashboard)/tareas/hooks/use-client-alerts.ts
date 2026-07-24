@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { jobsService, clientsService, tasksService } from "@/services";
+import { jobsService } from "@/services/jobs.service";
+import { clientsService } from "@/services/clients.service";
+import { tasksService } from "@/services/tasks.service";;
 export interface ClientAlert {
   id: string;
   jobId: string;

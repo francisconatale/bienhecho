@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { transaccionesService } from "@/services";
+import { transaccionesService } from "@/services/transacciones.service";;
 
 export function useCuentaCorriente(clienteId: string) {
   const { data: transacciones = [], isLoading } = useQuery({

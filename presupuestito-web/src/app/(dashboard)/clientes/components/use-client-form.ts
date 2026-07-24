@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { clientsService } from "@/services";
+import { clientsService } from "@/services/clients.service";;
 import { Client } from "@/types";
 import { useEffect } from "react";
 import { toast } from "sonner";

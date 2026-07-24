@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Plus, ChevronDown } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { tasksService } from "@/services";
+import { tasksService } from "@/services/tasks.service";;
 import { TaskItem } from "./task-item";
 import { TaskForm } from "./task-form";
 import { DataTable, type Column } from "@/components/ui/data-table";

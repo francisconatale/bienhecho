@@ -1,6 +1,9 @@
 import { useState, useCallback, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { jobsService, clientsService, tasksService, cobrosService } from '@/services';
+import { jobsService } from "@/services/jobs.service";
+import { clientsService } from "@/services/clients.service";
+import { tasksService } from "@/services/tasks.service";
+import { cobrosService } from "@/services/cobros.service";;
 import { useBudgetPDF } from '@/hooks/use-budget-pdf';
 
 export function useTrabajoDetail(id: string) {

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { JobStatus, Job } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { jobsService } from "@/services";
+import { jobsService } from "@/services/jobs.service";;
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
 

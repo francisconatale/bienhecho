@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { z } from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { materialsService } from "@/services";
+import { materialsService } from "@/services/materials.service";;
 import { Material } from "@/types";
 import { toast } from "sonner";
 export const materialSchema = z.object({

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { jobsService, visitsService } from "@/services";
+import { jobsService } from "@/services/jobs.service";
+import { visitsService } from "@/services/visits.service";;
 import { useProfile } from "@/hooks/use-profile";
 import { useClientAlerts } from "@/app/(dashboard)/tareas/hooks/use-client-alerts";
 import { useServerPagination } from "@/hooks/use-server-pagination";

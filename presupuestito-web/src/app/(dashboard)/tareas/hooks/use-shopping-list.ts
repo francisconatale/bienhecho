@@ -1,5 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { materialsService, jobsService, clientsService } from "@/services";
+import { materialsService } from "@/services/materials.service";
+import { jobsService } from "@/services/jobs.service";
+import { clientsService } from "@/services/clients.service";;
 export function useShoppingList() {
   const queryClient = useQueryClient();
 

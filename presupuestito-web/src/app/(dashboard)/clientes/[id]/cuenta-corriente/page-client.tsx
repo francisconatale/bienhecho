@@ -5,7 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import { notFound, useRouter } from "next/navigation";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { useQuery } from "@tanstack/react-query";
-import { clientsService } from "@/services";
+import { clientsService } from "@/services/clients.service";;
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { MetricasCuenta } from "./components/metricas-cuenta";
 import { TransaccionesList } from "./components/transacciones-list";
