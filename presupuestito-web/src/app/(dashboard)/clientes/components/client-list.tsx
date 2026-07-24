@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { ArrowLeft, User, Users } from "lucide-react";
 import { ClientForm } from "./client-form";
 import { MasterDetail } from "@/components/ui/master-detail";
@@ -31,11 +32,27 @@ export function ClientList({ initialData }: { initialData?: { data: Client[], to
     ConfirmDialog,
   } = useClients(initialData);
 
-  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const selectedJobId = searchParams.get("jobId");
+
+  const setSelectedJobId = (jobId: string | null) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (jobId) {
+      params.set("jobId", jobId);
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    } else {
+      params.delete("jobId");
+      params.delete("task");
+      params.delete("view");
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    }
+  };
 
   // Reset selectedJobId when client changes
   const handleClientChange = (id: string | null) => {
-    setSelectedJobId(null);
     handleSelectedIdChange(id);
     setShowCreationForm(false);
   };

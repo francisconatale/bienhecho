@@ -42,21 +42,23 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
   });
 
   const [search, setSearch] = useState("");
-  const [selectedId, setSelectedId] = useState<string | null>(
-    () => searchParams.get("id") || null
-  );
+  const selectedId = searchParams.get("id");
 
   const handleSelectedIdChange = (id: string | null) => {
-    setSelectedId(id);
     const params = new URLSearchParams(searchParams.toString());
     if (id) {
       params.set("id", id);
+      params.delete("dir");
+      params.delete("task");
+      params.delete("view");
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
     } else {
       params.delete("id");
+      params.delete("dir");
+      params.delete("task");
+      params.delete("view");
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     }
-    // Remove dir if it exists to reset the animation state
-    params.delete("dir");
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   const isBackDirection = searchParams.get("dir") === "back";
