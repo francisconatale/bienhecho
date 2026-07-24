@@ -67,6 +67,7 @@ export function ClientList({ initialData }: { initialData?: { data: Client[], to
         selectedId={selectedId}
         onSelectedChange={handleClientChange}
         onDetailBack={selectedJobId ? () => setSelectedJobId(null) : undefined}
+        hideMobileBackButton={!!searchParams.get("task") || !!searchParams.get("view")}
         items={filtered as Client[]}
         getItemId={(c) => c.id}
         search={search}

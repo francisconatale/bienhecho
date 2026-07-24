@@ -43,6 +43,7 @@ export interface MasterDetailProps<T> {
   detailAnimationClass?: string;
   /** Override back button behavior for mobile detail pane */
   onDetailBack?: () => void;
+  hideMobileBackButton?: boolean;
 }
 
 export function MasterDetail<T>({
@@ -70,6 +71,7 @@ export function MasterDetail<T>({
   emptyState,
   detailAnimationClass = "animate-fade-in-up",
   onDetailBack,
+  hideMobileBackButton = false,
 }: MasterDetailProps<T>) {
   const hasDetail = selectedId || showCreationForm;
 
@@ -101,10 +103,11 @@ export function MasterDetail<T>({
   return (
     <>
       {/* Mobile Detail Back Button — floating over detail pane */}
-      {hasDetail && (
+      {hasDetail && !hideMobileBackButton && (
         <div className="md:hidden px-4 pt-12 pb-3 absolute top-0 left-0 w-full z-50 flex items-center justify-between bg-transparent pointer-events-none">
           <button
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               if (onDetailBack) {
                 onDetailBack();
               } else if (selectedItem) {

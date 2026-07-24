@@ -122,6 +122,7 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
         detailAnimationClass={isBackDirection ? "animate-slide-in-left" : "animate-page-in"}
         selectedId={selectedId}
         onSelectedChange={handleSelectedIdChange}
+        hideMobileBackButton={!!searchParams.get("task") || !!searchParams.get("view")}
         items={jobs}
         getItemId={(j: any) => j.id}
         search={search}
