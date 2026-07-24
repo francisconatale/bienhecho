@@ -145,11 +145,11 @@ export function ClientDetailPane({
     <div className="flex-1 overflow-y-auto relative w-full h-full min-h-full flex flex-col">
       <AuroraBackground preset="perfil" />
 
-      <form onSubmit={onSubmit} className="relative z-10 px-4 pt-28 pb-24 md:pt-8 md:pb-8 max-w-[1200px] mx-auto flex flex-col gap-6">
+      <form onSubmit={onSubmit} className="relative z-10 px-4 pt-28 pb-24 md:pt-8 md:pb-8 max-w-[1200px] w-full mx-auto flex flex-col gap-6">
         
         {/* 1. Header Card */}
-        <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-5 md:p-6 border border-outline-variant/20 shadow-sm flex flex-col md:flex-row md:items-start justify-between gap-6">
-          <div className="flex flex-row items-start gap-4 md:gap-6 w-full">
+        <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-5 md:p-6 border border-outline-variant/20 shadow-sm flex flex-col md:flex-row md:items-start justify-between gap-6 overflow-hidden w-full">
+          <div className="flex flex-row items-start gap-4 md:gap-6 w-full min-w-0">
             <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-[#E8F5E9] text-[#2E7D32] dark:bg-[#2E7D32]/20 dark:text-[#81C784] flex items-center justify-center font-bold text-3xl shrink-0 mt-0.5">
               {client.nombre.charAt(0)}
             </div>
@@ -157,44 +157,47 @@ export function ClientDetailPane({
             <div className="flex-1 min-w-0 flex flex-col gap-1 md:gap-2">
               {isEditing ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                  <div className="md:col-span-2 space-y-1">
+                  <div className="md:col-span-2 space-y-1 min-w-0">
                     <label htmlFor="client-nombre" className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Nombre</label>
-                    <input id="client-nombre" type="text" {...register("nombre")} aria-invalid={!!errors.nombre} aria-describedby={errors.nombre ? "client-nombre-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-lg font-bold focus:border-primary focus:outline-none transition-colors" autoFocus />
+                    <input id="client-nombre" type="text" {...register("nombre")} aria-invalid={!!errors.nombre} aria-describedby={errors.nombre ? "client-nombre-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-lg font-bold focus:border-primary focus:outline-none transition-colors min-w-0" autoFocus />
                     {errors.nombre && <p id="client-nombre-error" role="alert" className="text-xs font-bold text-error mt-1">{errors.nombre.message}</p>}
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-1 min-w-0">
                     <label htmlFor="client-email" className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Email</label>
-                    <input id="client-email" type="email" {...register("email")} aria-invalid={!!errors.email} aria-describedby={errors.email ? "client-email-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors" />
+                    <input id="client-email" type="email" {...register("email")} aria-invalid={!!errors.email} aria-describedby={errors.email ? "client-email-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors min-w-0" />
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-1 min-w-0">
                     <label htmlFor="client-telefono" className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Teléfono</label>
-                    <input id="client-telefono" type="tel" {...register("telefono")} aria-invalid={!!errors.telefono} aria-describedby={errors.telefono ? "client-telefono-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors" />
+                    <input id="client-telefono" type="tel" {...register("telefono")} aria-invalid={!!errors.telefono} aria-describedby={errors.telefono ? "client-telefono-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors min-w-0" />
                   </div>
-                  <div className="md:col-span-2 space-y-1">
+                  <div className="md:col-span-2 space-y-1 min-w-0">
                     <label htmlFor="client-direccion" className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Dirección</label>
-                    <input id="client-direccion" type="text" {...register("direccion")} aria-invalid={!!errors.direccion} aria-describedby={errors.direccion ? "client-direccion-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors" />
+                    <input id="client-direccion" type="text" {...register("direccion")} aria-invalid={!!errors.direccion} aria-describedby={errors.direccion ? "client-direccion-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors min-w-0" />
                   </div>
                 </div>
               ) : (
                 <>
-                  <h1 className="text-2xl md:text-[28px] font-bold text-on-surface tracking-tight leading-none">{client.nombre}</h1>
-                  <span className="text-[13px] text-on-surface-variant/70 cursor-default select-none">
+                  <h1 className="text-2xl md:text-[28px] font-bold text-on-surface tracking-tight leading-none break-words whitespace-normal break-all sm:break-normal">{client.nombre}</h1>
+                  <span className="text-[13px] text-on-surface-variant/70 cursor-default select-none truncate">
                     Cliente desde {new Date(client.created_at).toLocaleDateString("es-AR", { month: "short", year: "numeric" })}
                   </span>
-                  <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-3 md:mt-2">
+                  <div className="flex flex-col sm:flex-row flex-wrap sm:items-center gap-x-6 gap-y-2 mt-3 md:mt-2 min-w-0">
                     {client.email && (
-                      <span className="flex items-center gap-2 text-[13px] text-on-surface-variant cursor-default select-none">
-                        <Mail className="w-3.5 h-3.5 opacity-60" aria-hidden="true" /> {client.email}
+                      <span className="flex items-center gap-2 text-[13px] text-on-surface-variant cursor-default select-none min-w-0 max-w-full">
+                        <Mail className="w-3.5 h-3.5 opacity-60 shrink-0" aria-hidden="true" />
+                        <span className="truncate flex-1 min-w-0">{client.email}</span>
                       </span>
                     )}
                     {client.telefono && (
-                      <span className="flex items-center gap-2 text-[13px] text-on-surface-variant cursor-default select-none">
-                        <Phone className="w-3.5 h-3.5 opacity-60" aria-hidden="true" /> {client.telefono}
+                      <span className="flex items-center gap-2 text-[13px] text-on-surface-variant cursor-default select-none min-w-0 max-w-full">
+                        <Phone className="w-3.5 h-3.5 opacity-60 shrink-0" aria-hidden="true" />
+                        <span className="truncate flex-1 min-w-0">{client.telefono}</span>
                       </span>
                     )}
                     {client.direccion && (
-                      <span className="flex items-center gap-2 text-[13px] text-on-surface-variant cursor-default select-none">
-                        <MapPin className="w-3.5 h-3.5 opacity-60" aria-hidden="true" /> {client.direccion}
+                      <span className="flex items-center gap-2 text-[13px] text-on-surface-variant cursor-default select-none min-w-0 max-w-full">
+                        <MapPin className="w-3.5 h-3.5 opacity-60 shrink-0" aria-hidden="true" />
+                        <span className="truncate flex-1 min-w-0">{client.direccion}</span>
                       </span>
                     )}
                   </div>
@@ -206,19 +209,19 @@ export function ClientDetailPane({
           <div className="hidden md:flex gap-2 shrink-0">
             {isEditing ? (
               <>
-                <button type="button" onClick={() => setIsEditing(false)} className="px-4 py-2 rounded-xl bg-on-surface/5 hover:bg-on-surface/10 text-sm font-bold transition-colors">
+                <button type="button" onClick={() => setIsEditing(false)} className="px-4 py-2 rounded-xl bg-on-surface/5 hover:bg-on-surface/10 text-sm font-bold transition-colors shrink-0">
                   Cancelar
                 </button>
-                <button type="submit" disabled={isLoading} data-client-save className="px-5 py-2 rounded-xl bg-primary text-white hover:bg-primary-dark text-sm font-bold shadow-sm transition-all active:scale-95">
+                <button type="submit" disabled={isLoading} data-client-save className="px-5 py-2 rounded-xl bg-primary text-white hover:bg-primary-dark text-sm font-bold shadow-sm transition-all active:scale-95 shrink-0">
                   {isLoading ? "..." : "Guardar"}
                 </button>
               </>
             ) : (
               <>
-                <button type="button" onClick={() => setIsEditing(true)} className="w-10 h-10 flex items-center justify-center rounded-[12px] border border-outline-variant/20 dark:border-white/10 text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-colors group">
+                <button type="button" onClick={() => setIsEditing(true)} className="w-10 h-10 flex items-center justify-center rounded-[12px] border border-outline-variant/20 dark:border-white/10 text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-colors group shrink-0">
                   <Pencil className="w-4 h-4 group-hover:scale-110 transition-transform" />
                 </button>
-                <button type="button" onClick={() => onDelete(client)} className="w-10 h-10 flex items-center justify-center rounded-[12px] border border-outline-variant/20 dark:border-white/10 text-on-surface-variant hover:text-error hover:bg-error/5 transition-colors group">
+                <button type="button" onClick={() => onDelete(client)} className="w-10 h-10 flex items-center justify-center rounded-[12px] border border-outline-variant/20 dark:border-white/10 text-on-surface-variant hover:text-error hover:bg-error/5 transition-colors group shrink-0">
                   <Trash2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
                 </button>
               </>
@@ -230,7 +233,7 @@ export function ClientDetailPane({
         <Link
           href={`/clientes/${client.id}/cuenta-corriente`}
           className={cn(
-            "block rounded-xl p-4 md:p-5 border shadow-sm transition-all active:scale-[0.98]",
+            "block rounded-xl p-4 md:p-5 border shadow-sm transition-all active:scale-[0.98] overflow-hidden w-full",
             deudaTotal > 0
               ? "bg-[#FEF2F2] dark:bg-[#DC2626]/10 border-[#FECACA] dark:border-[#DC2626]/20"
               : deudaTotal < 0
@@ -238,11 +241,11 @@ export function ClientDetailPane({
                 : "bg-surface/60 dark:bg-surface/40 border-outline-variant/15"
           )}
         >
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col gap-0.5">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/50">Cuenta Corriente</span>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/50 truncate">Cuenta Corriente</span>
               <span className={cn(
-                "text-[22px] md:text-2xl font-bold tabular-nums",
+                "text-[22px] md:text-2xl font-bold tabular-nums truncate",
                 deudaTotal > 0
                   ? "text-[#DC2626] dark:text-[#FCA5A5]"
                   : deudaTotal < 0
@@ -276,6 +279,7 @@ export function ClientDetailPane({
             const jobColumns: Column<Job>[] = [
               {
                 label: "Trabajo",
+                className: "max-w-[130px] sm:max-w-[200px] md:max-w-none w-full",
                 render: (job) => {
                   const daysSinceCreation = Math.floor((Date.now() - new Date(job.created_at).getTime()) / (1000 * 60 * 60 * 24));
                   return (

@@ -55,100 +55,102 @@ export function DataTable<T>({
 
       {topContent}
 
-      <table className="w-full">
-        {title && <caption className="sr-only">{title}</caption>}
-        <thead className="hidden md:table-header-group">
-          <tr className="border-b border-outline-variant/20 bg-surface-variant/20">
-            {columns.map((col, i) => (
-              <th
-                key={i}
-                className={[
-                  "text-[11px] font-bold text-on-surface-variant uppercase tracking-widest px-4 py-2 text-left",
-                  col.headerClassName,
-                ].filter(Boolean).join(" ")}
-              >
-                {col.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-
-        <tbody className="divide-y divide-outline-variant/10">
-          {items.length === 0 ? (
-            <tr>
-              <td
-                colSpan={columns.length}
-                className="p-5 text-[13px] text-on-surface-variant/60 text-center italic"
-              >
-                {emptyMessage}
-              </td>
+      <div className="overflow-x-auto w-full">
+        <table className="w-full">
+          {title && <caption className="sr-only">{title}</caption>}
+          <thead className="hidden md:table-header-group">
+            <tr className="border-b border-outline-variant/20 bg-surface-variant/20">
+              {columns.map((col, i) => (
+                <th
+                  key={i}
+                  className={[
+                    "text-[11px] font-bold text-on-surface-variant uppercase tracking-widest px-4 py-2 text-left",
+                    col.headerClassName,
+                  ].filter(Boolean).join(" ")}
+                >
+                  {col.label}
+                </th>
+              ))}
             </tr>
-          ) : renderRow ? (
-            items.map((item) => (
-              <tr key={keyExtractor(item)} className="group">
-                <td colSpan={columns.length} className="p-0">
-                  {renderRow(item)}
+          </thead>
+
+          <tbody className="divide-y divide-outline-variant/10">
+            {items.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className="p-5 text-[13px] text-on-surface-variant/60 text-center italic"
+                >
+                  {emptyMessage}
                 </td>
               </tr>
-            ))
-          ) : (
-            items.map((item) => (
-              <tr
-                key={keyExtractor(item)}
-                className={[
-                  "group transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 rounded-xl",
-                  onRowClick && "cursor-pointer hover:bg-primary/5",
-                ].filter(Boolean).join(" ")}
-                {...(onRowClick
-                  ? {
-                      onClick: () => onRowClick(item),
-                      onKeyDown: (e: React.KeyboardEvent) =>
-                        e.key === "Enter" && onRowClick(item),
-                      tabIndex: 0,
-                      role: "button",
-                      "aria-label": rowLabel ? `Ver detalle de ${rowLabel(item)}` : undefined,
-                    }
-                  : {})}
-              >
-                {columns.map((col, i) => (
-                  <td
-                    key={i}
-                    className={["px-4 py-2.5 md:py-3", col.className].filter(Boolean).join(" ")}
-                  >
-                    {col.render(item)}
+            ) : renderRow ? (
+              items.map((item) => (
+                <tr key={keyExtractor(item)} className="group">
+                  <td colSpan={columns.length} className="p-0">
+                    {renderRow(item)}
                   </td>
-                ))}
+                </tr>
+              ))
+            ) : (
+              items.map((item) => (
+                <tr
+                  key={keyExtractor(item)}
+                  className={[
+                    "group transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 rounded-xl",
+                    onRowClick && "cursor-pointer hover:bg-primary/5",
+                  ].filter(Boolean).join(" ")}
+                  {...(onRowClick
+                    ? {
+                        onClick: () => onRowClick(item),
+                        onKeyDown: (e: React.KeyboardEvent) =>
+                          e.key === "Enter" && onRowClick(item),
+                        tabIndex: 0,
+                        role: "button",
+                        "aria-label": rowLabel ? `Ver detalle de ${rowLabel(item)}` : undefined,
+                      }
+                    : {})}
+                >
+                  {columns.map((col, i) => (
+                    <td
+                      key={i}
+                      className={["px-4 py-2.5 md:py-3", col.className].filter(Boolean).join(" ")}
+                    >
+                      {col.render(item)}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
+            {footerRow && (
+              <tr>
+                <td colSpan={columns.length} className="p-0">
+                  {footerRow}
+                </td>
               </tr>
-            ))
-          )}
-          {footerRow && (
-            <tr>
-              <td colSpan={columns.length} className="p-0">
-                {footerRow}
-              </td>
-            </tr>
-          )}
-        </tbody>
+            )}
+          </tbody>
 
-        {pagination && (
-          <tfoot>
-            <tr>
-              <td
-                colSpan={columns.length}
-                className="px-4 py-3 border-t border-outline-variant/10"
-              >
-                <PaginationButtons
-                  currentPage={pagination.currentPage}
-                  totalPages={pagination.totalPages}
-                  totalItems={pagination.totalItems}
-                  pageSize={pagination.pageSize}
-                  onPageChange={pagination.goToPage}
-                />
-              </td>
-            </tr>
-          </tfoot>
-        )}
-      </table>
+          {pagination && (
+            <tfoot>
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className="px-4 py-3 border-t border-outline-variant/10"
+                >
+                  <PaginationButtons
+                    currentPage={pagination.currentPage}
+                    totalPages={pagination.totalPages}
+                    totalItems={pagination.totalItems}
+                    pageSize={pagination.pageSize}
+                    onPageChange={pagination.goToPage}
+                  />
+                </td>
+              </tr>
+            </tfoot>
+          )}
+        </table>
+      </div>
     </div>
   );
 }
