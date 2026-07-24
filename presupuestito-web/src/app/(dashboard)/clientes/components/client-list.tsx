@@ -9,6 +9,7 @@ import { ClientItem } from "./client-item";
 import { MasterDetailSkeleton } from "@/components/ui/skeletons";
 import { useClients } from "../hooks/use-clients";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import { Client } from "@/types";
 
 export function ClientList() {
   const {
@@ -35,10 +36,10 @@ export function ClientList() {
 
   return (
     <div className="flex flex-col flex-1 bg-transparent relative overflow-hidden">
-      <MasterDetail
+      <MasterDetail<Client>
         selectedId={selectedId}
         onSelectedChange={(id) => { handleSelectedIdChange(id); setShowCreationForm(false); }}
-        items={filtered}
+        items={filtered as Client[]}
         getItemId={(c) => c.id}
         search={search}
         onSearchChange={setSearch}
