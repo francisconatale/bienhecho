@@ -28,7 +28,9 @@ function Greeting({ displayName, className }: { displayName: string; className: 
   );
 }
 
-export function DashboardContent() {
+import { DashboardInitialData } from "./hooks/use-dashboard";
+
+export function DashboardContent({ initialData }: { initialData?: DashboardInitialData }) {
   const {
     isLoading,
     stats,
@@ -36,7 +38,7 @@ export function DashboardContent() {
     pagination,
     profile,
     alerts,
-  } = useDashboard();
+  } = useDashboard(initialData);
 
   const displayName = profile?.nombre || "";
 

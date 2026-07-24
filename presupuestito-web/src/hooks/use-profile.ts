@@ -3,7 +3,7 @@ import { profileService_get, profileService_update } from "@/actions/profile.act
 import type { Profile } from "@/services/profile.service";
 import { useAuth } from "@/contexts/auth-context";
 
-export function useProfile() {
+export function useProfile(initialData?: Profile | null) {
   const { user, loading: authLoading } = useAuth();
 
   const {
@@ -15,6 +15,8 @@ export function useProfile() {
     queryKey: ["profile"],
     queryFn: () => profileService_get(),
     enabled: !!user && !authLoading,
+    initialData,
+    staleTime: 1000 * 60 * 60 * 24, // 24 horas
   });
 
   return {

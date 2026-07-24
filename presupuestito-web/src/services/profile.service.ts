@@ -1,4 +1,5 @@
 import { requireAuth } from "@/utils/supabase/require-auth";
+import { cache } from "react";
 
 export interface Profile {
   id: string;
@@ -11,12 +12,12 @@ export interface Profile {
 }
 
 export const profileService = {
-  get: async (): Promise<Profile | null> => {
+  get: cache(async (): Promise<Profile | null> => {
     const { supabase, user } = await requireAuth();
     const { data, error } = await supabase.from("perfiles").select("*").eq("id", user.id).single();
     if (error && error.code !== "PGRST116") throw new Error(error.message);
     return data as Profile | null;
-  },
+  }),
 
   upsert: async (profileData: Partial<Profile>): Promise<Profile> => {
     const { supabase, user } = await requireAuth();

@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { jobsService_getAll } from "@/actions/jobs.actions";
 import { clientsService_getAll } from "@/actions/clients.actions";
 import { tasksService_getAll } from "@/actions/tasks.actions";
+import { Job, Client, Task } from "@/types";
+
 export interface ClientAlert {
   id: string;
   jobId: string;
@@ -10,10 +12,10 @@ export interface ClientAlert {
   tipo: "borrador" | "demorado";
 }
 
-export function useClientAlerts() {
-  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll });
-  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService_getAll });
-  const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ["tasks"], queryFn: tasksService_getAll });
+export function useClientAlerts(initialData?: { jobs?: Job[], clients?: Client[], tasks?: Task[] }) {
+  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll, initialData: initialData?.jobs });
+  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService_getAll, initialData: initialData?.clients });
+  const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ["tasks"], queryFn: tasksService_getAll, initialData: initialData?.tasks });
 
   const alerts: ClientAlert[] = [];
 
