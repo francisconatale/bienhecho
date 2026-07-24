@@ -24,8 +24,20 @@ export function PDFPreviewModal({ data, onDownload, onCancel, loading = false }:
     setParams(prev => ({ ...prev, primaryColor: e.target.value }));
   };
 
+  const handleSecondaryColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setParams(prev => ({ ...prev, secondaryColor: e.target.value }));
+  };
+
   const handleLogoScaleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setParams(prev => ({ ...prev, logoScale: parseFloat(e.target.value) }));
+  };
+
+  const handleModeToggle = () => {
+    setParams(prev => ({
+      ...prev,
+      colorMode: prev.colorMode === "solid" ? "gradient" : "solid",
+      secondaryColor: prev.colorMode === "solid" ? "#FF9F43" : undefined,
+    }));
   };
 
   return (
@@ -35,7 +47,18 @@ export function PDFPreviewModal({ data, onDownload, onCancel, loading = false }:
         <div className="flex items-center gap-6 flex-wrap">
           <div className="flex items-center gap-2">
             <label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">
-              Color
+              Modo
+            </label>
+            <button
+              onClick={handleModeToggle}
+              className="text-xs font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg bg-on-surface/5 text-on-surface-variant hover:bg-on-surface/10 transition-all active:scale-[0.98] cursor-pointer"
+            >
+              {params.colorMode === "solid" ? "Sólido" : "Degradado"}
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">
+              {params.colorMode === "gradient" ? "Desde" : "Color"}
             </label>
             <input
               type="color"
@@ -44,7 +67,19 @@ export function PDFPreviewModal({ data, onDownload, onCancel, loading = false }:
               className="w-9 h-9 rounded-lg border border-outline-variant/20 cursor-pointer bg-transparent p-0.5"
             />
           </div>
-
+          {params.colorMode === "gradient" && (
+            <div className="flex items-center gap-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">
+                Hasta
+              </label>
+              <input
+                type="color"
+                value={params.secondaryColor ?? "#FF9F43"}
+                onChange={handleSecondaryColorChange}
+                className="w-9 h-9 rounded-lg border border-outline-variant/20 cursor-pointer bg-transparent p-0.5"
+              />
+            </div>
+          )}
           {hasLogo && (
             <div className="flex items-center gap-2">
               <label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">

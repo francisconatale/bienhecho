@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { PDFData } from "@/lib/pdf/generate-budget";
 import type { PDFParams } from "@/lib/pdf/types";
 import { derivePDFColors } from "@/lib/pdf/derivePDFColors";
+import { createColorStrategy } from "@/lib/pdf/color-strategies";
 import { buildItemsList } from "@/lib/pdf/budget-layout";
 
 interface BudgetPreviewProps {
@@ -11,6 +12,7 @@ interface BudgetPreviewProps {
 
 export function BudgetPreview({ data, params }: BudgetPreviewProps) {
   const colors = derivePDFColors(params.primaryColor);
+  const strategy = createColorStrategy(params.primaryColor, params.secondaryColor);
   const rgb = (c: [number, number, number]) => `rgb(${c[0]},${c[1]},${c[2]})`;
   const rgba = (c: [number, number, number], a: number) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
 
@@ -31,7 +33,7 @@ export function BudgetPreview({ data, params }: BudgetPreviewProps) {
   return (
     <div className="bg-white text-[#1A3020] text-sm leading-snug">
       {/* Header — matches PDF layout order: logo centered, text on top */}
-      <div style={{ backgroundColor: rgb(colors.primary) }} className="relative px-4 py-3 min-h-[72px] overflow-hidden">
+      <div style={{ background: strategy.cssHeaderBackground }} className="relative px-4 py-3 min-h-[72px] overflow-hidden">
         {hasLogo && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             {logoError || !logoLoaded ? (
@@ -163,7 +165,7 @@ export function BudgetPreview({ data, params }: BudgetPreviewProps) {
       )}
 
       {/* Footer */}
-      <div style={{ backgroundColor: rgb(colors.primary) }} className="px-4 py-3 flex items-center justify-between mt-2">
+      <div style={{ background: strategy.cssFooterBackground }} className="px-4 py-3 flex items-center justify-between mt-2">
         <div style={{ color: rgba(colors.onPrimary, 0.7) }} className="text-[10px]">
           presupuestito.com
         </div>

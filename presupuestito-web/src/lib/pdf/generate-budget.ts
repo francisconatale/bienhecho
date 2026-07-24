@@ -2,6 +2,7 @@ import type { Client, Job, Task, Material } from "@/types";
 import type { PDFParams } from "./types";
 import { DEFAULT_PDF_PARAMS } from "./types";
 import { derivePDFColors } from "./derivePDFColors";
+import { createColorStrategy } from "./color-strategies";
 import { LAYOUT, buildItemsList } from "./budget-layout";
 
 export interface PDFData {
@@ -79,7 +80,8 @@ export async function generateBudgetPDF(
 
   const effectiveParams = params ?? DEFAULT_PDF_PARAMS;
   const colors = derivePDFColors(effectiveParams.primaryColor);
-  const { primary, onPrimary, onSurface, onSurfaceVariant, outlineVariant } = colors;
+  const { onPrimary, onSurface, onSurfaceVariant, outlineVariant } = colors;
+  const strategy = createColorStrategy(effectiveParams.primaryColor, effectiveParams.secondaryColor);
   
   let currentY = 0;
   
@@ -113,8 +115,7 @@ export async function generateBudgetPDF(
   }
 
   // Header
-  doc.setFillColor(...primary);
-  doc.rect(0, 0, pageWidth, headerHeight, "F");
+  strategy.applyHeaderBackground(doc, 0, 0, pageWidth, headerHeight);
   
   // Logo in the header (centered, size adjustable)
   if (logoBase64 && logoFormat) {
@@ -324,9 +325,7 @@ export async function generateBudgetPDF(
   // Siempre al fondo de la hoja
   let finalFooterY = pageHeight - footerHeight;
   
-  doc.setFillColor(...primary);
-  // Full width footer
-  doc.rect(0, finalFooterY, pageWidth, footerHeight, "F");
+  strategy.applyFooterBackground(doc, 0, finalFooterY, pageWidth, footerHeight);
   
   doc.setFont("Inter", "normal");
   doc.setFontSize(LAYOUT.dateFontSize);

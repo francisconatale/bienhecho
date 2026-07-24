@@ -1,10 +1,15 @@
+export type ColorMode = "solid" | "gradient";
+
 export interface PDFParams {
   primaryColor: string;
+  colorMode: ColorMode;
+  secondaryColor?: string;
   logoScale: number;
 }
 
 export const DEFAULT_PDF_PARAMS: PDFParams = {
   primaryColor: "#3D8B6E",
+  colorMode: "solid",
   logoScale: 1,
 };
 
