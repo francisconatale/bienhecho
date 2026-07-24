@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Check, Trash2, Pencil } from "lucide-react";
 import { Task } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { tasksService } from "@/services/tasks.service";;
+import { tasksService_update, tasksService_delete } from "@/actions/tasks.actions";
 import { TaskForm } from "./task-form";
 import { Modal } from "@/components/ui/modal";
 import { cn } from "@/lib/utils";
@@ -29,12 +29,12 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
   const [ConfirmDialog, confirm] = useConfirm();
 
   const updateTaskMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => tasksService.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => tasksService_update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
   });
 
   const removeTaskMutation = useMutation({
-    mutationFn: tasksService.delete,
+    mutationFn: tasksService_delete,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
   });
 

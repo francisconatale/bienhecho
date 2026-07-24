@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { z } from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { cobrosService } from "@/services/cobros.service";
-import { materialsService } from "@/services/materials.service";
-import { jobsService } from "@/services/jobs.service";;
+import { cobrosService_getByJobId, cobrosService_create, cobrosService_update, cobrosService_delete } from "@/actions/cobros.actions";
+import { materialsService_getByJobId } from "@/actions/materials.actions";
+import { jobsService_getById } from "@/actions/jobs.actions";
 import { Cobro } from "@/types";
 import { toast } from "sonner";
 
@@ -21,17 +21,17 @@ export function usePayments(trabajoId: string) {
 
   const { data: cobros = [], isLoading: isLoadingCobros } = useQuery({
     queryKey: ["cobros", trabajoId],
-    queryFn: () => cobrosService.getByJobId(trabajoId),
+    queryFn: () => cobrosService_getByJobId(trabajoId),
   });
 
   const { data: materiales = [], isLoading: isLoadingMaterials } = useQuery({
     queryKey: ["materials", trabajoId],
-    queryFn: () => materialsService.getByJobId(trabajoId),
+    queryFn: () => materialsService_getByJobId(trabajoId),
   });
 
   const { data: job, isLoading: isLoadingJob } = useQuery({
     queryKey: ["job", trabajoId],
-    queryFn: () => jobsService.getById(trabajoId),
+    queryFn: () => jobsService_getById(trabajoId),
   });
 
   const totalMateriales = useMemo(() => {
@@ -49,7 +49,7 @@ export function usePayments(trabajoId: string) {
   }, [presupuestoTotal, totalCobrado]);
 
   const addMutation = useMutation({
-    mutationFn: cobrosService.create,
+    mutationFn: cobrosService_create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cobros", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["job", trabajoId] }); // invalidate job to reflect state change if any
@@ -59,7 +59,7 @@ export function usePayments(trabajoId: string) {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Cobro> }) =>
-      cobrosService.update(id, data),
+      cobrosService_update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cobros", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["job", trabajoId] });
@@ -68,7 +68,7 @@ export function usePayments(trabajoId: string) {
   });
 
   const removeMutation = useMutation({
-    mutationFn: cobrosService.delete,
+    mutationFn: cobrosService_delete,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cobros", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["job", trabajoId] });

@@ -5,7 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { useQuery } from "@tanstack/react-query";
-import { jobsService } from "@/services/jobs.service";;
+import { jobsService_getById } from "@/actions/jobs.actions";
 import { MaterialList } from "../components/material-list";
 import { getBackUrl } from "./navigation";
 import { MaterialesSkeleton } from "@/components/ui/skeletons";
@@ -21,7 +21,7 @@ export function MaterialesContent({ id }: MaterialesPageInnerProps) {
   const { popHistory } = useNavigationHistory();
   const { data: job, isLoading } = useQuery({
     queryKey: ["job", id],
-    queryFn: () => jobsService.getById(id),
+    queryFn: () => jobsService_getById(id),
   });
 
   if (isLoading) {

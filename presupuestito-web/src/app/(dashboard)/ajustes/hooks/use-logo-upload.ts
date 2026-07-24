@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { profileService, Profile } from "@/services/profile.service";
-import { storageService } from "@/services/storage.service";
+import { profileService_get, profileService_update } from "@/actions/profile.actions";
+import { Profile } from "@/services/profile.service";
+import { storageService_uploadCompanyLogo, storageService_deleteCompanyLogo } from "@/actions/storage.actions";
 
 export function useLogoUpload() {
   const [isUploading, setIsUploading] = useState(false);
@@ -12,20 +13,20 @@ export function useLogoUpload() {
 
     try {
       // 1. Get current profile to get the user ID
-      const profile = await profileService.get();
+      const profile = await profileService_get();
       if (!profile) {
         throw new Error("No se pudo obtener el perfil de usuario");
       }
 
       // 2. Upload the file to Supabase Storage
-      const { path, error: uploadError } = await storageService.uploadCompanyLogo(profile.id, file);
+      const { path, error: uploadError } = await storageService_uploadCompanyLogo(profile.id, file);
       
       if (uploadError) {
         throw uploadError;
       }
 
       // 3. Update the profile with the new logo_path
-      const updatedProfile = await profileService.update({ logo_path: path });
+      const updatedProfile = await profileService_update({ logo_path: path });
       
       return updatedProfile;
     } catch (err) {
@@ -42,19 +43,19 @@ export function useLogoUpload() {
     setError(null);
 
     try {
-      const profile = await profileService.get();
+      const profile = await profileService_get();
       if (!profile || !profile.logo_path) {
         return profile;
       }
 
       // 1. Delete from storage
-      const { error: deleteError } = await storageService.deleteCompanyLogo(profile.logo_path);
+      const { error: deleteError } = await storageService_deleteCompanyLogo(profile.logo_path);
       if (deleteError) {
         throw deleteError;
       }
 
       // 2. Update profile
-      const updatedProfile = await profileService.update({ logo_path: null });
+      const updatedProfile = await profileService_update({ logo_path: null });
       return updatedProfile;
     } catch (err) {
       console.error("Error deleting logo:", err);

@@ -1,7 +1,7 @@
 import { useState, useEffect, useDeferredValue } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { clientsService } from "@/services/clients.service";;
+import { clientsService_getPaginated, clientsService_delete } from "@/actions/clients.actions";
 import { useServerPagination } from "@/hooks/use-server-pagination";
 import { Client } from "@/types";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -26,7 +26,7 @@ export function useClients() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["clients", "paginated", page, pageSize, deferredSearch],
-    queryFn: () => clientsService.getPaginated(page, pageSize, deferredSearch),
+    queryFn: () => clientsService_getPaginated(page, pageSize, deferredSearch),
   });
 
   const clients = data?.data || [];
@@ -60,7 +60,7 @@ export function useClients() {
   };
 
   const deleteMutation = useMutation({
-    mutationFn: clientsService.delete,
+    mutationFn: clientsService_delete,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
     },

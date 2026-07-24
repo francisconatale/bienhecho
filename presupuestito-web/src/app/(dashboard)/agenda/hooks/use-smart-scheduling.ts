@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { tasksService } from "@/services/tasks.service";
-import { jobsService } from "@/services/jobs.service";
-import { clientsService } from "@/services/clients.service";
-import { visitsService } from "@/services/visits.service";;
+import { tasksService_getAll } from "@/actions/tasks.actions";
+import { jobsService_getAll } from "@/actions/jobs.actions";
+import { clientsService_getAll } from "@/actions/clients.actions";
+import { visitsService_getAll } from "@/actions/visits.actions";
 import { Task, Job, Visit } from "@/types";
 
 export interface AgendaSuggestion {
@@ -14,10 +14,10 @@ export interface AgendaSuggestion {
 }
 
 export function useSmartScheduling() {
-  const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
-  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
-  const { data: visits = [], isLoading: isLoadingVisits } = useQuery({ queryKey: ["visits"], queryFn: visitsService.getAll });
+  const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ["tasks"], queryFn: tasksService_getAll });
+  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll });
+  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService_getAll });
+  const { data: visits = [], isLoading: isLoadingVisits } = useQuery({ queryKey: ["visits"], queryFn: visitsService_getAll });
 
   const getSuggestions = (): AgendaSuggestion[] => {
     // 1. Filter critical tasks that are incomplete

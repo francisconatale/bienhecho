@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { useProfile } from "@/hooks/use-profile";
 import { useLogoUpload } from "../../hooks/use-logo-upload";
-import { storageService } from "@/services/storage.service";
+import { getPublicLogoUrl } from "@/lib/storage-utils";
 import Image from "next/image";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -20,7 +20,7 @@ export function ProfilePicture() {
 
   useEffect(() => {
     if (profile?.logo_path) {
-      setPreviewUrl(storageService.getPublicUrl(profile.logo_path));
+      setPreviewUrl(getPublicLogoUrl(profile.logo_path));
     } else {
       setPreviewUrl(null);
     }
@@ -46,7 +46,7 @@ export function ProfilePicture() {
       if (updatedProfile) {
         refetchProfile();
         if (updatedProfile.logo_path) {
-          setPreviewUrl(storageService.getPublicUrl(updatedProfile.logo_path));
+          setPreviewUrl(getPublicLogoUrl(updatedProfile.logo_path));
         }
         toast.success("Foto actualizada correctamente");
       }

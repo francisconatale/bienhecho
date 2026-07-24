@@ -3,9 +3,9 @@ import { ChevronLeft, FileDown, Hammer, Wallet, CheckCircle, X, Loader2, Palette
 import Link from "next/link";
 import { notFound, useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { jobsService } from "@/services/jobs.service";;
+import { jobsService_delete } from "@/actions/jobs.actions";
 import { useProfile } from "@/hooks/use-profile";
-import { storageService } from "@/services/storage.service";
+import { getPublicLogoUrl } from "@/lib/storage-utils";
 import type { PDFData } from "@/lib/pdf/generate-budget";
 import type { PDFParams } from "@/lib/pdf/types";
 import dynamic from "next/dynamic";
@@ -153,7 +153,7 @@ export function TrabajoDetail({
         cuit: "00-00000000-0",
         matricula: profile?.numero_matricula,
         trade: job.titulo || profile?.rubro || "Servicios Profesionales",
-        logo_url: profile?.logo_path ? storageService.getPublicUrl(profile.logo_path) : undefined,
+        logo_url: profile?.logo_path ? getPublicLogoUrl(profile.logo_path) : undefined,
       },
     };
     setPreviewData(data);
@@ -189,10 +189,7 @@ export function TrabajoDetail({
       confirmText: "Eliminar",
       variant: "danger",
       action: async () => {
-        // jobsService is imported through useTrabajoDetail or directly. But here we don't need jobsService if we use deleteJobMutation. Actually we still need jobsService. Let me just use jobsService.delete(job.id) directly. 
-        // Oh wait, I didn't export deleteJobMutation in useTrabajoDetail? I did, but I didn't extract it from the hook here. Let's just import jobsService if not present. It is not in imports since I removed it. I will restore it in a sec if needed, wait, I didn't remove it from imports, I removed the whole line.
-        // Wait, the hook has deleteJobMutation, I'll use it or add it later. I will just leave the delete logic unchanged since it works but needs jobsService, which I might have removed. I'll add `import { jobsService } from "@/services/jobs.service";` at the top.
-        await jobsService.delete(job.id);
+        await jobsService_delete(job.id);
         queryClient.invalidateQueries({ queryKey: ["jobs"] });
         toast.success("Trabajo eliminado correctamente");
         if (isEmbedded && onBack) {

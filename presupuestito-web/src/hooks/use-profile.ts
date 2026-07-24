@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { profileService, Profile } from "@/services/profile.service";
+import { profileService_get, profileService_update } from "@/actions/profile.actions";
+import type { Profile } from "@/services/profile.service";
 import { useAuth } from "@/contexts/auth-context";
 
 export function useProfile() {
@@ -12,7 +13,7 @@ export function useProfile() {
     refetch,
   } = useQuery({
     queryKey: ["profile"],
-    queryFn: profileService.get,
+    queryFn: () => profileService_get(),
     enabled: !!user && !authLoading,
   });
 
@@ -29,7 +30,7 @@ export function useUpdateProfile() {
 
   return useMutation({
     mutationFn: (updates: Partial<Pick<Profile, "nombre" | "rubro">>) =>
-      profileService.update(updates),
+      profileService_update(updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
     },

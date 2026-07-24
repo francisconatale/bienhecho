@@ -1,16 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { materialsService } from "@/services/materials.service";
-import { jobsService } from "@/services/jobs.service";
-import { clientsService } from "@/services/clients.service";;
+import { materialsService_getAll, materialsService_update } from "@/actions/materials.actions";
+import { jobsService_getAll } from "@/actions/jobs.actions";
+import { clientsService_getAll } from "@/actions/clients.actions";
 export function useShoppingList() {
   const queryClient = useQueryClient();
 
-  const { data: materiales = [], isLoading: isLoadingMaterials } = useQuery({ queryKey: ["materials"], queryFn: materialsService.getAll });
-  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
+  const { data: materiales = [], isLoading: isLoadingMaterials } = useQuery({ queryKey: ["materials"], queryFn: materialsService_getAll });
+  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll });
+  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService_getAll });
 
   const updateMaterialMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => materialsService.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => materialsService_update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["materials"] }),
   });
 

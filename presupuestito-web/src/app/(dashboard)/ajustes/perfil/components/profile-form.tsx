@@ -2,7 +2,7 @@
 
 import { useProfile } from "@/hooks/use-profile";
 import { useAuth } from "@/contexts/auth-context";
-import { profileService } from "@/services/profile.service";
+import { profileService_upsert } from "@/actions/profile.actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -21,7 +21,7 @@ export function ProfileForm() {
       const rubro = formData.get("rubro") as string;
       const numero_matricula = formData.get("numero_matricula") as string;
       const direccion = formData.get("direccion") as string;
-      await profileService.upsert({ nombre, rubro, numero_matricula, direccion });
+      await profileService_upsert({ nombre, rubro, numero_matricula, direccion });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });

@@ -4,19 +4,19 @@ import { VisitForm } from "./visit-form";
 import { Modal } from "@/components/ui/modal";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { jobsService } from "@/services/jobs.service";
-import { clientsService } from "@/services/clients.service";
-import { visitsService } from "@/services/visits.service";;
+import { jobsService_getAll } from "@/actions/jobs.actions";
+import { clientsService_getAll } from "@/actions/clients.actions";
+import { visitsService_create } from "@/actions/visits.actions";
 
 export function SmartSuggestions() {
   const queryClient = useQueryClient();
   const { suggestions } = useSmartScheduling();
-  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-  const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
+  const { data: jobs = [] } = useQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll });
+  const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsService_getAll });
   const [selectedSuggestion, setSelectedSuggestion] = useState<AgendaSuggestion | null>(null);
 
   const addVisitMutation = useMutation({
-    mutationFn: visitsService.create,
+    mutationFn: visitsService_create,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["visits"] }),
   });
 

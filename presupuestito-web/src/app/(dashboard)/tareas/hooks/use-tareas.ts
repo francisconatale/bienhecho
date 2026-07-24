@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
-import { tasksService } from "@/services/tasks.service";;
+import { tasksService_getCounts, tasksService_getResumen, tasksService_getPaginated, tasksService_update, tasksService_delete } from "@/actions/tasks.actions";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 import { useServerPagination } from "@/hooks/use-server-pagination";
@@ -20,13 +20,13 @@ export function useTareas() {
   // 1. Fetch counts
   const { data: counts, isLoading: isLoadingCounts } = useQuery({
     queryKey: ["tasks", "counts"],
-    queryFn: tasksService.getCounts,
+    queryFn: tasksService_getCounts,
   });
 
   // 2. Fetch resumen if needed
   const { data: resumen, isLoading: isLoadingResumen } = useQuery({
     queryKey: ["tasks", "resumen"],
-    queryFn: tasksService.getResumen,
+    queryFn: tasksService_getResumen,
     enabled: category === "resumen" && filter === "pendientes",
     placeholderData: keepPreviousData,
   });
@@ -34,7 +34,7 @@ export function useTareas() {
   // 3. Fetch paginated category if needed
   const { data: paginated, isLoading: isLoadingPaginated } = useQuery({
     queryKey: ["tasks", "paginated", filter, category, page, pageSize],
-    queryFn: () => tasksService.getPaginated(page, pageSize, filter, category !== "resumen" ? category : undefined),
+    queryFn: () => tasksService_getPaginated(page, pageSize, filter, category !== "resumen" ? category : undefined),
     enabled: category !== "resumen" || filter === "completadas",
     placeholderData: keepPreviousData,
   });
@@ -43,7 +43,7 @@ export function useTareas() {
   const isLoading = !hasAnyData && (isLoadingCounts || isLoadingResumen || isLoadingPaginated);
 
   const updateTaskMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => tasksService.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => tasksService_update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       // Invalidate dashboard counts/stats where used
@@ -52,7 +52,7 @@ export function useTareas() {
   });
 
   const removeTaskMutation = useMutation({
-    mutationFn: tasksService.delete,
+    mutationFn: tasksService_delete,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });

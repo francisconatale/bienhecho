@@ -3,8 +3,7 @@
 import { useState, useRef, useMemo, useEffect } from "react";
 import { Briefcase, Pencil, X, Check } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { jobsService } from "@/services/jobs.service";
-import { clientsService } from "@/services/clients.service";;
+import { jobsService_delete, jobsService_getPaginated } from "@/actions/jobs.actions";
 import { Job } from "@/types";
 import { useServerPagination } from "@/hooks/use-server-pagination";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
@@ -34,7 +33,7 @@ export function JobList() {
   const [ConfirmDialog, confirm] = useConfirm();
 
   const deleteJobMutation = useMutation({
-    mutationFn: (id: string) => jobsService.delete(id),
+    mutationFn: (id: string) => jobsService_delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
       toast.success("Trabajo eliminado correctamente");
@@ -70,7 +69,7 @@ export function JobList() {
 
   const { data, isLoading } = useQuery({ 
     queryKey: ["jobs", "paginated", page, pageSize, search], 
-    queryFn: () => jobsService.getPaginated(page, pageSize, search) 
+    queryFn: () => jobsService_getPaginated(page, pageSize, search) 
   });
 
   const jobs = data?.data || [];

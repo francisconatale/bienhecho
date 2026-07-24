@@ -7,7 +7,7 @@ import { TaskPhoto } from "@/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { PhotoUpload } from "./photo-upload";
 import { cn } from "@/lib/utils";
-import { taskPhotosService } from "@/services/task-photos.service";;
+import { taskPhotosService_getByTaskId, taskPhotosService_uploadFile, taskPhotosService_create, taskPhotosService_delete } from "@/actions/task-photos.actions";
 import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
 import { TareaPhotosSkeleton } from "@/components/ui/skeletons";
@@ -22,7 +22,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
   const queryClient = useQueryClient();
   const { data: photos = [], isLoading } = useQuery({
     queryKey: ["taskPhotos", tareaId],
-    queryFn: () => taskPhotosService.getByTaskId(tareaId),
+    queryFn: () => taskPhotosService_getByTaskId(tareaId),
   });
 
   const [showUploadForm, setShowUploadForm] = useState(false);
@@ -38,9 +38,9 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
   }) => {
     setIsSaving(true);
     try {
-      const publicUrl = await taskPhotosService.uploadFile(photoData.file);
+      const publicUrl = await taskPhotosService_uploadFile(photoData.file);
 
-      await taskPhotosService.create({
+      await taskPhotosService_create({
         tarea_id: photoData.tareaId,
         url: publicUrl,
         descripcion: photoData.descripcion,
@@ -66,7 +66,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
       action: async () => {
         try {
           const photo = photos.find(p => p.id === id);
-          await taskPhotosService.delete(id, photo?.url);
+          await taskPhotosService_delete(id, photo?.url);
           queryClient.invalidateQueries({ queryKey: ["taskPhotos", tareaId] });
         } catch (e) {
           console.error("Error deleting photo:", e);

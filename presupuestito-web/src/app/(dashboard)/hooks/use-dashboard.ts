@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { jobsService } from "@/services/jobs.service";
-import { visitsService } from "@/services/visits.service";;
+import { jobsService_getDashboardStats, jobsService_getPaginated } from "@/actions/jobs.actions";
+import { visitsService_getUpcoming } from "@/actions/visits.actions";
 import { useProfile } from "@/hooks/use-profile";
 import { useClientAlerts } from "@/app/(dashboard)/tareas/hooks/use-client-alerts";
 import { useServerPagination } from "@/hooks/use-server-pagination";
@@ -13,17 +13,17 @@ export function useDashboard() {
 
   const { data: stats, isLoading: isLoadingStats } = useQuery({
     queryKey: ["dashboardStats"],
-    queryFn: () => jobsService.getDashboardStats(),
+    queryFn: () => jobsService_getDashboardStats(),
   });
 
   const { data: upcomingVisits = [], isLoading: isLoadingVisits } = useQuery({
     queryKey: ["upcomingVisits"],
-    queryFn: () => visitsService.getUpcoming(),
+    queryFn: () => visitsService_getUpcoming(),
   });
 
   const { data: paginatedData, isLoading: isLoadingPaginated } = useQuery({
     queryKey: ["jobs", "paginated", page, pageSize, ""],
-    queryFn: () => jobsService.getPaginated(page, pageSize, ""),
+    queryFn: () => jobsService_getPaginated(page, pageSize, ""),
   });
 
   const { profile, isLoading: isLoadingProfile } = useProfile();

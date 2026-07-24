@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { visitsService } from "@/services/visits.service";
-import { jobsService } from "@/services/jobs.service";
-import { clientsService } from "@/services/clients.service";;
+import { visitsService_getAll, visitsService_create, visitsService_update, visitsService_delete } from "@/actions/visits.actions";
+import { jobsService_getAll } from "@/actions/jobs.actions";
+import { clientsService_getAll } from "@/actions/clients.actions";
 import { Visit, VisitStatus } from "@/types";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
@@ -24,22 +24,22 @@ export function formatDate(year: number, month: number, day: number) {
 
 export function useAgenda() {
   const queryClient = useQueryClient();
-  const { data: visits = [], isLoading: isLoadingVisits } = useQuery({ queryKey: ["visits"], queryFn: visitsService.getAll });
-  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
+  const { data: visits = [], isLoading: isLoadingVisits } = useQuery({ queryKey: ["visits"], queryFn: visitsService_getAll });
+  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll });
+  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService_getAll });
 
   const addVisitMutation = useMutation({
-    mutationFn: visitsService.create,
+    mutationFn: visitsService_create,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["visits"] }),
   });
 
   const updateVisitMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => visitsService.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => visitsService_update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["visits"] }),
   });
 
   const removeVisitMutation = useMutation({
-    mutationFn: visitsService.delete,
+    mutationFn: visitsService_delete,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["visits"] }),
   });
 

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { jobsService } from "@/services/jobs.service";
-import { clientsService } from "@/services/clients.service";
-import { tasksService } from "@/services/tasks.service";;
+import { jobsService_getAll } from "@/actions/jobs.actions";
+import { clientsService_getAll } from "@/actions/clients.actions";
+import { tasksService_getAll } from "@/actions/tasks.actions";
 export interface ClientAlert {
   id: string;
   jobId: string;
@@ -11,9 +11,9 @@ export interface ClientAlert {
 }
 
 export function useClientAlerts() {
-  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
-  const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
+  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll });
+  const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService_getAll });
+  const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ["tasks"], queryFn: tasksService_getAll });
 
   const alerts: ClientAlert[] = [];
 

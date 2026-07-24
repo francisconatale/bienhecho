@@ -5,7 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import { notFound, useRouter } from "next/navigation";
 import { useNavigationHistory } from "@/hooks/use-navigation-history";
 import { useQuery } from "@tanstack/react-query";
-import { clientsService } from "@/services/clients.service";;
+import { clientsService_getById } from "@/actions/clients.actions";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { MetricasCuenta } from "./components/metricas-cuenta";
 import { TransaccionesList } from "./components/transacciones-list";
@@ -16,7 +16,7 @@ export function CuentaCorrientePageClient({ id }: { id: string }) {
   const { popHistory } = useNavigationHistory();
   const { data: client, isLoading } = useQuery({
     queryKey: ["client", id],
-    queryFn: () => clientsService.getById(id),
+    queryFn: () => clientsService_getById(id),
   });
 
   if (isLoading) {

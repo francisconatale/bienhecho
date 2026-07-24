@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { JobStatus, Job } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { jobsService } from "@/services/jobs.service";;
+import { jobsService_update } from "@/actions/jobs.actions";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
 
@@ -36,7 +36,7 @@ interface JobStatusProps {
 export function JobStatusSelector({ job }: JobStatusProps) {
   const queryClient = useQueryClient();
   const updateJobMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => jobsService.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => jobsService_update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["jobs"] }),
   });
 

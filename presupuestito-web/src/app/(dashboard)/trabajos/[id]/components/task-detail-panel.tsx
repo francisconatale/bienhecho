@@ -3,9 +3,9 @@
 import React, { useState, useRef } from "react";
 import { ChevronLeft, Pencil, Check, CalendarDays, ClipboardList, Flame } from "lucide-react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { jobsService } from "@/services/jobs.service";
-import { tasksService } from "@/services/tasks.service";
-import { visitsService } from "@/services/visits.service";;
+import { jobsService_getAll } from "@/actions/jobs.actions";
+import { tasksService_getAll, tasksService_update } from "@/actions/tasks.actions";
+import { visitsService_getAll, visitsService_getVisitaTareas } from "@/actions/visits.actions";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { cn } from "@/lib/utils";
 import { MobilePageHeader } from "@/components/ui/mobile-page-header";
@@ -20,16 +20,16 @@ interface TaskDetailPanelProps {
 }
 
 export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetailPanelProps) {
-  const { data: jobs = [], isLoading: isJobsLoading } = useQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-  const { data: tasks = [], isLoading: isTasksLoading } = useQuery({ queryKey: ["tasks"], queryFn: tasksService.getAll });
-  const { data: visits = [], isLoading: isVisitsLoading } = useQuery({ queryKey: ["visits"], queryFn: visitsService.getAll });
-  const { data: visitaTareas = [], isLoading: isVisitaTareasLoading } = useQuery({ queryKey: ["visitTasks"], queryFn: visitsService.getVisitaTareas });
+  const { data: jobs = [], isLoading: isJobsLoading } = useQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll });
+  const { data: tasks = [], isLoading: isTasksLoading } = useQuery({ queryKey: ["tasks"], queryFn: tasksService_getAll });
+  const { data: visits = [], isLoading: isVisitsLoading } = useQuery({ queryKey: ["visits"], queryFn: visitsService_getAll });
+  const { data: visitaTareas = [], isLoading: isVisitaTareasLoading } = useQuery({ queryKey: ["visitTasks"], queryFn: visitsService_getVisitaTareas });
 
   const isLoading = isJobsLoading || isTasksLoading || isVisitsLoading || isVisitaTareasLoading;
 
   const queryClient = useQueryClient();
   const updateTaskMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => tasksService.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => tasksService_update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
   });
 

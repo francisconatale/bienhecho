@@ -4,7 +4,8 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { transaccionesService } from "@/services/transacciones.service";;
+import { transaccionesService_create } from "@/actions/transacciones.actions";
+
 interface AjusteManualFormProps {
   clienteId: string;
   onClose: () => void;
@@ -25,7 +26,7 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
 
   const queryClient = useQueryClient();
   const createMutation = useMutation({
-    mutationFn: transaccionesService.create,
+    mutationFn: transaccionesService_create,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["transactions"] }),
   });
 

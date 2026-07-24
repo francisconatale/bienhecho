@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { clientsService } from "@/services/clients.service";;
+import { clientsService_create, clientsService_update } from "@/actions/clients.actions";
 import { Client } from "@/types";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -27,13 +27,13 @@ export function useClientForm(
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
-    mutationFn: clientsService.create,
+    mutationFn: clientsService_create,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["clients"] }),
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Client> }) =>
-      clientsService.update(id, data),
+      clientsService_update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["clients"] }),
   });
 

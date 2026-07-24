@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { z } from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { materialsService } from "@/services/materials.service";;
+import { materialsService_getByJobId, materialsService_create, materialsService_update, materialsService_delete } from "@/actions/materials.actions";
 import { Material } from "@/types";
 import { toast } from "sonner";
 export const materialSchema = z.object({
@@ -17,7 +17,7 @@ export function useMaterials(trabajoId: string) {
 
   const { data: materiales = [], isLoading } = useQuery({
     queryKey: ["materials", trabajoId],
-    queryFn: () => materialsService.getByJobId(trabajoId),
+    queryFn: () => materialsService_getByJobId(trabajoId),
   });
 
   const totalMateriales = useMemo(() => {
@@ -25,18 +25,18 @@ export function useMaterials(trabajoId: string) {
   }, [materiales]);
 
   const addMutation = useMutation({
-    mutationFn: materialsService.create,
+    mutationFn: materialsService_create,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["materials", trabajoId] }),
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Material> }) =>
-      materialsService.update(id, data),
+      materialsService_update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["materials", trabajoId] }),
   });
 
   const removeMutation = useMutation({
-    mutationFn: materialsService.delete,
+    mutationFn: materialsService_delete,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["materials", trabajoId] }),
   });
 

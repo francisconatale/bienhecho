@@ -1,30 +1,30 @@
 import { useState, useCallback, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { jobsService } from "@/services/jobs.service";
-import { clientsService } from "@/services/clients.service";
-import { tasksService } from "@/services/tasks.service";
-import { cobrosService } from "@/services/cobros.service";;
+import { jobsService_getById, jobsService_update } from "@/actions/jobs.actions";
+import { clientsService_getById } from "@/actions/clients.actions";
+import { tasksService_getByJobId } from "@/actions/tasks.actions";
+import { cobrosService_getByJobId, cobrosService_create } from "@/actions/cobros.actions";
 import { useBudgetPDF } from '@/hooks/use-budget-pdf';
 
 export function useTrabajoDetail(id: string) {
   const queryClient = useQueryClient();
   const { data: job, isLoading: isLoadingJob } = useQuery({ 
     queryKey: ['job', id], 
-    queryFn: () => jobsService.getById(id) 
+    queryFn: () => jobsService_getById(id) 
   });
   const { data: client } = useQuery({ 
     queryKey: ['client', job?.cliente_id], 
-    queryFn: () => clientsService.getById(job!.cliente_id),
+    queryFn: () => clientsService_getById(job!.cliente_id),
     enabled: !!job?.cliente_id 
   });
   const { data: jobTasks = [] } = useQuery({ 
     queryKey: ['tasks', id], 
-    queryFn: () => tasksService.getByJobId(id) 
+    queryFn: () => tasksService_getByJobId(id) 
   });
-  const { data: cobros = [] } = useQuery({ queryKey: ['cobros', id], queryFn: () => cobrosService.getByJobId(id) });
+  const { data: cobros = [] } = useQuery({ queryKey: ['cobros', id], queryFn: () => cobrosService_getByJobId(id) });
 
   const updateJobMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => jobsService.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => jobsService_update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
       queryClient.invalidateQueries({ queryKey: ['job', id] });
@@ -32,7 +32,7 @@ export function useTrabajoDetail(id: string) {
   });
 
   const addCobroMutation = useMutation({
-    mutationFn: cobrosService.create,
+    mutationFn: cobrosService_create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cobros', id] });
       queryClient.invalidateQueries({ queryKey: ['jobs'] });

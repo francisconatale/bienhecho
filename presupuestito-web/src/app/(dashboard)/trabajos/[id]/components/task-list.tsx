@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Plus, ChevronDown } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { tasksService } from "@/services/tasks.service";;
+import { tasksService_getByJobId, tasksService_create } from "@/actions/tasks.actions";
 import { TaskItem } from "./task-item";
 import { TaskForm } from "./task-form";
 import { DataTable, type Column } from "@/components/ui/data-table";
@@ -21,10 +21,10 @@ export function TaskList({ jobId, isJobPaid, onSelectTask }: TaskListProps) {
   const queryClient = useQueryClient();
   const { data: jobTasksUnsorted = [], isLoading } = useQuery({ 
     queryKey: ["tasks", jobId], 
-    queryFn: () => tasksService.getByJobId(jobId) 
+    queryFn: () => tasksService_getByJobId(jobId) 
   });
   const createTaskMutation = useMutation({
-    mutationFn: tasksService.create,
+    mutationFn: tasksService_create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks", jobId] });
       queryClient.invalidateQueries({ queryKey: ["tasks"] }); // For global tasks list

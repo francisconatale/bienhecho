@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { clientsService } from "@/services/clients.service";
-import { jobsService } from "@/services/jobs.service";;
+import { clientsService_getAll } from "@/actions/clients.actions";
+import { jobsService_create } from "@/actions/jobs.actions";
 import { toast } from "sonner";
 export const questions = [
   { id: "cliente", question: "¿Para qué cliente es este trabajo?", hint: "Seleccioná un cliente existente" },
@@ -20,11 +20,11 @@ export function useNuevoTrabajo() {
 
   const { data: clients = [], isLoading: isLoadingClients } = useQuery({
     queryKey: ["clients"],
-    queryFn: clientsService.getAll,
+    queryFn: clientsService_getAll,
   });
 
   const createMutation = useMutation({
-    mutationFn: jobsService.create,
+    mutationFn: jobsService_create,
     onSuccess: (newJob) => {
       queryClient.setQueryData(["jobs"], (old: any) => old ? [newJob, ...old] : [newJob]);
       queryClient.invalidateQueries({ queryKey: ["jobs"] });

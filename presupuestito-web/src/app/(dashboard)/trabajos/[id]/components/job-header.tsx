@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { User, Calendar, MapPin, Pencil, Check, Trash2 } from "lucide-react";
 import { Job, Client } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { jobsService } from "@/services/jobs.service";;
+import { jobsService_update } from "@/actions/jobs.actions";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +19,7 @@ interface JobHeaderProps {
 export function JobHeader({ job, client, isEditing: externalEditing, onEditingChange, onHasChanges }: JobHeaderProps) {
   const queryClient = useQueryClient();
   const updateJobMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => jobsService.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => jobsService_update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["jobs"] }),
   });
 

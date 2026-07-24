@@ -4,11 +4,11 @@ import { generateBudgetPDF } from "@/lib/pdf/generate-budget";
 import type { PDFData } from "@/lib/pdf/generate-budget";
 import type { PDFParams } from "@/lib/pdf/types";
 import { useQueryClient } from "@tanstack/react-query";
-import { jobsService } from "@/services/jobs.service";
-import { clientsService } from "@/services/clients.service";
-import { tasksService } from "@/services/tasks.service";
-import { materialsService } from "@/services/materials.service";;
-import { storageService } from "@/services/storage.service";
+import { jobsService_getAll } from "@/actions/jobs.actions";
+import { clientsService_getAll } from "@/actions/clients.actions";
+import { tasksService_getByJobId } from "@/actions/tasks.actions";
+import { materialsService_getByJobId } from "@/actions/materials.actions";
+import { getPublicLogoUrl } from "@/lib/storage-utils";
 import { useProfile } from "@/hooks/use-profile";
 
 export function useBudgetPDF() {
@@ -16,11 +16,11 @@ export function useBudgetPDF() {
   const { profile } = useProfile();
 
   const getBudgetData = async (jobId: string): Promise<PDFData> => {
-    const jobs = await queryClient.fetchQuery({ queryKey: ["jobs"], queryFn: jobsService.getAll });
-    const clients = await queryClient.fetchQuery({ queryKey: ["clients"], queryFn: clientsService.getAll });
+    const jobs = await queryClient.fetchQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll });
+    const clients = await queryClient.fetchQuery({ queryKey: ["clients"], queryFn: clientsService_getAll });
     
-    const tasks = await queryClient.fetchQuery({ queryKey: ["tasks", jobId], queryFn: () => tasksService.getByJobId(jobId) });
-    const materiales = await queryClient.fetchQuery({ queryKey: ["materials", jobId], queryFn: () => materialsService.getByJobId(jobId) });
+    const tasks = await queryClient.fetchQuery({ queryKey: ["tasks", jobId], queryFn: () => tasksService_getByJobId(jobId) });
+    const materiales = await queryClient.fetchQuery({ queryKey: ["materials", jobId], queryFn: () => materialsService_getByJobId(jobId) });
 
     const job = jobs.find((j) => j.id === jobId);
     const client = clients.find((c) => c.id === job?.cliente_id);
@@ -46,7 +46,7 @@ export function useBudgetPDF() {
       cuit: "00-00000000-0",
       matricula: profile?.numero_matricula,
       trade: job.titulo || profile?.rubro || "Servicios Profesionales",
-      logo_url: profile?.logo_path ? storageService.getPublicUrl(profile.logo_path) : undefined,
+      logo_url: profile?.logo_path ? getPublicLogoUrl(profile.logo_path) : undefined,
     };
 
     return { client, job, tasks: jobTasks, materiales: jobMateriales, userProfile };
