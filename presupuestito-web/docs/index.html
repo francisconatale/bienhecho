@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentación - Bien Hecho</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --surface: #ffffff;
+            --background: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+        }
+
+        /* Layout */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 3rem 4rem;
+            max-width: 1000px;
+        }
+
+        /* Sidebar Nav */
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            display: block;
+            text-decoration: none;
+        }
+
+        .nav-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.4rem 0;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-link.sub {
+            padding-left: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Typography & Elements */
+        h1, h2, h3, h4 {
+            color: var(--text-main);
+            scroll-margin-top: 2rem;
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; letter-spacing: -0.02em; }
+        h2 { font-size: 1.75rem; margin-top: 3rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+        h3 { font-size: 1.25rem; margin-top: 2rem; margin-bottom: 1rem; }
+        h4 { font-size: 1rem; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        
+        p { margin-bottom: 1.25rem; color: var(--text-muted); }
+        
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1.5rem; color: var(--text-muted); }
+        li { margin-bottom: 0.5rem; }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #f1f5f9;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-main);
+        }
+
+        td {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        /* Code & Badges */
+        code {
+            background: #f1f5f9;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: ui-monospace, monospace;
+            font-size: 0.85em;
+            color: #db2777;
+        }
+
+        pre {
+            background: #1e293b;
+            color: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .priority-alta { background: #fee2e2; color: #dc2626; }
+        .priority-media { background: #fef9c3; color: #ca8a04; }
+        .priority-baja { background: #f3f4f6; color: #4b5563; }
+        
+        .badge-type { background: #e0e7ff; color: #4338ca; }
+
+        /* Blockquotes */
+        blockquote {
+            border-left: 4px solid var(--primary);
+            background: #eff6ff;
+            padding: 1rem 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+        }
+        
+        blockquote p {
+            margin: 0;
+            color: #1e40af;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <a href="#" class="sidebar-brand">Bien Hecho Docs</a>
+        
+        <div class="nav-group">
+            <div class="nav-title">Sprint 0: Definiciones</div>
+            <a href="#proposito" class="nav-link">Propósito y Problema</a>
+            <a href="#identidad" class="nav-link">Identidad y Voz</a>
+            <a href="#mvp-scope" class="nav-link">Scope del MVP</a>
+            <a href="#guia-estilo" class="nav-link">Guía de Estilo</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-title">Operaciones</div>
+            <a href="#dashboard" class="nav-link">Dashboard Operativo</a>
+            <a href="#flujos" class="nav-link">Flujos de Estado</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-title">Arquitectura</div>
+            <a href="#feature-based" class="nav-link">Feature-Based</a>
+            <a href="#state-management" class="nav-link">Gestión de Estado</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-title">Base de Datos</div>
+            <a href="#database-map" class="nav-link">Mapa de Relaciones</a>
+            <a href="#tabla-clientes" class="nav-link sub">Clientes</a>
+            <a href="#tabla-trabajos" class="nav-link sub">Trabajos</a>
+            <a href="#tabla-tareas" class="nav-link sub">Tareas</a>
+            <a href="#tabla-visitas" class="nav-link sub">Visitas</a>
+            <a href="#tabla-cobros" class="nav-link sub">Cobros</a>
+            <a href="#tabla-materiales" class="nav-link sub">Materiales</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <h1>Documentación del Sistema</h1>
+        <p>Bienvenido a la referencia técnica de Bien Hecho. Este documento consolida las reglas de negocio, modelos de datos, decisiones de diseño y las definiciones originales del Sprint 0.</p>
+
+        <!-- SPRINT 0 -->
+        <section id="proposito">
+            <h2>Sprint 0: Propósito y Definición</h2>
+            
+            <h3>¿Qué es Bien Hecho?</h3>
+            <p>Un gestor de presupuestos digital diseñado para profesionales independientes y pequeñas empresas de servicios (electricistas, plomeros, carpinteros, constructores, etc.) que actualmente generan presupuestos en papel o Excel.</p>
+            
+            <h3>Problema que resuelve</h3>
+            <ul>
+                <li>Presupuestos manuales en papel/Excel.</li>
+                <li>Dificultad para gestionar múltiples presupuestos de clientes.</li>
+                <li>Falta de profesionalismo en presentación y seguimiento.</li>
+                <li>Pérdida de tiempo en convertir un presupuesto a factura.</li>
+            </ul>
+        </section>
+
+        <section id="identidad">
+            <h3>Identidad de Marca y Voz</h3>
+            <p><strong>Propósito:</strong> Dignificar y simplificar el trabajo administrativo de los profesionales de oficio, devolviéndoles tiempo para lo que realmente saben hacer.</p>
+            
+            <ul>
+                <li><strong>Pragmatismo:</strong> Soluciones directas que funcionan en el momento.</li>
+                <li><strong>Cercanía:</strong> Soporte humano y lenguaje de igual a igual.</li>
+                <li><strong>Claridad:</strong> Cero tecnicismos innecesarios.</li>
+                <li><strong>Orgullo del Oficio:</strong> Respeto total por el trabajo manual y técnico.</li>
+            </ul>
+
+            <p><strong>Tono de voz:</strong> Práctica, honesta, directa y laburadora. Como un colega que te da un buen consejo. Se evitan palabras corporativas como "SaaS", "disrupción" o "sinergia".</p>
+        </section>
+
+        <section id="mvp-scope">
+            <h3>Objetivo y Scope del MVP</h3>
+            <ul>
+                <li>Crear presupuestos con items (cantidad, precio).</li>
+                <li>Exportar a PDF profesional y enviarlo al cliente.</li>
+                <li>Gestión básica de clientes.</li>
+                <li>Autenticación y cálculo automático de totales.</li>
+            </ul>
+            <p><em>Excluido del MVP inicial: Pagos online integrados, reportes detallados y control de stock complejo.</em></p>
+        </section>
+
+        <section id="guia-estilo">
+            <h2>Sprint 0: Guía de Estilo</h2>
+            <p>El diseño combina la <strong>robustez laboral</strong> con la <strong>limpieza de iOS (HIG)</strong>, priorizando áreas seguras y legibilidad en entornos de trabajo móviles.</p>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Token</th><th>Color Light</th><th>Color Dark</th><th>Uso</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>color-primary</code></td><td><span style="color:#00236F;font-weight:bold;">#00236F</span> (Azul)</td><td><span style="color:#3B82F6;font-weight:bold;">#3B82F6</span></td><td>Botones, navegación.</td></tr>
+                        <tr><td><code>color-accent</code></td><td><span style="color:#FFC329;font-weight:bold;">#FFC329</span> (Amarillo)</td><td><span style="color:#F59E0B;font-weight:bold;">#F59E0B</span></td><td>Alertas, atención.</td></tr>
+                        <tr><td><code>color-success</code></td><td><span style="color:#10B981;font-weight:bold;">#10B981</span> (Esmeralda)</td><td><span style="color:#34D399;font-weight:bold;">#34D399</span></td><td>Estados exitosos.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Tipografía principal orientada al sistema y la legibilidad (Dynamic Type), y PDF exportado con encabezados claros en el color primario.</p>
+        </section>
+
+        <!-- DASHBOARD Y FLUJOS -->
+        <section id="dashboard">
+            <h2>Tablero de Tareas (Operaciones)</h2>
+            <p>La sección <code>/tareas</code> se reestructuró para enfocarse puramente en la gestión operativa (Kanban/Lista), eliminando distracciones financieras o de materiales:</p>
+            <ul>
+                <li><strong>Vista Dedicada (Full-Width):</strong> El tablero ahora ocupa todo el ancho de la pantalla (`max-w-7xl`), ofreciendo espacio amplio para arrastrar y soltar tareas sin paneles laterales que interfieran.</li>
+                <li><strong>Alertas en el Home:</strong> Los resúmenes financieros ("Plata a facturar") y las alertas de cliente ("Presupuesto pendiente") se movieron a la pantalla principal (`/`), que es su lugar natural como panel de control global.</li>
+            </ul>
+            
+            <h3>Jerarquía y Acciones Rápidas</h3>
+            <p>Las tareas ya no son una lista plana, sino que están jerarquizadas. Ahora incorporan acciones directas (<em>In-Place</em>) para agilizar la gestión sin necesidad de entrar al detalle:</p>
+            <ul>
+                <li>
+                    <span class="badge priority-alta">Alta / Urgente</span> 
+                    <strong>Hoy:</strong> Tareas urgentes. Se pueden marcar rápidamente con el ícono de Fuego (🔥) en la lista.
+                </li>
+                <li>
+                    <span class="badge priority-media">Media</span> 
+                    <strong>Próximo:</strong> Tareas agendadas que siguen en la cola pero no son críticas hoy.
+                </li>
+                <li>
+                    <span class="badge priority-baja">Baja</span> 
+                    <strong>Sin apuro:</strong> Tareas de mantenimiento, detalles menores o acciones postergables.
+                </li>
+                <li>
+                    <strong>Eliminar (🗑️):</strong> Se pueden descartar tareas directamente desde el panel operativo.
+                </li>
+            </ul>
+
+            <p><strong>Resumen Financiero:</strong> El Dashboard calcula dinámicamente lo que se puede facturar sumando el campo <code>precio</code> de todas las tareas incompletas que pertenecen a trabajos en estado <code>presupuestado</code>.</p>
+
+            <h3>Paginado Local y Vistas Especializadas</h3>
+            <p>Para mantener el rendimiento y la estética, la vista principal "Resumen" (por defecto) muestra un <strong>límite estricto de 10 tareas pendientes combinadas</strong>. Si el volumen de tareas en una categoría excede las visualizadas en el resumen, el sistema habilita una transición a una <strong>Vista Especializada</strong> (ej. "Solo Tareas Urgentes"). Esta vista renderiza la totalidad de ítems para esa prioridad sin límite, manteniendo el contexto (botón "Volver al resumen") y ocultando filtros ajenos, gestionándose integramente a nivel estado local sin recarga ni cambio de ruta.</p>
+        </section>
+
+        <section id="flujos">
+            <h2>Flujos de Estado del Trabajo</h2>
+            <p>El ciclo de vida de un Trabajo sigue una progresión estricta:</p>
+            
+<pre>borrador ──(emitir presupuesto)──▶ presupuestado
+presupuestado ──(cobro registrado / marcar pagado)──▶ pagado</pre>
+
+            <ul>
+                <li><code>borrador</code>: Trabajo creado. Aún no se emitió presupuesto al cliente.</li>
+                <li><code>presupuestado</code>: Presupuesto emitido, pendiente de cobro.</li>
+                <li><code>pagado</code>: Estado terminal (solo lectura). No se puede modificar ni generar presupuesto sin advertencia.</li>
+            </ul>
+        </section>
+
+        <!-- DATABASE -->
+        <section id="database-map">
+            <h2>Base de Datos y Relaciones</h2>
+            
+            <blockquote>
+                <p><strong>Autoridad:</strong> Esta es la fuente de verdad para cualquier cambio que involucre tablas, relaciones o datos del backend. Los types del frontend deben respetar esta estructura.</p>
+            </blockquote>
+
+            <h3>Mapa de Relaciones</h3>
+<pre>CLIENTE (1) ──── (N) TRABAJO
+TRABAJO (1) ──── (N) TAREA
+TRABAJO (1) ──── (N) VISITA
+TRABAJO (1) ──── (N) COBRO
+TRABAJO (1) ──── (N) MATERIAL
+VISITA  (N) ──── (N) TAREA  → a través de VISITA_TAREAS</pre>
+        </section>
+
+        <section id="tabla-clientes">
+            <h3>Tabla: Clientes</h3>
+            <p>Base de todo el sistema. Datos de contacto del cliente.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Campo</th><th>Tipo</th><th>Nullable</th><th>Descripción</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>id</code></td><td><span class="badge badge-type">uuid PK</span></td><td>No</td><td>Identificador único</td></tr>
+                        <tr><td><code>nombre</code></td><td><span class="badge badge-type">string</span></td><td>No</td><td>Nombre completo o razón social</td></tr>
+                        <tr><td><code>telefono</code></td><td><span class="badge badge-type">string</span></td><td>No</td><td>Teléfono de contacto</td></tr>
+                        <tr><td><code>email</code></td><td><span class="badge badge-type">string</span></td><td>Sí</td><td>Email (opcional)</td></tr>
+                        <tr><td><code>direccion</code></td><td><span class="badge badge-type">string</span></td><td>No</td><td>Dirección principal</td></tr>
+                        <tr><td><code>notas</code></td><td><span class="badge badge-type">text</span></td><td>Sí</td><td>Notas libres sobre el cliente</td></tr>
+                        <tr><td><code>created_at</code></td><td><span class="badge badge-type">timestamp</span></td><td>No</td><td>Fecha de creación</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="tabla-trabajos">
+            <h3>Tabla: Trabajos</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Campo</th><th>Tipo</th><th>Nullable</th><th>Descripción</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>id</code></td><td><span class="badge badge-type">uuid PK</span></td><td>No</td><td>Identificador único</td></tr>
+                        <tr><td><code>cliente_id</code></td><td><span class="badge badge-type">uuid FK</span></td><td>No</td><td>Cliente al que pertenece</td></tr>
+                        <tr><td><code>titulo</code></td><td><span class="badge badge-type">string</span></td><td>No</td><td>Nombre descriptivo del trabajo</td></tr>
+                        <tr><td><code>presupuesto</code></td><td><span class="badge badge-type">decimal</span></td><td>No</td><td>Suma automática de precios de tareas</td></tr>
+                        <tr><td><code>estado</code></td><td><span class="badge badge-type">enum</span></td><td>No</td><td>Estado actual del trabajo</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4>Enum: Estado del Trabajo</h4>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Valor</th><th>Descripción</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>borrador</code></td><td>Trabajo creado, aún no se emitió presupuesto</td></tr>
+                        <tr><td><code>presupuestado</code></td><td>Presupuesto emitido, pendiente de cobro</td></tr>
+                        <tr><td><code>pagado</code></td><td>Estado terminal. Trabajo finalizado y cobrado totalmente</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="tabla-tareas">
+            <h3>Tabla: Tareas (y Gestión In-Place)</h3>
+            <p>Representa los ítems de trabajo. Como mejora reciente en la UI del Centro de Operaciones, las tareas ahora soportan <strong>acciones rápidas (in-place)</strong> sin necesidad de navegar al detalle del trabajo:</p>
+            <ul>
+                <li><strong>Marcar como Urgente:</strong> Mediante un ícono de fuego (🔥) se puede alternar el estado de <code>prioridad</code> a "alta".</li>
+                <li><strong>Eliminar Tarea:</strong> Mediante un ícono de papelera (🗑️) se permite descartar la tarea del listado con confirmación nativa.</li>
+                <li><strong>Marcar Completada:</strong> Checkbox interactivo a la izquierda.</li>
+            </ul>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Campo</th><th>Tipo</th><th>Nullable</th><th>Descripción</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>id</code></td><td><span class="badge badge-type">uuid PK</span></td><td>No</td><td>Identificador único</td></tr>
+                        <tr><td><code>trabajo_id</code></td><td><span class="badge badge-type">uuid FK</span></td><td>No</td><td>Trabajo al que pertenece</td></tr>
+                        <tr><td><code>descripcion</code></td><td><span class="badge badge-type">string</span></td><td>No</td><td>Qué es la tarea</td></tr>
+                        <tr><td><code>precio</code></td><td><span class="badge badge-type">decimal</span></td><td>Sí</td><td>Precio unitario. Si es null, NO se factura</td></tr>
+                        <tr><td><code>completada</code></td><td><span class="badge badge-type">boolean</span></td><td>No</td><td>Si la tarea ya fue realizada</td></tr>
+                        <tr><td><code>prioridad</code></td><td><span class="badge badge-type">enum</span></td><td>Sí</td><td>Nivel de urgencia de la tarea</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4>Enum: Prioridad</h4>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Valor</th><th>Descripción</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>alta</code></td><td>Urgente. Tareas que deben resolverse hoy.</td></tr>
+                        <tr><td><code>media</code></td><td>Próximo. Tareas agendadas en la cola de trabajo.</td></tr>
+                        <tr><td><code>baja</code></td><td>Sin apuro. Mantenimiento o detalles menores.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="tabla-visitas">
+            <h3>Tabla: Visitas</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Campo</th><th>Tipo</th><th>Nullable</th><th>Descripción</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>id</code></td><td><span class="badge badge-type">uuid PK</span></td><td>No</td><td>Identificador único</td></tr>
+                        <tr><td><code>trabajo_id</code></td><td><span class="badge badge-type">uuid FK</span></td><td>No</td><td>Trabajo al que corresponde</td></tr>
+                        <tr><td><code>fecha</code></td><td><span class="badge badge-type">date</span></td><td>No</td><td>Día de la visita</td></tr>
+                        <tr><td><code>estado</code></td><td><span class="badge badge-type">enum</span></td><td>No</td><td>Estado de la visita en campo</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4>Enum: Estado de la Visita</h4>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Valor</th><th>Descripción</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>planificada</code></td><td>Agendada, aún no fue realizada</td></tr>
+                        <tr><td><code>realizada</code></td><td>La visita ya se efectuó en campo</td></tr>
+                        <tr><td><code>cancelada</code></td><td>La visita fue suspendida o no se realizó</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="tabla-cobros">
+            <h3>Tabla: Cobros</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Campo</th><th>Tipo</th><th>Nullable</th><th>Descripción</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>id</code></td><td><span class="badge badge-type">uuid PK</span></td><td>No</td><td>Identificador único</td></tr>
+                        <tr><td><code>trabajo_id</code></td><td><span class="badge badge-type">uuid FK</span></td><td>No</td><td>Trabajo al que pertenece</td></tr>
+                        <tr><td><code>monto_cobrado</code></td><td><span class="badge badge-type">decimal</span></td><td>No</td><td>Monto recibido</td></tr>
+                        <tr><td><code>fecha_cobro</code></td><td><span class="badge badge-type">date</span></td><td>No</td><td>Fecha en que se cobró</td></tr>
+                        <tr><td><code>forma_pago</code></td><td><span class="badge badge-type">enum</span></td><td>Sí</td><td>Método utilizado para el pago</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4>Enum: Forma de Pago</h4>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Valor</th><th>Descripción</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>efectivo</code></td><td>Pago realizado en moneda física</td></tr>
+                        <tr><td><code>transferencia</code></td><td>Pago vía CBU/CVU o cuenta bancaria</td></tr>
+                        <tr><td><code>cheque</code></td><td>Pago diferido mediante cheque</td></tr>
+                        <tr><td><code>mercado_pago</code></td><td>Pago por billetera virtual o código QR</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="tabla-materiales">
+            <h3>Tabla: Materiales</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Campo</th><th>Tipo</th><th>Nullable</th><th>Descripción</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>id</code></td><td><span class="badge badge-type">uuid PK</span></td><td>No</td><td>Identificador único</td></tr>
+                        <tr><td><code>trabajo_id</code></td><td><span class="badge badge-type">uuid FK</span></td><td>No</td><td>Trabajo al que pertenece</td></tr>
+                        <tr><td><code>nombre_material</code></td><td><span class="badge badge-type">string</span></td><td>No</td><td>Nombre del material</td></tr>
+                        <tr><td><code>cantidad</code></td><td><span class="badge badge-type">decimal</span></td><td>No</td><td>Cantidad utilizada</td></tr>
+                        <tr><td><code>precio_unitario</code></td><td><span class="badge badge-type">decimal</span></td><td>No</td><td>Precio por unidad</td></tr>
+                        <tr><td><code>comprado</code></td><td><span class="badge badge-type">boolean</span></td><td>No</td><td>Si fue adquirido (lista de compras)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ARQUITECTURA -->
+        <section id="feature-based">
+            <h2>Arquitectura y Refactor (Feature-Based)</h2>
+            <p>El proyecto migró de páginas monolíticas a una estructura <strong>Feature-Based Architecture</strong> para mejorar la escalabilidad y mantenibilidad, definida durante el refactor del Sprint 0 de <code>.specify</code>.</p>
+            
+            <h3>1. Estructura por Dominios (Features)</h3>
+            <p>Las entidades principales (Clientes, Trabajos, Agenda, Tareas) residen en <code>src/features/</code> agrupando su propia lógica, hooks, tipos y componentes internos.</p>
+            <pre>src/features/trabajos/
+├── types.ts
+├── store.ts
+├── hooks/
+│   ├── use-materials.ts
+│   └── use-job-detail.ts
+└── components/
+    ├── trabajo-detail.tsx
+    ├── job-header.tsx
+    └── detail/
+        ├── sidebar-budget.tsx
+        └── pdf-dialog.tsx</pre>
+            
+            <h3>2. División de Tipos</h3>
+            <p>Se eliminó el monolito de tipos y se separó en archivos por dominio (<code>client.ts</code>, <code>job.ts</code>, <code>task.ts</code>) orquestados a través de un archivo index principal (barrel export) en <code>src/types/index.ts</code>.</p>
+        </section>
+
+        <section id="state-management">
+            <h2>Gestión de Estado (Zustand Slices)</h2>
+            <p>Para evitar un store global gigante y acoplado, el estado se divide en <strong>Slices independientes</strong> bajo <code>src/lib/store/slices/</code>.</p>
+            
+            <ul>
+                <li><strong>Slices por Entidad:</strong> <code>clients-slice.ts</code>, <code>jobs-slice.ts</code>, <code>tasks-slice.ts</code>.</li>
+                <li><strong>Cross-Slice Sync:</strong> La lógica en cascada (ej. actualizar una tarea y que recalcule el presupuesto total del trabajo) se maneja a través de un middleware especial (<code>cross-slice-sync.ts</code>).</li>
+                <li><strong>Compatibilidad:</strong> Se exporta todo unificado en un store principal para mantener retrocompatibilidad en la app.</li>
+            </ul>
+
+            <h3>Componentes Compartidos (UI)</h3>
+            <p>La duplicación de estilos y fondos complejos se consolida en componentes reutilizables como <code>&lt;AuroraBackground /&gt;</code> ubicado en <code>src/components/ui/</code>, el cual expone distintas variantes preconfiguradas ("layout", "ajustes", "perfil", "trabajo").</p>
+        </section>
+
+    </main>
+</body>
+</html>
