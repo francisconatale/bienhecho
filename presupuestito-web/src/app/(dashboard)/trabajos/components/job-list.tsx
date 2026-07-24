@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useMemo, useEffect } from "react";
+import { useState, useRef, useMemo, useEffect, useDeferredValue } from "react";
 import { Briefcase, Pencil, X, Check } from "lucide-react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { jobsService_delete, jobsService_getPaginated } from "@/actions/jobs.actions";
@@ -66,11 +66,12 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
 
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const deferredSearch = useDeferredValue(search);
 
   const { data, isLoading } = useQuery({ 
-    queryKey: ["jobs", "paginated", page, pageSize, search], 
-    queryFn: () => jobsService_getPaginated(page, pageSize, search),
-    initialData: page === 1 && search === "" ? initialData : undefined,
+    queryKey: ["jobs", "paginated", page, pageSize, deferredSearch], 
+    queryFn: () => jobsService_getPaginated(page, pageSize, deferredSearch),
+    initialData: page === 1 && deferredSearch === "" ? initialData : undefined,
     placeholderData: keepPreviousData,
   });
 
@@ -100,7 +101,7 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
   
   useEffect(() => {
     setPage(1);
-  }, [search]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [deferredSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const selected = jobs.find((j) => j.id === selectedId) || null;
 
