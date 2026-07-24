@@ -8,7 +8,12 @@ import { useProfile } from "@/hooks/use-profile";
 import { storageService } from "@/services/storage.service";
 import type { PDFData } from "@/lib/pdf/generate-budget";
 import type { PDFParams } from "@/lib/pdf/types";
-import { PDFPreviewModal } from "@/components/budgets/PDFPreviewModal";
+import dynamic from "next/dynamic";
+
+const PDFPreviewModal = dynamic(
+  () => import("@/components/budgets/PDFPreviewModal").then((m) => ({ default: m.PDFPreviewModal })),
+  { ssr: false }
+);
 
 import { ProgressBar } from "../[id]/components/progress-bar";
 import { TaskList } from "../[id]/components/task-list";

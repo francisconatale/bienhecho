@@ -32,7 +32,7 @@ function Blob({
     <div
       className={`${dark ? "hidden dark:block " : ""}${className} ${
         pulse ? "animate-pulse" : ""
-      } transform-gpu will-change-transform will-change-opacity`}
+      } transform-gpu`}
       style={pulse && pulseDuration ? { animationDuration: pulseDuration } : undefined}
     />
   );

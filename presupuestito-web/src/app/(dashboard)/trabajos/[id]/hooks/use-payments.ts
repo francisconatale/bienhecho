@@ -30,7 +30,7 @@ export function usePayments(trabajoId: string) {
   });
 
   const { data: job, isLoading: isLoadingJob } = useQuery({
-    queryKey: ["jobs", trabajoId],
+    queryKey: ["job", trabajoId],
     queryFn: () => jobsService.getById(trabajoId),
   });
 
@@ -52,7 +52,7 @@ export function usePayments(trabajoId: string) {
     mutationFn: cobrosService.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cobros", trabajoId] });
-      queryClient.invalidateQueries({ queryKey: ["jobs", trabajoId] }); // invalidate job to reflect state change if any
+      queryClient.invalidateQueries({ queryKey: ["job", trabajoId] }); // invalidate job to reflect state change if any
       queryClient.invalidateQueries({ queryKey: ["transacciones"] });
     },
   });
@@ -62,7 +62,7 @@ export function usePayments(trabajoId: string) {
       cobrosService.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cobros", trabajoId] });
-      queryClient.invalidateQueries({ queryKey: ["jobs", trabajoId] });
+      queryClient.invalidateQueries({ queryKey: ["job", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["transacciones"] });
     },
   });
@@ -71,7 +71,7 @@ export function usePayments(trabajoId: string) {
     mutationFn: cobrosService.delete,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cobros", trabajoId] });
-      queryClient.invalidateQueries({ queryKey: ["jobs", trabajoId] });
+      queryClient.invalidateQueries({ queryKey: ["job", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["transacciones"] });
     },
   });

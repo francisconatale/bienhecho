@@ -17,9 +17,9 @@ function NavItem({ icon, label, href, active }: NavItemProps) {
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-colors text-[13px] font-semibold tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 ${
+      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-semibold tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 ${
         active
-          ? "bg-primary/10 text-primary border border-primary/20 shadow-sm"
+          ? "bg-primary/10 text-primary border border-primary/20"
           : "text-on-surface-variant hover:bg-outline-variant/10 hover:text-on-surface border border-transparent"
       }`}
     >
