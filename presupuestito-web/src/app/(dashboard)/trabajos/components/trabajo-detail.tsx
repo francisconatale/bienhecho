@@ -265,6 +265,7 @@ export function TrabajoDetail({
             jobId={job.id}
             taskId={selectedTaskId}
             onBack={() => setSelectedTaskId(null)}
+            onDelete={() => setSelectedTaskId(null)}
           />
         </div>
       )}
@@ -289,6 +290,7 @@ export function TrabajoDetail({
                 jobId={job.id}
                 taskId={selectedTaskId}
                 onBack={() => setSelectedTaskId(null)}
+                onDelete={() => setSelectedTaskId(null)}
               />
             </div>
           ) : (

@@ -81,7 +81,7 @@ export function TareaItem({ task, onToggle, onTogglePriority, onDelete }: TareaI
               onClick={() => onDelete(task.id)}
               title="Eliminar tarea"
               aria-label={`Eliminar tarea: ${task.descripcion}`}
-              className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full text-on-surface-variant/30 hover:text-red-500 hover:bg-red-500/10 transition-colors"
+              className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full text-on-surface-variant/50 hover:text-red-500 hover:bg-red-500/10 transition-colors"
             >
               <Trash2 className="w-[18px] h-[18px]" />
             </button>

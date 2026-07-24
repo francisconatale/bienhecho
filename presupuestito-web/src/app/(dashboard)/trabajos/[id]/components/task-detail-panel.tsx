@@ -1,22 +1,25 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { ChevronLeft, Pencil, Check, CalendarDays, ClipboardList, Flame, Loader2 } from "lucide-react";
+import { ChevronLeft, Pencil, Check, CalendarDays, ClipboardList, Flame, Loader2, Trash2 } from "lucide-react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { jobsService_getAll } from "@/actions/jobs.actions";
-import { tasksService_getAll, tasksService_update } from "@/actions/tasks.actions";
+import { tasksService_getAll, tasksService_update, tasksService_delete } from "@/actions/tasks.actions";
 import { visitsService_getAll, visitsService_getVisitaTareas } from "@/actions/visits.actions";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { cn } from "@/lib/utils";
 import { MobilePageHeader } from "@/components/ui/mobile-page-header";
 import { TaskPhotos } from "./task-photos";
 import { TareaDetailSkeleton } from "@/components/ui/skeletons";
+import { useConfirm } from "@/hooks/use-confirm";
+import { toast } from "sonner";
 
 interface TaskDetailPanelProps {
   jobId: string;
   taskId: string;
   onBack: () => void;
   backLabel?: string;
+  onDelete?: () => void;
 }
 
 export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetailPanelProps) {
@@ -41,6 +44,30 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
       });
     },
   });
+
+  const removeTaskMutation = useMutation({
+    mutationFn: tasksService_delete,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      toast.success("Tarea eliminada");
+      onDelete?.();
+    },
+  });
+
+  const [ConfirmDialog, confirm] = useConfirm();
+
+  const handleDelete = () => {
+    if (!task) return;
+    confirm({
+      title: "Eliminar tarea",
+      description: `¿Estás seguro de eliminar "${task.descripcion}"? Esta acción no se puede deshacer.`,
+      confirmText: "Eliminar",
+      variant: "danger",
+      action: async () => {
+        await removeTaskMutation.mutateAsync(task.id);
+      },
+    });
+  };
 
   const isTogglingComplete = updateTaskMutation.isPending && updateTaskMutation.variables?.data?.completada !== undefined;
   const isTogglingPriority = updateTaskMutation.isPending && updateTaskMutation.variables?.data?.prioridad !== undefined;
@@ -120,6 +147,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
           onEditStart={() => setIsEditing(true)}
           onCancel={handleCancel}
           onSave={handleSave}
+          onDelete={onDelete ? handleDelete : undefined}
         />
       </div>
 
@@ -143,13 +171,24 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
               <h1 className="text-xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter cursor-default select-none flex-1">
                 {task.descripcion}
               </h1>
-              <button
-                onClick={() => setIsEditing(true)}
-                className="hidden md:flex p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-primary hover:bg-primary/10 transition-colors transition-transform opacity-0 group-hover:opacity-100 active:scale-95 shrink-0"
-                title="Editar tarea"
-              >
-                <Pencil className="w-4 h-4" />
-              </button>
+              <div className="hidden md:flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-primary hover:bg-primary/10 transition-colors active:scale-95"
+                  title="Editar tarea"
+                >
+                  <Pencil className="w-4 h-4" />
+                </button>
+                {onDelete && (
+                  <button
+                    onClick={handleDelete}
+                    className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/40 hover:text-red-500 hover:bg-red-500/10 transition-colors active:scale-95"
+                    title="Eliminar tarea"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
           ) : (
             <textarea
@@ -340,6 +379,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
           </div>
         </div>
       </main>
+      <ConfirmDialog />
     </>
   );
 }

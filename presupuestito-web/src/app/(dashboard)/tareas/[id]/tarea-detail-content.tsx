@@ -38,6 +38,7 @@ export function TareaDetailContent({ id }: TareaPageClientProps) {
       taskId={task.id}
       onBack={() => router.push("/tareas")}
       backLabel="Tareas"
+      onDelete={() => router.push("/tareas")}
     />
   );
 }
