@@ -26,7 +26,7 @@
 **Implementation**:
 ```typescript
 // Estructura de la DB
-const DB_NAME = 'presupuestito-photos';
+const DB_NAME = 'bien-hecho-photos';
 const DB_VERSION = 1;
 const STORE_NAME = 'task-photos';
 

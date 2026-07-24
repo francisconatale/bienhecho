@@ -167,7 +167,7 @@ export function BudgetPreview({ data, params }: BudgetPreviewProps) {
       {/* Footer */}
       <div style={{ background: strategy.cssFooterBackground }} className="px-4 py-3 flex items-center justify-between mt-2">
         <div style={{ color: rgba(colors.onPrimary, 0.7) }} className="text-[10px]">
-          presupuestito.com
+          bien-hecho.com
         </div>
         <div className="text-right">
           <div style={{ color: rgba(colors.onPrimary, 0.7) }} className="text-[10px] font-bold tracking-widest uppercase">

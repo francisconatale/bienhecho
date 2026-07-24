@@ -1,6 +1,6 @@
 # Implementation Plan: Gestión de Cobros y Materiales
 
-Este plan detalla los pasos de implementación para la nueva funcionalidad en la aplicación de Presupuestito, basado en la arquitectura existente y las reglas establecidas en `AGENTS.md`, `GEMINI.md` y `database_relations.md`.
+Este plan detalla los pasos de implementación para la nueva funcionalidad en la aplicación de Bien Hecho, basado en la arquitectura existente y las reglas establecidas en `AGENTS.md`, `GEMINI.md` y `database_relations.md`.
 
 ## Fase 1: Actualización del Estado Global (Zustand store)
 

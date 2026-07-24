@@ -1,4 +1,4 @@
-# Design Memory — Presupuestito
+# Design Memory — Bien Hecho
 
 Decisiones de diseño documentadas en orden cronológico. Leer antes de hacer cambios visuales.
 

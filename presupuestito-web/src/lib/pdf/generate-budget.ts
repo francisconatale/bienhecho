@@ -330,7 +330,7 @@ export async function generateBudgetPDF(
   doc.setFont("Inter", "normal");
   doc.setFontSize(LAYOUT.dateFontSize);
   doc.setTextColor(230, 245, 235);
-  doc.text("presupuestito.com", margin, finalFooterY + footerHeight - 10);
+  doc.text("bien-hecho.com", margin, finalFooterY + footerHeight - 10);
   
   doc.setFont("Inter", "bold");
   doc.setFontSize(LAYOUT.totalLabelFontSize);
@@ -348,7 +348,7 @@ export async function generateBudgetPDF(
   doc.setProperties({
     title: fileName,
     subject: `Presupuesto para ${client.nombre}`,
-    creator: "Presupuestito"
+    creator: "Bien Hecho"
   });
   
   const pdfBlobUrl = doc.output("bloburl");

@@ -320,7 +320,7 @@ import { TaskList } from "@/features/tareas/components/task-list";
 import { MasterDetailSkeleton } from "@/components/ui/master-detail-skeleton";
 
 export const metadata: Metadata = {
-  title: "Presupuestito - Tareas",
+  title: "Bien Hecho - Tareas",
   description: "Seguimiento de tareas de todos tus trabajos.",
 };
 

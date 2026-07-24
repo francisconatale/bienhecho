@@ -10,13 +10,13 @@
   Follow-up TODOs: none
 -->
 
-# Presupuestito Constitution
+# Bien Hecho Constitution
 
 ## Core Principles
 
 ### I. Simplicity First (MVP Scope)
 
-Presupuestito is a tool for a single freelancer or small employer.
+Bien Hecho is a tool for a single freelancer or small employer.
 Every feature MUST justify its existence against real daily workflow needs.
 No ERP complexity. No multi-tenant abstractions. No premature optimization.
 
@@ -33,7 +33,7 @@ jobs and invoices from their phone or laptop. Simplicity is the product.
 
 ### II. Data Integrity for Financial Records
 
-Presupuestito handles budgets, task pricing, and invoices.
+Bien Hecho handles budgets, task pricing, and invoices.
 Financial accuracy is non-negotiable.
 
 - All monetary values MUST use `decimal` (Prisma `Decimal`) — never
@@ -153,7 +153,7 @@ No new runtime dependencies without explicit rationale.
 ## Governance
 
 This constitution is the authoritative reference for architectural
-decisions in the Presupuestito project. All implementation plans and
+decisions in the Bien Hecho project. All implementation plans and
 specifications MUST comply with these principles.
 
 - **Amendments**: Any change to this constitution MUST be documented

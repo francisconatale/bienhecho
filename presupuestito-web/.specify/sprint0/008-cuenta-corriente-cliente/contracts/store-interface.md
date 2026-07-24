@@ -173,7 +173,7 @@ Called once on store initialization via `persist`'s `onRehydrateStorage`.
 
 **Algorithm:**
 ```
-1. Check localStorage flag "presupuestito-cc-migrated-v1"
+1. Check localStorage flag "bien-hecho-cc-migrated-v1"
 2. If already migrated, return
 3. Get all presupuestado jobs → create cargo for each
 4. Get all cobros → create abono for each (skip if already covered by a job cargo? No, include all)

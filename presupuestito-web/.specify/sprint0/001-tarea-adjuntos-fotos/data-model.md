@@ -56,7 +56,7 @@ interface StoredPhoto {
 }
 ```
 
-**Database**: `presupuestito-photos`
+**Database**: `bien-hecho-photos`
 **Object Store**: `task-photos`
 **Index**: `tarea_id` (para queries por tarea)
 

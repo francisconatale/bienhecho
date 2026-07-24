@@ -75,7 +75,7 @@ En elementos `<span>`, `<p>`, `<div>` que muestran datos sin interacción, agreg
 Elementos interactivos (`<button>`, `<a>`, `<div onClick>`) usan `cursor-pointer`.
 
 ## Regla: Documentación Post-Implement (.specify)
-Al finalizar la etapa `implement` del flujo `.specify`, actualizar las secciones relevantes en `/home/francisco/Software/presupuestito/index.html` antes de dar la tarea por terminada.
+Al finalizar la etapa `implement` del flujo `.specify`, actualizar las secciones relevantes en `/home/francisco/Software/bien-hecho/index.html` antes de dar la tarea por terminada.
 
 ## Regla: Subtablas para Enumerados (Enums) en Documentación
 Al documentar modelos de datos (en `database_relations.md` o `index.html`), cuando un campo represente un conjunto de valores limitados:

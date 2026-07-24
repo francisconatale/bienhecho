@@ -1,6 +1,6 @@
 # Implementation Plan: Paginado local y filtrado de tareas por estado
 
-**Branch**: `010-paginado-local-filtrado` | **Date**: 2026-06-29 | **Spec**: [spec.md](file:///home/francisco/Software/presupuestito/presupuestito-web/specs/010-paginado-local-filtrado/spec.md)
+**Branch**: `010-paginado-local-filtrado` | **Date**: 2026-06-29 | **Spec**: [spec.md](file:///home/francisco/Software/bien-hecho/bien-hecho-web/specs/010-paginado-local-filtrado/spec.md)
 
 **Input**: Feature specification from `specs/010-paginado-local-filtrado/spec.md`
 

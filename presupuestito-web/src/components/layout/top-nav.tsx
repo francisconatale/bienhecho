@@ -2,6 +2,7 @@
 
 import { LayoutDashboard, Users, Settings, Wallet, CheckSquare, Calendar, Briefcase } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 interface NavItemProps {
@@ -48,11 +49,11 @@ export function TopNav() {
     <nav aria-label="Navegación principal" className="hidden md:flex sticky top-0 z-50 h-16 items-center justify-between border-b border-outline-variant/10 bg-surface px-6 transition-all">
       <div className="flex items-center gap-6">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 rounded-[12px] bg-primary flex items-center justify-center text-white shadow-sm shadow-primary/20 group-hover:scale-105 transition-transform">
-            <Wallet className="w-4 h-4" strokeWidth={2.5} />
+          <div className="w-8 h-8 group-hover:scale-105 transition-transform flex items-center justify-center">
+            <Image src="/icon.svg" alt="Bien Hecho Logo" width={32} height={32} />
           </div>
           <span className="font-bold text-base tracking-tight text-on-surface">
-            Presupuestito
+            Bien Hecho
           </span>
         </Link>
 

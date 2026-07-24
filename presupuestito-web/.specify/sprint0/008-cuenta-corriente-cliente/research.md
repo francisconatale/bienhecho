@@ -67,8 +67,8 @@ On first load after deployment, generate initial transactions from existing data
 
 ### Migration Flag
 ```typescript
-// In localStorage, alongside the presupuestito-store persist key
-const MIGRATION_KEY = "presupuestito-cc-migrated-v1";
+// In localStorage, alongside the bien-hecho-store persist key
+const MIGRATION_KEY = "bien-hecho-cc-migrated-v1";
 ```
 
 ### Migration Steps

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { LayoutDashboard, Users, Settings, Wallet, ChevronLeft, ChevronRight, CheckSquare, Calendar, Briefcase } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 interface NavItemProps {
@@ -67,11 +68,11 @@ export function Sidebar() {
 
       <div className={`p-6 pb-2 flex items-center ${isExpanded ? "justify-start" : "justify-center"}`}>
         <Link href="/" className="flex items-center gap-3 group overflow-hidden">
-          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white shadow-sm shadow-primary/20 group-hover:scale-105 transition-transform shrink-0">
-            <Wallet className="w-5 h-5" strokeWidth={2.5} />
+          <div className="w-9 h-9 group-hover:scale-105 transition-transform shrink-0 flex items-center justify-center">
+            <Image src="/icon.svg" alt="Bien Hecho Logo" width={36} height={36} />
           </div>
           <span className={`font-bold text-lg tracking-tight text-on-surface whitespace-nowrap transition-all duration-300 ${isExpanded ? 'opacity-100 max-w-[150px]' : 'opacity-0 max-w-0'}`}>
-            Presupuestito
+            Bien Hecho
           </span>
         </Link>
       </div>
