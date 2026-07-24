@@ -289,7 +289,7 @@ export function TrabajoDetail({
       )}
       {/* View overlays (mobile) */}
       {!selectedTaskId && viewParam && (
-        <div className="fixed inset-0 z-[60] bg-surface overflow-y-auto md:hidden pt-16 px-4 pb-8">
+        <div className="fixed inset-0 z-[60] bg-transparent overflow-y-auto md:hidden pt-16 px-4 pb-8">
           <MobilePageHeader 
             onBack={handleViewClose} 
             isEditing={false} 
