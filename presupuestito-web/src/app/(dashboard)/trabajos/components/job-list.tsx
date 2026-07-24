@@ -144,10 +144,10 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
               onSave={() => {
                 document.querySelector<HTMLButtonElement>('[data-job-header-save]')?.click();
               }}
-              onDelete={job.estado === "borrador" ? () => {
+              onDelete={() => {
                 confirm({
                   title: "Eliminar Trabajo",
-                  description: `¿Estás seguro de que querés eliminar el trabajo "${job.titulo}"? Esta acción no se puede deshacer.`,
+                  description: `¿Estás seguro de que querés eliminar el trabajo "${job.titulo}"? Todas sus tareas, visitas y materiales se borrarán, pero los cobros y transacciones registrados se conservarán.`,
                   confirmText: "Eliminar",
                   variant: "danger",
                   action: async () => {
@@ -157,7 +157,7 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
                     }
                   }
                 });
-              } : undefined}
+              }}
             />
           );
         }}

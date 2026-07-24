@@ -185,7 +185,7 @@ export function TrabajoDetail({
     if (!job) return;
     confirm({
       title: "Eliminar Trabajo",
-      description: `¿Estás seguro de que querés eliminar el trabajo "${job.titulo}"? Esta acción no se puede deshacer.`,
+      description: `¿Estás seguro de que querés eliminar el trabajo "${job.titulo}"? Todas sus tareas, visitas y materiales se borrarán, pero los cobros y transacciones registrados se conservarán.`,
       confirmText: "Eliminar",
       variant: "danger",
       action: async () => {
@@ -201,10 +201,16 @@ export function TrabajoDetail({
     });
   }, [confirm, job, queryClient, router, isEmbedded, onBack]);
 
-  // Expose delete handler for external calls via ref if needed, but we removed event bus.
-  // Instead, the parent should trigger it or handle it.
-  // We'll leave it attached to a known window function for legacy or use a ref,
-  // but since we want to remove the event bus, we remove it completely.
+  useEffect(() => {
+    const handleCustomDelete = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail === job?.id) {
+        handleDeleteJob();
+      }
+    };
+    document.addEventListener("delete-job", handleCustomDelete);
+    return () => document.removeEventListener("delete-job", handleCustomDelete);
+  }, [job?.id, handleDeleteJob]);
 
   const handleEmitPresupuesto = useCallback(() => { doGeneratePDF(true); }, [doGeneratePDF]);
   const handleGuardarPdf = useCallback(() => { doGeneratePDF(false); }, [doGeneratePDF]);

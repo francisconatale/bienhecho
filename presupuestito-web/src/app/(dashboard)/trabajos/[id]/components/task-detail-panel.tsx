@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { ChevronLeft, Pencil, Check, CalendarDays, ClipboardList, Flame } from "lucide-react";
+import { ChevronLeft, Pencil, Check, CalendarDays, ClipboardList, Flame, Loader2 } from "lucide-react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { jobsService_getAll } from "@/actions/jobs.actions";
 import { tasksService_getAll, tasksService_update } from "@/actions/tasks.actions";
@@ -30,8 +30,20 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
   const queryClient = useQueryClient();
   const updateTaskMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => tasksService_update(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+    onSuccess: (updatedTask) => {
+      queryClient.setQueryData(["tasks", jobId], (old: any[] | undefined) => {
+        if (!old) return old;
+        return old.map(t => t.id === updatedTask.id ? updatedTask : t);
+      });
+      queryClient.setQueryData(["tasks"], (old: any[] | undefined) => {
+        if (!old) return old;
+        return old.map(t => t.id === updatedTask.id ? updatedTask : t);
+      });
+    },
   });
+
+  const isTogglingComplete = updateTaskMutation.isPending && updateTaskMutation.variables?.data?.completada !== undefined;
+  const isTogglingPriority = updateTaskMutation.isPending && updateTaskMutation.variables?.data?.prioridad !== undefined;
 
   const job = jobs.find((j) => j.id === jobId);
   const task = tasks.find((t) => t.id === taskId && t.trabajo_id === jobId);
@@ -152,12 +164,14 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mt-4 md:mt-8">
             <button
-              onClick={() => !isEditing && updateTaskMutation.mutateAsync({ id: task.id, data: { completada: !task.completada }})}
+              onClick={() => !isEditing && !isTogglingComplete && updateTaskMutation.mutateAsync({ id: task.id, data: { completada: !task.completada }})}
+              disabled={isTogglingComplete}
               className={cn(
                 "relative overflow-hidden p-4 md:p-5 rounded-xl text-left transition-[background-color,border-color,box-shadow] duration-300 flex flex-col gap-2 group select-none",
                 task.completada
                   ? "bg-primary/10 hover:bg-primary/15 border border-primary/20 shadow-inner"
-                  : "bg-surface/40 dark:bg-surface/10 hover:bg-surface/60 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-lg"
+                  : "bg-surface/40 dark:bg-surface/10 hover:bg-surface/60 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-lg",
+                isTogglingComplete && "opacity-70 cursor-wait"
               )}
             >
               <span className="relative z-10 text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">
@@ -172,7 +186,12 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
                       : "border-outline-variant/30 group-hover:border-primary/50 bg-surface/50"
                   )}
                 >
-                  {task.completada && <Check className="w-4 h-4 text-white" strokeWidth={4} />}
+                  {isTogglingComplete
+                    ? <Loader2 className={cn("w-4 h-4 animate-spin", task.completada ? "text-white" : "text-primary")} strokeWidth={3} />
+                    : task.completada
+                      ? <Check className="w-4 h-4 text-white" strokeWidth={4} />
+                      : null
+                  }
                 </div>
                 <span className={cn(
                   "text-sm md:text-xl font-bold tracking-tight transition-colors duration-300",
@@ -185,17 +204,19 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
 
             <button
               onClick={() => {
-                if (isEditing) return;
+                if (isEditing || isTogglingPriority) return;
                 const next = task.prioridad === "alta" ? "baja" : task.prioridad === "media" ? "alta" : "media";
                 updateTaskMutation.mutateAsync({ id: task.id, data: { prioridad: next }});
               }}
+              disabled={isTogglingPriority}
               className={cn(
                 "relative overflow-hidden p-4 md:p-5 rounded-xl text-left transition-[background-color,border-color,box-shadow] duration-300 flex flex-col gap-2 group select-none",
                 task.prioridad === "alta"
                   ? "bg-orange-500/10 hover:bg-orange-500/15 border border-orange-500/20 shadow-inner"
                   : task.prioridad === "media"
                   ? "bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 shadow-inner"
-                  : "bg-surface/40 dark:bg-surface/10 hover:bg-surface/60 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-lg"
+                  : "bg-surface/40 dark:bg-surface/10 hover:bg-surface/60 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-lg",
+                isTogglingPriority && "opacity-70 cursor-wait"
               )}
             >
               <span className={cn(
@@ -215,7 +236,10 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel }: TaskDetail
                       : "border-outline-variant/30 group-hover:border-orange-500/50 bg-surface/50 text-on-surface-variant/30 group-hover:text-orange-500/50"
                   )}
                 >
-                  <Flame className={cn("w-4 h-4", task.prioridad === "alta" || task.prioridad === "media" ? "text-white" : "fill-current")} strokeWidth={task.prioridad === "alta" ? 3 : 2} />
+                  {isTogglingPriority
+                    ? <Loader2 className={cn("w-4 h-4 animate-spin", task.prioridad ? "text-white" : "text-orange-500/50")} strokeWidth={3} />
+                    : <Flame className={cn("w-4 h-4", task.prioridad === "alta" || task.prioridad === "media" ? "text-white" : "fill-current")} strokeWidth={task.prioridad === "alta" ? 3 : 2} />
+                  }
                 </div>
                 <span className={cn(
                   "text-sm md:text-xl font-bold tracking-tight transition-colors duration-300 capitalize",

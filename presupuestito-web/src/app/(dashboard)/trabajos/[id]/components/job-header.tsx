@@ -195,15 +195,13 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
                   <Pencil className="w-4 h-4" />
                 </button>
               )}
-              {job.estado === "borrador" && (
-                <button
-                  onClick={() => document.dispatchEvent(new CustomEvent('delete-job', { detail: job.id }))}
-                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-red-500 hover:bg-red-500/10 transition-colors transition-transform hidden md:flex active:scale-95 shrink-0 cursor-pointer"
-                  title="Eliminar trabajo"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              )}
+              <button
+                onClick={() => document.dispatchEvent(new CustomEvent('delete-job', { detail: job.id }))}
+                className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-red-500 hover:bg-red-500/10 transition-colors transition-transform hidden md:flex active:scale-95 shrink-0 cursor-pointer"
+                title="Eliminar trabajo"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
             </div>
           </div>
 

@@ -25,7 +25,11 @@ export function TaskList({ jobId, isJobPaid, onSelectTask }: TaskListProps) {
   });
   const createTaskMutation = useMutation({
     mutationFn: tasksService_create,
-    onSuccess: () => {
+    onSuccess: (newTask) => {
+      queryClient.setQueryData(["tasks", jobId], (old: Task[] | undefined) => {
+        if (!old) return [newTask];
+        return [...old, newTask];
+      });
       queryClient.invalidateQueries({ queryKey: ["tasks", jobId] });
       queryClient.invalidateQueries({ queryKey: ["tasks"] }); // For global tasks list
     },

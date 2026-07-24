@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Trash2, Pencil } from "lucide-react";
+import { Check, Trash2, Pencil, Loader2 } from "lucide-react";
 import { Task } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { tasksService_update, tasksService_delete } from "@/actions/tasks.actions";
@@ -30,12 +30,24 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
 
   const updateTaskMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => tasksService_update(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+    onSuccess: (updatedTask) => {
+      queryClient.setQueryData(["tasks", jobId], (old: Task[] | undefined) => {
+        if (!old) return old;
+        return old.map(t => t.id === updatedTask.id ? updatedTask : t);
+      });
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
   });
 
   const removeTaskMutation = useMutation({
     mutationFn: tasksService_delete,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+    onSuccess: (_, deletedId) => {
+      queryClient.setQueryData(["tasks", jobId], (old: Task[] | undefined) => {
+        if (!old) return old;
+        return old.filter(t => t.id !== deletedId);
+      });
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
   });
 
   const handleToggleComplete = async () => {
@@ -67,6 +79,7 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
           {/* Checkbox */}
           <button
             onClick={handleToggleComplete}
+            disabled={updateTaskMutation.isPending}
             role="checkbox"
             aria-checked={task.completada}
             aria-label={`Marcar tarea "${task.descripcion}" como ${task.completada ? "pendiente" : "completada"}`}
@@ -74,10 +87,15 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
               "relative z-10 w-5 h-5 rounded-[6px] border-[2px] flex items-center justify-center shrink-0 transition-colors transition-transform duration-300 active:scale-75",
               task.completada
                 ? "bg-primary border-primary shadow-[0_0_8px_rgba(61,139,110,0.4)]"
-                : "border-outline-variant/40 group-hover:border-primary/50 bg-transparent"
+                : "border-outline-variant/40 group-hover:border-primary/50 bg-transparent",
+              updateTaskMutation.isPending && "opacity-50 cursor-not-allowed"
             )}
           >
-            {task.completada && <Check className="w-3 h-3 text-white" strokeWidth={4} />}
+            {updateTaskMutation.isPending ? (
+              <Loader2 className={cn("w-3 h-3 animate-spin", task.completada ? "text-white" : "text-primary")} strokeWidth={4} />
+            ) : task.completada ? (
+              <Check className="w-3 h-3 text-white" strokeWidth={4} />
+            ) : null}
           </button>
 
           {/* Content */}
