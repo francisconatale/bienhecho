@@ -49,7 +49,7 @@ export function ColorPicker({ color, onChange, className = "" }: ColorPickerProp
       </button>
 
       {isOpen && (
-        <div className="absolute top-12 left-0 z-50 shadow-xl rounded-xl overflow-hidden border border-outline-variant/20 bg-surface p-3 animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute bottom-12 md:bottom-auto md:top-12 right-0 sm:left-0 sm:right-auto z-50 shadow-xl rounded-xl overflow-hidden border border-outline-variant/20 bg-surface p-3 animate-in fade-in zoom-in-95 duration-200">
           <HexColorPicker color={color} onChange={onChange} />
           
           <div className="mt-3 flex gap-2">

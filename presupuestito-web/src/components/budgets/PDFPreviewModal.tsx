@@ -45,7 +45,7 @@ export function PDFPreviewModal({ data, onDownload, onCancel, loading = false }:
     <Modal isOpen={true} onClose={onCancel} title="Personalizar PDF" position="center">
       <div className="flex flex-col gap-4">
         {/* Controls */}
-        <div className="flex items-center gap-6 flex-wrap">
+        <div className="flex items-center gap-6 flex-wrap order-2 md:order-1 pt-2 md:pt-0 border-t border-outline-variant/15 md:border-0">
           <div className="flex items-center gap-2">
             <label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">
               Modo
@@ -99,14 +99,14 @@ export function PDFPreviewModal({ data, onDownload, onCancel, loading = false }:
         </div>
 
         {/* Preview */}
-        <div className="border border-outline-variant/20 rounded-xl overflow-hidden shadow-sm">
+        <div className="border border-outline-variant/20 rounded-xl overflow-hidden shadow-sm order-1 md:order-2">
           <div className="max-h-[60vh] overflow-y-auto custom-scrollbar">
             <BudgetPreview data={data} params={params} />
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex gap-2 pt-1">
+        <div className="flex gap-2 pt-1 order-3">
           <button
             onClick={onCancel}
             className="flex-1 px-4 py-3 rounded-xl bg-on-surface/5 text-on-surface font-bold text-sm hover:bg-on-surface/10 transition-all active:scale-[0.98] cursor-pointer"
