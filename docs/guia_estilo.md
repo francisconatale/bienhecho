@@ -1,6 +1,6 @@
 # GUÍA DE ESTILO Y DISEÑO (iOS HIG Edition)
 
-Esta guía define la identidad visual de **Presupuestito**, adaptada a los estándares de **Apple Human Interface Guidelines (HIG)** para ofrecer una experiencia nativa y fluida en dispositivos móviles.
+Esta guía define la identidad visual de **Bien Hecho**, adaptada a los estándares de **Apple Human Interface Guidelines (HIG)** para ofrecer una experiencia nativa y fluida en dispositivos móviles.
 
 ## 1. CONCEPTO VISUAL
 El diseño combina la **robustez laboral** con la **limpieza de iOS**. Priorizamos la legibilidad, el uso de áreas seguras (Safe Areas) y la interactividad táctil clara.

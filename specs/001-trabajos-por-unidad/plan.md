@@ -51,7 +51,7 @@ specs/001-trabajos-por-unidad/
 ### Source Code (repository root)
 
 ```text
-presupuestito-web/
+bien-hecho-web/
 └── src/
     ├── app/(dashboard)/trabajos/
     │   └── [id]/components/
@@ -68,7 +68,7 @@ presupuestito-web/
         └── task.ts                    # Interfaces TypeScript
 ```
 
-**Structure Decision**: El proyecto ya tiene una estructura Next.js establecida bajo `presupuestito-web/src`. Modificaremos los archivos existentes en sus respectivas ubicaciones según el diseño de Features y Lib.
+**Structure Decision**: El proyecto ya tiene una estructura Next.js establecida bajo `bien-hecho-web/src`. Modificaremos los archivos existentes en sus respectivas ubicaciones según el diseño de Features y Lib.
 
 ## Complexity Tracking
 

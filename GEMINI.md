@@ -1,4 +1,4 @@
-# Presupuestito — Reglas del Proyecto
+# Bien Hecho — Reglas del Proyecto
 
 Este archivo define los patrones, convenciones y decisiones de diseño del proyecto. Deben respetarse siempre al agregar o modificar código.
 

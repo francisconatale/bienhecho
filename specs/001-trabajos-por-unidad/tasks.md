@@ -30,8 +30,8 @@ description: "Task list for Trabajos por Unidad/Horas"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [x] T002 [P] Update `TaskSchema` with `cantidad` and `precio_unitario` fields in `presupuestito-web/src/lib/schemas.ts`
-- [x] T003 [P] Update `Task` interface with new fields in `presupuestito-web/src/types/task.ts`
+- [x] T002 [P] Update `TaskSchema` with `cantidad` and `precio_unitario` fields in `bien-hecho-web/src/lib/schemas.ts`
+- [x] T003 [P] Update `Task` interface with new fields in `bien-hecho-web/src/types/task.ts`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -45,10 +45,10 @@ description: "Task list for Trabajos por Unidad/Horas"
 
 ### Implementation for User Story 1
 
-- [x] T004 [US1] Agregar inputs para `cantidad` y `precio_unitario`, con cálculo automático, en `presupuestito-web/src/app/(dashboard)/trabajos/[id]/components/task-form.tsx`
-- [x] T005 [P] [US1] Modificar la visualización de la tarea para mostrar el desglose en `presupuestito-web/src/app/(dashboard)/trabajos/[id]/components/task-item.tsx`
-- [x] T006 [P] [US1] Modificar el panel de detalles para mostrar el desglose en `presupuestito-web/src/app/(dashboard)/trabajos/[id]/components/task-detail-panel.tsx`
-- [x] T007 [US1] Modificar la configuración de autoTable (columnas, headers) para el PDF en `presupuestito-web/src/lib/pdf/generate-budget.ts`
+- [x] T004 [US1] Agregar inputs para `cantidad` y `precio_unitario`, con cálculo automático, en `bien-hecho-web/src/app/(dashboard)/trabajos/[id]/components/task-form.tsx`
+- [x] T005 [P] [US1] Modificar la visualización de la tarea para mostrar el desglose en `bien-hecho-web/src/app/(dashboard)/trabajos/[id]/components/task-item.tsx`
+- [x] T006 [P] [US1] Modificar el panel de detalles para mostrar el desglose en `bien-hecho-web/src/app/(dashboard)/trabajos/[id]/components/task-detail-panel.tsx`
+- [x] T007 [US1] Modificar la configuración de autoTable (columnas, headers) para el PDF en `bien-hecho-web/src/lib/pdf/generate-budget.ts`
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -62,7 +62,7 @@ description: "Task list for Trabajos por Unidad/Horas"
 
 ### Implementation for User Story 2
 
-- [x] T008 [US2] Interceptar la obtención de tareas y establecer valores por defecto si `cantidad` está vacío en `presupuestito-web/src/services/tasks.service.ts`
+- [x] T008 [US2] Interceptar la obtención de tareas y establecer valores por defecto si `cantidad` está vacío en `bien-hecho-web/src/services/tasks.service.ts`
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 

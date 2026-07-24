@@ -1,4 +1,4 @@
--- Supabase Database Schema para "Presupuestito"
+-- Supabase Database Schema para "Bien Hecho"
 -- Basado en database_relations.md
 
 -- ==========================================

@@ -1,4 +1,4 @@
-# Presupuestito — Features de Valor Agregado
+# Bien Hecho — Features de Valor Agregado
 
 > **Objetivo:** Propuestas de features para todo el rubro de trabajadores,
 > organización y gestión de negocios de servicios/construcción en LATAM.
@@ -230,7 +230,7 @@
 
 ## Benchmarking Competitivo
 
-| Dimensión | Jobber | Housecall Pro | ServiceTitan | **Presupuestito** |
+| Dimensión | Jobber | Housecall Pro | ServiceTitan | **Bien Hecho** |
 |-----------|--------|---------------|--------------|-------------------|
 | Audiencia | Pequeño negocio | Equipos crecientes | Mid-market | **Solo trabajador LATAM** |
 | Precio | $39-249/mes | $79-199/mes | Caro (custom) | **Gratis + affordable** |

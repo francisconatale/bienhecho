@@ -4,7 +4,7 @@
 
 1. **Start the local server**:
    ```bash
-   cd presupuestito-web
+   cd bien-hecho-web
    npm run dev
    ```
 

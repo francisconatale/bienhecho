@@ -1,5 +1,5 @@
 -- =============================================================================
--- PRESUPUESTITO — SCHEMA COMPLETO Y DEFINITIVO
+-- BIEN HECHO — SCHEMA COMPLETO Y DEFINITIVO
 -- Versión: 2026-06-29
 --
 -- Este archivo reemplaza todas las migraciones anteriores.
