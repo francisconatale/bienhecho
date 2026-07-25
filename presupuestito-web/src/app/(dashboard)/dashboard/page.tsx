@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DashboardContent } from "./dashboard-content";
+import { DashboardContent } from "../dashboard-content";
 
 import { jobsService_getDashboardStats, jobsService_getPaginated } from "@/actions/jobs.actions";
 import { visitsService_getUpcoming } from "@/actions/visits.actions";

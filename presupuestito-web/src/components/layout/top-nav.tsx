@@ -38,7 +38,7 @@ export function TopNav() {
     return null;
   }
 
-  const isDashboardActive = pathname === "/" || pathname.startsWith("/presupuestos/");
+  const isDashboardActive = pathname === "/dashboard" || pathname.startsWith("/presupuestos/");
   const isClientesActive = pathname.startsWith("/clientes");
   const isTrabajosActive = pathname.startsWith("/trabajos") && !pathname.includes("/tareas");
   const isTareasActive = pathname.startsWith("/tareas") || pathname.includes("/tareas/");
@@ -48,7 +48,7 @@ export function TopNav() {
   return (
     <nav aria-label="Navegación principal" className="hidden md:flex sticky top-0 z-50 h-16 items-center justify-between border-b border-outline-variant/10 bg-surface px-6 transition-colors">
       <div className="flex items-center gap-6">
-        <Link href="/" className="flex items-center gap-3 group">
+        <Link href="/dashboard" className="flex items-center gap-3 group">
           <div className="w-8 h-8 group-hover:scale-105 transition-transform flex items-center justify-center">
             <Image src="/icon.svg" alt="Bien Hecho Logo" width={32} height={32} />
           </div>
@@ -61,7 +61,7 @@ export function TopNav() {
           <NavItem
             icon={<LayoutDashboard className="w-4 h-4" strokeWidth={2.5} />}
             label="Dashboard"
-            href="/"
+            href="/dashboard"
             active={isDashboardActive}
           />
           <NavItem

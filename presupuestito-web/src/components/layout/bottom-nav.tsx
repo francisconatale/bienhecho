@@ -65,8 +65,8 @@ export function BottomNav() {
         <NavItem
         icon={<LayoutDashboard className="w-5 h-5" strokeWidth={2} />}
         label="Dashboard"
-        href="/"
-        active={pathname === "/"}
+        href="/dashboard"
+        active={pathname === "/dashboard"}
       />
       <NavItem
         icon={<Users className="w-5 h-5" strokeWidth={2} />}
