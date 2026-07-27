@@ -43,8 +43,8 @@ export function useBudgetPDF() {
       name: profile?.nombre || "Prestador de Servicios",
       company: profile?.nombre || "Mi Empresa",
       address: profile?.direccion || "Domicilio Comercial S/D",
-      cuit: "00-00000000-0",
-      matricula: profile?.numero_matricula,
+      cuit: profile?.cuit || undefined,
+      matricula: profile?.matricula || profile?.numero_matricula || undefined,
       trade: job.titulo || profile?.rubro || "Servicios Profesionales",
       logo_url: profile?.logo_path ? getPublicLogoUrl(profile.logo_path) : undefined,
     };

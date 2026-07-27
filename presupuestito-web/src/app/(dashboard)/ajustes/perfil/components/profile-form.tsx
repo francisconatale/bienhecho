@@ -19,9 +19,11 @@ export function ProfileForm() {
     mutationFn: async (formData: FormData) => {
       const nombre = formData.get("nombre") as string;
       const rubro = formData.get("rubro") as string;
-      const numero_matricula = formData.get("numero_matricula") as string;
+      const numero_matricula = formData.get("matricula") as string;
+      const matricula = formData.get("matricula") as string;
+      const cuit = formData.get("cuit") as string;
       const direccion = formData.get("direccion") as string;
-      await profileService_upsert({ nombre, rubro, numero_matricula, direccion });
+      await profileService_upsert({ nombre, rubro, numero_matricula, matricula, cuit, direccion });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
@@ -88,11 +90,21 @@ export function ProfileForm() {
           />
         </div>
         <div>
+          <label className="block text-sm font-semibold text-on-surface mb-2">CUIT</label>
+          <input 
+            type="text" 
+            name="cuit"
+            defaultValue={profile?.cuit || ""} 
+            placeholder="Opcional" 
+            className="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/20 focus:outline-none" 
+          />
+        </div>
+        <div>
           <label className="block text-sm font-semibold text-on-surface mb-2">Número de Matrícula</label>
           <input 
             type="text" 
-            name="numero_matricula"
-            defaultValue={profile?.numero_matricula || ""} 
+            name="matricula"
+            defaultValue={profile?.matricula || profile?.numero_matricula || ""} 
             placeholder="Opcional" 
             className="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/20 focus:outline-none" 
           />

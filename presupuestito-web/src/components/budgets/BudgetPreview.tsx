@@ -97,6 +97,7 @@ export function BudgetPreview({ data, params }: BudgetPreviewProps) {
             {userProfile.address && <div>{userProfile.address}</div>}
             {userProfile.phone && <div>{userProfile.phone}</div>}
             {userProfile.cuit && <div>CUIT: {userProfile.cuit}</div>}
+            {userProfile.matricula && <div>Matrícula: {userProfile.matricula}</div>}
           </div>
         </div>
         <div>

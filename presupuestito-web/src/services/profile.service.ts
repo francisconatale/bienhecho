@@ -7,6 +7,8 @@ export interface Profile {
   rubro?: string;
   direccion?: string;
   numero_matricula?: string;
+  matricula?: string;
+  cuit?: string;
   logo_path?: string;
   created_at: string;
 }

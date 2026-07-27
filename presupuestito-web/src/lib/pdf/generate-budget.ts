@@ -216,6 +216,10 @@ export async function generateBudgetPDF(
     doc.text(`CUIT: ${userProfile.cuit}`, margin, senderInfoY);
     senderInfoY += LAYOUT.infoLineGap;
   }
+  if (userProfile.matricula) {
+    doc.text(`Matrícula: ${userProfile.matricula}`, margin, senderInfoY);
+    senderInfoY += LAYOUT.infoLineGap;
+  }
   
   // PARA column
   let paraY = currentY - LAYOUT.deParaLineGap;
