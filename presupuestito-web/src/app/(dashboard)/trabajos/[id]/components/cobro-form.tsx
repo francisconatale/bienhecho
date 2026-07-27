@@ -9,9 +9,10 @@ interface CobroFormProps {
   initialData?: CobroFormValues;
   onSave: (data: CobroFormValues) => void;
   onCancel: () => void;
+  hideFooter?: boolean;
 }
 
-export function CobroForm({ initialData, onSave, onCancel }: CobroFormProps) {
+export function CobroForm({ initialData, onSave, onCancel, hideFooter = false }: CobroFormProps) {
   const todayStr = new Date().toISOString().split("T")[0];
 
   const [montoCobrado, setMontoCobrado] = useState(
@@ -61,6 +62,8 @@ export function CobroForm({ initialData, onSave, onCancel }: CobroFormProps) {
       <div className="flex gap-3">
         <input
           type="number"
+          inputMode="decimal"
+          aria-label="Monto cobrado"
           value={montoCobrado}
           onChange={(e) => setMontoCobrado(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -104,26 +107,28 @@ export function CobroForm({ initialData, onSave, onCancel }: CobroFormProps) {
         />
       </div>
 
-      <div className="flex gap-2 pt-1">
-        <button
-          onClick={onCancel}
-          className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
-        >
-          Cancelar
-        </button>
-        <button
-          onClick={handleSave}
-          disabled={!canSave}
-          className={cn(
-            "flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2",
-            canSave
-              ? "bg-on-surface text-surface shadow-lg shadow-black/10 hover:bg-on-surface-variant"
-              : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
-          )}
-        >
-          {initialData ? "Guardar" : "Registrar"}
-        </button>
-      </div>
+      {!hideFooter && (
+        <div className="flex gap-2 pt-1">
+          <button
+            onClick={onCancel}
+            className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={!canSave}
+            className={cn(
+              "flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2",
+              canSave
+                ? "bg-on-surface text-surface shadow-lg shadow-black/10 hover:bg-on-surface-variant"
+                : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
+            )}
+          >
+            {initialData ? "Guardar" : "Registrar"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

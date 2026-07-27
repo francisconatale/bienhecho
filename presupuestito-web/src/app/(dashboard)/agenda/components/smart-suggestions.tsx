@@ -67,6 +67,12 @@ export function SmartSuggestions() {
         isOpen={!!selectedSuggestion}
         onClose={() => setSelectedSuggestion(null)}
         title="Agendar desde sugerencia"
+        footer={
+          <div className="flex gap-2">
+            <button type="button" onClick={() => setSelectedSuggestion(null)} className="flex-1 h-11 rounded-xl font-bold text-xs text-on-surface-variant hover:bg-outline-variant/10 transition-colors">Cancelar</button>
+            <button type="button" className="flex-1 h-11 rounded-xl font-bold text-xs text-white bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 transition-colors">Crear Visita</button>
+          </div>
+        }
       >
         {selectedSuggestion && (
           <VisitForm
@@ -87,6 +93,7 @@ export function SmartSuggestions() {
               setSelectedSuggestion(null);
             }}
             onCancel={() => setSelectedSuggestion(null)}
+            hideFooter
           />
         )}
       </Modal>

@@ -114,6 +114,12 @@ export function AgendaContent({ initialData }: { initialData?: AgendaInitialData
         isOpen={state.showNewModal}
         onClose={() => actions.setShowNewModal(false)}
         title="Nueva Visita"
+        footer={
+          <div className="flex gap-2">
+            <button type="button" onClick={() => actions.setShowNewModal(false)} className="flex-1 h-11 rounded-xl font-bold text-xs text-on-surface-variant hover:bg-outline-variant/10 transition-colors">Cancelar</button>
+            <button type="button" className="flex-1 h-11 rounded-xl font-bold text-xs text-white bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 transition-colors">Crear Visita</button>
+          </div>
+        }
       >
         <VisitForm
           jobs={state.jobs}
@@ -129,6 +135,7 @@ export function AgendaContent({ initialData }: { initialData?: AgendaInitialData
             }
           }}
           onCancel={() => actions.setShowNewModal(false)}
+          hideFooter
         />
       </Modal>
 
@@ -136,6 +143,12 @@ export function AgendaContent({ initialData }: { initialData?: AgendaInitialData
         isOpen={!!state.editingVisit}
         onClose={() => actions.setEditingVisit(null)}
         title="Editar Visita"
+        footer={
+          <div className="flex gap-2">
+            <button type="button" onClick={() => actions.setEditingVisit(null)} className="flex-1 h-11 rounded-xl font-bold text-xs text-on-surface-variant hover:bg-outline-variant/10 transition-colors">Cancelar</button>
+            <button type="button" className="flex-1 h-11 rounded-xl font-bold text-xs text-white bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 transition-colors">Guardar Cambios</button>
+          </div>
+        }
       >
         {state.editingVisit && (
           <VisitForm
@@ -152,6 +165,7 @@ export function AgendaContent({ initialData }: { initialData?: AgendaInitialData
               }
             }}
             onCancel={() => actions.setEditingVisit(null)}
+            hideFooter
           />
         )}
       </Modal>

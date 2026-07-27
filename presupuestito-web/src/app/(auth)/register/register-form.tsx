@@ -114,6 +114,7 @@ export function RegisterForm() {
               <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tu nombre o empresa</label>
               <input
                 type="text"
+                autoComplete="name"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -148,6 +149,7 @@ export function RegisterForm() {
               <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Email</label>
               <input 
                 type="email" 
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -160,6 +162,7 @@ export function RegisterForm() {
               <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Contraseña</label>
               <input 
                 type="password" 
+                autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required

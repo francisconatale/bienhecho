@@ -136,6 +136,7 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
         </select>
         <input
           type="number"
+          inputMode="decimal"
           value={monto}
           onChange={(e) => setMonto(e.target.value)}
           onKeyDown={handleKeyDown}

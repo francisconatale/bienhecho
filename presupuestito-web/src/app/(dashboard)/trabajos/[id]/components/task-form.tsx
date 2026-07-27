@@ -23,6 +23,7 @@ interface TaskFormProps {
   }) => Promise<void> | void;
   onCancel: () => void;
   isSaving?: boolean;
+  hideFooter?: boolean;
 }
 
 const PRIORIDADES = [
@@ -31,7 +32,7 @@ const PRIORIDADES = [
   { value: "baja" as const, label: "Sin apuro", sublabel: "cuando puedas", color: "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary border-primary/20" },
 ];
 
-export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: TaskFormProps) {
+export function TaskForm({ initialData, onSave, onCancel, isSaving = false, hideFooter = false }: TaskFormProps) {
   const [descripcion, setDescripcion] = useState(initialData?.descripcion ?? "");
   const [cantidad, setCantidad] = useState(
     initialData?.cantidad ? String(initialData.cantidad) : "1"
@@ -104,6 +105,8 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: Ta
           <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Cantidad</label>
           <input
             type="number"
+            inputMode="decimal"
+            aria-label="Cantidad"
             value={cantidad}
             onChange={(e) => setCantidad(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -117,6 +120,8 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: Ta
           <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Precio Unitario</label>
           <input
             type="number"
+            inputMode="decimal"
+            aria-label="Precio unitario"
             value={precioUnitario}
             onChange={(e) => setPrecioUnitario(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -170,35 +175,39 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false }: Ta
         <p className="text-[10px] text-on-surface-variant/40">Fecha límite — opcional</p>
       </div>
 
-      <div className="sticky bottom-0 bg-surface/95 dark:bg-surface/90 backdrop-blur-xl border-t border-outline-variant/10 -mx-5 px-5 sm:-mx-6 sm:px-6 py-4 flex gap-2 z-10 -mb-8 sm:-mb-6">
-        <button
-          onClick={onCancel}
-          disabled={isSaving}
-          className="flex-1 py-3 rounded-full bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Cancelar
-        </button>
-        <button
-          onClick={handleSave}
-          disabled={!canSave || isSaving}
-          className={cn(
-            "flex-1 py-3 rounded-full font-black text-[10px] uppercase tracking-widest transition-colors transition-transform active:scale-95 flex items-center justify-center gap-2",
-            canSave
-              ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark"
-              : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed",
-            isSaving && "opacity-70 cursor-not-allowed"
-          )}
-        >
-          {isSaving ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              {initialData ? "Guardando..." : "Agregando..."}
-            </>
-          ) : (
-            initialData ? "Guardar" : "Agregar"
-          )}
-        </button>
-      </div>
+      {!hideFooter && (
+        <div className="flex gap-2 pt-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={isSaving}
+            className="flex-1 py-3 rounded-full bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={!canSave || isSaving}
+            className={cn(
+              "flex-1 py-3 rounded-full font-black text-[10px] uppercase tracking-widest transition-colors transition-transform active:scale-95 flex items-center justify-center gap-2",
+              canSave
+                ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark"
+                : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed",
+              isSaving && "opacity-70 cursor-not-allowed"
+            )}
+          >
+            {isSaving ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                {initialData ? "Guardando..." : "Agregando..."}
+              </>
+            ) : (
+              initialData ? "Guardar" : "Agregar"
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -139,7 +139,11 @@ export function TaskList({ jobId, isJobPaid, onSelectTask }: TaskListProps) {
         ) : undefined}
       />
 
-      <Modal isOpen={isAdding} onClose={() => setIsAdding(false)} title="Nueva tarea">
+      <Modal
+        isOpen={isAdding}
+        onClose={() => setIsAdding(false)}
+        title="Nueva tarea"
+      >
         <TaskForm onSave={handleAdd} onCancel={() => setIsAdding(false)} isSaving={createTaskMutation.isPending} />
       </Modal>
     </div>

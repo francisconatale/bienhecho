@@ -2,8 +2,8 @@ export function TrabajoDetailSkeleton({ isEmbedded = false }: { isEmbedded?: boo
   return (
     <div className={isEmbedded ? "relative w-full flex flex-col min-h-full h-full flex-1" : "relative w-full flex flex-col min-h-screen"}>
       <main className={isEmbedded 
-        ? "relative flex-1 w-full mx-auto px-4 pt-24 pb-28 md:pt-6 md:px-8 max-w-full" 
-        : "relative flex-1 w-full mx-auto px-4 pt-24 pb-28 md:px-8 md:pt-8 md:pb-12 max-w-[1400px] md:mt-0"
+        ? "relative flex-1 w-full mx-auto px-4 pt-28 pb-28 md:pt-6 md:px-8 max-w-full" 
+        : "relative flex-1 w-full mx-auto px-4 pt-28 pb-28 md:px-8 md:pt-8 md:pb-12 max-w-[1400px] md:mt-0"
       }>
         <div className={`flex flex-col gap-3 md:gap-6 ${isEmbedded 
           ? "xl:flex xl:flex-col 2xl:grid 2xl:grid-cols-[1fr_300px] gap-6" 

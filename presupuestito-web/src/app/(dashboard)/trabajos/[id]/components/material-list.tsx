@@ -60,8 +60,18 @@ export function MaterialList({ jobId }: MaterialListProps) {
         ) : undefined}
       />
       
-      <Modal isOpen={isAdding} onClose={() => setIsAdding(false)} title="Nuevo Material">
-        <MaterialForm onSave={handleAdd} onCancel={() => setIsAdding(false)} />
+      <Modal
+        isOpen={isAdding}
+        onClose={() => setIsAdding(false)}
+        title="Nuevo Material"
+        footer={
+          <div className="flex gap-2">
+            <button type="button" onClick={() => setIsAdding(false)} className="flex-1 py-3 rounded-full bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95">Cancelar</button>
+            <button type="button" className="flex-1 py-3 rounded-full bg-primary text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary-dark transition-colors transition-transform active:scale-95">Agregar</button>
+          </div>
+        }
+      >
+        <MaterialForm onSave={handleAdd} onCancel={() => setIsAdding(false)} hideFooter />
       </Modal>
     </div>
   );
