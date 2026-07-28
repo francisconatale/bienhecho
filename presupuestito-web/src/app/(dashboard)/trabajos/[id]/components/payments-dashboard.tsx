@@ -7,6 +7,7 @@ import { CobroForm } from "./cobro-form";
 import { cn } from "@/lib/utils";
 import { Cobro } from "@/types";
 import { Modal } from "@/components/ui/modal";
+import { useConfirm } from "@/hooks/use-confirm";
 
 interface PaymentsDashboardProps {
   jobId: string;
@@ -21,6 +22,7 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
     removeCobro,
   } = usePayments(jobId);
 
+  const [ConfirmDialog, confirm] = useConfirm();
   const [isAddingCobro, setIsAddingCobro] = useState(false);
   const [editingCobro, setEditingCobro] = useState<Cobro | null>(null);
 
@@ -75,20 +77,33 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
             isOpen={isAddingCobro}
             onClose={() => setIsAddingCobro(false)}
             title="Registrar Cobro"
+            footer={
+              <div className="flex gap-2">
+                <button type="button" onClick={() => setIsAddingCobro(false)} className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95">Cancelar</button>
+                <button type="button" className="flex-1 py-2.5 rounded-xl bg-on-surface text-surface font-black text-[10px] uppercase tracking-widest shadow-lg shadow-black/10 hover:bg-on-surface-variant transition-colors transition-transform active:scale-95">Registrar</button>
+              </div>
+            }
           >
-            <CobroForm onSave={handleSaveCobro} onCancel={() => setIsAddingCobro(false)} />
+            <CobroForm onSave={handleSaveCobro} onCancel={() => setIsAddingCobro(false)} hideFooter />
           </Modal>
 
           <Modal
             isOpen={editingCobro !== null}
             onClose={() => setEditingCobro(null)}
             title="Editar Cobro"
+            footer={
+              <div className="flex gap-2">
+                <button type="button" onClick={() => setEditingCobro(null)} className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95">Cancelar</button>
+                <button type="button" className="flex-1 py-2.5 rounded-xl bg-on-surface text-surface font-black text-[10px] uppercase tracking-widest shadow-lg shadow-black/10 hover:bg-on-surface-variant transition-colors transition-transform active:scale-95">Guardar</button>
+              </div>
+            }
           >
             {editingCobro && (
               <CobroForm
                 initialData={editingCobro}
                 onSave={handleSaveCobro}
                 onCancel={() => setEditingCobro(null)}
+                hideFooter
               />
             )}
           </Modal>
@@ -114,7 +129,15 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
                   <button onClick={() => setEditingCobro(cobro)} aria-label="Editar cobro" className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-on-surface hover:bg-on-surface/10 rounded-lg">
                     <Edit2 className="w-3 h-3" />
                   </button>
-                  <button onClick={() => { if (window.confirm("¿Eliminar este cobro? Esta acción no se puede deshacer.")) { removeCobro(cobro.id) } }} aria-label="Eliminar cobro" className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-red-500 hover:bg-red-500/10 rounded-lg">
+                  <button onClick={() => {
+                    confirm({
+                      title: "Eliminar cobro",
+                      description: "¿Estás seguro de eliminar este cobro? Esta acción no se puede deshacer.",
+                      confirmText: "Eliminar",
+                      variant: "danger",
+                      action: async () => { removeCobro(cobro.id); },
+                    });
+                  }} aria-label="Eliminar cobro" className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-red-500 hover:bg-red-500/10 rounded-lg">
                     <Trash2 className="w-3 h-3" />
                   </button>
                 </div>
@@ -129,6 +152,7 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
           )}
         </div>
       </div>
+      <ConfirmDialog />
     </div>
   );
 }

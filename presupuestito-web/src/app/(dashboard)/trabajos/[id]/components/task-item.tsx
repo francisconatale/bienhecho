@@ -167,7 +167,11 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
       </div>
 
       {/* Edit modal */}
-      <Modal isOpen={isEditing} onClose={() => setIsEditing(false)} title="Editar tarea">
+      <Modal
+        isOpen={isEditing}
+        onClose={() => setIsEditing(false)}
+        title="Editar tarea"
+      >
         <TaskForm
           initialData={{ descripcion: task.descripcion, cantidad: task.cantidad, precio_unitario: task.precio_unitario, precio: task.precio, prioridad: task.prioridad, fecha_vencimiento: task.fecha_vencimiento }}
           onSave={handleSave}

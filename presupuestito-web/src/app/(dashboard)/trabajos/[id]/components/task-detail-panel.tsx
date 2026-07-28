@@ -315,6 +315,8 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
                         <label className="text-[10px] font-black text-on-surface-variant/50 uppercase tracking-widest block mb-1">Cant.</label>
                         <input
                           type="number"
+                          inputMode="decimal"
+                          aria-label="Cantidad"
                           value={cantidad}
                           onChange={(e) => setCantidad(e.target.value)}
                           className="w-full bg-transparent border-b-2 border-outline-variant/30 py-1 text-lg font-bold text-on-surface outline-none focus:border-primary transition-colors"
@@ -325,6 +327,8 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
                         <span className="absolute left-0 bottom-2 text-sm font-bold text-on-surface-variant/40 pointer-events-none">$</span>
                         <input
                           type="number"
+                          inputMode="decimal"
+                          aria-label="Precio unitario"
                           value={precioUnitario}
                           onChange={(e) => setPrecioUnitario(e.target.value)}
                           className="w-full bg-transparent border-b-2 border-outline-variant/30 pl-4 py-1 text-lg font-bold text-on-surface outline-none focus:border-primary transition-colors"

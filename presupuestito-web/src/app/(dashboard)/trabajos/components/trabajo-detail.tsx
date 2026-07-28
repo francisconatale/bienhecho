@@ -289,7 +289,7 @@ export function TrabajoDetail({
       )}
       {/* View overlays (mobile) */}
       {!selectedTaskId && viewParam && (
-        <div className="fixed inset-0 z-[60] bg-transparent overflow-y-auto md:hidden pt-16 px-4 pb-8">
+        <div className="fixed inset-0 z-[60] bg-transparent overflow-y-auto md:hidden pt-28 px-4 pb-8">
           <MobilePageHeader 
             onBack={handleViewClose} 
             isEditing={false} 
@@ -310,8 +310,8 @@ export function TrabajoDetail({
         "relative flex-1 w-full mx-auto",
         (selectedTaskId || viewParam) ? "hidden md:block" : "",
         isEmbedded 
-          ? "px-4 pt-16 pb-28 md:pt-6 md:px-8 max-w-full" 
-          : "px-4 pt-24 pb-28 md:px-8 md:pt-8 md:pb-12 max-w-[1400px] md:mt-0"
+          ? "px-4 pt-28 pb-28 md:pt-6 md:px-8 max-w-full" 
+          : "px-4 pt-28 pb-28 md:px-8 md:pt-8 md:pb-12 max-w-[1400px] md:mt-0"
       )}>
         <div className={cn(
           "w-full",

@@ -30,7 +30,7 @@ export function UpdatePasswordForm() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-4">
+    <main className="min-h-[100dvh] flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8 animate-page-in">
         <div className="text-center space-y-3">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary shadow-lg shadow-primary/20 mb-4">
@@ -54,6 +54,7 @@ export function UpdatePasswordForm() {
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/40" />
                 <input
                   type="password"
+                  autoComplete="new-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

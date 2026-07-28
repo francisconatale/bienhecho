@@ -8,12 +8,13 @@ interface ModalProps {
   title: string;
   children: React.ReactNode;
   position?: "auto" | "center";
+  footer?: React.ReactNode;
 }
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-export function Modal({ isOpen, onClose, title, children, position = "auto" }: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, position = "auto", footer }: ModalProps) {
   const previouslyFocused = useRef<HTMLElement | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -105,9 +106,14 @@ export function Modal({ isOpen, onClose, title, children, position = "auto" }: M
           </button>
         </div>
         
-        <div className="px-5 sm:px-6 pb-8 sm:pb-6 pt-2 overflow-y-auto custom-scrollbar flex-1 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:pb-6">
+        <div className="px-5 sm:px-6 pt-2 overflow-y-auto custom-scrollbar flex-1">
           {children}
         </div>
+        {footer && (
+          <div className="shrink-0 border-t border-outline-variant/10 px-5 sm:px-6 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pb-4 bg-surface">
+            {footer}
+          </div>
+        )}
       </div>
     </div>,
     document.body

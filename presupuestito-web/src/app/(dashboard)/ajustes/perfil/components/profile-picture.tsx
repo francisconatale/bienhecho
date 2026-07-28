@@ -7,11 +7,13 @@ import { getPublicLogoUrl } from "@/lib/storage-utils";
 import Image from "next/image";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useConfirm } from "@/hooks/use-confirm";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 
 export function ProfilePicture() {
+  const [ConfirmDialog, confirm] = useConfirm();
   const { profile, refetchProfile } = useProfile();
   const { uploadLogo, deleteLogo, isUploading, error } = useLogoUpload();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -59,21 +61,29 @@ export function ProfilePicture() {
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm("¿Eliminar tu foto de perfil?")) return;
-    try {
-      const updatedProfile = await deleteLogo();
-      if (updatedProfile) {
-        refetchProfile();
-        setPreviewUrl(null);
-        toast.success("Foto eliminada correctamente");
-      }
-    } catch (err) {
-      toast.error("Ocurrió un error al eliminar la foto");
-    }
+  const handleDelete = () => {
+    confirm({
+      title: "Eliminar foto de perfil",
+      description: "¿Estás seguro de eliminar tu foto de perfil?",
+      confirmText: "Eliminar",
+      variant: "danger",
+      action: async () => {
+        try {
+          const updatedProfile = await deleteLogo();
+          if (updatedProfile) {
+            refetchProfile();
+            setPreviewUrl(null);
+            toast.success("Foto eliminada correctamente");
+          }
+        } catch (err) {
+          toast.error("Ocurrió un error al eliminar la foto");
+        }
+      },
+    });
   };
 
   return (
+    <>
     <section className="flex flex-col items-center">
       <div className="relative group">
         <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-surface-container-highest shadow-sm bg-surface-variant flex items-center justify-center relative">
@@ -130,5 +140,7 @@ export function ProfilePicture() {
         )}
       </div>
     </section>
+    <ConfirmDialog />
+    </>
   );
 }
