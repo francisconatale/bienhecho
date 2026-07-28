@@ -3,7 +3,7 @@ import type { PDFParams } from "./types";
 import { DEFAULT_PDF_PARAMS } from "./types";
 import { derivePDFColors } from "./derivePDFColors";
 import { createColorStrategy } from "./color-strategies";
-import { LAYOUT, buildItemsList } from "./budget-layout";
+import { LAYOUT, buildTasksList, buildMaterialsList } from "./budget-layout";
 
 export interface PDFData {
   client: Client;
@@ -251,37 +251,49 @@ export async function generateBudgetPDF(
   drawSeparator(currentY);
   currentY += LAYOUT.sectionGap;
   
-  // Items
+  // Items (Trabajos)
   checkPageBreak(25);
-  doc.setFont("Inter", "bold");
-  doc.setFontSize(LAYOUT.descriptionLabelFontSize);
-  doc.setTextColor(...onSurfaceVariant);
-  doc.text("DESCRIPCIÓN", margin, currentY, { charSpace: LAYOUT.labelCharSpace });
   currentY += LAYOUT.itemRowGap;
   
-  const allItems = buildItemsList(tasks, materiales);
+  const tasksItems = buildTasksList(tasks);
+  const materialsItems = buildMaterialsList(materiales);
   
   autoTable.default(doc, {
     startY: currentY,
     margin: { left: margin, right: margin },
-    showHead: false,
-    body: allItems.map(item => [
+    showHead: 'firstPage',
+    head: [[
+      { content: "TRABAJOS", styles: { halign: "left" } },
+      { content: "CANTIDAD", styles: { halign: "right" } },
+      { content: "PRECIO UNITARIO", styles: { halign: "right" } },
+      { content: "TOTAL", styles: { halign: "right" } }
+    ]],
+    body: tasksItems.map(item => [
       item.desc,
       `${item.qty} un.`,
+      `$${item.unitPrice.toLocaleString("es-AR")}`,
       `$${item.total.toLocaleString("es-AR")}`
     ]),
     theme: "plain",
     styles: {
-      cellPadding: { top: 2, bottom: 2, left: 0, right: 0 },
+      cellPadding: { top: 4, bottom: 4, left: 0, right: 0 },
       font: "Inter",
     },
+    headStyles: {
+      fillColor: false,
+      textColor: onSurfaceVariant,
+      fontSize: LAYOUT.descriptionLabelFontSize,
+      fontStyle: "bold",
+      cellPadding: { top: 0, bottom: 6, left: 0, right: 0 }
+    },
     columnStyles: {
-      0: { cellWidth: colWidth * 1.3, halign: "left", textColor: onSurface, fontSize: LAYOUT.itemDescFontSize, fontStyle: "normal" },
+      0: { cellWidth: colWidth * 1.1, halign: "left", textColor: onSurface, fontSize: LAYOUT.itemDescFontSize, fontStyle: "normal" },
       1: { halign: "right", textColor: onSurfaceVariant, fontSize: LAYOUT.itemQtyFontSize },
-      2: { halign: "right", textColor: onSurface, fontStyle: "bold", fontSize: LAYOUT.itemTotalFontSize }
+      2: { halign: "right", textColor: onSurfaceVariant, fontSize: LAYOUT.itemQtyFontSize },
+      3: { halign: "right", textColor: onSurface, fontStyle: "bold", fontSize: LAYOUT.itemTotalFontSize }
     },
     didDrawCell: (data) => {
-      if (data.row.index < allItems.length - 1 && data.cell.section === 'body') {
+      if (data.row.index < tasksItems.length - 1 && data.cell.section === 'body') {
         doc.setDrawColor(...outlineVariant);
         doc.setLineWidth(LAYOUT.cellLineWidth);
         doc.line(
@@ -295,6 +307,65 @@ export async function generateBudgetPDF(
   });
 
   currentY = (doc as any).lastAutoTable.finalY + LAYOUT.tightSectionGap;
+  
+    // Materiales (if any)
+  if (materialsItems.length > 0) {
+    drawSeparator(currentY);
+    currentY += LAYOUT.sectionGap;
+    
+    checkPageBreak(25);
+    currentY += LAYOUT.itemRowGap;
+    
+    autoTable.default(doc, {
+      startY: currentY,
+      margin: { left: margin, right: margin },
+      showHead: 'firstPage',
+      head: [[
+        { content: "MATERIALES", styles: { halign: "left" } },
+        { content: "CANTIDAD", styles: { halign: "right" } },
+        { content: "PRECIO UNITARIO", styles: { halign: "right" } },
+        { content: "TOTAL", styles: { halign: "right" } }
+      ]],
+      body: materialsItems.map(item => [
+        item.desc,
+        `${item.qty} un.`,
+        `$${item.unitPrice.toLocaleString("es-AR")}`,
+        `$${item.total.toLocaleString("es-AR")}`
+      ]),
+      theme: "plain",
+      styles: {
+        cellPadding: { top: 4, bottom: 4, left: 0, right: 0 },
+        font: "Inter",
+      },
+      headStyles: {
+        fillColor: false,
+        textColor: onSurfaceVariant,
+        fontSize: LAYOUT.descriptionLabelFontSize,
+        fontStyle: "bold",
+        cellPadding: { top: 0, bottom: 6, left: 0, right: 0 }
+      },
+      columnStyles: {
+        0: { cellWidth: colWidth * 1.1, halign: "left", textColor: onSurface, fontSize: LAYOUT.itemDescFontSize, fontStyle: "normal" },
+        1: { halign: "right", textColor: onSurfaceVariant, fontSize: LAYOUT.itemQtyFontSize },
+        2: { halign: "right", textColor: onSurfaceVariant, fontSize: LAYOUT.itemQtyFontSize },
+        3: { halign: "right", textColor: onSurface, fontStyle: "bold", fontSize: LAYOUT.itemTotalFontSize }
+      },
+      didDrawCell: (data) => {
+        if (data.row.index < materialsItems.length - 1 && data.cell.section === 'body') {
+          doc.setDrawColor(...outlineVariant);
+          doc.setLineWidth(LAYOUT.cellLineWidth);
+          doc.line(
+            data.cell.x,
+            data.cell.y + data.cell.height,
+            data.cell.x + data.cell.width,
+            data.cell.y + data.cell.height
+          );
+        }
+      }
+    });
+    
+    currentY = (doc as any).lastAutoTable.finalY + LAYOUT.tightSectionGap;
+  }
   
   drawSeparator(currentY);
   currentY += LAYOUT.sectionGap;
@@ -340,7 +411,7 @@ export async function generateBudgetPDF(
   doc.setFontSize(LAYOUT.totalLabelFontSize);
   doc.text("TOTAL", pageWidth - margin, finalFooterY + 12, { align: "right", charSpace: LAYOUT.labelCharSpace });
   
-  const finalTotal = allItems.reduce((acc, i) => acc + i.total, 0);
+  const finalTotal = [...tasksItems, ...materialsItems].reduce((acc, i) => acc + i.total, 0);
   doc.setFontSize(LAYOUT.totalAmountFontSize);
   doc.setTextColor(...onPrimary);
   doc.text(`$${finalTotal.toLocaleString("es-AR")}`, pageWidth - margin, finalFooterY + 22, { align: "right" });

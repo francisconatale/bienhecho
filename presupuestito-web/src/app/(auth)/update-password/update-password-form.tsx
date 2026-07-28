@@ -26,7 +26,7 @@ export function UpdatePasswordForm() {
     }
 
     toast.success("Contraseña actualizada exitosamente.");
-    router.push("/");
+    router.push("/dashboard");
   };
 
   return (

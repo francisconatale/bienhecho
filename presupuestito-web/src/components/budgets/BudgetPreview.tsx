@@ -3,7 +3,7 @@ import type { PDFData } from "@/lib/pdf/generate-budget";
 import type { PDFParams } from "@/lib/pdf/types";
 import { derivePDFColors } from "@/lib/pdf/derivePDFColors";
 import { createColorStrategy } from "@/lib/pdf/color-strategies";
-import { buildItemsList } from "@/lib/pdf/budget-layout";
+import { buildTasksList, buildMaterialsList } from "@/lib/pdf/budget-layout";
 
 interface BudgetPreviewProps {
   data: Pick<PDFData, "client" | "job" | "tasks" | "materiales" | "userProfile">;
@@ -17,8 +17,9 @@ export function BudgetPreview({ data, params }: BudgetPreviewProps) {
   const rgba = (c: [number, number, number], a: number) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
 
   const { client, job, tasks, materiales, userProfile } = data;
-  const allItems = buildItemsList(tasks, materiales);
-  const finalTotal = allItems.reduce((acc, i) => acc + i.total, 0);
+  const tasksItems = buildTasksList(tasks);
+  const materialsItems = buildMaterialsList(materiales);
+  const finalTotal = [...tasksItems, ...materialsItems].reduce((acc, i) => acc + i.total, 0);
   const senderName = userProfile.company || userProfile.name || "Sin nombre";
   const invoiceId = job.id ? job.id.substring(0, 6).toUpperCase() : "000000";
   const dateStr = new Date().toLocaleDateString("es-AR", {
@@ -119,14 +120,17 @@ export function BudgetPreview({ data, params }: BudgetPreviewProps) {
         <div style={{ backgroundColor: rgb(colors.outlineVariant) }} className="h-px" />
       </div>
 
-      {/* Items */}
+      {/* Items (Trabajos) */}
       <div className="px-4 pb-1">
-        <div style={{ color: rgb(colors.onSurfaceVariant) }} className="text-[9px] font-bold tracking-widest uppercase">
-          DESCRIPCIÓN
+        <div style={{ color: rgb(colors.onSurfaceVariant) }} className="flex text-[9px] font-bold tracking-widest uppercase">
+          <div className="flex-1">TRABAJOS</div>
+          <div className="w-12 text-right">CANT.</div>
+          <div className="w-20 text-right">P. UNIT</div>
+          <div className="w-24 text-right">TOTAL</div>
         </div>
       </div>
       <div className="px-4">
-        {allItems.map((item, i) => (
+        {tasksItems.map((item, i) => (
           <div key={i}>
             <div className="flex items-center py-2 gap-3">
               <div className="flex-1 min-w-0">
@@ -134,19 +138,65 @@ export function BudgetPreview({ data, params }: BudgetPreviewProps) {
                   {item.desc}
                 </div>
               </div>
-              <div style={{ color: rgb(colors.onSurfaceVariant) }} className="text-xs text-right w-16 shrink-0">
+              <div style={{ color: rgb(colors.onSurfaceVariant) }} className="text-xs text-right w-12 shrink-0">
                 {item.qty} un.
+              </div>
+              <div style={{ color: rgb(colors.onSurfaceVariant) }} className="text-xs text-right w-20 shrink-0">
+                ${item.unitPrice.toLocaleString("es-AR")}
               </div>
               <div style={{ color: rgb(colors.onSurface) }} className="text-sm font-bold text-right w-24 shrink-0">
                 ${item.total.toLocaleString("es-AR")}
               </div>
             </div>
-            {i < allItems.length - 1 && (
+            {i < tasksItems.length - 1 && (
               <div style={{ backgroundColor: rgb(colors.outlineVariant) }} className="h-px opacity-50" />
             )}
           </div>
         ))}
       </div>
+
+      {/* Materials (if any) */}
+      {materialsItems.length > 0 && (
+        <>
+          {/* Separator */}
+          <div className="px-4 py-2">
+            <div style={{ backgroundColor: rgb(colors.outlineVariant) }} className="h-px" />
+          </div>
+          <div className="px-4 pb-1">
+            <div style={{ color: rgb(colors.onSurfaceVariant) }} className="flex text-[9px] font-bold tracking-widest uppercase">
+              <div className="flex-1">MATERIALES</div>
+              <div className="w-12 text-right">CANT.</div>
+              <div className="w-20 text-right">P. UNIT</div>
+              <div className="w-24 text-right">TOTAL</div>
+            </div>
+          </div>
+          <div className="px-4">
+            {materialsItems.map((item, i) => (
+              <div key={i}>
+                <div className="flex items-center py-2 gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div style={{ color: rgb(colors.onSurface) }} className="text-sm truncate">
+                      {item.desc}
+                    </div>
+                  </div>
+                  <div style={{ color: rgb(colors.onSurfaceVariant) }} className="text-xs text-right w-12 shrink-0">
+                    {item.qty} un.
+                  </div>
+                  <div style={{ color: rgb(colors.onSurfaceVariant) }} className="text-xs text-right w-20 shrink-0">
+                    ${item.unitPrice.toLocaleString("es-AR")}
+                  </div>
+                  <div style={{ color: rgb(colors.onSurface) }} className="text-sm font-bold text-right w-24 shrink-0">
+                    ${item.total.toLocaleString("es-AR")}
+                  </div>
+                </div>
+                {i < materialsItems.length - 1 && (
+                  <div style={{ backgroundColor: rgb(colors.outlineVariant) }} className="h-px opacity-50" />
+                )}
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* Separator */}
       <div className="px-4 py-2">

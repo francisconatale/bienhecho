@@ -11,10 +11,10 @@ export const LAYOUT = {
   deParaTitleFontSize: 7,
   deParaNameFontSize: 12,
   deParaInfoFontSize: 9,
-  descriptionLabelFontSize: 7,
-  itemDescFontSize: 10,
-  itemQtyFontSize: 9,
-  itemTotalFontSize: 10,
+  descriptionLabelFontSize: 8,
+  itemDescFontSize: 11,
+  itemQtyFontSize: 10,
+  itemTotalFontSize: 11,
   observationsLabelFontSize: 7,
   observationsTextFontSize: 9,
   totalLabelFontSize: 9,
@@ -40,20 +40,24 @@ export function getPageLayout(pageWidth: number) {
 export interface LayoutItem {
   desc: string;
   qty: number;
+  unitPrice: number;
   total: number;
 }
 
-export function buildItemsList(tasks: any[], materiales: any[]): LayoutItem[] {
-  return [
-    ...(tasks || []).map(t => ({
-      desc: t.descripcion,
-      qty: t.cantidad || 1,
-      total: t.precio || 0,
-    })),
-    ...(materiales || []).map(m => ({
-      desc: m.nombre_material,
-      qty: m.cantidad || 1,
-      total: m.subtotal || 0,
-    })),
-  ];
+export function buildTasksList(tasks: any[]): LayoutItem[] {
+  return (tasks || []).map(t => ({
+    desc: t.descripcion,
+    qty: t.cantidad || 1,
+    unitPrice: t.precio || 0,
+    total: ((t.precio || 0) * (t.cantidad || 1)),
+  }));
+}
+
+export function buildMaterialsList(materiales: any[]): LayoutItem[] {
+  return (materiales || []).map(m => ({
+    desc: m.nombre_material,
+    qty: m.cantidad || 1,
+    unitPrice: m.precio_unitario || 0,
+    total: m.subtotal || 0,
+  }));
 }
