@@ -29,7 +29,22 @@ export async function middleware(request: NextRequest) {
 
   // Usamos getSession en lugar de getUser para evitar una petición de red en cada navegación.
   // getSession decodifica el JWT localmente de forma instantánea y solo hace petición si el token expiró y necesita refresh.
-  await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (session && request.nextUrl.pathname === "/") {
+    const dashboardUrl = request.nextUrl.clone();
+    dashboardUrl.pathname = "/dashboard";
+    const redirectResponse = NextResponse.redirect(dashboardUrl);
+    
+    // Si la sesión fue refrescada, copiar las cookies actualizadas a la respuesta de redirección
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value);
+    });
+
+    return redirectResponse;
+  }
 
   return supabaseResponse;
 }
