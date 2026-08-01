@@ -48,8 +48,8 @@ export function buildTasksList(tasks: any[]): LayoutItem[] {
   return (tasks || []).map(t => ({
     desc: t.descripcion,
     qty: t.cantidad || 1,
-    unitPrice: t.precio || 0,
-    total: ((t.precio || 0) * (t.cantidad || 1)),
+    unitPrice: t.precio_unitario ?? (t.cantidad ? (t.precio || 0) / t.cantidad : t.precio || 0),
+    total: t.precio || 0,
   }));
 }
 
