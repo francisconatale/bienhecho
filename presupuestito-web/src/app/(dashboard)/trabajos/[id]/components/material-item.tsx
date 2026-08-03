@@ -41,12 +41,6 @@ export function MaterialItem({ material, jobId }: MaterialItemProps) {
         isOpen={isEditing}
         onClose={() => setIsEditing(false)}
         title="Editar Material"
-        footer={
-          <div className="flex gap-2">
-            <button type="button" onClick={() => setIsEditing(false)} className="flex-1 py-3 rounded-full bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95">Cancelar</button>
-            <button type="button" className="flex-1 py-3 rounded-full bg-primary text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary-dark transition-colors transition-transform active:scale-95">Guardar</button>
-          </div>
-        }
       >
         <MaterialForm
           initialData={{ 
@@ -56,7 +50,6 @@ export function MaterialItem({ material, jobId }: MaterialItemProps) {
           }}
           onSave={handleSave}
           onCancel={() => setIsEditing(false)}
-          hideFooter
         />
       </Modal>
       <div className="group relative flex flex-col md:flex-row md:items-center px-4 py-3 hover:bg-primary/5 transition-colors gap-1 md:gap-0">
