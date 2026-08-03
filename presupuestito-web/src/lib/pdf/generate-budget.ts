@@ -64,7 +64,19 @@ async function compressLogo(
     canvas.width = newWidth;
     canvas.height = newHeight;
     const ctx = canvas.getContext("2d")!;
+
+    const isPng = format.toUpperCase() === "PNG";
+    if (!isPng) {
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, newWidth, newHeight);
+    }
     ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+    if (isPng) {
+      const compressed = canvas.toDataURL("image/png");
+      const compressedBase64 = compressed.split(",")[1];
+      return { base64: compressedBase64, format: "PNG" };
+    }
 
     const compressed = canvas.toDataURL("image/jpeg", LOGO_JPEG_QUALITY);
     const compressedBase64 = compressed.split(",")[1];
