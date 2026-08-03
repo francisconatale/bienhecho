@@ -44,7 +44,7 @@ export function useBudgetPDF() {
       company: profile?.nombre || "Mi Empresa",
       address: profile?.direccion || "Domicilio Comercial S/D",
       cuit: profile?.cuit || undefined,
-      matricula: profile?.matricula || profile?.numero_matricula || undefined,
+      matricula: profile?.matricula || undefined,
       trade: job.titulo || profile?.rubro || "Servicios Profesionales",
       logo_url: profile?.logo_path ? getPublicLogoUrl(profile.logo_path) : undefined,
     };

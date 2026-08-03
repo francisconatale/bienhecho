@@ -19,11 +19,10 @@ export function ProfileForm() {
     mutationFn: async (formData: FormData) => {
       const nombre = formData.get("nombre") as string;
       const rubro = formData.get("rubro") as string;
-      const numero_matricula = formData.get("matricula") as string;
       const matricula = formData.get("matricula") as string;
       const cuit = formData.get("cuit") as string;
       const direccion = formData.get("direccion") as string;
-      await profileService_upsert({ nombre, rubro, numero_matricula, matricula, cuit, direccion });
+      await profileService_upsert({ nombre, rubro, matricula, cuit, direccion });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
@@ -104,7 +103,7 @@ export function ProfileForm() {
           <input 
             type="text" 
             name="matricula"
-            defaultValue={profile?.matricula || profile?.numero_matricula || ""} 
+            defaultValue={profile?.matricula || ""} 
             placeholder="Opcional" 
             className="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/20 focus:outline-none" 
           />

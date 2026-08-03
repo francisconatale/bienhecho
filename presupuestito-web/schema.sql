@@ -271,9 +271,10 @@ CREATE TABLE IF NOT EXISTS "public"."perfiles" (
     "nombre" "text" NOT NULL,
     "rubro" "text",
     "created_at" timestamp with time zone DEFAULT "now"(),
-    "numero_matricula" "text",
     "direccion" "text",
-    "logo_path" "text"
+    "logo_path" "text",
+    "cuit" "text",
+    "matricula" "text"
 );
 
 

@@ -6,7 +6,6 @@ export interface Profile {
   nombre: string;
   rubro?: string;
   direccion?: string;
-  numero_matricula?: string;
   matricula?: string;
   cuit?: string;
   logo_path?: string;
