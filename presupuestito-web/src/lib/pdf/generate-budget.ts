@@ -31,6 +31,49 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
   return btoa(binary);
 }
 
+const LOGO_MAX_DIMENSION = 800;
+const LOGO_JPEG_QUALITY = 0.85;
+
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+async function compressLogo(
+  base64: string,
+  format: string
+): Promise<{ base64: string; format: string }> {
+  try {
+    const src = `data:image/${format.toLowerCase()};base64,${base64}`;
+    const img = await loadImage(src);
+
+    const { width, height } = img;
+    if (width <= LOGO_MAX_DIMENSION && height <= LOGO_MAX_DIMENSION) {
+      return { base64, format };
+    }
+
+    const ratio = Math.min(LOGO_MAX_DIMENSION / width, LOGO_MAX_DIMENSION / height);
+    const newWidth = Math.round(width * ratio);
+    const newHeight = Math.round(height * ratio);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = newWidth;
+    canvas.height = newHeight;
+    const ctx = canvas.getContext("2d")!;
+    ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+    const compressed = canvas.toDataURL("image/jpeg", LOGO_JPEG_QUALITY);
+    const compressedBase64 = compressed.split(",")[1];
+    return { base64: compressedBase64, format: "JPEG" };
+  } catch {
+    return { base64, format };
+  }
+}
+
 async function createDocWithInter(): Promise<InstanceType<Awaited<typeof import("jspdf")>["default"]>> {
   const [{ default: jsPDF }, regular, bold, italic] = await Promise.all([
     import("jspdf"),
@@ -101,13 +144,15 @@ export async function generateBudgetPDF(
       const response = await fetch(userProfile.logo_url);
       if (response.ok) {
         const buffer = await response.arrayBuffer();
-        logoBase64 = arrayBufferToBase64(buffer);
+        let rawBase64 = arrayBufferToBase64(buffer);
+        let rawFormat = "PNG";
         const urlLower = userProfile.logo_url.toLowerCase();
-        if (urlLower.includes(".png")) {
-          logoFormat = "PNG";
-        } else if (urlLower.includes(".jpg") || urlLower.includes(".jpeg") || urlLower.includes(".webp")) {
-          logoFormat = "JPEG";
+        if (urlLower.includes(".jpg") || urlLower.includes(".jpeg") || urlLower.includes(".webp")) {
+          rawFormat = "JPEG";
         }
+        const compressed = await compressLogo(rawBase64, rawFormat);
+        logoBase64 = compressed.base64;
+        logoFormat = compressed.format;
       }
     } catch (error) {
       console.error("Failed to load logo", error);
