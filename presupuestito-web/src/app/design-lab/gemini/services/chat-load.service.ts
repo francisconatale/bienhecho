@@ -100,13 +100,14 @@ export const chatLoadService = {
       existingDescriptions.add(key);
       nextOrden += 1;
       if (task.precio == null) sinPrecio++;
+      const total = task.precio != null ? (task.quantity ?? 1) * task.precio : null;
 
       const { error: insertErr } = await supabase.from("tareas").insert({
         user_id: user.id,
         trabajo_id: trabajoId,
         descripcion: task.description,
         cantidad: task.quantity ?? 1,
-        precio: task.precio,
+        precio: total,
         precio_unitario: task.precio,
         completada: false,
         orden: nextOrden,

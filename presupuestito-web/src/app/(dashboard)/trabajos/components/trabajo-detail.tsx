@@ -32,6 +32,7 @@ import { MaterialList } from "../[id]/components/material-list";
 import { PaymentsDashboard } from "../[id]/components/payments-dashboard";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
+import { TaskChatWidget } from "../[id]/components/task-chat-widget";
 
 const TaskDetailPanel = dynamic(
   () => import("../[id]/components/task-detail-panel").then((m) => m.TaskDetailPanel),
@@ -551,6 +552,7 @@ export function TrabajoDetail({
         />
       )}
       <ConfirmDialog />
+      <TaskChatWidget jobId={job.id} clienteId={client?.id ?? null} jobTitulo={job.titulo} />
     </div>
   );
 }

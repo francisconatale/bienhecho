@@ -39,8 +39,8 @@ const responseSchema: Schema = {
         type: SchemaType.OBJECT,
         properties: {
           description: { type: SchemaType.STRING },
-          quantity: { type: SchemaType.NUMBER, nullable: true },
-          precio: { type: SchemaType.NUMBER, nullable: true },
+          quantity: { type: SchemaType.INTEGER, nullable: true },
+          precio: { type: SchemaType.INTEGER, nullable: true },
           add: {
             type: SchemaType.BOOLEAN,
             nullable: true,
@@ -70,26 +70,15 @@ const model = genAI.getGenerativeModel({
   generationConfig: {
     responseMimeType: "application/json",
     responseSchema,
-    temperature: 0.7,
-    topP: 0.95,
+    temperature: 0.3,
+    topP: 0.85,
     maxOutputTokens: 1024,
     thinkingConfig: {
-      // Gemma 4 genera un canal de razonamiento por defecto que (a) se filtra
-      // como preámbulo en la respuesta (el "* User input: ... * Instruction: ..."
-      // en loop) y (b) pelea con la salida estructurada (google-gemini/cookbook
-      // #1198, ollama #15386). includeThoughts:false es no-op silencioso en la
-      // API para gemma; el toggle que SÍ funciona es thinkingLevel "minimal"
-      // (cero thought tokens, documentado en "Run Gemma with the Gemini API").
       thinkingLevel: "minimal",
     },
-    // thinkingConfig no existe aún en el type del SDK, pero el REST v1beta lo
-    // acepta y es la única forma de apagar el razonamiento de gemma.
   } as GenerationConfig & { thinkingConfig: { thinkingLevel: string } },
 });
 
-// Gemma suele emitir el objeto JSON seguido de texto suelto (prosa, resúmenes,
-// un segundo objeto). Esto NO es rescatar output inválido: se toma el primer
-// objeto JSON balanceado y luego assertLLMResponse valida cada campo estricto.
 function extractFirstJsonObject(text: string): string | null {
   const start = text.indexOf("{");
   if (start === -1) return null;
@@ -129,11 +118,12 @@ async function generateParsedResponse(stepPrompt: string): Promise<LLMResponse> 
   let lastError: unknown;
 
   for (let attempt = 1; attempt <= 3; attempt++) {
+    let raw = "";
     try {
       const result = await model.generateContent({
         contents: [{ role: "user", parts: [{ text: stepPrompt }] }],
       });
-      const raw = result.response.text();
+      raw = result.response.text();
 
       if (!raw || raw.trim().length === 0) {
         throw new Error("El modelo devolvió una respuesta vacía.");
@@ -148,6 +138,10 @@ async function generateParsedResponse(stepPrompt: string): Promise<LLMResponse> 
     } catch (error) {
       lastError = error;
       console.warn(`Output inválido del modelo (intento ${attempt}):`, error instanceof Error ? error.message : error);
+      console.warn(
+        `Raw del modelo (${raw.length} chars):`,
+        raw.length > 1000 ? `${raw.slice(0, 1000)}\n...[truncado]` : raw
+      );
     }
   }
 
@@ -198,10 +192,16 @@ function assertLLMResponse(value: unknown): LLMResponse {
   return value as LLMResponse;
 }
 
+export interface ChatContext {
+  trabajo_id?: string;
+  cliente_id?: string | null;
+}
+
 export async function generateChatResponse(
   messages: Message[],
   _userId: string,
-  conversationId?: string
+  conversationId?: string,
+  context?: ChatContext
 ): Promise<{ success: boolean; data?: BackendResponse; conversationId?: string; error?: string }> {
   try {
     if (!process.env.GEMINI_API_KEY) {
@@ -218,7 +218,12 @@ export async function generateChatResponse(
     if (!currentConvId) {
       const { data: conv, error: convErr } = await supabase
         .from("conversations")
-        .insert({ status: "IN_PROGRESS", user_id: user.id })
+        .insert({
+          status: "IN_PROGRESS",
+          user_id: user.id,
+          trabajo_id: context?.trabajo_id ?? null,
+          cliente_id: context?.cliente_id ?? null,
+        })
         .select()
         .single();
 

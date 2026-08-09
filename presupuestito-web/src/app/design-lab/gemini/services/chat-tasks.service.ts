@@ -17,7 +17,7 @@ export function normalizeDescription(text: string): string {
 // Cantidad/precio deben ser > 0: el modelo a veces glitchea con 0 o negativos
 // (ej. "instale 0 focos"); se tratan como dato no definido → quedan pendientes.
 function positiveOrNull(value: number | null | undefined): number | null {
-  return typeof value === "number" && value > 0 ? value : null;
+  return typeof value === "number" && Number.isInteger(value) && value > 0 ? value : null;
 }
 
 export function missingFieldsOf(t: QuantityPrecio): MissingField[] {
