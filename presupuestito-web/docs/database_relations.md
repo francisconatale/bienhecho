@@ -74,7 +74,9 @@ El proyecto grande. Cada trabajo pertenece a un cliente y tiene presupuesto prop
 | `user_id` | uuid FK | no | Usuario propietario (`→ auth.users.id`) |
 | `trabajo_id` | uuid FK | no | Trabajo al que pertenece (`→ trabajos.id`) |
 | `descripcion` | string | no | Qué es la tarea (ej: "Instalación de foco") |
+| `cantidad` | decimal | sí | Cantidad de unidades (default `1`) |
 | `precio` | decimal | sí | Precio unitario. Si es null, NO se factura |
+| `precio_unitario` | decimal | sí | Precio unitario (duplicado para compatibilidad del servicio) |
 | `completada` | boolean | no | Si la tarea ya fue realizada |
 | `prioridad` | string | sí | Nivel de urgencia (`alta`, `media`, `baja`) para agrupar |
 | `fecha_vencimiento`| date | sí | Fecha límite para realizar la tarea (opcional) |
@@ -338,5 +340,84 @@ presupuestado ──(cobro registrado / marcar pagado)──▶ pagado
 | Tabla `visita_tareas` | No | Sí |
 | Cobros | Sí | Sí |
 | Materiales | Opcional | Sí |
+
+---
+
+## Tablas del chat de tareas (asistente IA)
+
+Backend de la arquitectura de interpretación de tareas por chat (spec `001-voice-task-arch`).
+El backend (Server Action `design-lab/gemini/actions.ts`) orquesta el flujo y sirve **una**
+tarea de clarificación a la vez. RLS multi-tenancy por `conversations.user_id`.
+
+### `conversations`
+
+| Campo | Tipo | Nullable | Descripción |
+|-------|------|----------|-------------|
+| `id` | uuid PK | no | Identificador único |
+| `created_at` | timestamptz | no | Fecha de creación |
+| `status` | text | no | Estado de la conversación |
+| `user_id` | uuid FK | no | Usuario propietario / persona (`→ auth.users.id`) |
+| `cliente_id` | uuid FK | sí | Cliente asociado a la conversación (`→ clientes.id`, ON DELETE SET NULL) |
+| `trabajo_id` | uuid FK | sí | Trabajo vinculado; las tareas de la conversación pertenecen a este trabajo (`→ trabajos.id`, ON DELETE SET NULL) |
+
+**Enumerado `status`:**
+- `IN_PROGRESS` — Conversación activa
+- `COMPLETED` — Conversación finalizada
+
+**Relaciones salientes:**
+- Una conversación tiene N tareas (`tasks_snapshot.conversation_id → conversations.id`)
+- Una conversación tiene N pasos pendientes (`pending_steps.conversation_id → conversations.id`)
+- Una conversación se vincula a UN trabajo (`conversations.trabajo_id → trabajos.id`)
+
+### `tasks_snapshot` (tareas detectadas por el LLM)
+
+| Campo | Tipo | Nullable | Descripción |
+|-------|------|----------|-------------|
+| `id` | uuid PK | no | Identificador único |
+| `conversation_id` | uuid FK | no | Conversación a la que pertenece (`→ conversations.id`, ON DELETE CASCADE) |
+| `description` | text | no | Descripción del trabajo detectado |
+| `quantity` | numeric | sí | Cantidad (null si falta aclarar) |
+| `precio` | numeric | sí | Precio unitario (null si falta aclarar) |
+| `status` | text | no | Estado de la tarea |
+| `created_at` | timestamptz | no | Fecha de creación |
+
+**Enumerado `status`:**
+- `PENDING` — Falta completar algún dato (cantidad o precio)
+- `COMPLETED` — Cantidad y precio definidos
+
+### `pending_steps` (cola de aclaraciones)
+
+| Campo | Tipo | Nullable | Descripción |
+|-------|------|----------|-------------|
+| `id` | uuid PK | no | Identificador único |
+| `conversation_id` | uuid FK | no | Conversación (`→ conversations.id`, ON DELETE CASCADE) |
+| `task_id` | uuid FK | no | Tarea a aclarar (`→ tasks_snapshot.id`, ON DELETE CASCADE) |
+| `step_type` | text | no | Qué se está aclarando |
+| `status` | text | no | Estado del paso |
+| `attempts` | int | no | Contador de reintentos (límite: 3) |
+| `created_at` | timestamptz | no | Fecha de creación |
+
+**Enumerado `step_type`:**
+- `CLARIFY_DATOS` — Faltan datos de la tarea (cantidad y/o precio). Se piden juntos si faltan ambos; el prompt deriva qué falta de la tarea (no hay cases por campo)
+- `CLARIFY_CANTIDAD_ADICIONAL` — El usuario quiere SUMAR unidades a una tarea ya registrada pero no dijo cuántas; se pregunta cuántas agregar
+
+**Enumerado `status`:**
+- `PENDING` — Esperando la respuesta del usuario
+- `RESOLVED` — Dato aclarado correctamente
+- `FAILED` — Superó el límite de 3 intentos; requiere intervención manual
+
+**Reglas de negocio:**
+- Solo un `pending_steps` en estado `PENDING` se sirve a la vez por conversación
+- Una tarea está incompleta si `quantity` **o** `precio` es null. Si faltan ambas se piden juntas en una sola pregunta; si el usuario solo aporta una, el próximo turno pregunta por la que sigue faltando
+- Al llegar a 3 `attempts`, el paso pasa a `FAILED` y no se vuelve a preguntar
+- Al completarse una tarea incompleta y no existir un paso activo, se encola la siguiente aclaración
+- El matching de tareas existentes lo decide la IA usando el contexto de la conversación (descripción exacta). Para un aumento de cantidad, si el usuario dijo cuántas, el backend SUMA y resuelve en el mismo turno (`add: true` + `quantity`); si no lo dijo, encola `CLARIFY_CANTIDAD_ADICIONAL`
+
+**Vínculo con trabajos (carga al sistema):**
+- Una conversación se vincula a UN trabajo (`conversations.trabajo_id`) y un cliente (`conversations.cliente_id`)
+- Al cargar, se crea el `trabajo` si no existe, se setea `conversations.trabajo_id`, y las tareas del chat se copian como `tareas` de ese trabajo (sin duplicar: se compara por descripción normalizada contra las tareas existentes del trabajo)
+- El `quantity` y `precio` del chat se copian a `tareas.cantidad` y `tareas.precio` / `precio_unitario`; si `precio` es null la tarea es descriptiva y NO se factura
+- Las tareas nuevas que aparezcan en turnos posteriores se anexan al mismo trabajo vinculado
+
 
 **La app no fuerza ninguno de los dos flujos.** Las visitas y materiales son opcionales.
