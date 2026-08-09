@@ -27,7 +27,7 @@ pedido, responde **consultas** sin tocar datos y termina volcando todo a un
 | `hooks/use-chat-tasks.ts` | Store zustand (cliente): mensajes, tareas, paso activo, conversación, loading. | lo consumen los 3 componentes |
 | `types/chat.ts` | **Contratos** compartidos cliente ↔ servidor ↔ LLM (`LLMResponse`, `BackendResponse`, `WorkItem`, ...). | todo el módulo |
 | `actions.ts` | **Orquestador** (server): conversación → paso activo → flujo → LLM → persistencia → estado final. Exporta `generateChatResponse` y `loadChatTasksIntoJob`. | `lib/chat-flow-strategy`, `services/*`, Supabase, Gemini |
-| `lib/chat-flow-strategy.ts` | **Estrategia por flujo**: define el enum `CHAT_FLOWS`, los prompts (`prompt`) y la persistencia (`run`) de cada flujo, más helpers (`enqueueStep`, `resolveStep`, `failOrRetryStep`, `sanitizeRespuesta`, `chatSystemInstruction`). | `actions.ts`, `services/chat-tasks.service`, LLM |
+| `lib/chat-flow-strategy.ts` | **Estrategia por flujo**: define el enum `CHAT_FLOWS`, los prompts (`prompt`) y la persistencia (`run`) de cada flujo, más helpers (`enqueueStep`, `resolveStep`, `failOrRetryStep`, `buildRegisteredContext`, `missingFieldsLabel`, los reply builders, `chatSystemInstruction`). | `actions.ts`, `services/chat-tasks.service`, LLM |
 | `services/chat-tasks.service.ts` | **Toda** las queries a `tasks_snapshot` (sync, update, removeByDescription, list*, findNextIncomplete) + helpers `normalizeDescription`, `missingFieldsOf`, `isIncomplete`. | `actions.ts`, `lib/chat-flow-strategy.ts` |
 | `services/chat-load.service.ts` | `loadTasksIntoJob`: crea/vincula el trabajo y copia `tasks_snapshot` → `tareas` (dedupe por descripción normalizada). | `actions.ts` |
 
@@ -124,7 +124,7 @@ al LLM**, el store del cliente lo conserva únicamente para pintar las burbujas.
      │                                  │  generateContent(prompt)                                │
      │                                  │───────────────────────────────────►                    │
      │                                  │◄──────────────── LLMResponse JSON ───────────────────│
-     │                                  │  sanitizeRespuesta()                                  │
+     │                                  │  strategy.run() arma la respuesta (reply builders)   │
      │                                  │  strategy.run({supabase, parsedJSON, activeStep})     │
      │                                  │          │ update/sync tasks_snapshot                  │
      │                                  │          │ enqueue/resolve/fail pending_steps         │
@@ -207,14 +207,18 @@ El flujo se resuelve desde el `step_type` del único `pending_step` activo
 ### Contrato LLM → backend (esquema intent/data)
 
 El modelo responde siempre un JSON validado estricto (`assertLLMResponse` en
-`actions.ts`, sin rescates): `gemini-2.5-flash` impone el `responseSchema` a
-nivel API (structured output nativo) y además el parse valida cada campo.
+`actions.ts`, sin rescates): `gemma-4-26b-a4b-it` con `responseSchema`
+(structured output nativo) y además el parse valida cada campo.
 Declara la **intención** del turno y el backend ejecuta según el flujo activo.
+**El LLM NO escribe texto libre**: el contrato no tiene campo de prosa y la
+instrucción lo prohíbe explícitamente (el free-text en el schema es el trigger
+del bug de loops degenerativos de gemma). El mensaje del bot lo arman los
+**reply builders** del backend a partir de `intent` + `data` + estado real en
+la base.
 
 ```json
 {
   "intent": "CREATE_TASK | UPDATE_TASK | DELETE_TASK | QUERY_TASK | UNKNOWN",
-  "respuesta": "string",
   "status": "completed | pending",
   "data": [
     {
@@ -329,7 +333,7 @@ Turno 5  "3"                                     ──► CLARIFY_ADICIONAL: 5+
 - **Máximo 3 intentos** (FR-005/US3): `MAX_CLARIFICATION_ATTEMPTS`; al superarlo el paso pasa a `FAILED` y se sigue con la tarea sin ese dato.
 - **`status` derivado**: `COMPLETED` solo si `quantity` y `precio` están definidos.
 - **No pisar con `null`**: en los flujos de clarificación se rellena solo lo que el usuario aportó.
-- **Respuesta limpia**: `sanitizeRespuesta` corta en la primera repetición de frase y limita a 600 caracteres.
+- **El mensaje lo arma el backend, no el LLM**: `FLOW_STRATEGIES[flujo].run` devuelve `{ tareas, respuesta }` con texto construido por los reply builders (`replyForRegistered`, `replyForUpdated`, `replyForQuery`, `replyForPendingQuestion`, `replyForUnknown`) a partir de `intent` + `data` + números reales de la base. El LLM solo llena datos estructurados.
 
 ---
 
@@ -341,7 +345,7 @@ El diseño sigue patrones establecidos en la industria y la literatura de LLMs:
 |---|---|---|
 | **Slot Filling + Dialogue State Tracking (DST)** | El "intent frame" define slots (`cantidad`, `precio`); el DST persiste qué slots faltan y dispara las preguntas de relleno en diálogo multi-turno. | `pending_steps` = dialog state persistido; `missingFieldsOf` = slot tracking; `CLARIFY_DATOS` rellena slots sin pisar lo ya dado. |
 | **Agent-as-State-Machine (FSM / StateFlow)** | El agente es una máquina de estados: el código posee el estado y las transiciones; el LLM opera dentro del estado. Cada turno es un checkpoint reanudable. | `resolveFlow(step_type)` = transición; estados `PENDING`/`RESOLVED`/`FAILED` + `attempts`; todo releído de Postgres en cada turno. |
-| **"Code owns state, LLM owns language"** (control surfaces) | El LLM nunca decide si "ya recolectó todo" o "debo ejecutar": el código valida, persiste y dispara. El LLM solo interpreta y genera texto. | Separación `strategy.prompt` (LLM) / `strategy.run` (backend); el `status` final lo decide el backend, no el LLM. |
+| **"Code owns state, LLM owns language"** (control surfaces) | El LLM nunca decide si "ya recolectó todo" o "debo ejecutar": el código valida, persiste y dispara. El LLM solo interpreta y llena datos estructurados; el texto final lo arma el backend. | Separación `strategy.prompt` (LLM) / `strategy.run` (backend); el `status` final y la `respuesta` los decide el backend, no el LLM. |
 | **Progressive disclosure** | Una sola pregunta a la vez, sin adelantar pasos futuros. | Una tarea a la vez (FR-004/FR-008) + prompts que exigen UNA pregunta corta. |
 | **Cola FIFO de trabajo** | Las unidades de trabajo esperan en orden y se procesan de a una. | Tareas incompletas en `tasks_snapshot` + `findNextIncomplete` por `created_at`. |
 
