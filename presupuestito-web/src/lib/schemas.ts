@@ -1,14 +1,11 @@
 import { z } from "zod";
 
-// --- Enums / Literals ---
-
 export const JobStatusSchema = z.enum(["borrador", "presupuestado", "pagado"]);
 export const TaskPrioritySchema = z.enum(["alta", "media", "baja"]);
 export const VisitStatusSchema = z.enum(["planificada", "realizada", "cancelada"]);
 export const TransaccionTipoSchema = z.enum(["cargo", "abono"]);
 export const TransaccionOrigenSchema = z.enum(["automático", "manual"]);
 
-// --- Models ---
 
 export const ClientSchema = z.object({
   id: z.string().uuid().or(z.string()),
@@ -29,6 +26,9 @@ export const JobSchema = z.object({
   direccion: z.string().min(1, "La dirección es obligatoria"),
   descripcion: z.string().optional(),
   presupuesto: z.number().min(0),
+  total_estimado: z.number().min(0).default(0),
+  total_cobrado: z.number().min(0).default(0),
+  saldo_pendiente: z.number().default(0),
   estado: JobStatusSchema,
   fecha_inicio: z.string().optional(),
   fecha_fin_estimada: z.string().optional(),

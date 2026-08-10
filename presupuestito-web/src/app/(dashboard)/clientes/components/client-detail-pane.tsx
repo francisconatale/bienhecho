@@ -69,71 +69,45 @@ export function ClientDetailPane({
         .select("*")
         .eq("cliente_id", client.id)
         .order("created_at", { ascending: false });
-        
+
       if (jobsError) throw jobsError;
       const jobIds = jobs?.map(j => j.id) || [];
-      
+
       if (jobIds.length === 0) {
-        return { jobs: [], tasks: [], materiales: [], cobros: [] };
+        return { jobs: [], tasks: [] };
       }
-      
-      const [
-        { data: tasks },
-        { data: materiales },
-        { data: cobros }
-      ] = await Promise.all([
-        supabase.from("tareas").select("*").in("trabajo_id", jobIds),
-        supabase.from("materiales").select("*").in("trabajo_id", jobIds),
-        supabase.from("cobros").select("*").in("trabajo_id", jobIds)
-      ]);
-      
+
+      const { data: tasks } = await supabase
+        .from("tareas")
+        .select("*")
+        .in("trabajo_id", jobIds);
+
       return {
         jobs: jobs || [],
         tasks: tasks || [],
-        materiales: materiales || [],
-        cobros: cobros || []
       };
     }
   });
 
   const clientJobs = data?.jobs || [];
-  
+
   const jobMetrics = useMemo(() => {
     const tasks = data?.tasks || [];
-    const materiales = data?.materiales || [];
-    const cobros = data?.cobros || [];
 
     const metrics: Record<string, {
       completedTasks: number,
       totalTasks: number,
-      materialsCost: number,
-      totalEstimado: number,
-      totalCobrado: number,
-      saldoPendiente: number,
     }> = {};
 
     clientJobs.forEach(job => {
       const jobTasks = tasks.filter((t: any) => t.trabajo_id === job.id);
-      const jobMaterials = materiales.filter((m: any) => m.trabajo_id === job.id);
-      const jobCobros = cobros.filter((c: any) => c.trabajo_id === job.id);
-
-      const completedTasks = jobTasks.filter((t: any) => t.completada).length;
-      const totalTasks = jobTasks.length;
-      const materialsCost = jobMaterials.reduce((sum: number, m: any) => sum + m.subtotal, 0);
-      const totalEstimado = jobTasks.reduce((sum: number, t: any) => sum + (t.precio ?? 0), 0) + materialsCost;
-      const totalCobrado = jobCobros.reduce((s: number, c: any) => s + c.monto_cobrado, 0);
-      const saldoPendiente = Math.max(0, totalEstimado - totalCobrado);
 
       metrics[job.id] = {
-        completedTasks,
-        totalTasks,
-        materialsCost,
-        totalEstimado,
-        totalCobrado,
-        saldoPendiente
+        completedTasks: jobTasks.filter((t: any) => t.completada).length,
+        totalTasks: jobTasks.length,
       };
     });
-    
+
     return metrics;
   }, [clientJobs, data]);
   const { saldo: deudaTotal } = useCuentaCorriente(client.id);
@@ -348,15 +322,15 @@ export function ClientDetailPane({
                 className: "md:w-32 text-right",
                 headerClassName: "text-right",
                 render: (job) => {
-                  const metrics = jobMetrics[job.id] || { totalEstimado: 0, saldoPendiente: 0 };
+                  const saldoPendiente = job.saldo_pendiente ?? 0;
                   return (
                     <div className="flex flex-col items-end justify-center">
                       <span className="text-base font-bold text-on-surface tabular-nums">
                         {job.presupuesto > 0 ? formatCurrency(job.presupuesto) : "S/P"}
                       </span>
-                      {job.estado === "presupuestado" && metrics.totalEstimado > 0 && metrics.saldoPendiente > 0 && (
+                      {job.estado === "presupuestado" && (job.total_estimado ?? 0) > 0 && saldoPendiente > 0 && (
                         <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 mt-0.5">
-                          Debe {formatCurrency(metrics.saldoPendiente)}
+                          Debe {formatCurrency(saldoPendiente)}
                         </span>
                       )}
                     </div>

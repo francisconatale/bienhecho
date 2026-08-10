@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { tasksService_getAll } from "@/actions/tasks.actions";
+import { tasksService_getById } from "@/actions/tasks.actions";
 import { TaskDetailPanel } from "@/app/(dashboard)/trabajos/[id]/components/task-detail-panel";
 import { TareaDetailSkeleton } from "@/components/ui/skeletons";
 
@@ -13,8 +13,7 @@ interface TareaPageClientProps {
 
 export function TareaDetailContent({ id }: TareaPageClientProps) {
   const router = useRouter();
-  const { data: tasks = [], isLoading } = useQuery({ queryKey: ["tasks"], queryFn: tasksService_getAll });
-  const task = tasks.find((t) => t.id === id);
+  const { data: task, isLoading } = useQuery({ queryKey: ["tasks", id], queryFn: () => tasksService_getById(id) });
 
   if (isLoading) {
     return <TareaDetailSkeleton />;

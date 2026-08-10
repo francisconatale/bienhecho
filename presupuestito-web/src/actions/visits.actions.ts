@@ -8,6 +8,9 @@ export const visitsService_getAll: typeof visitsService.getAll = async (...args)
 export const visitsService_getUpcoming: typeof visitsService.getUpcoming = async (...args) =>
   visitsService.getUpcoming(...args);
 
+export const visitsService_getByRange: typeof visitsService.getByRange = async (...args) =>
+  visitsService.getByRange(...args);
+
 export const visitsService_create: typeof visitsService.create = async (...args) =>
   visitsService.create(...args);
 

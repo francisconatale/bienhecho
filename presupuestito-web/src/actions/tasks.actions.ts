@@ -17,6 +17,9 @@ export const tasksService_getCounts: typeof tasksService.getCounts = async (...a
 export const tasksService_getByJobId: typeof tasksService.getByJobId = async (...args) =>
   tasksService.getByJobId(...args);
 
+export const tasksService_getById: typeof tasksService.getById = async (...args) =>
+  tasksService.getById(...args);
+
 export const tasksService_create: typeof tasksService.create = async (...args) =>
   tasksService.create(...args);
 

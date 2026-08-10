@@ -27,9 +27,6 @@ export function useNavigationHistory() {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(stack));
     
     if (!popped) return fallbackUrl;
-
-    // Append ?dir=back or &dir=back to the popped URL if not present
-    // so we get the back animation.
     try {
       const urlObj = new URL(popped, window.location.origin);
       urlObj.searchParams.set("dir", "back");

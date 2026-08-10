@@ -3,8 +3,8 @@
 import React, { useState, useRef } from "react";
 import { ChevronLeft, Pencil, Check, CalendarDays, ClipboardList, Flame, Loader2, Trash2 } from "lucide-react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { jobsService_getAll } from "@/actions/jobs.actions";
-import { tasksService_getAll, tasksService_update, tasksService_delete } from "@/actions/tasks.actions";
+import { jobsService_getById } from "@/actions/jobs.actions";
+import { tasksService_getByJobId, tasksService_update, tasksService_delete } from "@/actions/tasks.actions";
 import { visitsService_getAll, visitsService_getVisitaTareas } from "@/actions/visits.actions";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { cn } from "@/lib/utils";
@@ -23,8 +23,8 @@ interface TaskDetailPanelProps {
 }
 
 export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: TaskDetailPanelProps) {
-  const { data: jobs = [], isLoading: isJobsLoading } = useQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll });
-  const { data: tasks = [], isLoading: isTasksLoading } = useQuery({ queryKey: ["tasks"], queryFn: tasksService_getAll });
+  const { data: job, isLoading: isJobsLoading } = useQuery({ queryKey: ["jobs", jobId], queryFn: () => jobsService_getById(jobId) });
+  const { data: tasks = [], isLoading: isTasksLoading } = useQuery({ queryKey: ["tasks", jobId], queryFn: () => tasksService_getByJobId(jobId) });
   const { data: visits = [], isLoading: isVisitsLoading } = useQuery({ queryKey: ["visits"], queryFn: visitsService_getAll });
   const { data: visitaTareas = [], isLoading: isVisitaTareasLoading } = useQuery({ queryKey: ["visitTasks"], queryFn: visitsService_getVisitaTareas });
 
@@ -72,8 +72,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
   const isTogglingComplete = updateTaskMutation.isPending && updateTaskMutation.variables?.data?.completada !== undefined;
   const isTogglingPriority = updateTaskMutation.isPending && updateTaskMutation.variables?.data?.prioridad !== undefined;
 
-  const job = jobs.find((j) => j.id === jobId);
-  const task = tasks.find((t) => t.id === taskId && t.trabajo_id === jobId);
+  const task = tasks.find((t) => t.id === taskId);
 
   const [isEditing, setIsEditing] = useState(false);
   const [descripcion, setDescripcion] = useState(task?.descripcion ?? "");

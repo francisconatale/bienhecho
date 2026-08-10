@@ -1,5 +1,6 @@
-import { CalendarDays, Trash2, Clock, CheckCircle2, XCircle } from "lucide-react";
+﻿import { CalendarDays, Trash2, Clock, CheckCircle2, XCircle } from "lucide-react";
 import { Visit } from "@/types";
+import { VisitWithJob } from "@/services/visits.service";
 import { cn } from "@/lib/utils";
 import { MONTHS } from "../hooks/use-agenda";
 
@@ -8,8 +9,8 @@ interface VisitListProps {
   selectedDay: number | null;
   month: number;
   year: number;
-  dayVisits: Visit[];
-  getJobInfo: (id: string) => { titulo: string; cliente: string; direccion: string };
+  dayVisits: VisitWithJob[];
+  getJobInfo: (visit: VisitWithJob) => { titulo: string; cliente: string; direccion: string };
   handleStatusToggle: (visit: Visit) => void;
   setEditingVisit: (visit: Visit) => void;
   handleDelete: (id: string) => void;
@@ -50,7 +51,7 @@ function VisitCard({ visit, jobInfo, onToggleStatus, onEdit, onDelete }: {
           </div>
           <h3 className="text-sm font-bold text-on-surface cursor-default select-none">{jobInfo.titulo}</h3>
           <p className="text-[11px] text-on-surface-variant/60 mt-0.5 cursor-default select-none">
-            {jobInfo.cliente} • {jobInfo.direccion}
+            {jobInfo.cliente} â€¢ {jobInfo.direccion}
           </p>
           {visit.notas && (
             <p className="text-xs text-on-surface-variant mt-2 italic cursor-default select-none">{visit.notas}</p>
@@ -120,9 +121,9 @@ export function VisitList({
     return (
       <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl border border-outline-variant/20 shadow-sm py-16 text-center">
         <CalendarDays className="w-12 h-12 text-on-surface-variant/20 mx-auto mb-4" strokeWidth={1.5} />
-        <h3 className="text-base font-bold text-on-surface mb-1">Seleccioná un día</h3>
+        <h3 className="text-base font-bold text-on-surface mb-1">SeleccionÃ¡ un dÃ­a</h3>
         <p className="text-sm text-on-surface-variant/60">
-          Hacé clic en un día del calendario para ver sus visitas.
+          HacÃ© clic en un dÃ­a del calendario para ver sus visitas.
         </p>
       </div>
     );
@@ -145,7 +146,7 @@ export function VisitList({
             <VisitCard
               key={visit.id}
               visit={visit}
-              jobInfo={getJobInfo(visit.trabajo_id)}
+              jobInfo={getJobInfo(visit)}
               onToggleStatus={() => handleStatusToggle(visit)}
               onEdit={() => setEditingVisit(visit)}
               onDelete={() => handleDelete(visit.id)}
@@ -158,7 +159,7 @@ export function VisitList({
             <VisitCard
               key={visit.id}
               visit={visit}
-              jobInfo={getJobInfo(visit.trabajo_id)}
+              jobInfo={getJobInfo(visit)}
               onToggleStatus={() => handleStatusToggle(visit)}
               onEdit={() => setEditingVisit(visit)}
               onDelete={() => handleDelete(visit.id)}
@@ -171,7 +172,7 @@ export function VisitList({
             <VisitCard
               key={visit.id}
               visit={visit}
-              jobInfo={getJobInfo(visit.trabajo_id)}
+              jobInfo={getJobInfo(visit)}
               onToggleStatus={() => handleStatusToggle(visit)}
               onEdit={() => setEditingVisit(visit)}
               onDelete={() => handleDelete(visit.id)}
@@ -184,7 +185,7 @@ export function VisitList({
             <CalendarDays className="w-10 h-10 text-on-surface-variant/20 mx-auto mb-3" strokeWidth={1.5} />
             <h3 className="text-sm font-bold text-on-surface mb-1">Sin visitas</h3>
             <p className="text-xs text-on-surface-variant/60">
-              No hay visitas para este día.
+              No hay visitas para este dÃ­a.
             </p>
             <button
               onClick={() => setShowNewModal(true)}

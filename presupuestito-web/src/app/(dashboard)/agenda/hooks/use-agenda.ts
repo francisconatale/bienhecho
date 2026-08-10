@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { visitsService_getAll, visitsService_create, visitsService_update, visitsService_delete } from "@/actions/visits.actions";
+import { visitsService_getByRange, visitsService_create, visitsService_update, visitsService_delete } from "@/actions/visits.actions";
 import { jobsService_getAll } from "@/actions/jobs.actions";
 import { clientsService_getAll } from "@/actions/clients.actions";
 import { Visit, VisitStatus } from "@/types";
+import { VisitWithJob } from "@/services/visits.service";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 
@@ -23,34 +24,51 @@ export function formatDate(year: number, month: number, day: number) {
 }
 
 export interface AgendaInitialData {
-  visits?: Visit[];
+  visits?: VisitWithJob[];
   jobs?: any[];
   clients?: any[];
 }
 
 export function useAgenda(initialData?: AgendaInitialData) {
   const queryClient = useQueryClient();
-  const { data: visits = [], isLoading: isLoadingVisits } = useQuery({ queryKey: ["visits"], queryFn: visitsService_getAll, initialData: initialData?.visits });
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(new Date().getMonth());
+
+  const monthStart = `${year}-${String(month + 1).padStart(2, "0")}-01`;
+  const monthEnd = `${year}-${String(month + 1).padStart(2, "0")}-${String(new Date(year, month + 1, 0).getDate()).padStart(2, "0")}`;
+
+  const { data: visits = [], isLoading: isLoadingVisits } = useQuery({
+    queryKey: ["visits", year, month],
+    queryFn: () => visitsService_getByRange(monthStart, monthEnd),
+    initialData: initialData?.visits,
+  });
   const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll, initialData: initialData?.jobs });
   const { data: clients = [], isLoading: isLoadingClients } = useQuery({ queryKey: ["clients"], queryFn: clientsService_getAll, initialData: initialData?.clients });
 
   const addVisitMutation = useMutation({
     mutationFn: visitsService_create,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["visits"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["visits"] });
+      queryClient.invalidateQueries({ queryKey: ["smart-suggestions"] });
+    },
   });
 
   const updateVisitMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => visitsService_update(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["visits"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["visits"] });
+      queryClient.invalidateQueries({ queryKey: ["smart-suggestions"] });
+    },
   });
 
   const removeVisitMutation = useMutation({
     mutationFn: visitsService_delete,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["visits"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["visits"] });
+      queryClient.invalidateQueries({ queryKey: ["smart-suggestions"] });
+    },
   });
 
-  const [year, setYear] = useState(new Date().getFullYear());
-  const [month, setMonth] = useState(new Date().getMonth());
   const [selectedDay, setSelectedDay] = useState<number | null>(new Date().getDate());
   const [showNewModal, setShowNewModal] = useState(false);
   const [editingVisit, setEditingVisit] = useState<Visit | null>(null);
@@ -64,10 +82,7 @@ export function useAgenda(initialData?: AgendaInitialData) {
         .filter((v) => v.fecha === selectedDate)
         .filter((v) => {
           if (filterStatus && v.estado !== filterStatus) return false;
-          if (filterClient) {
-            const job = jobs.find((j) => j.id === v.trabajo_id);
-            if (!job || job.cliente_id !== filterClient) return false;
-          }
+          if (filterClient && v.job?.cliente_id !== filterClient) return false;
           return true;
         })
         .sort((a, b) => a.hora_inicio.localeCompare(b.hora_inicio))
@@ -110,16 +125,11 @@ export function useAgenda(initialData?: AgendaInitialData) {
     return visits.filter((v) => v.fecha === date).length;
   };
 
-  const getJobInfo = (trabajoId: string) => {
-    const job = jobs.find((j) => j.id === trabajoId);
-    if (!job) return { titulo: "—", cliente: "—", direccion: "" };
-    const client = clients.find((c) => c.id === job.cliente_id);
-    return {
-      titulo: job.titulo,
-      cliente: client?.nombre || "—",
-      direccion: job.direccion,
-    };
-  };
+  const getJobInfo = (visit: VisitWithJob) => ({
+    titulo: visit.job?.titulo || "—",
+    cliente: visit.job?.clientes?.nombre || "—",
+    direccion: visit.job?.direccion || "",
+  });
 
   const [ConfirmDialog, confirm] = useConfirm();
 
