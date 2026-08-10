@@ -218,6 +218,28 @@ Materiales utilizados o presupuestados para un trabajo.
 
 ---
 
+### `get_smart_suggestions()` (RPC)
+
+Función SQL (`security invoker`, RLS activo) que devuelve sugerencias de agenda:
+trabajos con tareas críticas (sin completar, prioridad `alta`/`media`) que **no** tienen
+una visita futura (hoy o después, y no `cancelada`).
+
+**Parámetros:** ninguno (filtra por `auth.uid()` vía RLS).
+
+**Retorna:**
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `job_id` | uuid | Trabajo sugerido |
+| `job_title` | text | Título del trabajo |
+| `client_name` | text | Nombre del cliente (`Cliente Desconocido` si falta) |
+| `critical_tasks_count` | bigint | Cantidad de tareas críticas |
+| `high_priority_count` | bigint | Cantidad de tareas con prioridad `alta` |
+| `critical_tasks` | jsonb | Tareas críticas ordenadas (alta primero, luego por `orden`) |
+
+**Orden:** por `high_priority_count` DESC, luego `critical_tasks_count` DESC.
+
+---
+
 ## Mapa de relaciones
 
 ```

@@ -60,6 +60,13 @@ export const jobsService = {
     return data as Job;
   },
 
+  getByClientId: async (clientId: string): Promise<Job[]> => {
+    const { supabase, user } = await requireAuth();
+    const { data, error } = await supabase.from("trabajos").select("*, clientes(nombre)").eq("cliente_id", clientId).eq("user_id", user.id).order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return data as Job[];
+  },
+
   create: async (jobData: Omit<Job, "id" | "created_at" | "user_id">): Promise<Job> => {
     const { supabase, user } = await requireAuth();
 

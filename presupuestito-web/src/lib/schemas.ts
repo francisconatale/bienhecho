@@ -1,14 +1,11 @@
 import { z } from "zod";
 
-// --- Enums / Literals ---
-
 export const JobStatusSchema = z.enum(["borrador", "presupuestado", "pagado"]);
 export const TaskPrioritySchema = z.enum(["alta", "media", "baja"]);
 export const VisitStatusSchema = z.enum(["planificada", "realizada", "cancelada"]);
 export const TransaccionTipoSchema = z.enum(["cargo", "abono"]);
 export const TransaccionOrigenSchema = z.enum(["automático", "manual"]);
 
-// --- Models ---
 
 export const ClientSchema = z.object({
   id: z.string().uuid().or(z.string()),

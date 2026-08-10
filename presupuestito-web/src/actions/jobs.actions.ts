@@ -14,6 +14,9 @@ export const jobsService_getPaginated: typeof jobsService.getPaginated = async (
 export const jobsService_getById: typeof jobsService.getById = async (...args) =>
   jobsService.getById(...args);
 
+export const jobsService_getByClientId: typeof jobsService.getByClientId = async (...args) =>
+  jobsService.getByClientId(...args);
+
 export const jobsService_create: typeof jobsService.create = async (...args) =>
   jobsService.create(...args);
 

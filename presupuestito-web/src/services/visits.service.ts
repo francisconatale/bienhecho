@@ -1,12 +1,37 @@
 import { Visit, VisitaTarea } from "@/types";
 import { requireAuth } from "@/utils/supabase/require-auth";
 
+export type VisitWithJob = Visit & {
+  job?: {
+    titulo: string;
+    direccion: string;
+    cliente_id: string;
+    clientes: { nombre: string };
+  };
+};
+
 export const visitsService = {
   getAll: async (): Promise<Visit[]> => {
     const { supabase, user } = await requireAuth();
     const { data, error } = await supabase.from("visitas").select("*").eq("user_id", user.id).order("fecha", { ascending: true });
     if (error) throw new Error(error.message);
     return data as Visit[];
+  },
+
+  getByRange: async (desde: string, hasta: string): Promise<VisitWithJob[]> => {
+    const { supabase, user } = await requireAuth();
+
+    const { data, error } = await supabase
+      .from("visitas")
+      .select("*, trabajos(titulo, direccion, cliente_id, clientes(nombre))")
+      .eq("user_id", user.id)
+      .gte("fecha", desde)
+      .lte("fecha", hasta)
+      .order("fecha", { ascending: true })
+      .order("hora_inicio", { ascending: true });
+
+    if (error) throw new Error(error.message);
+    return data as VisitWithJob[];
   },
 
   getUpcoming: async (): Promise<(Visit & { trabajos: { titulo: string, clientes: { nombre: string } } })[]> => {

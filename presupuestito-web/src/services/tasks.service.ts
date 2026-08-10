@@ -126,6 +126,13 @@ export const tasksService = {
     return (data as any[]).map(applyDefaults);
   },
 
+  getById: async (id: string): Promise<Task | null> => {
+    const { supabase, user } = await requireAuth();
+    const { data, error } = await supabase.from("tareas").select("*").eq("id", id).eq("user_id", user.id).maybeSingle();
+    if (error) throw new Error(error.message);
+    return data ? applyDefaults(data) : null;
+  },
+
   create: async (taskData: Omit<Task, "id" | "user_id">): Promise<Task> => {
     const { supabase, user } = await requireAuth();
 
