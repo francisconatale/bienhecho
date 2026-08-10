@@ -45,7 +45,10 @@ El proyecto grande. Cada trabajo pertenece a un cliente y tiene presupuesto prop
 | `titulo` | string | no | Nombre descriptivo del trabajo |
 | `direccion` | string | no | Dirección donde se realiza (puede diferir del cliente) |
 | `descripcion` | text | sí | Notas generales del trabajo |
-| `presupuesto` | decimal | no | Suma automática de precios de tareas (no influye en cobro final) |
+| `presupuesto` | decimal | no | Suma automática de precios de tareas (mantenida por triggers) |
+| `total_estimado` | numeric(10,2) | no (default 0) | Suma de precios de tareas + subtotales de materiales. Fuente de verdad del total mostrado. |
+| `total_cobrado` | numeric(10,2) | no (default 0) | Suma de `cobros.monto_cobrado` del trabajo. |
+| `saldo_pendiente` | numeric(10,2) | no (default 0) | `total_estimado - total_cobrado`. Admite negativos (caso "A favor"). |
 | `estado` | string | no | Estado actual del trabajo |
 | `fecha_inicio` | date | sí | Fecha de inicio real o estimada |
 | `fecha_fin_estimada` | date | sí | Fecha estimada de finalización |
@@ -212,9 +215,35 @@ Materiales utilizados o presupuestados para un trabajo.
 | `nombre_material` | string | no | Nombre del material |
 | `cantidad` | decimal | no | Cantidad utilizada |
 | `precio_unitario` | decimal | no | Precio por unidad |
-| `subtotal` | decimal | no | cantidad × precio_unitario |
+| `subtotal` | decimal | no | cantidad × precio_unitario (forzado por trigger, la BD es autoridad) |
 | `comprado` | boolean | no | Indica si el material ya fue adquirido (default: false) |
 | `created_at` | timestamp | no | Fecha de creación |
+
+---
+
+## Funciones y triggers
+
+Los totales de `trabajos` (`presupuesto`, `total_estimado`, `total_cobrado`, `saldo_pendiente`) y el auto-paso a `pagado` son mantenidos **únicamente** por triggers. El frontend los lee, nunca los escribe.
+
+| Trigger | Tabla | Momento / Evento | Función |
+|---------|-------|------------------|---------|
+| `on_tarea_change_recalcular` | `tareas` | AFTER INSERT OR DELETE OR UPDATE OF `precio, cantidad, precio_unitario` | `recalcular_trabajo_totales` |
+| `on_material_subtotal_sync` | `materiales` | BEFORE INSERT OR UPDATE OF `cantidad, precio_unitario` | `sync_material_subtotal` |
+| `on_material_change_recalcular` | `materiales` | AFTER INSERT OR DELETE OR UPDATE OF `cantidad, precio_unitario, subtotal` | `recalcular_trabajo_totales` |
+| `on_cobro_change_recalcular` | `cobros` | AFTER INSERT OR DELETE OR UPDATE OF `monto_cobrado` | `recalcular_trabajo_totales` |
+| `on_cobro_insert` | `cobros` | AFTER INSERT | `emitir_transaccion_cobro` |
+| `on_cobro_update_sync_abono` | `cobros` | AFTER UPDATE OF `monto_cobrado, fecha_cobro` | `sync_abono_cobro_update` |
+| `on_cobro_delete_revert` | `cobros` | AFTER DELETE | `revertir_abono_cobro_delete` |
+| `on_trabajo_estado_presupuestado` | `trabajos` | AFTER UPDATE OF `estado` | `emitir_transaccion_presupuesto` |
+
+**Eliminados** (reemplazados por `recalcular_trabajo_totales`): `on_tarea_change_update_presupuesto` + `update_trabajo_presupuesto()`, `on_cobro_insert_check_pagado` + `check_trabajo_pagado()`.
+
+**Funciones:**
+
+- `recalcular_trabajo_totales()` — RECALCULA `presupuesto = SUM(tareas.precio)`, `total_estimado = presupuesto + SUM(materiales.subtotal)`, `total_cobrado = SUM(cobros.monto_cobrado)`, `saldo_pendiente = total_estimado - total_cobrado`; si `estado = presupuestado` y `saldo_pendiente <= 0` pasa a `pagado`.
+- `sync_material_subtotal()` — BEFORE trigger: fuerza `NEW.subtotal = NEW.cantidad * NEW.precio_unitario`.
+- `sync_abono_cobro_update()` — al actualizar un cobro, ajusta el `abono` automático (`monto`, `fecha`, `concepto`) de `transacciones` con `referencia_cobro_id = NEW.id`, `tipo = abono`, `origen = automático`.
+- `revertir_abono_cobro_delete()` — al borrar un cobro, inserta un `cargo` de anulación `"Anulación de cobro: {titulo}"` (el abono original se conserva como rastro, saldo neto cero).
 
 ---
 
@@ -275,9 +304,9 @@ VISITA   (N) ──── (N) TAREA                      →  a través de VISIT
 - **Cobros**: listado de `cobros` del trabajo con saldo pendiente
 - **Materiales**: listado de `materiales` del trabajo, con costo total
 - **Notas**: campo `descripcion` del trabajo (editable inline)
-- **Total estimado**: suma de `tareas.precio` where precio IS NOT NULL
-- **Total materiales**: suma de `materiales.subtotal`
-- **Saldo pendiente**: `SUM(tareas.precio WHERE precio IS NOT NULL) + SUM(materiales.subtotal) - SUM(cobros.monto_cobrado)`
+- **Total estimado**: `trabajos.total_estimado` (persistido: suma de `tareas.precio` + `materiales.subtotal`)
+- **Total materiales**: suma de `materiales.subtotal` (en vivo para display)
+- **Saldo pendiente**: `trabajos.saldo_pendiente` (persistido: `total_estimado - total_cobrado`)
 
 ### Agenda / calendario
 - `visitas` agrupadas por semana
@@ -292,7 +321,7 @@ VISITA   (N) ──── (N) TAREA                      →  a través de VISIT
 
 ### Cuentas a cobrar (por trabajo)
 - **Cobros registrados**: `cobros` del trabajo, con fecha y forma de pago
-- **Saldo pendiente**: `SUM(tareas.precio WHERE precio IS NOT NULL) + SUM(materiales.subtotal) - SUM(cobros.monto_cobrado)`
+- **Saldo pendiente**: `trabajos.saldo_pendiente` (persistido por triggers)
 
 ### Materiales (por trabajo)
 - Todos los `materiales` del trabajo

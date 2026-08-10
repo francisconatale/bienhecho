@@ -243,8 +243,8 @@ export function TrabajoDetail({
 
   const totalEstimado = jobTasks.reduce((sum, t) => sum + (t.precio ?? 0), 0);
   const hasTasksWithPrice = jobTasks.some((t) => t.precio !== null);
-  
-  const presupuestoTotal = totalEstimado + totalMateriales;
+
+  const presupuestoTotal = job.total_estimado ?? 0;
   const hasItemsForBudget = hasTasksWithPrice || totalMateriales > 0;
 
   const backLabel = from === "/tareas" ? "Tareas" : from === "/clientes" && client ? client.nombre : "Trabajos";
