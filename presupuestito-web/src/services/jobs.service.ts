@@ -55,7 +55,7 @@ export const jobsService = {
 
   getById: async (id: string): Promise<Job | null> => {
     const { supabase, user } = await requireAuth();
-    const { data, error } = await supabase.from("trabajos").select("*, clientes(nombre)").eq("id", id).eq("user_id", user.id).single();
+    const { data, error } = await supabase.from("trabajos").select("*, clientes(*)").eq("id", id).eq("user_id", user.id).single();
     if (error) throw new Error(error.message);
     return data as Job;
   },

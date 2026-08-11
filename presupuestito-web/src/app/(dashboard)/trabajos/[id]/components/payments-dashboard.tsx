@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Edit2, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { usePayments } from "../hooks/use-payments";
+import { useTransactions } from "../hooks/use-transactions";
 import { CobroForm } from "./cobro-form";
+import { TransactionsTimeline } from "./transactions-timeline";
 import { cn } from "@/lib/utils";
 import { Cobro } from "@/types";
 import { Modal } from "@/components/ui/modal";
-import { useConfirm } from "@/hooks/use-confirm";
 
 interface PaymentsDashboardProps {
   jobId: string;
@@ -22,7 +23,8 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
     removeCobro,
   } = usePayments(jobId);
 
-  const [ConfirmDialog, confirm] = useConfirm();
+  const { transacciones, isLoading: isLoadingTransactions } = useTransactions(jobId);
+
   const [isAddingCobro, setIsAddingCobro] = useState(false);
   const [editingCobro, setEditingCobro] = useState<Cobro | null>(null);
 
@@ -56,11 +58,11 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
         </div>
       </div>
 
-      {/* Pagos Recibidos */}
+      {/* Cuenta Corriente */}
       <div className="space-y-4">
         <div className="flex items-end justify-between px-2">
           <h2 className="text-[11px] font-black uppercase tracking-[0.4em] text-on-surface-variant/50">
-            Pagos Recibidos
+            Cuenta Corriente
           </h2>
           <button
             onClick={() => setIsAddingCobro(true)}
@@ -95,51 +97,20 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
             )}
           </Modal>
 
-          {cobros.length > 0 ? (
-            cobros.map((cobro) => (
-              <div key={cobro.id} className="group relative bg-surface/80 rounded-xl p-3 border border-primary/20 flex items-center gap-3">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-bold text-on-surface">
-                      ${cobro.monto_cobrado.toLocaleString("es-AR")}
-                    </p>
-                    <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-on-surface/5 text-on-surface-variant/60">
-                      {cobro.forma_pago || "Sin especificar"}
-                    </span>
-                  </div>
-                  <p className="text-[10px] font-medium text-on-surface-variant/60 mt-0.5">
-                    {new Date(cobro.fecha_cobro).toLocaleDateString("es-AR")}
-                  </p>
-                </div>
-
-                <div className="flex flex-row md:flex-col gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => setEditingCobro(cobro)} aria-label="Editar cobro" className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-on-surface hover:bg-on-surface/10 rounded-lg">
-                    <Edit2 className="w-3 h-3" />
-                  </button>
-                  <button onClick={() => {
-                    confirm({
-                      title: "Eliminar cobro",
-                      description: "¿Estás seguro de eliminar este cobro? Esta acción no se puede deshacer.",
-                      confirmText: "Eliminar",
-                      variant: "danger",
-                      action: async () => { removeCobro(cobro.id); },
-                    });
-                  }} aria-label="Eliminar cobro" className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-red-500 hover:bg-red-500/10 rounded-lg">
-                    <Trash2 className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-            ))
+          {isLoadingTransactions ? (
+            <div className="py-12 flex justify-center">
+              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
           ) : (
-            !isAddingCobro && !editingCobro && (
-              <div className="py-6 px-4 text-center bg-surface/10 rounded-xl border border-dashed border-outline-variant/20">
-                <p className="text-xs font-bold text-on-surface-variant/50">Aún no hay cobros registrados</p>
-              </div>
-            )
+            <TransactionsTimeline 
+              transactions={transacciones} 
+              cobros={cobros} 
+              onEditCobro={setEditingCobro} 
+              onDeleteCobro={removeCobro} 
+            />
           )}
         </div>
       </div>
-      <ConfirmDialog />
     </div>
   );
 }
