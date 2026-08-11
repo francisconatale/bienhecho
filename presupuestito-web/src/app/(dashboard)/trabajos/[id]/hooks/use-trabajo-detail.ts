@@ -1,7 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { jobsService_getById, jobsService_update } from "@/actions/jobs.actions";
-import { clientsService_getById } from "@/actions/clients.actions";
 import { tasksService_getByJobId } from "@/actions/tasks.actions";
 import { cobrosService_getByJobId, cobrosService_create } from "@/actions/cobros.actions";
 import { useBudgetPDF } from '@/hooks/use-budget-pdf';
@@ -12,12 +11,8 @@ export function useTrabajoDetail(id: string) {
     queryKey: ['job', id], 
     queryFn: () => jobsService_getById(id) 
   });
-  const { data: client } = useQuery({ 
-    queryKey: ['client', job?.cliente_id], 
-    queryFn: () => clientsService_getById(job!.cliente_id),
-    enabled: !!job?.cliente_id 
-  });
-  const { data: jobTasks = [] } = useQuery({ 
+  const client = job?.clientes ?? null;
+  const { data: jobTasks = [], isLoading: isLoadingTasks } = useQuery({ 
     queryKey: ['tasks', id], 
     queryFn: () => tasksService_getByJobId(id) 
   });
@@ -73,6 +68,7 @@ export function useTrabajoDetail(id: string) {
   return {
     job,
     isLoadingJob,
+    isLoadingTasks,
     client,
     jobTasks,
     cobros,

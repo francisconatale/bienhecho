@@ -41,11 +41,19 @@ export const alertsService = {
       }
     }
 
-    jobs.forEach((job) => {
-      // @ts-ignore
-      const nombre = job.clientes?.nombre || "Cliente desconocido";
-
-      if (job.estado === "borrador") {
+    const borradorJobs = jobs.filter((job) => job.estado === "borrador");
+    if (borradorJobs.length > 3) {
+      alerts.push({
+        id: "alert-borrador-multiple",
+        jobId: "multiple",
+        clienteNombre: "Varios",
+        mensaje: `Te falta emitir el presupuesto de ${borradorJobs.length} trabajos.`,
+        tipo: "borrador",
+      });
+    } else {
+      borradorJobs.forEach((job) => {
+        // @ts-ignore
+        const nombre = job.clientes?.nombre || "Cliente desconocido";
         alerts.push({
           id: `alert-borrador-${job.id}`,
           jobId: job.id,
@@ -53,7 +61,12 @@ export const alertsService = {
           mensaje: `Te falta emitirle el presupuesto a ${nombre}.`,
           tipo: "borrador",
         });
-      }
+      });
+    }
+
+    jobs.forEach((job) => {
+      // @ts-ignore
+      const nombre = job.clientes?.nombre || "Cliente desconocido";
 
       if (job.estado === "presupuestado" && job.fecha_inicio) {
         if (today > job.fecha_inicio && !delayedTaskCounts[job.id]) {

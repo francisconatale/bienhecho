@@ -33,6 +33,7 @@ export const JobSchema = z.object({
   fecha_inicio: z.string().optional(),
   fecha_fin_estimada: z.string().optional(),
   created_at: z.string(),
+  clientes: ClientSchema.nullable().optional(),
 });
 
 export const TaskSchema = z.object({

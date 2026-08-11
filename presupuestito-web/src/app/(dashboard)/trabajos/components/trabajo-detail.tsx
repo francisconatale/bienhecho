@@ -73,6 +73,7 @@ export function TrabajoDetail({
   const { 
     job, 
     isLoadingJob, 
+    isLoadingTasks, 
     client, 
     jobTasks, 
     cobros, 
@@ -139,7 +140,7 @@ export function TrabajoDetail({
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  const { materiales: jobMateriales, totalMateriales } = useMaterials(id);
+  const { materiales: jobMateriales, totalMateriales, isLoading: isLoadingMateriales } = useMaterials(id);
   const [ConfirmDialog, confirm] = useConfirm();
 
   const handleDownloadPDF = () => {
@@ -393,25 +394,36 @@ export function TrabajoDetail({
                   <div className="p-4 md:p-5 flex flex-col gap-3">
                     <div className="flex items-end justify-between">
                       <h3 className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant/70">Progreso</h3>
-                      <span className="text-xs font-bold text-on-surface-variant/50">
-                        {jobTasks.filter(t => t.completada).length} / {jobTasks.length} completadas
-                      </span>
+                      {isLoadingTasks ? (
+                        <span className="w-20 h-4 bg-outline-variant/10 rounded animate-pulse" />
+                      ) : (
+                        <span className="text-xs font-bold text-on-surface-variant/50">
+                          {jobTasks.filter(t => t.completada).length} / {jobTasks.length} completadas
+                        </span>
+                      )}
                     </div>
                     
-                    {(() => {
-                      const total = jobTasks.length;
-                      const completed = jobTasks.filter((t) => t.completada).length;
-                      const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
-                      
-                      return (
-                        <div className="flex items-center gap-3">
-                          <div className="flex-1 h-3 bg-on-surface/5 dark:bg-black/20 rounded-full overflow-hidden relative">
-                            <div className="absolute top-0 left-0 h-full bg-primary transition-[width] duration-[600ms] ease-out" style={{ width: `${percentage}%` }} />
+                    {isLoadingTasks ? (
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1 h-3 bg-outline-variant/10 rounded-full animate-pulse" />
+                        <span className="w-8 h-4 bg-outline-variant/10 rounded animate-pulse" />
+                      </div>
+                    ) : (
+                      (() => {
+                        const total = jobTasks.length;
+                        const completed = jobTasks.filter((t) => t.completada).length;
+                        const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
+                        
+                        return (
+                          <div className="flex items-center gap-3">
+                            <div className="flex-1 h-3 bg-on-surface/5 dark:bg-black/20 rounded-full overflow-hidden relative">
+                              <div className="absolute top-0 left-0 h-full bg-primary transition-[width] duration-[600ms] ease-out" style={{ width: `${percentage}%` }} />
+                            </div>
+                            <span className="text-xs font-bold text-on-surface w-8 text-right">{percentage}%</span>
                           </div>
-                          <span className="text-xs font-bold text-on-surface w-8 text-right">{percentage}%</span>
-                        </div>
-                      );
-                    })()}
+                        );
+                      })()
+                    )}
                   </div>
 
                   <div className="h-px w-full bg-outline-variant/10" />
@@ -429,11 +441,19 @@ export function TrabajoDetail({
                       <div className="flex flex-col gap-1 mt-3">
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-medium text-on-surface-variant/70">Tareas</span>
-                          <span className="text-xs font-bold text-on-surface">${totalEstimado.toLocaleString("es-AR")}</span>
+                          {isLoadingTasks ? (
+                            <span className="w-16 h-4 bg-outline-variant/10 rounded animate-pulse" />
+                          ) : (
+                            <span className="text-xs font-bold text-on-surface">${totalEstimado.toLocaleString("es-AR")}</span>
+                          )}
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-medium text-on-surface-variant/70">Materiales</span>
-                          <span className="text-xs font-bold text-on-surface">${totalMateriales.toLocaleString("es-AR")}</span>
+                          {isLoadingMateriales ? (
+                            <span className="w-16 h-4 bg-outline-variant/10 rounded animate-pulse" />
+                          ) : (
+                            <span className="text-xs font-bold text-on-surface">${totalMateriales.toLocaleString("es-AR")}</span>
+                          )}
                         </div>
                       </div>
                     </div>
