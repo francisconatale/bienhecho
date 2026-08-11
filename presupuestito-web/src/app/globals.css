@@ -169,15 +169,6 @@ html.dark, :root.dark {
     border-radius: var(--input-radius);
   }
   textarea.input-field { @apply text-sm; }
-  
-  @utility hit-padding {
-    position: relative;
-    &::before {
-      content: '';
-      position: absolute;
-      inset: -8px;
-    }
-  }
 
   @keyframes page-transition {
     from { opacity: 0; transform: translateY(8px); }
@@ -208,6 +199,17 @@ html.dark, :root.dark {
     100% { transform: translateX(200%) skewX(12deg); }
   }
 }
+
+@utility hit-padding {
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+  }
+}
+
+
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
