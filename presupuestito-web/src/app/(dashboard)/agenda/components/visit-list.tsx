@@ -51,7 +51,7 @@ function VisitCard({ visit, jobInfo, onToggleStatus, onEdit, onDelete }: {
           </div>
           <h3 className="text-sm font-bold text-on-surface cursor-default select-none">{jobInfo.titulo}</h3>
           <p className="text-[11px] text-on-surface-variant/60 mt-0.5 cursor-default select-none">
-            {jobInfo.cliente} â€¢ {jobInfo.direccion}
+            {jobInfo.cliente} • {jobInfo.direccion}
           </p>
           {visit.notas && (
             <p className="text-xs text-on-surface-variant mt-2 italic cursor-default select-none">{visit.notas}</p>
@@ -93,8 +93,8 @@ function StatusGroup({ icon: Icon, iconColor, label, count, children }: {
     <div>
       <div className="px-6 py-2 bg-surface/50 dark:bg-surface/30 flex items-center gap-2">
         <Icon className={cn("w-3 h-3", iconColor)} />
-        <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/50">{label}</span>
-        <span className="text-[10px] text-on-surface-variant/30">{count}</span>
+        <span className="text-[11px] font-semibold text-on-surface-variant/60">{label}</span>
+        <span className="text-[11px] text-on-surface-variant/40">{count}</span>
       </div>
       {children}
     </div>
@@ -121,9 +121,9 @@ export function VisitList({
     return (
       <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl border border-outline-variant/20 shadow-sm py-16 text-center">
         <CalendarDays className="w-12 h-12 text-on-surface-variant/20 mx-auto mb-4" strokeWidth={1.5} />
-        <h3 className="text-base font-bold text-on-surface mb-1">SeleccionÃ¡ un dÃ­a</h3>
+        <h3 className="text-base font-bold text-on-surface mb-1">Seleccioná un día</h3>
         <p className="text-sm text-on-surface-variant/60">
-          HacÃ© clic en un dÃ­a del calendario para ver sus visitas.
+          Hacé clic en un día del calendario para ver sus visitas.
         </p>
       </div>
     );
@@ -185,7 +185,7 @@ export function VisitList({
             <CalendarDays className="w-10 h-10 text-on-surface-variant/20 mx-auto mb-3" strokeWidth={1.5} />
             <h3 className="text-sm font-bold text-on-surface mb-1">Sin visitas</h3>
             <p className="text-xs text-on-surface-variant/60">
-              No hay visitas para este dÃ­a.
+              No hay visitas para este día.
             </p>
             <button
               onClick={() => setShowNewModal(true)}
