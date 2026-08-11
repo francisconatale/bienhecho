@@ -20,11 +20,11 @@ export default async function DashboardLayout({
   await requireAuth();
 
   return (
-    <div className="relative z-10 flex flex-col flex-1 w-full min-h-screen">
+    <div className="relative z-10 flex flex-col flex-1 w-full">
       <TopNav />
-      <div className="flex-1 flex flex-col min-h-0 min-w-0">
+      <main className="flex-1 flex flex-col min-h-0 min-w-0">
         {children}
-      </div>
+      </main>
       <BottomNav />
     </div>
   );

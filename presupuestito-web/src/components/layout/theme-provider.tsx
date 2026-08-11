@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useMemo } from "react";
 
 interface ThemeContextType {
   darkMode: boolean;
@@ -38,8 +38,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, [darkMode, mounted]);
 
+  const value = useMemo(() => ({ darkMode, setDarkMode }), [darkMode]);
+
   return (
-    <ThemeContext.Provider value={{ darkMode, setDarkMode }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );

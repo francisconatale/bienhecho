@@ -1,1 +1,144 @@
-@import "tailwindcss";@custom-variant dark (&:where(.dark, .dark *));@theme {  --color-surface-container-highest: #C8DDD0;  --color-surface: #FFFFFF;  --color-tertiary-container: #6e2c00;  --color-surface-tint: #3D8B6E;  --color-on-primary-fixed: #1A5C38;  --color-secondary-container: #C2E5CE;  --color-tertiary: #4b1c00;  --color-on-surface: #1A3020;  --color-on-primary-container: #1A5C38;  --color-on-secondary-container: #3D6048;  --color-surface-container-lowest: #FFFFFF;  --color-surface-dim: #B5D0BC;  --color-surface-container-high: #E0ECE4;  --color-inverse-surface: #1A3020;  --color-on-secondary-fixed-variant: #3D6048;  --color-on-error-container: #93000a;  --color-inverse-primary: #6ECFB0;  --color-accent-dark: #F59E0B;  --color-secondary-fixed-dim: #6B9078;  --color-surface-variant: #C8DDD0;  --color-surface-container: #E5F0E8;  --color-on-primary-fixed-variant: #2E7A58;  --color-success: #43A047;  --color-on-secondary: #FFFFFF;  --color-outline: #6B9078;  --color-success-dark: #6ECFB0;  --color-primary-fixed-dim: #6ECFB0;  --color-tertiary-fixed-dim: #ffb691;  --color-on-secondary-fixed: #1A3020;  --color-inverse-on-surface: #FFFFFF;  --color-on-tertiary: #ffffff;  --color-primary-fixed: #C2E5CE;  --color-on-tertiary-fixed: #341100;  --color-secondary: #5A8A6A;  --color-surface-container-low: #EDF5F0;  --color-primary: #3D8B6E;  --color-on-background: #1A3020;  --color-on-surface-variant: #3D6048;  --color-primary-dark: #2E7A58;  --color-grouped-bg-dark: #0D1F14;  --color-secondary-fixed: #C2E5CE;  --color-background: #F0F7F3;  --color-outline-variant: #B5D0BC;  --color-error: #ba1a1a;  --color-primary-container: #C2E5CE;  --color-on-primary: #FFFFFF;  --color-error-container: #ffdad6;  --color-grouped-bg-light: #E8F2EB;  --color-on-error: #ffffff;  --color-surface-bright: #FFFFFF;  --color-on-tertiary-fixed-variant: #773205;  --color-tertiary-fixed: #ffdbcb;  --color-on-tertiary-container: #f39461;  --font-sans: var(--font-inter);  --font-footnote: var(--font-inter);  --font-label-caps: var(--font-inter);  --font-headline: var(--font-inter);  --font-body: var(--font-inter);  --font-headline-large: var(--font-inter);  --font-headline-large-mobile: var(--font-inter);  --font-mono: var(--font-inter);  --font-tabular-nums: var(--font-inter);  --radius-default: 0.25rem;  --radius-lg: 0.5rem;  --radius-xl: 0.75rem;  --spacing-safe-area-inset: 16px;  --spacing-gutter: 12px;  --spacing-stack-gap: 8px;  --spacing-section-margin: 20px;}/* Base resets and defaults */@layer base {  input, textarea, select {    font-family: inherit;  }  body {    @apply bg-grouped-bg-light text-on-background antialiased transition-colors duration-200;    min-height: max(884px, 100dvh);  }  html.dark, :root.dark {    /* Backgrounds (OLED Pure Black) */    --color-background: #000000;    --color-grouped-bg-light: #000000;    --color-grouped-bg-dark: #000000;    --color-surface-container-lowest: #000000;    --color-surface-dim: #000000;    /* Surfaces (Cards & Inset Grouped) */    --color-surface: #0D1F14;    --color-surface-container: #12291A;    --color-surface-container-low: #0A1A10;    --color-surface-bright: #0D1F14;    --color-inverse-surface: #E8F5E9;    /* Elevated Surfaces & Borders */    --color-surface-variant: #1A3D24;    --color-surface-container-high: #1A3D24;    --color-surface-container-highest: #2A5038;    /* Typography & Icons */    --color-on-background: #E8F5E9;    --color-on-surface: #E8F5E9;    --color-on-surface-variant: #A8D5BA;    --color-inverse-on-surface: #000000;    --color-outline: #5A8A6A;    --color-outline-variant: #2A5038;    /* Primary Brand (Sage Green) */    --color-primary: #6ECFB0;    --color-primary-dark: #5BBFA0;    --color-primary-container: #1B5E3A;    --color-on-primary: #0A2E1A;    --color-on-primary-container: #A8E6C3;    --color-inverse-primary: #1B5E3A;    --color-surface-tint: #6ECFB0;    /* Accents (Safety Yellow / Amber) */    --color-accent-dark: #F59E0B;    --color-secondary: #81C794;    --color-secondary-container: #1B4D30;    --color-on-secondary: #0A2E1A;    --color-on-secondary-container: #A8E6C3;    /* States (Success/Tertiary) */    --color-success: #6ECFB0;    --color-success-dark: #6ECFB0;    --color-tertiary: #6ECFB0;    --color-tertiary-container: #1B5E3A;    --color-on-tertiary: #0A2E1A;    --color-on-tertiary-container: #A8E6C3;    /* States (Error) */    --color-error: #F87171;    --color-error-container: #7F1D1D;    --color-on-error: #000000;    --color-on-error-container: #FECACA;    /* Legacy/Generic Fixed fallbacks */    --color-on-primary-fixed: #D4EDDA;    --color-on-secondary-fixed-variant: #A8E6C3;    --color-secondary-fixed-dim: #81C794;    --color-on-primary-fixed-variant: #A8E6C3;    --color-primary-fixed-dim: #6ECFB0;    --color-tertiary-fixed-dim: #6EE7B7;    --color-on-secondary-fixed: #0A2E1A;    --color-primary-fixed: #1B5E3A;    --color-on-tertiary-fixed: #000000;    --color-secondary-fixed: #1B4D30;    --color-on-tertiary-fixed-variant: #A7F3D0;    --color-tertiary-fixed: #A7F3D0;  }}@layer utilities {  .pb-safe {    padding-bottom: env(safe-area-inset-bottom);  }  .pt-safe {    padding-top: env(safe-area-inset-top);  }  .input-field {    @apply w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-semibold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all;  }  textarea.input-field {    @apply text-sm;  }  /* Page entrance: fade + subtle lift (280ms) */  @keyframes page-transition {    from {      opacity: 0;      transform: translateY(8px);    }    to {      opacity: 1;      transform: translateY(0);    }  }  .animate-page-in {    animation: page-transition 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;  }  /* Slide in from right (detail pane forward navigation) */  @keyframes slide-in-right {    0% {      opacity: 0;      transform: translateX(16px);    }    100% {      opacity: 1;      transform: translateX(0);    }  }  .animate-slide-in-right {    animation: slide-in-right 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;  }  /* Slide in from left (detail pane back navigation) */  @keyframes slide-in-left {    0% {      opacity: 0;      transform: translateX(-16px);    }    100% {      opacity: 1;      transform: translateX(0);    }  }  .animate-slide-in-left {    animation: slide-in-left 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;  }  /* Card / element entrance: fade + subtle lift (250ms) */  @keyframes fade-in-up {    from {      opacity: 0;      transform: translateY(8px);    }    to {      opacity: 1;      transform: translateY(0);    }  }  .animate-fade-in-up {    animation: fade-in-up 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;  }  /* Progress bar shimmer sweep */  @keyframes shimmer {    0% {      transform: translateX(-100%) skewX(12deg);    }    100% {      transform: translateX(200%) skewX(12deg);    }  }}@media (prefers-reduced-motion: reduce) {  *,  *::before,  *::after {    animation-duration: 0.01ms !important;    animation-iteration-count: 1 !important;    transition-duration: 0.01ms !important;    scroll-behavior: auto !important;  }}
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Concept 2: Plata en Verde */
+  --color-primary: #16A34A;
+  --color-primary-dark: #14532D;
+  --color-secondary: #22C55E;
+  --color-success: #22C55E;
+  
+  --color-background: #F5F5F7;
+  --color-grouped-bg-light: #F5F5F7;
+  --color-grouped-bg-dark: #111827;
+  
+  --color-surface: #FFFFFF;
+  --color-surface-container: #F5F5F7;
+  --color-surface-container-low: #FFFFFF;
+  --color-surface-container-high: #E5E5EA;
+  --color-surface-container-highest: #D1D1D6;
+  
+  --color-on-background: #111827;
+  --color-on-surface: #111827;
+  --color-on-surface-variant: #6E6E73;
+  --color-on-primary: #FFFFFF;
+  --color-on-secondary: #FFFFFF;
+  --color-on-success: #14532D;
+  
+  --color-outline: #E5E5EA;
+  --color-outline-variant: #D1D1D6;
+  
+  --color-error: #ef4444;
+  --color-on-error: #ffffff;
+  --color-error-container: #fee2e2;
+  --color-on-error-container: #991b1b;
+
+  /* Typography */
+  --font-sans: var(--font-inter);
+  --font-footnote: var(--font-inter);
+  --font-label-caps: var(--font-inter);
+  --font-headline: var(--font-inter);
+  --font-body: var(--font-inter);
+  --font-headline-large: var(--font-inter);
+  --font-headline-large-mobile: var(--font-inter);
+  --font-mono: var(--font-inter);
+  --font-tabular-nums: var(--font-inter);
+  
+  /* Radius & Spacing */
+  --radius-default: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --spacing-safe-area-inset: 16px;
+  --spacing-gutter: 12px;
+  --spacing-stack-gap: 8px;
+  --spacing-section-margin: 20px;
+}
+
+/* Base resets and defaults */
+@layer base {
+  input, textarea, select {
+    font-family: inherit;
+  }
+  body {
+    @apply bg-grouped-bg-light text-on-background antialiased transition-colors duration-200;
+    min-height: max(884px, 100dvh);
+  }
+  
+  html.dark, :root.dark {
+    /* Backgrounds (Dark Mode for Plata en Verde) */
+    --color-background: #111827;
+    --color-grouped-bg-light: #111827;
+    --color-grouped-bg-dark: #030712;
+    
+    /* Surfaces */
+    --color-surface: #1F2937;
+    --color-surface-container: #374151;
+    --color-surface-container-low: #1F2937;
+    
+    /* Typography & Icons */
+    --color-on-background: #F3F4F6;
+    --color-on-surface: #F3F4F6;
+    --color-on-surface-variant: #9CA3AF;
+    
+    --color-outline: #4B5563;
+    --color-outline-variant: #374151;
+    
+    /* Primary Brand */
+    --color-primary: #22C55E;
+    --color-primary-dark: #16A34A;
+    --color-on-primary: #F0FDF4;
+    
+    /* Secondary & Success */
+    --color-secondary: #16A34A;
+    --color-success: #22C55E;
+    --color-on-success: #14532D;
+  }
+}
+
+@layer utilities {
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+  .pt-safe { padding-top: env(safe-area-inset-top); }
+  
+  .input-field {
+    @apply w-full bg-on-surface/5 border border-outline-variant/20 rounded-xl px-4 py-3 text-sm font-semibold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all;
+  }
+  textarea.input-field { @apply text-sm; }
+  
+  @keyframes page-transition {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-page-in { animation: page-transition 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+  
+  @keyframes slide-in-right {
+    0% { opacity: 0; transform: translateX(16px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+  .animate-slide-in-right { animation: slide-in-right 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+  
+  @keyframes slide-in-left {
+    0% { opacity: 0; transform: translateX(-16px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+  .animate-slide-in-left { animation: slide-in-left 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+  
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in-up { animation: fade-in-up 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+  
+  @keyframes shimmer {
+    0% { transform: translateX(-100%) skewX(12deg); }
+    100% { transform: translateX(200%) skewX(12deg); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

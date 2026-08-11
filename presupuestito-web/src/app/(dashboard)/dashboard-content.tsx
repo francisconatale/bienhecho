@@ -54,31 +54,29 @@ export function DashboardContent({ initialData }: { initialData?: DashboardIniti
     <>
       <BackgroundEffects />
       <main id="main-content">
-        <div className="md:hidden flex flex-col px-4 pt-14 pb-28 space-y-5">
-          <div className="pt-4">
-            <Greeting displayName={displayName} className="text-[32px] font-bold tracking-tight text-on-surface leading-tight" />
-          </div>
-
-          <StatCards stats={stats} />
-          <VisitsList visits={upcomingVisits} />
-          <AlertsList alerts={alerts} />
-          <ActivityList pagination={pagination} />
-        </div>
-
-        <div className="hidden md:flex flex-col px-10 xl:px-16 pt-12 pb-16 gap-8 w-full max-w-[1400px] mx-auto">
+        <div className="flex flex-col px-4 md:px-10 xl:px-16 pt-14 md:pt-12 pb-28 md:pb-16 gap-5 md:gap-8 w-full max-w-[1400px] mx-auto">
           <div className="flex items-center justify-between gap-6 pt-4">
-            <Greeting displayName={displayName} className="text-[48px] lg:text-[56px] font-bold tracking-tight text-on-surface leading-none" />
-            <ActionsList />
+            <Greeting displayName={displayName} className="text-[32px] md:text-[48px] lg:text-[56px] font-bold tracking-tight text-on-surface leading-tight md:leading-none" />
+            <div className="hidden md:block">
+              <ActionsList />
+            </div>
           </div>
 
-          <div className="grid grid-cols-12 gap-8 items-start">
-            <div className="col-span-12 lg:col-span-7 flex flex-col gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-8 items-start">
+            <div className="lg:col-span-7 lg:row-start-1 lg:col-start-1 order-1">
               <StatCards stats={stats} row />
-              <AlertsList alerts={alerts} />
-              <ActivityList pagination={pagination} />
             </div>
-            <div className="col-span-12 lg:col-span-5">
+            
+            <div className="lg:col-span-5 lg:row-start-1 lg:row-span-3 lg:col-start-8 order-2">
               <VisitsList visits={upcomingVisits} />
+            </div>
+
+            <div className="lg:col-span-7 lg:row-start-2 lg:col-start-1 order-3 w-full">
+              <AlertsList alerts={alerts} />
+            </div>
+
+            <div className="lg:col-span-7 lg:row-start-3 lg:col-start-1 order-4 w-full">
+              <ActivityList pagination={pagination} />
             </div>
           </div>
         </div>

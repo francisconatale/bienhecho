@@ -116,7 +116,6 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
 
   return (
     <div className="flex flex-col flex-1 bg-transparent relative overflow-hidden">
-      <AuroraBackground preset="trabajo" className="md:hidden" />
 
       <MasterDetail
         detailAnimationClass={isBackDirection ? "animate-slide-in-left" : "animate-page-in"}
@@ -225,7 +224,6 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
         )}
         emptyDetail={
           <div className="flex-1 flex items-start justify-center pt-16 text-on-surface-variant relative">
-            <AuroraBackground preset="trabajo" />
             <div className="text-center z-10 relative">
               <Briefcase className="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2 opacity-15" />
               <p className="text-xs md:text-base font-medium">Seleccioná un trabajo</p>
