@@ -33,6 +33,9 @@
   --color-error-container: #fee2e2;
   --color-on-error-container: #991b1b;
 
+  --color-accent: #f59e0b;
+  --color-accent-dark: #d97706;
+
   /* Typography */
   --font-sans: var(--font-inter);
   --font-footnote: var(--font-inter);
@@ -92,6 +95,10 @@
     --color-secondary: #16A34A;
     --color-success: #22C55E;
     --color-on-success: #14532D;
+
+    /* Accent (warning) */
+    --color-accent: #fbbf24;
+    --color-accent-dark: #f59e0b;
   }
 }
 
