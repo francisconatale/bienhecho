@@ -18,11 +18,7 @@ import { toast } from "sonner";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { useDebounce } from "@/hooks/use-debounce";
 
-function formatCurrency(amount: number): string {
-  if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
-  if (amount >= 1000) return `$${(amount / 1000).toFixed(0)}K`;
-  return `$${amount}`;
-}
+import { formatCurrency } from "@/lib/utils";
 
 
 
@@ -166,7 +162,9 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
         pagination={pag as any}
         creationHref="/trabajos/nuevo"
         renderItem={(job: any, isSelected) => {
-          const clientName = job.clientes?.nombre || "Sin cliente";
+          const tareas = Array.isArray(job.tareas) ? job.tareas : [];
+          const done = tareas.filter((t: any) => t.completada).length;
+          const pct = tareas.length ? Math.round((done / tareas.length) * 100) : 0;
           return (
             <button
               onClick={() => handleSelectedIdChange(job.id)}
@@ -181,12 +179,23 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
                 }`}>
                   <Briefcase className="w-5 h-5" strokeWidth={1.5} />
                 </div>
-                <div className="flex-1 min-w-0 flex flex-col items-start">
-                  <div className={`font-medium text-sm md:text-base truncate transition-colors ${isSelected ? "text-primary" : "text-on-surface"}`}>{job.titulo}</div>
-                  <div className="text-[11px] md:text-sm text-on-surface-variant truncate mb-1">{clientName}</div>
-                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] md:text-[11px] font-medium bg-on-surface/5 text-on-surface-variant/70 capitalize">
-                    {job.estado.replace(/_/g, " ")}
-                  </span>
+                <div className="flex-1 min-w-0">
+                  <div className={`font-semibold text-sm md:text-base truncate transition-colors ${isSelected ? "text-primary" : "text-on-surface"}`}>{job.titulo}</div>
+                  <div className="flex items-center justify-between gap-2 mt-1.5">
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-on-surface/5 text-on-surface-variant/80 capitalize">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary/70 shrink-0" />
+                      {job.estado.replace(/_/g, " ")}
+                    </span>
+                    <span className="text-[13px] font-semibold text-on-surface tabular-nums shrink-0">
+                      {formatCurrency(job.presupuesto || 0)}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <div className="h-1 flex-1 rounded-full bg-on-surface/5 overflow-hidden">
+                      <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${pct}%` }} />
+                    </div>
+                    <span className="text-[11px] font-medium text-on-surface-variant/60 tabular-nums shrink-0">{pct}%</span>
+                  </div>
                 </div>
               </div>
             </button>

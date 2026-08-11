@@ -23,35 +23,25 @@ export function ClientItem({ client, isSelected, onSelect }: ClientItemProps) {
       }`}
     >
       {isSelected && <div className="hidden md:block absolute left-0 top-0 bottom-0 w-1 bg-primary shadow-[0_0_8px_var(--color-primary)]" />}
-      <div className="flex items-center gap-3 md:gap-4">
-        <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center font-bold text-[11px] md:text-sm shrink-0 transition-colors duration-300 ${
+      <div className="flex items-center gap-3 md:gap-4 min-h-[40px]">
+        <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-[13px] md:text-sm shrink-0 transition-colors duration-300 ${
           isSelected ? "bg-primary/20 text-primary shadow-inner" : "bg-primary/8 text-primary/60"
         }`}>
           {client.nombre.charAt(0)}
         </div>
         <div className="flex-1 min-w-0">
-          <div className={`font-medium text-sm md:text-base truncate transition-colors ${isSelected ? "text-primary" : "text-on-surface"}`}>{client.nombre}</div>
-          <div className="text-[11px] md:text-sm text-on-surface-variant truncate">{client.email}</div>
-        </div>
-        <div className="text-right shrink-0">
-          {clientJobs.filter(j => j.estado === "presupuestado").length > 0 && (
-            <div className="flex flex-col items-end gap-0.5">
-              <span className="text-[11px] md:text-[11px] font-bold text-on-surface-variant/50 leading-none">Presupuestado</span>
-              <span className="text-[11px] md:text-sm font-bold text-on-surface leading-none tabular-nums">
-                {formatCurrency(clientJobs.filter(j => j.estado === "presupuestado").reduce((a, j) => a + j.presupuesto, 0))}
-              </span>
-              {saldo > 0 && (
-                <span className="text-[11px] md:text-[11px] font-bold text-accent-dark dark:text-accent mt-1.5 leading-none">Adeuda</span>
-              )}
-              {saldo > 0 && (
-                <span className="text-[11px] md:text-sm font-bold text-accent-dark dark:text-accent leading-none tabular-nums">{formatCurrency(saldo)}</span>
-              )}
-            </div>
-          )}
-          <div className="text-[9px] md:text-xs text-on-surface-variant tabular-nums mt-1">
+          <div className={`text-base font-semibold truncate leading-tight transition-colors ${isSelected ? "text-primary" : "text-on-surface"}`}>{client.nombre}</div>
+          <div className="text-[13px] text-on-surface-variant truncate leading-snug mt-0.5">
             {clientJobs.length} trabajo{clientJobs.length !== 1 ? "s" : ""}
           </div>
         </div>
+        {saldo > 0 && (
+          <div className="text-right shrink-0">
+            <span className="text-[15px] font-semibold text-error leading-none tabular-nums">
+              Debe {formatCurrency(saldo)}
+            </span>
+          </div>
+        )}
       </div>
     </button>
   );

@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { jobsService_getDashboardStats, jobsService_getPaginated } from "@/actions/jobs.actions";
 import { visitsService_getUpcoming } from "@/actions/visits.actions";
 import { useProfile } from "@/hooks/use-profile";
 import { useClientAlerts } from "@/app/(dashboard)/tareas/hooks/use-client-alerts";
-import { useServerPagination } from "@/hooks/use-server-pagination";
 import { Job, Client, Task, Visit } from "@/types";
 import { Profile } from "@/services/profile.service";
 
@@ -38,37 +37,35 @@ export function useDashboard(initialData?: DashboardInitialData) {
     queryKey: ["jobs", "paginated", page, pageSize, ""],
     queryFn: () => jobsService_getPaginated(page, pageSize, ""),
     initialData: page === 1 ? initialData?.paginatedData : undefined,
+    placeholderData: keepPreviousData,
   });
 
   const { profile, isLoading: isLoadingProfile } = useProfile(initialData?.profile);
   const { alerts } = useClientAlerts({ alerts: initialData?.alerts });
 
   const totalItems = paginatedData?.total || 0;
-  const serverPag = useServerPagination(totalItems, pageSize);
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const isFirstPage = page === 1;
+  const isLastPage = page >= totalPages;
 
   useEffect(() => {
-    serverPag.goToPage(page);
-  }, [page]);
+    if (page > totalPages) {
+      setPage(Math.max(1, totalPages));
+    }
+  }, [page, totalPages]);
 
   const pagination = {
-    ...serverPag,
-    goToPage: (p: number) => {
-      setPage(p);
-      serverPag.goToPage(p);
-    },
-    nextPage: () => {
-      if (!serverPag.isLastPage) {
-        setPage((p) => p + 1);
-        serverPag.nextPage();
-      }
-    },
-    prevPage: () => {
-      if (!serverPag.isFirstPage) {
-        setPage((p) => p - 1);
-        serverPag.prevPage();
-      }
-    },
     paginatedItems: paginatedData?.data || [],
+    currentPage: page,
+    totalPages,
+    totalItems,
+    pageSize,
+    isFirstPage,
+    isLastPage,
+    goToPage: (p: number) => setPage(Math.max(1, Math.min(p, totalPages))),
+    nextPage: () => !isLastPage && setPage((p) => p + 1),
+    prevPage: () => !isFirstPage && setPage((p) => p - 1),
+    setPageSize: () => {},
   };
 
   const isLoading = isLoadingStats || isLoadingVisits || isLoadingPaginated || isLoadingProfile;
