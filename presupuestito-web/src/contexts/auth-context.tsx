@@ -27,9 +27,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const supabase = supabaseRef.current;
     let didSetInitial = false;
 
-    // Use onAuthStateChange exclusively — the INITIAL_SESSION event
-    // fires synchronously with the cached session, which is more
-    // reliable in React Strict Mode than a separate getSession() call.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
         setSession(currentSession);
