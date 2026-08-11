@@ -15,13 +15,17 @@ interface MaterialListProps {
 }
 
 export function MaterialList({ jobId }: MaterialListProps) {
-  const { materiales, totalMateriales, addMaterial, isLoading } = useMaterials(jobId);
+  const { materiales, totalMateriales, addMaterial, isLoading, isSaving } = useMaterials(jobId);
   const [isAdding, setIsAdding] = useState(false);
   const pag = usePagination(materiales, 20);
 
-  const handleAdd = (data: any) => {
-    addMaterial(data);
-    setIsAdding(false);
+  const handleAdd = async (data: any) => {
+    try {
+      await addMaterial(data);
+      setIsAdding(false);
+    } catch {
+      // Modal stays open; error is surfaced by the hook toast
+    }
   };
 
   const columns: Column<Material>[] = [
@@ -84,7 +88,7 @@ export function MaterialList({ jobId }: MaterialListProps) {
         onClose={() => setIsAdding(false)}
         title="Nuevo Material"
       >
-        <MaterialForm onSave={handleAdd} onCancel={() => setIsAdding(false)} />
+        <MaterialForm onSave={handleAdd} onCancel={() => setIsAdding(false)} isSaving={isSaving} />
       </Modal>
     </div>
   );

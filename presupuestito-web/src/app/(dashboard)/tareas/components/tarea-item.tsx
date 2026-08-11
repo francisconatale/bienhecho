@@ -1,4 +1,4 @@
-import { Check, Briefcase, Flame, Trash2 } from "lucide-react";
+import { Check, Briefcase, Flame, Trash2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -7,27 +7,33 @@ interface TareaItemProps {
   onToggle: (taskId: string, current: boolean) => void;
   onTogglePriority: (taskId: string, currentPriority: string | null) => void;
   onDelete: (taskId: string) => void;
+  pending?: boolean;
   viewMode?: "list" | "board";
 }
 
-export function TareaItem({ task, onToggle, onTogglePriority, onDelete }: TareaItemProps) {
+export function TareaItem({ task, onToggle, onTogglePriority, onDelete, pending = false }: TareaItemProps) {
   return (
     <div className="transition-[background-color] duration-[120ms] group flex items-center gap-4 px-4 py-3 bg-transparent hover:bg-on-surface/5">
       {/* Top Row: Checkbox & Title */}
       <div className="flex items-center gap-4 flex-1 min-w-0">
         <button
           onClick={() => onToggle(task.id, task.completada)}
+          disabled={pending}
           role="checkbox"
           aria-checked={task.completada}
           aria-label={task.completada ? `Marcar "${task.descripcion}" como pendiente` : `Marcar "${task.descripcion}" como completada`}
           className={cn(
-            "rounded-lg border-2 flex items-center justify-center shrink-0 transition-[background-color,border-color,transform] duration-[100ms] active:scale-90 w-6 h-6",
+            "rounded-lg border-2 flex items-center justify-center shrink-0 transition-[background-color,border-color,transform] duration-[100ms] active:scale-90 w-6 h-6 disabled:opacity-70",
             task.completada
               ? "bg-emerald-500 border-emerald-500"
               : "border-outline-variant/30 hover:border-primary/50 group-hover:border-primary/40"
           )}
         >
-          {task.completada && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+          {pending ? (
+            <Loader2 className="w-3.5 h-3.5 text-emerald-600 animate-spin" />
+          ) : task.completada ? (
+            <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+          ) : null}
         </button>
 
         <Link href={`/tareas/${task.id}`} className="flex-1 min-w-0">

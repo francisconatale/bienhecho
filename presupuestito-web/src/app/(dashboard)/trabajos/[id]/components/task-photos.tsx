@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Plus, Trash2, Image as ImageIcon, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { TaskPhoto } from "@/types";
@@ -29,6 +29,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [viewerPhotoIndex, setViewerPhotoIndex] = useState<number | null>(null);
   const [ConfirmDialog, confirm] = useConfirm();
+  const viewerRef = useRef<HTMLDivElement>(null);
 
   const handleSave = async (photoData: {
     tareaId: string;
@@ -91,15 +92,35 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
   }, [viewerPhotoIndex, photos.length]);
 
   useEffect(() => {
+    if (viewerPhotoIndex === null) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    viewerRef.current?.querySelector<HTMLElement>("button")?.focus();
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (viewerPhotoIndex === null) return;
       if (e.key === "Escape") closeViewer();
       if (e.key === "ArrowLeft") goToPrev();
       if (e.key === "ArrowRight") goToNext();
+      if (e.key === "Tab" && viewerRef.current) {
+        const focusable = Array.from(
+          viewerRef.current.querySelectorAll<HTMLElement>("button")
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [viewerPhotoIndex, goToPrev, goToNext]);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      previouslyFocused?.focus();
+    };
+  }, [viewerPhotoIndex, goToPrev, goToNext, closeViewer]);
 
   if (isLoading) {
     return <TareaPhotosSkeleton />;
@@ -114,7 +135,7 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
         {photos.length < MAX_PHOTOS && (
           <button
             onClick={() => setShowUploadForm(true)}
-            className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-lg text-[11px] font-bold hover:bg-primary/20 transition-all active:scale-95"
+            className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-lg text-[11px] font-bold hover:bg-primary/20 transition-[background-color,transform] active:scale-[0.96] hit-padding"
           >
             <Plus className="w-3 h-3" strokeWidth={3} />
             Agregar
@@ -180,6 +201,10 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
 
       {viewerPhotoIndex !== null && typeof window !== "undefined" && createPortal(
         <div
+          ref={viewerRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Visor de fotos"
           className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center"
           onClick={closeViewer}
         >

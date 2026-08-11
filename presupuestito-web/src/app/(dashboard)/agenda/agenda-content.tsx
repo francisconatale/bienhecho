@@ -100,6 +100,7 @@ export function AgendaContent({ initialData }: { initialData?: AgendaInitialData
             setEditingVisit={actions.setEditingVisit}
             handleDelete={actions.handleDelete}
             setShowNewModal={actions.setShowNewModal}
+            pendingVisitId={actions.pendingVisitId}
           />
         </div>
       </div>
@@ -116,12 +117,13 @@ export function AgendaContent({ initialData }: { initialData?: AgendaInitialData
         title="Nueva Visita"
         footer={
           <div className="flex gap-2">
-            <button type="button" onClick={() => actions.setShowNewModal(false)} className="flex-1 h-11 rounded-xl font-bold text-xs text-on-surface-variant hover:bg-outline-variant/10 transition-colors">Cancelar</button>
-            <button type="button" className="flex-1 h-11 rounded-xl font-bold text-xs text-white bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 transition-colors">Crear Visita</button>
+            <button type="button" onClick={() => actions.setShowNewModal(false)} className="flex-1 h-11 rounded-xl font-bold text-xs text-on-surface-variant hover:bg-outline-variant/10 transition-colors active:scale-[0.96]">Cancelar</button>
+            <button type="submit" form="visit-form-new" className="flex-1 h-11 rounded-xl font-bold text-xs text-white bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 transition-[background-color,transform] duration-200 ease-spring active:scale-[0.96]">Crear Visita</button>
           </div>
         }
       >
         <VisitForm
+          id="visit-form-new"
           jobs={state.jobs}
           clients={state.clients}
           defaultFecha={state.selectedDate || undefined}
@@ -145,13 +147,14 @@ export function AgendaContent({ initialData }: { initialData?: AgendaInitialData
         title="Editar Visita"
         footer={
           <div className="flex gap-2">
-            <button type="button" onClick={() => actions.setEditingVisit(null)} className="flex-1 h-11 rounded-xl font-bold text-xs text-on-surface-variant hover:bg-outline-variant/10 transition-colors">Cancelar</button>
-            <button type="button" className="flex-1 h-11 rounded-xl font-bold text-xs text-white bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 transition-colors">Guardar Cambios</button>
+            <button type="button" onClick={() => actions.setEditingVisit(null)} className="flex-1 h-11 rounded-xl font-bold text-xs text-on-surface-variant hover:bg-outline-variant/10 transition-colors active:scale-[0.96]">Cancelar</button>
+            <button type="submit" form="visit-form-edit" className="flex-1 h-11 rounded-xl font-bold text-xs text-white bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 transition-[background-color,transform] duration-200 ease-spring active:scale-[0.96]">Guardar Cambios</button>
           </div>
         }
       >
         {state.editingVisit && (
           <VisitForm
+            id="visit-form-edit"
             jobs={state.jobs}
             clients={state.clients}
             initial={state.editingVisit}

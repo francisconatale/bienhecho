@@ -35,7 +35,7 @@ export const jobsService = {
 
     let query = supabase
       .from("trabajos")
-      .select("*, clientes(nombre)", { count: "exact" })
+      .select("*, clientes(nombre), tareas(id, completada)", { count: "exact" })
       .eq("user_id", user.id);
 
     if (filter && filter !== "todos") {

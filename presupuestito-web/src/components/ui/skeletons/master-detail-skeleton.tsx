@@ -2,7 +2,7 @@ import { Search } from "lucide-react";
 
 export function MasterDetailSkeleton() {
   return (
-    <div className="flex-1 relative flex min-h-0 overflow-hidden w-full">
+    <div role="status" aria-label="Cargando contenido" className="flex-1 relative flex min-h-0 overflow-hidden w-full">
       {/* Mobile Wrapper (only visible on mobile) */}
       <div className="md:hidden flex-1 flex flex-col w-full h-full overflow-y-auto">
         {/* Mobile Header Skeleton */}

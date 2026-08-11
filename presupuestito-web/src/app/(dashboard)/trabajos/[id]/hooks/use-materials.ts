@@ -29,6 +29,7 @@ export function useMaterials(trabajoId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["materials", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 
@@ -38,6 +39,7 @@ export function useMaterials(trabajoId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["materials", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 
@@ -46,6 +48,7 @@ export function useMaterials(trabajoId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["materials", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 
@@ -97,5 +100,6 @@ export function useMaterials(trabajoId: string) {
     updateMaterial,
     removeMaterial,
     isLoading,
+    isSaving: addMutation.isPending || updateMutation.isPending,
   };
 }

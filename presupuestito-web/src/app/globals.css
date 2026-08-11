@@ -54,10 +54,12 @@
   
   /* Superficies */
   --color-surface: var(--color-white);
+  --color-surface: var(--color-white);
   --color-surface-container: var(--color-gray-50);
   --color-surface-container-low: var(--color-white);
   --color-surface-container-high: var(--color-gray-200);
   --color-surface-container-highest: var(--color-gray-300);
+  --color-surface-variant: var(--color-gray-100);
   
   /* Textos / Íconos */
   --color-on-background: var(--color-gray-900);
@@ -80,6 +82,19 @@
   /* Acento */
   --color-accent: var(--color-amber-500);
   --color-accent-dark: var(--color-amber-600);
+  --color-accent-foreground: var(--color-gray-900);
+
+  /* Containers (semánticos faltantes) */
+  --color-primary-container: var(--color-green-50);
+  --color-secondary-container: var(--color-green-50);
+  --color-on-primary-container: var(--color-green-900);
+  --color-on-secondary-container: var(--color-green-900);
+  --color-ring: var(--color-primary);
+  --color-input: var(--color-outline);
+  --color-popover: var(--color-white);
+  --color-popover-foreground: var(--color-gray-900);
+  --color-muted: var(--color-gray-100);
+  --color-muted-foreground: var(--color-gray-500);
 
   /* Typography */
   --font-sans: var(--font-inter);
@@ -103,6 +118,35 @@
 
   /* Animation */
   --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-momentum: cubic-bezier(0.34, 1.2, 0.64, 1);
+
+  /* Tipografía Óptica - Escala Compacta */
+  --text-display-size: 1.75rem;
+  --text-display-line-height: 1.2;
+  --text-display-letter-spacing: -0.02em;
+  --text-display-font-weight: 600;
+  --text-heading-size: 1.125rem;
+  --text-heading-line-height: 1.2;
+  --text-heading-letter-spacing: -0.01em;
+  --text-heading-font-weight: 600;
+  --text-body-size: 0.875rem;
+  --text-body-line-height: 1.4;
+  --text-body-letter-spacing: 0em;
+  --text-body-font-weight: 400;
+  --text-caption-size: 0.75rem;
+  --text-caption-line-height: 1.3;
+  --text-caption-letter-spacing: 0.02em;
+  --text-caption-font-weight: 500;
+
+  /* Materiales Vidrio */
+  --glass-thick-bg: rgba(255, 255, 255, 0.92);
+  --glass-thick-blur: 8px;
+  --glass-thick-border: rgba(228, 228, 231, 0.6);
+  --glass-thick-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --glass-thin-bg: rgba(255, 255, 255, 0.92);
+  --glass-thin-blur: 4px;
+  --glass-thin-border: rgba(228, 228, 231, 0.8);
+  --glass-thin-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 /* Sobrescritura de semánticos para el modo oscuro */
@@ -116,6 +160,7 @@ html.dark, :root.dark {
   --color-surface: var(--color-gray-800);
   --color-surface-container: var(--color-gray-700);
   --color-surface-container-low: var(--color-gray-800);
+  --color-surface-variant: var(--color-gray-700);
   
   /* Textos / Íconos */
   --color-on-background: var(--color-gray-100);
@@ -139,6 +184,26 @@ html.dark, :root.dark {
   /* Acento */
   --color-accent: var(--color-amber-400);
   --color-accent-dark: var(--color-amber-500);
+
+  /* Containers (dark) */
+  --color-primary-container: var(--color-gray-800);
+  --color-secondary-container: var(--color-gray-800);
+  --color-on-primary-container: var(--color-green-50);
+  --color-on-secondary-container: var(--color-green-50);
+  --color-ring: var(--color-primary);
+  --color-input: var(--color-outline);
+  --color-popover: var(--color-gray-800);
+  --color-popover-foreground: var(--color-gray-100);
+  --color-muted: var(--color-gray-700);
+  --color-muted-foreground: var(--color-gray-400);
+
+  /* Materiales Vidrio (dark) */
+  --glass-thick-bg: rgba(24, 24, 27, 0.85);
+  --glass-thick-border: rgba(63, 63, 70, 0.6);
+  --glass-thick-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --glass-thin-bg: rgba(24, 24, 27, 0.85);
+  --glass-thin-border: rgba(63, 63, 70, 0.7);
+  --glass-thin-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 /* ==================================================
@@ -151,12 +216,15 @@ html.dark, :root.dark {
 
 /* Base resets and defaults */
 @layer base {
+  html {
+    scroll-padding-bottom: env(safe-area-inset-bottom);
+  }
   input, textarea, select {
     font-family: inherit;
   }
   body {
     @apply bg-grouped-bg-light text-on-background antialiased transition-colors duration-200;
-    min-height: max(884px, 100dvh);
+    min-height: 100dvh;
   }
 }
 
@@ -165,7 +233,7 @@ html.dark, :root.dark {
   .pt-safe { padding-top: env(safe-area-inset-top); }
   
   .input-field {
-    @apply w-full bg-on-surface/5 border border-outline-variant/20 px-4 py-3 text-sm font-semibold text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all;
+    @apply w-full bg-on-surface/5 border border-outline-variant/20 px-4 py-3 text-sm font-normal text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all;
     border-radius: var(--input-radius);
   }
   textarea.input-field { @apply text-sm; }
@@ -209,7 +277,49 @@ html.dark, :root.dark {
   }
 }
 
+/* Material Principal / Thick */
+@utility glass-thick {
+  background-color: var(--glass-thick-bg);
+  backdrop-filter: blur(var(--glass-thick-blur));
+  -webkit-backdrop-filter: blur(var(--glass-thick-blur));
+  border: 1px solid var(--glass-thick-border);
+  box-shadow: var(--glass-thick-shadow);
+}
 
+/* Material Secundario / Thin */
+@utility glass-thin {
+  background-color: var(--glass-thin-bg);
+  backdrop-filter: blur(var(--glass-thin-blur));
+  -webkit-backdrop-filter: blur(var(--glass-thin-blur));
+  border: 1px solid var(--glass-thin-border);
+  box-shadow: var(--glass-thin-shadow);
+}
+
+/* Tipografía Óptica - Escala Compacta */
+@utility text-display {
+  font-size: var(--text-display-size);
+  line-height: var(--text-display-line-height);
+  letter-spacing: var(--text-display-letter-spacing);
+  font-weight: var(--text-display-font-weight);
+}
+@utility text-heading {
+  font-size: var(--text-heading-size);
+  line-height: var(--text-heading-line-height);
+  letter-spacing: var(--text-heading-letter-spacing);
+  font-weight: var(--text-heading-font-weight);
+}
+@utility text-body {
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-line-height);
+  letter-spacing: var(--text-body-letter-spacing);
+  font-weight: var(--text-body-font-weight);
+}
+@utility text-caption {
+  font-size: var(--text-caption-size);
+  line-height: var(--text-caption-line-height);
+  letter-spacing: var(--text-caption-letter-spacing);
+  font-weight: var(--text-caption-font-weight);
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -217,5 +327,14 @@ html.dark, :root.dark {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass-thick, .glass-thin {
+    background-color: var(--color-surface) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-color: var(--color-outline-variant) !important;
   }
 }

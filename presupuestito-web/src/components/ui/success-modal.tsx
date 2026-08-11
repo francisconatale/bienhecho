@@ -28,7 +28,7 @@ export function SuccessModal({
         <div className="p-4 rounded-full bg-primary/10 text-primary">
           <CheckCircle2 className="w-12 h-12" />
         </div>
-        <h3 className="text-2xl font-bold text-on-surface">{title}</h3>
+        <h3 className="text-display text-on-surface">{title}</h3>
         <p className="text-on-surface-variant font-medium text-sm px-4">
           {description}
         </p>
@@ -36,21 +36,23 @@ export function SuccessModal({
 
       <div className="flex flex-col gap-3 mt-8">
         <button
+          type="button"
           onClick={() => {
             if (onPrimaryClick) onPrimaryClick();
             onClose();
           }}
-          className="w-full h-12 rounded-xl font-bold text-sm text-white bg-primary hover:bg-primary-dark transition-[background-color] duration-[120ms] shadow-lg shadow-primary/20"
+          className="w-full h-12 rounded-xl font-bold text-sm text-white bg-primary hover:bg-primary-dark transition-[background-color,transform] duration-200 ease-spring active:scale-[0.96] shadow-lg shadow-primary/20 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
         >
           {primaryButtonText}
         </button>
         {secondaryButtonText && (
           <button
+            type="button"
             onClick={() => {
               if (onSecondaryClick) onSecondaryClick();
               onClose();
             }}
-            className="w-full h-12 rounded-xl font-bold text-sm text-on-surface-variant bg-surface-variant/30 hover:bg-surface-variant/50 transition-[background-color] duration-[120ms]"
+            className="w-full h-12 rounded-xl font-bold text-sm text-on-surface-variant bg-surface-variant hover:bg-surface-variant/70 transition-[background-color,transform] duration-200 ease-spring active:scale-[0.96] focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
           >
             {secondaryButtonText}
           </button>

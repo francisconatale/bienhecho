@@ -112,7 +112,7 @@ export function Modal({ isOpen, onClose, title, children, position = "auto", foo
         aria-modal="true"
         aria-labelledby="modal-title"
         onKeyDown={handleKeyDown}
-        className={"relative w-full max-h-[95dvh] bg-surface shadow-2xl flex flex-col " + sheetClasses}
+        className={"relative w-full max-h-[95dvh] glass-thick flex flex-col " + sheetClasses}
       >
         {position !== "center" && (
           <div
@@ -124,11 +124,11 @@ export function Modal({ isOpen, onClose, title, children, position = "auto", foo
         )}
 
         <div className={`flex items-center justify-between px-5 sm:px-6 pb-2 shrink-0 ${position === "center" ? "pt-6" : "pt-3 sm:pt-6"}`}>
-          <h2 id="modal-title" className="text-xl font-bold text-on-surface tracking-tight">{title}</h2>
+          <h2 id="modal-title" className="text-heading text-on-surface">{title}</h2>
           <button
             onClick={requestClose}
             aria-label="Cerrar"
-            className="p-2 -mr-2 rounded-full hover:bg-outline-variant/10 transition-[background-color,color] duration-[120ms] text-on-surface-variant hover:text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 bg-surface/50 sm:bg-transparent"
+            className="p-2 -mr-2 rounded-full hover:bg-outline-variant/10 transition-[background-color,color,transform] duration-200 ease-spring active:scale-[0.96] text-on-surface-variant hover:text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 hit-padding bg-surface/50 sm:bg-transparent"
           >
             <X className="w-5 h-5" />
           </button>
@@ -138,7 +138,7 @@ export function Modal({ isOpen, onClose, title, children, position = "auto", foo
           {children}
         </div>
         {footer && (
-          <div className="shrink-0 border-t border-outline-variant/10 px-5 sm:px-6 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pb-4 bg-surface">
+          <div className="shrink-0 border-t border-outline-variant/10 px-5 sm:px-6 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pb-4 bg-surface/60 backdrop-blur-sm">
             {footer}
           </div>
         )}

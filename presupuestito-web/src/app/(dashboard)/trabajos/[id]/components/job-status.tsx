@@ -37,7 +37,10 @@ export function JobStatusSelector({ job }: JobStatusProps) {
   const queryClient = useQueryClient();
   const updateJobMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => jobsService_update(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["jobs"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["jobs"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
+    },
   });
 
   const [isOpen, setIsOpen] = useState(false);

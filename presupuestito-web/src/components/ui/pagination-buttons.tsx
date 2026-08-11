@@ -47,24 +47,26 @@ export function PaginationButtons({
   const endItem = Math.min(currentPage * pageSize, totalItems);
 
   const btnBase =
-    "flex items-center justify-center min-w-[36px] h-9 px-3 rounded-[12px] text-[11px] font-bold transition-all duration-200 select-none";
+    "flex items-center justify-center min-w-[36px] h-10 px-3 rounded-[12px] text-caption transition-[background-color,transform] duration-200 ease-spring select-none";
 
   return (
     <div className={cn("flex flex-col items-center gap-3 pt-6", className)}>
       <div className="flex items-center gap-1.5">
         <button
+          type="button"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
+          aria-label="Página anterior"
           className={cn(
             btnBase,
             "gap-1 px-3.5",
             currentPage === 1
               ? "text-on-surface-variant/30 cursor-not-allowed"
-              : "text-on-surface-variant hover:bg-on-surface/5 hover:text-on-surface active:scale-95"
+              : "text-on-surface-variant hover:bg-on-surface/5 hover:text-on-surface active:scale-[0.96]"
           )}
         >
           <ChevronLeft className="w-4 h-4" strokeWidth={2.5} />
-          <span className="hidden sm:inline text-[11px]">Anterior</span>
+          <span className="hidden sm:inline">Anterior</span>
         </button>
 
         <div className="flex items-center gap-1">
@@ -72,19 +74,23 @@ export function PaginationButtons({
             page === "..." ? (
               <span
                 key={`ellipsis-${idx}`}
-                className="flex items-center justify-center w-[30px] h-9 text-[11px] font-bold text-on-surface-variant/40 select-none"
+                aria-hidden="true"
+                className="flex items-center justify-center w-[30px] h-9 text-caption text-on-surface-variant/40 select-none"
               >
                 ...
               </span>
             ) : (
               <button
                 key={page}
+                type="button"
                 onClick={() => onPageChange(page)}
+                aria-current={page === currentPage ? "page" : undefined}
+                aria-label={`Página ${page}`}
                 className={cn(
                   btnBase,
                   page === currentPage
                     ? "bg-primary text-white shadow-md shadow-primary/20"
-                    : "text-on-surface-variant hover:bg-on-surface/5 hover:text-on-surface active:scale-95"
+                    : "text-on-surface-variant hover:bg-on-surface/5 hover:text-on-surface active:scale-[0.96]"
                 )}
               >
                 {page}
@@ -94,22 +100,24 @@ export function PaginationButtons({
         </div>
 
         <button
+          type="button"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
+          aria-label="Página siguiente"
           className={cn(
             btnBase,
             "gap-1 px-3.5",
             currentPage === totalPages
               ? "text-on-surface-variant/30 cursor-not-allowed"
-              : "text-on-surface-variant hover:bg-on-surface/5 hover:text-on-surface active:scale-95"
+              : "text-on-surface-variant hover:bg-on-surface/5 hover:text-on-surface active:scale-[0.96]"
           )}
         >
-          <span className="hidden sm:inline text-[11px]">Siguiente</span>
+          <span className="hidden sm:inline">Siguiente</span>
           <ChevronRight className="w-4 h-4" strokeWidth={2.5} />
         </button>
       </div>
 
-      <span className="text-[11px] font-medium text-on-surface-variant/50">
+      <span className="text-caption text-on-surface-variant">
         Mostrando {startItem}–{endItem} de {totalItems} resultados
       </span>
     </div>

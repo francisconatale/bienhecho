@@ -53,7 +53,7 @@ export function SmartSuggestions() {
               
               <button
                 onClick={() => setSelectedSuggestion(sug)}
-                className="mt-4 w-full h-9 rounded-lg bg-accent/10 text-accent-dark dark:text-accent font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-accent hover:text-white transition-all active:scale-95"
+                className="mt-4 w-full h-9 rounded-lg bg-accent/10 text-accent-dark dark:text-accent font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-accent hover:text-white transition-[background-color,transform] duration-200 ease-spring active:scale-[0.96] hit-padding"
               >
                 <Plus className="w-3.5 h-3.5" strokeWidth={3} />
                 Agendar Visita
@@ -69,13 +69,14 @@ export function SmartSuggestions() {
         title="Agendar desde sugerencia"
         footer={
           <div className="flex gap-2">
-            <button type="button" onClick={() => setSelectedSuggestion(null)} className="flex-1 h-11 rounded-xl font-bold text-xs text-on-surface-variant hover:bg-outline-variant/10 transition-colors">Cancelar</button>
-            <button type="button" className="flex-1 h-11 rounded-xl font-bold text-xs text-white bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 transition-colors">Crear Visita</button>
+            <button type="button" onClick={() => setSelectedSuggestion(null)} className="flex-1 h-11 rounded-xl font-bold text-xs text-on-surface-variant hover:bg-outline-variant/10 transition-colors active:scale-[0.96]">Cancelar</button>
+            <button type="submit" form="visit-form-suggestion" className="flex-1 h-11 rounded-xl font-bold text-xs text-white bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 transition-[background-color,transform] duration-200 ease-spring active:scale-[0.96]">Crear Visita</button>
           </div>
         }
       >
         {selectedSuggestion && (
           <VisitForm
+            id="visit-form-suggestion"
             jobs={jobs}
             clients={clients}
             initial={{

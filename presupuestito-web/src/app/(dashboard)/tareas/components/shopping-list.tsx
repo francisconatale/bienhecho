@@ -1,8 +1,9 @@
-import { Check, ShoppingCart } from "lucide-react";
+import { Check, ShoppingCart, Loader2 } from "lucide-react";
 import { useShoppingList } from "../hooks/use-shopping-list";
+import { cn } from "@/lib/utils";
 
 export function ShoppingList() {
-  const { pendingMaterials, toggleMaterial } = useShoppingList();
+  const { pendingMaterials, toggleMaterial, pendingId } = useShoppingList();
 
   if (pendingMaterials.length === 0) {
     return (
@@ -23,17 +24,25 @@ export function ShoppingList() {
       {pendingMaterials.map((item) => (
         <div
           key={item.id}
-          className="group relative flex items-start gap-4 p-4 rounded-2xl bg-surface/30 hover:bg-surface/50 border border-outline-variant/10 backdrop-blur-xl transition-all cursor-pointer active:scale-[0.98]"
+          className={cn(
+            "group relative flex items-start gap-4 p-4 rounded-2xl bg-surface/30 hover:bg-surface/50 border border-outline-variant/10 backdrop-blur-xl transition-all cursor-pointer active:scale-[0.98]",
+            pendingId === item.id && "pointer-events-none opacity-60"
+          )}
           onClick={() => toggleMaterial(item.id, item.comprado)}
         >
           <div className="pt-0.5">
             <button
+              type="button"
               role="checkbox"
               aria-checked={item.comprado}
               aria-label={`Marcar "${item.nombre_material}" como comprado`}
               className="w-6 h-6 rounded-full border-2 border-outline flex items-center justify-center transition-colors group-hover:border-primary"
             >
-              <Check className="w-4 h-4 opacity-0 transition-opacity" />
+              {pendingId === item.id ? (
+                <Loader2 className="w-4 h-4 text-primary animate-spin" />
+              ) : (
+                <Check className={cn("w-4 h-4 transition-opacity", item.comprado ? "opacity-100 text-primary" : "opacity-0")} />
+              )}
             </button>
           </div>
           <div className="flex-1 min-w-0">

@@ -150,11 +150,15 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
           </div>
 
           <div className="hidden md:flex justify-end gap-2 pt-2 md:pt-3">
-            <button onClick={handleCancel} data-job-header-cancel className="px-4 py-2 rounded-xl text-xs font-bold bg-on-surface/5 text-on-surface hover:bg-on-surface/10 transition-colors">
+            <button onClick={handleCancel} data-job-header-cancel disabled={updateJobMutation.isPending} className="px-4 py-2 rounded-xl text-xs font-bold bg-on-surface/5 text-on-surface hover:bg-on-surface/10 transition-colors disabled:opacity-50 active:scale-[0.96]">
               Cancelar
             </button>
-            <button onClick={handleSave} data-job-header-save disabled={!titulo.trim()} className="px-4 py-2 rounded-xl text-xs font-bold bg-primary text-white hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center gap-1.5">
-              <Check className="w-3.5 h-3.5" strokeWidth={3} />
+            <button onClick={handleSave} data-job-header-save disabled={!titulo.trim() || updateJobMutation.isPending} className="px-4 py-2 rounded-xl text-xs font-bold bg-primary text-white hover:bg-primary-dark transition-[background-color,transform] duration-200 ease-spring disabled:opacity-50 flex items-center gap-1.5 active:scale-[0.96]">
+              {updateJobMutation.isPending ? (
+                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <Check className="w-3.5 h-3.5" strokeWidth={3} />
+              )}
               Guardar
             </button>
           </div>
@@ -189,7 +193,8 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
               {job.estado !== "pagado" && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-primary hover:bg-primary/10 transition-all hidden md:flex active:scale-95 shrink-0 cursor-pointer"
+                  aria-label="Editar información del trabajo"
+                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-primary hover:bg-primary/10 transition-[background-color,color,transform] duration-200 ease-spring hidden md:flex active:scale-[0.96] shrink-0 cursor-pointer hit-padding"
                   title="Editar información del trabajo"
                 >
                   <Pencil className="w-4 h-4" />
@@ -197,7 +202,8 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
               )}
               <button
                 onClick={() => document.dispatchEvent(new CustomEvent('delete-job', { detail: job.id }))}
-                className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-red-500 hover:bg-red-500/10 transition-all hidden md:flex active:scale-95 shrink-0 cursor-pointer"
+                aria-label="Eliminar trabajo"
+                className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-red-500 hover:bg-red-500/10 transition-[background-color,color,transform] duration-200 ease-spring hidden md:flex active:scale-[0.96] shrink-0 cursor-pointer hit-padding"
                 title="Eliminar trabajo"
               >
                 <Trash2 className="w-4 h-4" />

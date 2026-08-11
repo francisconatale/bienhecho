@@ -210,6 +210,7 @@ export function TrabajoDetail({
       action: async () => {
         await jobsService_delete(job.id);
         queryClient.invalidateQueries({ queryKey: ["jobs"] });
+        queryClient.invalidateQueries({ queryKey: ["clients"] });
         toast.success("Trabajo eliminado correctamente");
         if (isEmbedded && onBack) {
           onBack();
@@ -465,9 +466,9 @@ export function TrabajoDetail({
                             onClick={handleDownloadPDF}
                             disabled={!hasItemsForBudget || generatingAction !== null}
                             className={cn(
-                              "w-full py-3.5 rounded-xl font-bold text-[13px] transition-[background-color,transform] duration-[120ms] flex items-center justify-center gap-2",
+                              "w-full py-3.5 rounded-xl font-bold text-[13px] transition-[background-color,transform] duration-200 ease-spring flex items-center justify-center gap-2",
                               hasItemsForBudget
-                                ? "bg-primary text-white hover:bg-primary-dark active:scale-[0.98] shadow-sm"
+                                ? "bg-primary text-white hover:bg-primary-dark active:scale-[0.96] ease-spring shadow-sm"
                                 : "bg-surface-variant text-on-surface-variant/70 cursor-not-allowed"
                             )}
                           >
@@ -477,7 +478,7 @@ export function TrabajoDetail({
                           <button
                             onClick={handlePersonalizarPDF}
                             disabled={!hasItemsForBudget || generatingAction !== null}
-                            className="w-full py-3 rounded-xl font-bold text-[12px] transition-[background-color,transform] duration-[120ms] flex items-center justify-center gap-2 bg-on-surface/5 text-on-surface-variant hover:bg-on-surface/10 active:scale-[0.98] cursor-pointer mt-2"
+                            className="w-full py-3 rounded-xl font-bold text-[12px] transition-[background-color,transform] duration-200 ease-spring flex items-center justify-center gap-2 bg-on-surface/5 text-on-surface-variant hover:bg-on-surface/10 active:scale-[0.96] ease-spring cursor-pointer mt-2"
                           >
                             <Palette className="w-3.5 h-3.5" strokeWidth={2.5} />
                             Personalizar PDF
@@ -488,14 +489,14 @@ export function TrabajoDetail({
                           <button
                             onClick={handleVerPDF}
                             disabled={generatingAction !== null || pdfDownloading}
-                            className="w-full py-3.5 rounded-xl font-bold text-[13px] transition-[background-color,transform] duration-[120ms] flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary-dark active:scale-[0.98] shadow-sm"
+                            className="w-full py-3.5 rounded-xl font-bold text-[13px] transition-[background-color,transform] duration-200 ease-spring flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary-dark active:scale-[0.96] ease-spring shadow-sm"
                           >
                             {pdfDownloading ? <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.5} /> : <FileDown className="w-4 h-4" strokeWidth={2.5} />}
                             {pdfDownloading ? "Generando..." : "Ver PDF"}
                           </button>
                           <button
                             onClick={handlePersonalizarPDF}
-                            className="w-full py-3 rounded-xl font-bold text-[12px] transition-[background-color,transform] duration-[120ms] flex items-center justify-center gap-2 bg-on-surface/5 text-on-surface-variant hover:bg-on-surface/10 active:scale-[0.98] cursor-pointer"
+                            className="w-full py-3 rounded-xl font-bold text-[12px] transition-[background-color,transform] duration-200 ease-spring flex items-center justify-center gap-2 bg-on-surface/5 text-on-surface-variant hover:bg-on-surface/10 active:scale-[0.96] ease-spring cursor-pointer"
                           >
                             <Palette className="w-3.5 h-3.5" strokeWidth={2.5} />
                             Personalizar PDF
@@ -526,7 +527,7 @@ export function TrabajoDetail({
                             }
                             await updateJobMutation.mutateAsync({ id: job.id, data: { estado: "pagado" } });
                           }}
-                          className="mt-3 w-full py-3.5 rounded-xl font-bold text-[13px] transition-[background-color,transform] duration-[120ms] flex items-center justify-center gap-2 bg-primary/10 text-primary hover:bg-primary/20 active:scale-[0.98] disabled:opacity-50"
+                          className="mt-3 w-full py-3.5 rounded-xl font-bold text-[13px] transition-[background-color,transform] duration-200 ease-spring flex items-center justify-center gap-2 bg-primary/10 text-primary hover:bg-primary/20 active:scale-[0.96] ease-spring disabled:opacity-50"
                         >
                           {addCobroMutation.isPending || updateJobMutation.isPending ? (
                             <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.5} />

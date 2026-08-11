@@ -7,13 +7,14 @@ interface PriorityTaskGroupProps {
   onToggle: (taskId: string, current: boolean) => void;
   onTogglePriority: (taskId: string, currentPriority: string | null) => void;
   onDelete: (taskId: string) => void;
+  pendingId?: string | null;
   viewMode?: "list" | "board";
   totalCount?: number;
   isResumen?: boolean;
   onViewAll?: () => void;
 }
 
-export function PriorityTaskGroup({ title, tasks, onToggle, onTogglePriority, onDelete, totalCount = 0, isResumen = false, onViewAll }: PriorityTaskGroupProps) {
+export function PriorityTaskGroup({ title, tasks, onToggle, onTogglePriority, onDelete, pendingId, totalCount = 0, isResumen = false, onViewAll }: PriorityTaskGroupProps) {
   const effectiveCount = totalCount || tasks.length;
   const hasMore = isResumen && effectiveCount > tasks.length;
 
@@ -22,7 +23,7 @@ export function PriorityTaskGroup({ title, tasks, onToggle, onTogglePriority, on
       <>
         <div className="flex flex-col divide-y divide-outline-variant/10">
           {tasks.map((task) => (
-            <TareaItem key={task.id} task={task} onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} />
+            <TareaItem key={task.id} task={task} onToggle={onToggle} onTogglePriority={onTogglePriority} onDelete={onDelete} pending={pendingId === task.id} />
           ))}
         </div>
         {hasMore && onViewAll && (

@@ -38,6 +38,7 @@ export function usePayments(trabajoId: string) {
       queryClient.invalidateQueries({ queryKey: ["cobros", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["job", trabajoId] }); // invalidate job to reflect state change if any
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 
@@ -48,6 +49,7 @@ export function usePayments(trabajoId: string) {
       queryClient.invalidateQueries({ queryKey: ["cobros", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["job", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 
@@ -57,6 +59,7 @@ export function usePayments(trabajoId: string) {
       queryClient.invalidateQueries({ queryKey: ["cobros", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["job", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 
@@ -113,5 +116,6 @@ export function usePayments(trabajoId: string) {
     updateCobro,
     removeCobro,
     isLoading: isLoadingCobros || isLoadingJob,
+    isSaving: addMutation.isPending || updateMutation.isPending,
   };
 }

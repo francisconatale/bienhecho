@@ -33,6 +33,7 @@ export function useAgenda(initialData?: AgendaInitialData) {
   const queryClient = useQueryClient();
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
+  const [pendingVisitId, setPendingVisitId] = useState<string | null>(null);
 
   const monthStart = `${year}-${String(month + 1).padStart(2, "0")}-01`;
   const monthEnd = `${year}-${String(month + 1).padStart(2, "0")}-${String(new Date(year, month + 1, 0).getDate()).padStart(2, "0")}`;
@@ -152,7 +153,12 @@ export function useAgenda(initialData?: AgendaInitialData) {
       realizada: "cancelada",
       cancelada: "planificada",
     };
-    await updateVisitMutation.mutateAsync({ id: visit.id, data: { estado: next[visit.estado] } });
+    setPendingVisitId(visit.id);
+    try {
+      await updateVisitMutation.mutateAsync({ id: visit.id, data: { estado: next[visit.estado] } });
+    } finally {
+      setPendingVisitId(null);
+    }
   };
 
   const addVisit = async (data: Omit<Visit, "id" | "created_at">) => {
@@ -196,6 +202,7 @@ export function useAgenda(initialData?: AgendaInitialData) {
       visitCountForDate,
       getJobInfo,
       ConfirmDialog,
+      pendingVisitId,
       handleDelete,
       handleStatusToggle,
       addVisit,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CobroFormValues } from "../hooks/use-payments";
 
@@ -10,9 +10,10 @@ interface CobroFormProps {
   onSave: (data: CobroFormValues) => void;
   onCancel: () => void;
   hideFooter?: boolean;
+  isSaving?: boolean;
 }
 
-export function CobroForm({ initialData, onSave, onCancel, hideFooter = false }: CobroFormProps) {
+export function CobroForm({ initialData, onSave, onCancel, hideFooter = false, isSaving = false }: CobroFormProps) {
   const todayStr = new Date().toISOString().split("T")[0];
 
   const [montoCobrado, setMontoCobrado] = useState(
@@ -111,21 +112,24 @@ export function CobroForm({ initialData, onSave, onCancel, hideFooter = false }:
         <div className="flex gap-2 pt-1">
           <button
             onClick={onCancel}
-            className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-bold text-xs hover:bg-on-surface/10 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
+            disabled={isSaving}
+            className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-bold text-xs hover:bg-on-surface/10 transition-[background-color,transform] active:scale-[0.96] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
           >
             Cancelar
           </button>
           <button
             onClick={handleSave}
-            disabled={!canSave}
+            disabled={!canSave || isSaving}
             className={cn(
-              "flex-1 py-2.5 rounded-xl font-bold text-xs transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2",
-              canSave
+              "flex-1 py-2.5 rounded-xl font-bold text-xs transition-[background-color,transform] active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 flex items-center justify-center gap-2",
+              canSave && !isSaving
                 ? "bg-on-surface text-surface shadow-lg shadow-black/10 hover:bg-on-surface-variant"
                 : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
             )}
           >
-            {initialData ? "Guardar" : "Registrar"}
+            {isSaving ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : initialData ? "Guardar" : "Registrar"}
           </button>
         </div>
       )}

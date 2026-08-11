@@ -24,6 +24,7 @@ export function TareasContent({ initialData }: { initialData?: TareasInitialData
     toggleTask,
     togglePriority,
     deleteTask,
+    pendingId,
     ConfirmDialog,
     pag,
   } = useTareas(initialData);
@@ -53,7 +54,8 @@ export function TareasContent({ initialData }: { initialData?: TareasInitialData
           <div className="md:hidden sticky top-0 z-50 bg-surface/60 backdrop-blur-2xl border-b border-outline-variant/10 px-4 py-4 mb-6 flex items-center gap-3 shadow-sm">
             <button 
               onClick={() => setCategory("resumen")} 
-              className="p-2 -ml-2 rounded-full bg-surface hover:bg-surface-variant/50 border border-outline-variant/20 active:scale-95 transition-all text-on-surface-variant shadow-sm"
+              aria-label="Volver al resumen"
+              className="p-2 -ml-2 rounded-full bg-surface hover:bg-surface-variant/50 border border-outline-variant/20 active:scale-[0.96] transition-[background-color,transform] duration-200 ease-spring text-on-surface-variant shadow-sm hit-padding"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -126,6 +128,7 @@ export function TareasContent({ initialData }: { initialData?: TareasInitialData
                 onToggle={toggleTask}
                 onTogglePriority={togglePriority}
                 onDelete={deleteTask}
+                pendingId={pendingId}
                 pag={pag}
               />
             </div>

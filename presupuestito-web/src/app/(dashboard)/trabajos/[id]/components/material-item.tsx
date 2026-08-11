@@ -35,13 +35,9 @@ export function MaterialItem({ material, jobId }: MaterialItemProps) {
     });
   };
 
-  return (
-    <>
-      <Modal
-        isOpen={isEditing}
-        onClose={() => setIsEditing(false)}
-        title="Editar Material"
-      >
+  if (isEditing) {
+    return (
+      <div className="px-4 py-4 bg-primary/5 border-b border-outline-variant/10">
         <MaterialForm
           initialData={{ 
             nombre_material: material.nombre_material, 
@@ -51,11 +47,17 @@ export function MaterialItem({ material, jobId }: MaterialItemProps) {
           onSave={handleSave}
           onCancel={() => setIsEditing(false)}
         />
-      </Modal>
-      <div className="group relative flex flex-col md:flex-row md:items-center px-4 py-3 hover:bg-primary/5 transition-colors gap-1 md:gap-0">
+        <ConfirmDialog />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="group relative flex flex-col md:flex-row md:items-center pl-4 pr-[90px] md:pr-0 py-3 hover:bg-primary/5 transition-colors gap-1 md:gap-0 border-b border-outline-variant/5">
         
         {/* Name */}
-        <div className="flex-1 min-w-0 pr-4">
+        <div className="flex-1 min-w-0 md:pr-4">
           <p className="text-[14px] font-bold transition-colors duration-300 text-on-surface cursor-default select-none truncate">
             {material.nombre_material}
           </p>
@@ -85,8 +87,26 @@ export function MaterialItem({ material, jobId }: MaterialItemProps) {
           </p>
         </div>
 
-        {/* Actions */}
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10 flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity transition-transform duration-300 translate-x-0 md:translate-x-2 md:group-hover:translate-x-0">
+        {/* Actions (Desktop) */}
+        <div className="hidden md:flex w-20 shrink-0 items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pr-4">
+          <button
+            onClick={() => setIsEditing(true)}
+            aria-label={`Editar ${material.nombre_material}`}
+            className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 active:scale-90"
+          >
+            <Edit2 className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleDelete}
+            aria-label={`Eliminar ${material.nombre_material}`}
+            className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 active:scale-90"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Actions (Mobile) */}
+        <div className="md:hidden absolute right-4 top-1/2 -translate-y-1/2 z-10 flex items-center gap-1">
           <button
             onClick={() => setIsEditing(true)}
             aria-label={`Editar ${material.nombre_material}`}

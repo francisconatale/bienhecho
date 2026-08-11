@@ -19,13 +19,13 @@ function NavItem({ icon, label, href, active }: NavItemProps) {
 
   return (
     <Link
-      className={`flex flex-col items-center justify-center transition-colors ${activeClasses} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2`}
+      className={`flex flex-col items-center justify-center transition-transform duration-200 ease-spring active:scale-[0.96] hit-padding ${activeClasses} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2`}
       href={href}
       aria-current={active ? "page" : undefined}
       aria-label={label}
     >
       <div
-        className={`${active ? "bg-primary/10 border border-primary/20" : "bg-transparent border border-transparent"} rounded-xl p-2 transition-colors duration-300`}
+        className={`${active ? "bg-primary/10 border border-primary/20" : "bg-transparent border border-transparent"} rounded-xl p-2 transition-colors duration-200`}
       >
         {icon}
       </div>
@@ -57,11 +57,11 @@ export function BottomNav() {
 
   return (
     <div
-      className={`fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm z-50 transition-transform transition-opacity duration-300 ease-in-out md:hidden ${
+      className={`fixed bottom-[calc(env(safe-area-inset-bottom)+1rem)] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm z-50 transition-[transform,opacity] duration-300 ease-momentum md:hidden ${
         isVisible ? "translate-y-0 opacity-100" : "translate-y-24 opacity-0"
       }`}
     >
-      <nav aria-label="Navegación principal" className="flex justify-between items-center px-2 py-1.5 bg-surface/80 backdrop-blur-xl border border-outline-variant/20 rounded-full shadow-[0_8px_30px_-8px_rgba(0,0,0,0.3)]">
+      <nav aria-label="Navegación principal" className="flex justify-between items-center px-2 py-1.5 glass-thick rounded-full">
         <NavItem
         icon={<LayoutDashboard className="w-5 h-5" strokeWidth={2} />}
         label="Dashboard"

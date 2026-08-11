@@ -18,6 +18,7 @@ export function useTareas(initialData?: TareasInitialData) {
 
   const [filter, setFilter] = useState<FilterType>("pendientes");
   const [category, setCategory] = useState<CategoryType>("resumen");
+  const [pendingId, setPendingId] = useState<string | null>(null);
 
   const [page, setPage] = useState(1);
   const pageSize = 12;
@@ -55,6 +56,7 @@ export function useTareas(initialData?: TareasInitialData) {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 
@@ -64,6 +66,7 @@ export function useTareas(initialData?: TareasInitialData) {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 
@@ -112,12 +115,22 @@ export function useTareas(initialData?: TareasInitialData) {
   const [ConfirmDialog, confirm] = useConfirm();
 
   const toggleTask = async (taskId: string, current: boolean) => {
-    await updateTaskMutation.mutateAsync({ id: taskId, data: { completada: !current } });
+    setPendingId(taskId);
+    try {
+      await updateTaskMutation.mutateAsync({ id: taskId, data: { completada: !current } });
+    } finally {
+      setPendingId(null);
+    }
   };
 
   const togglePriority = async (taskId: string, currentPriority: string | null) => {
     const next = currentPriority === "alta" ? "baja" : currentPriority === "media" ? "alta" : "media";
-    await updateTaskMutation.mutateAsync({ id: taskId, data: { prioridad: next } });
+    setPendingId(taskId);
+    try {
+      await updateTaskMutation.mutateAsync({ id: taskId, data: { prioridad: next } });
+    } finally {
+      setPendingId(null);
+    }
   };
 
   const deleteTask = async (taskId: string) => {
@@ -158,6 +171,7 @@ export function useTareas(initialData?: TareasInitialData) {
     toggleTask,
     togglePriority,
     deleteTask,
+    pendingId,
     groupedTasks,
     categoryCounts,
     ConfirmDialog,

@@ -79,7 +79,7 @@ export function DataTable<T>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="p-5 text-[13px] text-on-surface-variant/60 text-center italic"
+                  className="p-5 text-[13px] text-on-surface-variant text-center italic"
                 >
                   {emptyMessage}
                 </td>
@@ -104,7 +104,7 @@ export function DataTable<T>({
                     ? {
                         onClick: () => onRowClick(item),
                         onKeyDown: (e: React.KeyboardEvent) =>
-                          e.key === "Enter" && onRowClick(item),
+                          (e.key === "Enter" || e.key === " ") && onRowClick(item),
                         tabIndex: 0,
                         role: "button",
                         "aria-label": rowLabel ? `Ver detalle de ${rowLabel(item)}` : undefined,

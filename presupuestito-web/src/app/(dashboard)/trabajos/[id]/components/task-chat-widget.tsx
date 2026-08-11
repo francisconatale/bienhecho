@@ -69,6 +69,7 @@ export function TaskChatWidget({ jobId, clienteId, jobTitulo }: TaskChatWidgetPr
       queryClient.invalidateQueries({ queryKey: ["tasks", jobId] });
       queryClient.invalidateQueries({ queryKey: ["job", jobId] });
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     } catch (error: any) {
       toast.error(error.message || "Error al cargar las tareas.");
     } finally {

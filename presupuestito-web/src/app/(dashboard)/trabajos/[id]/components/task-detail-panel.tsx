@@ -43,6 +43,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
         return old.map(t => t.id === updatedTask.id ? updatedTask : t);
       });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 
@@ -51,6 +52,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
       toast.success("Tarea eliminada");
       onDelete?.();
     },

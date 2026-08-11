@@ -45,20 +45,22 @@ export function ConfirmModal({
 
       <div className="flex gap-3 mt-6">
         <button
+          type="button"
           onClick={onClose}
           disabled={isLoading}
-          className="flex-1 px-4 py-3 rounded-xl font-bold text-sm text-on-surface-variant bg-surface-variant/30 hover:bg-surface-variant/50 transition-[background-color] duration-[120ms] disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary/20"
+          className="flex-1 px-4 py-3 rounded-xl font-bold text-sm text-on-surface-variant bg-surface-variant hover:bg-surface-variant/70 transition-[background-color,transform] duration-200 ease-spring active:scale-[0.96] disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary/20"
         >
           {cancelText}
         </button>
         <button
+          type="button"
           onClick={() => {
             if (!isLoading) {
               onConfirm();
             }
           }}
           disabled={isLoading}
-          className={`flex-1 px-4 py-3 rounded-xl font-bold text-sm text-white transition-[background-color] duration-[120ms] shadow-lg flex items-center justify-center gap-2 disabled:opacity-70 focus-visible:ring-2 focus-visible:ring-primary/20 ${
+          className={`flex-1 px-4 py-3 rounded-xl font-bold text-sm text-white transition-[background-color,transform] duration-200 ease-spring active:scale-[0.96] shadow-lg flex items-center justify-center gap-2 disabled:opacity-70 focus-visible:ring-2 focus-visible:ring-primary/20 ${
             variant === "danger"
               ? "bg-error hover:brightness-110 shadow-red-500/20"
               : variant === "warning"

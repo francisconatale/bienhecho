@@ -12,6 +12,7 @@ export function AuroraBackground({ preset = "layout", className }: AuroraBackgro
   // We flattened the heavy blur divs into a simple, high-performance radial gradient
   return (
     <div
+      aria-hidden="true"
       className={`fixed inset-0 pointer-events-none transition-opacity duration-300 z-[-1] ${className ?? ""}`}
       style={{
         background: 'radial-gradient(circle at 50% -20%, var(--color-primary-container) 0%, transparent 60%), radial-gradient(circle at 100% 20%, var(--color-primary) 0%, transparent 50%)',

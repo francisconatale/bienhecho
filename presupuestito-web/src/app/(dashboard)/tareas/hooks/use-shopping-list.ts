@@ -1,9 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { materialsService_getAll, materialsService_update } from "@/actions/materials.actions";
 import { jobsService_getAll } from "@/actions/jobs.actions";
 import { clientsService_getAll } from "@/actions/clients.actions";
 export function useShoppingList() {
   const queryClient = useQueryClient();
+  const [pendingId, setPendingId] = useState<string | null>(null);
 
   const { data: materiales = [], isLoading: isLoadingMaterials } = useQuery({ queryKey: ["materials"], queryFn: materialsService_getAll });
   const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({ queryKey: ["jobs"], queryFn: jobsService_getAll });
@@ -24,12 +26,18 @@ export function useShoppingList() {
     .filter((m) => m.job && (m.job.estado === "presupuestado" || m.job.estado === "borrador"));
 
   const toggleMaterial = async (id: string, current: boolean) => {
-    await updateMaterialMutation.mutateAsync({ id, data: { comprado: !current } });
+    setPendingId(id);
+    try {
+      await updateMaterialMutation.mutateAsync({ id, data: { comprado: !current } });
+    } finally {
+      setPendingId(null);
+    }
   };
 
   return {
     pendingMaterials,
     toggleMaterial,
+    pendingId,
     isLoading: isLoadingMaterials || isLoadingJobs || isLoadingClients,
   };
 }

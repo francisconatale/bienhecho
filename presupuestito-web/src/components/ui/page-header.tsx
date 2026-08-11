@@ -22,11 +22,11 @@ export function PageHeader({
       )}
     >
       <div>
-        <h1 className="text-4xl font-black tracking-tight text-on-surface mb-2">
+        <h1 className="text-display text-on-surface mb-2">
           {title}
         </h1>
         {description && (
-          <p className="text-base text-on-surface-variant/60 font-medium">
+          <p className="text-body text-on-surface-variant font-normal">
             {description}
           </p>
         )}

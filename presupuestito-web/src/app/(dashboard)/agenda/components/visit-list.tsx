@@ -15,31 +15,39 @@ interface VisitListProps {
   setEditingVisit: (visit: Visit) => void;
   handleDelete: (id: string) => void;
   setShowNewModal: (show: boolean) => void;
+  pendingVisitId?: string | null;
 }
 
-function VisitCard({ visit, jobInfo, onToggleStatus, onEdit, onDelete }: {
+function VisitCard({ visit, jobInfo, onToggleStatus, onEdit, onDelete, isUpdating = false }: {
   visit: Visit;
   jobInfo: { titulo: string; cliente: string; direccion: string };
   onToggleStatus: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  isUpdating?: boolean;
 }) {
   return (
-    <div className="px-6 py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors">
+    <div className={cn("px-6 py-4 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors", isUpdating && "opacity-60 pointer-events-none")}>
       <div className="flex items-start gap-4">
         <button onClick={onToggleStatus} className="mt-1 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 rounded-full" aria-label={`Estado actual: ${visit.estado}. Cambiar estado`}>
-          <div
-            className={cn(
-              "w-4 h-4 rounded-full border-2 transition-colors",
-              visit.estado === "planificada" && "border-accent-dark",
-              visit.estado === "realizada" && "border-success bg-success",
-              visit.estado === "cancelada" && "border-outline-variant bg-outline-variant/30"
-            )}
-          >
-            {visit.estado === "realizada" && (
-              <div className="w-1.5 h-1.5 rounded-full bg-white mx-auto mt-0.5" />
-            )}
-          </div>
+          {isUpdating ? (
+            <div className="w-4 h-4 rounded-full flex items-center justify-center">
+              <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+            </div>
+          ) : (
+            <div
+              className={cn(
+                "w-4 h-4 rounded-full border-2 transition-colors",
+                visit.estado === "planificada" && "border-accent-dark",
+                visit.estado === "realizada" && "border-success bg-success",
+                visit.estado === "cancelada" && "border-outline-variant bg-outline-variant/30"
+              )}
+            >
+              {visit.estado === "realizada" && (
+                <div className="w-1.5 h-1.5 rounded-full bg-white mx-auto mt-0.5" />
+              )}
+            </div>
+          )}
         </button>
 
         <div className="flex-1 min-w-0">
@@ -112,6 +120,7 @@ export function VisitList({
   setEditingVisit,
   handleDelete,
   setShowNewModal,
+  pendingVisitId,
 }: VisitListProps) {
   const pendientes = dayVisits.filter((v) => v.estado === "planificada");
   const realizadas = dayVisits.filter((v) => v.estado === "realizada");
@@ -150,6 +159,7 @@ export function VisitList({
               onToggleStatus={() => handleStatusToggle(visit)}
               onEdit={() => setEditingVisit(visit)}
               onDelete={() => handleDelete(visit.id)}
+              isUpdating={pendingVisitId === visit.id}
             />
           ))}
         </StatusGroup>
@@ -163,6 +173,7 @@ export function VisitList({
               onToggleStatus={() => handleStatusToggle(visit)}
               onEdit={() => setEditingVisit(visit)}
               onDelete={() => handleDelete(visit.id)}
+              isUpdating={pendingVisitId === visit.id}
             />
           ))}
         </StatusGroup>
@@ -176,6 +187,7 @@ export function VisitList({
               onToggleStatus={() => handleStatusToggle(visit)}
               onEdit={() => setEditingVisit(visit)}
               onDelete={() => handleDelete(visit.id)}
+              isUpdating={pendingVisitId === visit.id}
             />
           ))}
         </StatusGroup>

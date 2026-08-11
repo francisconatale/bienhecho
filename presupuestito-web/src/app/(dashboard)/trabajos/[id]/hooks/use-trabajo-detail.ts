@@ -23,6 +23,7 @@ export function useTrabajoDetail(id: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
       queryClient.invalidateQueries({ queryKey: ['job', id] });
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
     }
   });
 
@@ -32,6 +33,7 @@ export function useTrabajoDetail(id: string) {
       queryClient.invalidateQueries({ queryKey: ['cobros', id] });
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
       queryClient.invalidateQueries({ queryKey: ['job', id] });
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
     },
   });

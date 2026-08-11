@@ -12,6 +12,9 @@ interface ColorPickerProps {
 export function ColorPicker({ color, onChange, className = "" }: ColorPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  const close = () => setIsOpen(false);
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent | TouchEvent) => {
@@ -34,13 +37,29 @@ export function ColorPicker({ color, onChange, className = "" }: ColorPickerProp
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setIsOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
+
   return (
     <div className="relative" ref={popoverRef}>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-9 h-9 rounded-lg border border-outline-variant/20 cursor-pointer overflow-hidden p-0.5 ${className}`}
         aria-label="Seleccionar color"
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
+        className={`w-9 h-9 rounded-lg border border-outline-variant/20 cursor-pointer overflow-hidden p-0.5 transition-[transform,border-color] duration-200 ease-spring active:scale-[0.96] focus-visible:ring-2 focus-visible:ring-primary/40 hit-padding ${className}`}
       >
         <div
           className="w-full h-full rounded-md"
@@ -49,12 +68,15 @@ export function ColorPicker({ color, onChange, className = "" }: ColorPickerProp
       </button>
 
       {isOpen && (
-        <div className="absolute bottom-12 md:bottom-auto md:top-12 right-0 sm:left-0 sm:right-auto z-50 shadow-xl rounded-xl overflow-hidden border border-outline-variant/20 bg-surface p-3 animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute bottom-12 md:bottom-auto md:top-12 right-0 sm:left-0 sm:right-auto z-50 shadow-xl rounded-xl overflow-hidden border border-outline-variant/20 bg-surface p-3">
           <HexColorPicker color={color} onChange={onChange} />
-          
+
           <div className="mt-3 flex gap-2">
-            <span className="text-xs font-semibold text-on-surface-variant my-auto uppercase">Hex</span>
+            <label htmlFor="color-picker-hex" className="text-xs font-semibold text-on-surface-variant my-auto uppercase cursor-default select-none">
+              Hex
+            </label>
             <input
+              id="color-picker-hex"
               type="text"
               value={color}
               onChange={(e) => onChange(e.target.value)}

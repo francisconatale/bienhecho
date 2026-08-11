@@ -19,12 +19,13 @@ interface SelectInputProps {
   onValueChange: (value: string) => void;
   options: SelectOption[];
   placeholder?: string;
+  label?: string;
   className?: string;
   size?: "sm" | "md";
 }
 
 const sizeClasses = {
-  sm: "h-9 px-3 py-2 text-xs",
+  sm: "h-10 px-3 py-2 text-xs",
   md: "h-11 px-3.5 py-2.5 text-sm",
 };
 
@@ -35,6 +36,7 @@ export function SelectInput({
   onValueChange,
   options,
   placeholder = "Seleccionar",
+  label,
   className,
   size = "md",
 }: SelectInputProps) {
@@ -44,9 +46,9 @@ export function SelectInput({
       onValueChange={(v) => onValueChange(v === CLEAR_VALUE ? "" : v)}
     >
       <SelectTrigger
-        aria-label={placeholder}
+        aria-label={label ?? placeholder}
         className={cn(
-          "bg-grouped-bg-light border border-outline-variant/20 rounded-xl text-on-surface font-semibold shadow-none focus:ring-2 focus:ring-primary/20",
+          "bg-grouped-bg-light border border-outline-variant/20 rounded-xl text-on-surface font-semibold shadow-none focus:ring-2 focus:ring-primary/20 transition-transform duration-200 ease-spring active:scale-[0.98]",
           sizeClasses[size],
           className
         )}

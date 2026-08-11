@@ -33,6 +33,7 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
     mutationFn: (id: string) => jobsService_delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
       toast.success("Trabajo eliminado correctamente");
     }
   });

@@ -53,8 +53,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   interactiveWidget: "resizes-content",
 };
 
@@ -69,6 +67,13 @@ export default function RootLayout({
         className="bg-grouped-bg-light text-on-background font-body min-h-screen antialiased transition-colors duration-200 flex flex-col"
       >
         <ThemeScript />
+
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2 focus:text-sm focus:text-on-surface focus:shadow-lg"
+        >
+          Ir al contenido
+        </a>
 
         <AuroraBackground preset="layout" />
 

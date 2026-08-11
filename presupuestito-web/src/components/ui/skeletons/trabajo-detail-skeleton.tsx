@@ -1,6 +1,6 @@
 export function TrabajoDetailSkeleton({ isEmbedded = false }: { isEmbedded?: boolean }) {
   return (
-    <div className={isEmbedded ? "relative w-full flex flex-col min-h-full h-full flex-1" : "relative w-full flex flex-col min-h-screen"}>
+    <div role="status" aria-label="Cargando detalle del trabajo" className={isEmbedded ? "relative w-full flex flex-col min-h-full h-full flex-1" : "relative w-full flex flex-col min-h-screen"}>
       <main className={isEmbedded 
         ? "relative flex-1 w-full mx-auto px-4 pt-28 pb-28 md:pt-6 md:px-8 max-w-full" 
         : "relative flex-1 w-full mx-auto px-4 pt-28 pb-28 md:px-8 md:pt-8 md:pb-12 max-w-[1400px] md:mt-0"

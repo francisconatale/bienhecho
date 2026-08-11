@@ -12,9 +12,10 @@ export interface VisitFormProps {
   onSubmit: (data: Omit<Visit, "id" | "created_at">) => void;
   onCancel: () => void;
   hideFooter?: boolean;
+  id?: string;
 }
 
-export function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCancel, hideFooter = false }: VisitFormProps) {
+export function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCancel, hideFooter = false, id }: VisitFormProps) {
   const [trabajoId, setTrabajoId] = useState(initial?.trabajo_id || "");
   const [fecha, setFecha] = useState(initial?.fecha || defaultFecha || new Date().toISOString().split("T")[0]);
   const [horaInicio, setHoraInicio] = useState(initial?.hora_inicio || "09:00");
@@ -51,6 +52,7 @@ export function VisitForm({ jobs, clients, initial, defaultFecha, onSubmit, onCa
 
   return (
     <form
+      id={id}
       onSubmit={(e) => {
         e.preventDefault();
         handleSubmit();

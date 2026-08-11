@@ -116,7 +116,8 @@ export function MasterDetail<T>({
                 onToggleCreation();
               }
             }}
-            className="w-10 h-10 rounded-full bg-surface/50 backdrop-blur-xl border border-outline-variant/20 shadow-sm flex items-center justify-center text-primary cursor-pointer hover:bg-surface transition-colors active:scale-95 pointer-events-auto"
+            className="w-10 h-10 rounded-full glass-thin flex items-center justify-center text-primary cursor-pointer hover:bg-surface transition-colors active:scale-[0.96] transition-[background-color,transform] duration-200 ease-spring pointer-events-auto"
+            aria-label="Volver"
           >
             <ChevronLeft className="w-6 h-6 -ml-0.5" strokeWidth={2.5} />
           </button>
@@ -132,7 +133,7 @@ export function MasterDetail<T>({
 
         {/* LIST PANE */}
         <div
-          className={`absolute inset-0 md:relative flex-shrink-0 flex flex-col border-r border-outline-variant/10 bg-transparent md:bg-surface overflow-hidden transition-transform duration-[280ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] z-10 w-full md:w-[360px] ${
+          className={`absolute inset-0 md:relative flex-shrink-0 flex flex-col border-r border-outline-variant/10 bg-transparent md:bg-surface overflow-hidden transition-transform duration-500 ease-momentum z-10 w-full md:w-[360px] ${
             hasDetail ? "-translate-x-full md:translate-x-0" : "translate-x-0"
           } ${isCollapsed ? "md:!w-[64px]" : ""}`}
         >
@@ -155,14 +156,17 @@ export function MasterDetail<T>({
                 {creationHref ? (
                   <Link
                     href={creationHref}
-                    className="hidden md:flex h-9 w-9 rounded-lg bg-primary text-white items-center justify-center hover:bg-primary-dark transition-colors cursor-pointer"
+                    aria-label="Crear nuevo"
+                    className="hidden md:flex h-10 w-10 rounded-lg bg-primary text-white items-center justify-center hover:bg-primary-dark transition-[background-color,transform] duration-200 ease-spring active:scale-[0.96] cursor-pointer hit-padding"
                   >
                     <Plus className="w-5 h-5" strokeWidth={2.5} />
                   </Link>
                 ) : onToggleCreation ? (
                   <button
+                    type="button"
                     onClick={onToggleCreation}
-                    className={`hidden md:flex h-9 w-9 rounded-lg items-center justify-center transition-colors cursor-pointer ${
+                    aria-label={showCreationForm ? "Cerrar formulario" : "Crear nuevo"}
+                    className={`hidden md:flex h-10 w-10 rounded-lg items-center justify-center transition-[background-color,transform] duration-200 ease-spring active:scale-[0.96] cursor-pointer hit-padding ${
                       showCreationForm
                         ? "bg-outline-variant/15 text-on-surface"
                         : "bg-primary text-white hover:bg-primary-dark"
@@ -182,8 +186,10 @@ export function MasterDetail<T>({
           {isCollapsed && (
             <div className="hidden md:flex flex-col items-center py-3 gap-2 h-full w-full">
               <button
+                type="button"
                 onClick={() => {}}
-                className="w-9 h-9 rounded-xl bg-on-surface/5 hover:bg-on-surface/10 flex items-center justify-center transition-all active:scale-90 cursor-pointer mb-2 shrink-0"
+                aria-label="Expandir lista"
+                className="w-9 h-9 rounded-xl bg-on-surface/5 hover:bg-on-surface/10 flex items-center justify-center transition-[background-color,transform] active:scale-[0.96] cursor-pointer mb-2 shrink-0"
                 title="Expandir lista"
               >
                 <ChevronsRight className="w-4 h-4 text-on-surface-variant" />
@@ -214,18 +220,21 @@ export function MasterDetail<T>({
                 {!hasDetail && (
                   <>
                     <div className="md:hidden flex pt-14 pb-4 px-4 items-center justify-between">
-                      <h1 className="text-[34px] font-bold text-on-surface tracking-tight leading-tight">{mobileTitle}</h1>
+                      <h1 className="text-display text-on-surface leading-tight">{mobileTitle}</h1>
                       {creationHref ? (
                         <Link
                           href={creationHref}
-                          className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-sm active:scale-95 transition-transform"
+                          aria-label="Crear nuevo"
+                          className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-sm active:scale-[0.96] transition-[transform,background-color] duration-200 ease-spring"
                         >
                           <Plus className="w-5 h-5" strokeWidth={2.5} />
                         </Link>
                       ) : onToggleCreation ? (
                         <button
+                          type="button"
                           onClick={onToggleCreation}
-                          className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm active:scale-95 transition-transform ${
+                          aria-label={showCreationForm ? "Cerrar formulario" : "Crear nuevo"}
+                          className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm active:scale-[0.96] transition-[transform,background-color] duration-200 ease-spring ${
                             showCreationForm
                               ? "bg-outline-variant/15 text-on-surface"
                               : "bg-primary text-white"
@@ -249,7 +258,7 @@ export function MasterDetail<T>({
                           onChange={(e) => onSearchChange(e.target.value)}
                           placeholder={searchPlaceholder}
                           aria-label={searchPlaceholder}
-                          className="w-full bg-surface/70 dark:bg-surface/40 backdrop-blur-xl border border-outline-variant/20 shadow-sm rounded-lg pl-9 pr-3 py-2.5 text-[15px] text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary/20"
+                          className="w-full bg-surface/90 dark:bg-surface/70 backdrop-blur-sm border border-outline-variant/20 shadow-sm rounded-lg pl-9 pr-3 py-2.5 text-[15px] text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary/20"
                         />
                       </div>
                     </div>
@@ -259,7 +268,7 @@ export function MasterDetail<T>({
                   <>
                     {/* Mobile: table style list */}
                     <div className="md:hidden px-4 pb-20">
-                      <div className="flex flex-col bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm">
+                      <div className="flex flex-col bg-surface/90 dark:bg-surface/70 backdrop-blur-sm rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm">
                         <div className="flex flex-col divide-y divide-outline-variant/10">
                           {pagination.paginatedItems.map((item) => (
                             <div key={getItemId(item)} className="bg-transparent">
@@ -285,7 +294,7 @@ export function MasterDetail<T>({
                 )}
                 {/* Pagination inside scroll — always reachable on mobile */}
                 <div className="md:hidden pb-28 pt-6 flex flex-col items-center gap-4">
-                  <span className="text-[13px] font-medium text-on-surface-variant/50">
+                  <span className="text-caption text-on-surface-variant">
                     {pagination.totalItems} {countLabel} en total
                   </span>
                   <PaginationButtons
@@ -315,7 +324,7 @@ export function MasterDetail<T>({
 
         {/* DETAIL PANE */}
         <div
-          className={`absolute inset-0 md:relative flex-1 flex flex-col bg-transparent min-w-0 transition-transform duration-[280ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] z-20 ${
+          className={`absolute inset-0 md:relative flex-1 flex flex-col bg-transparent min-w-0 transition-transform duration-500 ease-momentum z-20 ${
             hasDetail ? "translate-x-0" : "translate-x-full md:translate-x-0"
           } ${hasDetail ? "" : "max-md:pointer-events-none"}`}
         >

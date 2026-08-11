@@ -21,6 +21,7 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
     addCobro,
     updateCobro,
     removeCobro,
+    isSaving,
   } = usePayments(jobId);
 
   const { transacciones, isLoading: isLoadingTransactions } = useTransactions(jobId);
@@ -28,26 +29,30 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
   const [isAddingCobro, setIsAddingCobro] = useState(false);
   const [editingCobro, setEditingCobro] = useState<Cobro | null>(null);
 
-  const handleSaveCobro = (data: any) => {
-    if (editingCobro) {
-      updateCobro(editingCobro.id, data);
-      setEditingCobro(null);
-    } else {
-      addCobro(data);
-      setIsAddingCobro(false);
+  const handleSaveCobro = async (data: any) => {
+    try {
+      if (editingCobro) {
+        await updateCobro(editingCobro.id, data);
+        setEditingCobro(null);
+      } else {
+        await addCobro(data);
+        setIsAddingCobro(false);
+      }
+    } catch {
+      // Modal stays open; error is surfaced by the hook toast
     }
   };
 
   return (
     <div className="space-y-6 mt-8 relative z-10">
       {/* Saldo Pendiente Card */}
-      <div className="relative overflow-hidden bg-primary/10 dark:bg-primary/5 bg-surface/80 rounded-xl p-6 border border-primary/20 shadow-[0_8px_32px_rgba(61,139,110,0.1)] transition-colors transition-shadow duration-300">
+      <div className="relative overflow-hidden bg-primary/10 dark:bg-primary/5 bg-surface/80 rounded-xl p-6 border border-primary/20 shadow-[0_8px_32px_rgba(61,139,110,0.1)] transition-[background-color,box-shadow] duration-300">
         <div className="relative flex flex-col gap-1 z-10">
           <span className="text-[11px] font-bold text-primary/70">
             Saldo Pendiente
           </span>
           <span className={cn(
-            "text-4xl lg:text-5xl font-black tracking-tighter mt-1",
+            "text-display tracking-tighter mt-1",
             saldoPendiente <= 0 ? "text-primary" : "text-on-surface"
           )}>
             ${Math.max(0, saldoPendiente).toLocaleString("es-AR")}
@@ -67,7 +72,7 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
           <button
             onClick={() => setIsAddingCobro(true)}
             aria-label="Registrar nuevo cobro"
-            className="group flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] border border-primary/30 hover:border-primary bg-primary/10 transition-all duration-300 text-[11px] font-bold text-primary active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
+            className="group flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] border border-primary/30 hover:border-primary bg-primary/10 transition-[background-color,border-color,transform] duration-200 ease-spring text-[11px] font-bold text-primary active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 hit-padding"
           >
             <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90 duration-300" strokeWidth={2.5} />
             Registrar Cobro
@@ -80,7 +85,7 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
             onClose={() => setIsAddingCobro(false)}
             title="Registrar Cobro"
           >
-            <CobroForm onSave={handleSaveCobro} onCancel={() => setIsAddingCobro(false)} />
+            <CobroForm onSave={handleSaveCobro} onCancel={() => setIsAddingCobro(false)} isSaving={isSaving} />
           </Modal>
 
           <Modal
@@ -93,6 +98,7 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
                 initialData={editingCobro}
                 onSave={handleSaveCobro}
                 onCancel={() => setEditingCobro(null)}
+                isSaving={isSaving}
               />
             )}
           </Modal>
