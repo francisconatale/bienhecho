@@ -238,7 +238,7 @@ Los totales de `trabajos` (`presupuesto`, `total_estimado`, `total_cobrado`, `sa
 | `on_cobro_update_sync_abono` | `cobros` | AFTER UPDATE OF `monto_cobrado, fecha_cobro` | `sync_abono_cobro_update` |
 | `on_cobro_delete_revert` | `cobros` | AFTER DELETE | `revertir_abono_cobro_delete` |
 | `on_trabajo_estado_presupuestado` | `trabajos` | AFTER UPDATE OF `estado` | `emitir_transaccion_presupuesto` |
-| `on_trabajo_recalcular_cliente_saldo` | `trabajos` | AFTER INSERT OR DELETE OR UPDATE OF `saldo_pendiente, cliente_id` | `recalcular_cliente_saldo` |
+| `on_trabajo_recalcular_cliente_saldo` | `trabajos` | AFTER INSERT OR DELETE OR UPDATE OF `saldo_pendiente, cliente_id, estado` | `recalcular_cliente_saldo` |
 
 **Eliminados** (reemplazados por `recalcular_trabajo_totales`): `on_tarea_change_update_presupuesto` + `update_trabajo_presupuesto()`, `on_cobro_insert_check_pagado` + `check_trabajo_pagado()`.
 
@@ -248,7 +248,7 @@ Los totales de `trabajos` (`presupuesto`, `total_estimado`, `total_cobrado`, `sa
 - `sync_material_subtotal()` — BEFORE trigger: fuerza `NEW.subtotal = NEW.cantidad * NEW.precio_unitario`.
 - `sync_abono_cobro_update()` — al actualizar un cobro, ajusta el `abono` automático (`monto`, `fecha`, `concepto`) de `transacciones` con `referencia_cobro_id = NEW.id`, `tipo = abono`, `origen = automático`.
 - `revertir_abono_cobro_delete()` — al borrar un cobro, inserta un `cargo` de anulación `"Anulación de cobro: {titulo}"` (el abono original se conserva como rastro, saldo neto cero).
-- `recalcular_cliente_saldo()` — recalcula `clientes.saldo_cuenta_corriente = SUM(trabajos.saldo_pendiente)` de los trabajos del cliente con `estado <> 'borrador'`. Se dispara al insertar/borrar un trabajo o al cambiar su `saldo_pendiente` o `cliente_id` (si el trabajo cambia de cliente, recalcula también el cliente anterior).
+- `recalcular_cliente_saldo()` — recalcula `clientes.saldo_cuenta_corriente = SUM(trabajos.saldo_pendiente)` de los trabajos del cliente con `estado <> 'borrador'`. Se dispara al insertar/borrar un trabajo, al cambiar su `saldo_pendiente`, su `estado` (ej: `borrador` → `presupuestado`) o su `cliente_id` (si el trabajo cambia de cliente, recalcula también el cliente anterior).
 
 ---
 
