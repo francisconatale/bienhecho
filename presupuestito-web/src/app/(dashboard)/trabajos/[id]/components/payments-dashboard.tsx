@@ -77,33 +77,20 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
             isOpen={isAddingCobro}
             onClose={() => setIsAddingCobro(false)}
             title="Registrar Cobro"
-            footer={
-              <div className="flex gap-2">
-                <button type="button" onClick={() => setIsAddingCobro(false)} className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95">Cancelar</button>
-                <button type="button" className="flex-1 py-2.5 rounded-xl bg-on-surface text-surface font-black text-[10px] uppercase tracking-widest shadow-lg shadow-black/10 hover:bg-on-surface-variant transition-colors transition-transform active:scale-95">Registrar</button>
-              </div>
-            }
           >
-            <CobroForm onSave={handleSaveCobro} onCancel={() => setIsAddingCobro(false)} hideFooter />
+            <CobroForm onSave={handleSaveCobro} onCancel={() => setIsAddingCobro(false)} />
           </Modal>
 
           <Modal
             isOpen={editingCobro !== null}
             onClose={() => setEditingCobro(null)}
             title="Editar Cobro"
-            footer={
-              <div className="flex gap-2">
-                <button type="button" onClick={() => setEditingCobro(null)} className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95">Cancelar</button>
-                <button type="button" className="flex-1 py-2.5 rounded-xl bg-on-surface text-surface font-black text-[10px] uppercase tracking-widest shadow-lg shadow-black/10 hover:bg-on-surface-variant transition-colors transition-transform active:scale-95">Guardar</button>
-              </div>
-            }
           >
             {editingCobro && (
               <CobroForm
                 initialData={editingCobro}
                 onSave={handleSaveCobro}
                 onCancel={() => setEditingCobro(null)}
-                hideFooter
               />
             )}
           </Modal>
