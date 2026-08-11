@@ -1,0 +1,90 @@
+# ==============================================================
+# Supabase CLI config — presupuestito-web
+# Los puertos coinciden con el stack local Docker ya en ejecución
+# (54421 API / 54422 DB / 54423 Studio / 54424 SMTP / 54427 analytics).
+# Referencia completa:
+# https://supabase.com/docs/guides/local-development/cli/config
+# ==============================================================
+project_id = "presupuestito"
+
+[api]
+enabled = true
+port = 55421
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 55422
+major_version = 17
+
+[db.pooler]
+enabled = false
+
+[db.migrations]
+enabled = true
+schema_paths = []
+
+[db.seed]
+# Sin seed: los datos de prueba se cargan a mano o por script propio.
+enabled = false
+sql_paths = []
+
+[realtime]
+enabled = true
+
+[studio]
+enabled = true
+port = 55423
+api_url = "http://127.0.0.1"
+
+[local_smtp]
+enabled = true
+port = 55424
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[storage.s3_protocol]
+enabled = true
+
+[storage.analytics]
+enabled = false
+
+[storage.vector]
+enabled = true
+
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:3000"
+additional_redirect_urls = ["http://127.0.0.1:3000"]
+jwt_expiry = 3600
+enable_signup = true
+enable_anonymous_sign_ins = false
+minimum_password_length = 6
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false
+secure_password_change = false
+
+[auth.sms]
+enable_signup = false
+enable_confirmations = false
+
+[auth.external.apple]
+enabled = false
+
+[auth.web3.solana]
+enabled = false
+
+[edge_runtime]
+enabled = true
+policy = "per_worker"
+deno_version = 2
+
+[analytics]
+enabled = true
+port = 55427
+backend = "postgres"
