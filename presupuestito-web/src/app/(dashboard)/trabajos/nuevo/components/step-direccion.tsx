@@ -6,7 +6,7 @@ interface Props {
 export function StepDireccion({ direccion, setDireccion }: Props) {
   return (
     <>
-      <label htmlFor="direccion-trabajo" className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60 mb-1.5 block">Dirección del trabajo</label>
+      <label htmlFor="direccion-trabajo" className="text-xs font-bold text-on-surface-variant/60 mb-1.5 block">Dirección del trabajo</label>
       <input
         type="text"
         id="direccion-trabajo"

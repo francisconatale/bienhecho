@@ -9,7 +9,7 @@ export function StepFechas({ fechaInicio, setFechaInicio, fechaFinEstimada, setF
   return (
     <div className="space-y-3">
       <div>
-        <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40 mb-1.5 block">
+        <label className="text-[11px] font-bold text-on-surface-variant/40 mb-1.5 block">
           Fecha de inicio
         </label>
         <input
@@ -21,7 +21,7 @@ export function StepFechas({ fechaInicio, setFechaInicio, fechaFinEstimada, setF
         />
       </div>
       <div>
-        <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40 mb-1.5 block">
+        <label className="text-[11px] font-bold text-on-surface-variant/40 mb-1.5 block">
           Fecha fin estimada
         </label>
         <input

@@ -45,7 +45,7 @@ export function DataTable<T>({
       {(title || actions) && (
         <div className="flex items-center justify-between gap-4 px-4 py-4 border-b border-outline-variant/10 bg-surface-container-low/50 dark:bg-surface-container-low/30">
           {title && (
-            <h2 className="text-[13px] font-bold text-on-surface-variant uppercase tracking-widest">
+            <h2 className="text-[13px] font-bold text-on-surface-variant">
               {title}
             </h2>
           )}
@@ -64,7 +64,7 @@ export function DataTable<T>({
                 <th
                   key={i}
                   className={[
-                    "text-[11px] font-bold text-on-surface-variant uppercase tracking-widest px-4 py-2 text-left",
+                    "text-xs font-bold text-on-surface-variant px-4 py-2 text-left",
                     col.headerClassName,
                   ].filter(Boolean).join(" ")}
                 >

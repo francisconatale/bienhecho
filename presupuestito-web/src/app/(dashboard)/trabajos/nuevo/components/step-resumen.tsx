@@ -15,7 +15,7 @@ export function StepResumen({ state }: Props) {
             <Building2 className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
+            <p className="text-[11px] font-bold text-on-surface-variant/40">
               Cliente
             </p>
             <p className="font-semibold text-sm text-on-surface">
@@ -29,7 +29,7 @@ export function StepResumen({ state }: Props) {
         <div className="flex items-start gap-3">
           <FileText className="w-4 h-4 text-on-surface-variant/40 mt-0.5 shrink-0" />
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
+            <p className="text-[11px] font-bold text-on-surface-variant/40">
               Título
             </p>
             <p className="font-semibold text-sm text-on-surface">{titulo}</p>
@@ -45,7 +45,7 @@ export function StepResumen({ state }: Props) {
           <div className="flex items-start gap-3">
             <MapPin className="w-4 h-4 text-on-surface-variant/40 mt-0.5 shrink-0" />
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
+              <p className="text-[11px] font-bold text-on-surface-variant/40">
                 Dirección
               </p>
               <p className="font-semibold text-sm text-on-surface">{direccion}</p>
@@ -59,7 +59,7 @@ export function StepResumen({ state }: Props) {
           <div className="flex items-start gap-3">
             <DollarSign className="w-4 h-4 text-on-surface-variant/40 mt-0.5 shrink-0" />
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
+              <p className="text-[11px] font-bold text-on-surface-variant/40">
                 Presupuesto
               </p>
               <p className="font-semibold text-sm text-on-surface">
@@ -75,7 +75,7 @@ export function StepResumen({ state }: Props) {
           <div className="flex items-start gap-3">
             <Calendar className="w-4 h-4 text-on-surface-variant/40 mt-0.5 shrink-0" />
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
+              <p className="text-[11px] font-bold text-on-surface-variant/40">
                 Fechas
               </p>
               <p className="font-semibold text-sm text-on-surface">

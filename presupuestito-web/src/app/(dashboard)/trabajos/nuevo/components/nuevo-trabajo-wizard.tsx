@@ -21,7 +21,7 @@ export function NuevoTrabajoWizard() {
 
       <div className="min-h-[260px] flex flex-col">
         <div className="mb-2">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/40">
+          <span className="text-[11px] font-bold text-on-surface-variant/40">
             Paso {currentQ + 1} de {questions.length}
           </span>
         </div>

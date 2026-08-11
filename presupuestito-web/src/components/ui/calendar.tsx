@@ -35,7 +35,7 @@ export function CalendarMonth({ year, month, selectedDay, onSelectDay, dayBadge 
         {DAYS_OF_WEEK.map((d) => (
           <div
             key={d}
-            className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-wider text-center h-8 flex items-center justify-center"
+            className="text-[11px] font-semibold text-on-surface-variant/40 text-center h-8 flex items-center justify-center"
           >
             {d}
           </div>
@@ -107,7 +107,7 @@ export function CalendarStrip({ year, month, selectedDay, onSelectDay, dayBadge 
                 : "text-on-surface hover:bg-outline-variant/10"
             )}
           >
-            <span className="text-[10px] font-bold opacity-60 uppercase tracking-widest">
+            <span className="text-[11px] font-bold opacity-60">
               {DAYS_OF_WEEK[dDayOfWeek].substring(0, 3)}
             </span>
             <span className="text-[15px] font-bold">{dDay}</span>

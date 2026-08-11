@@ -9,7 +9,7 @@ export function StepTitulo({ titulo, setTitulo, descripcion, setDescripcion }: P
   return (
     <div className="space-y-3">
       <div>
-        <label htmlFor="titulo-trabajo" className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60 mb-1.5 block">Nombre del trabajo</label>
+        <label htmlFor="titulo-trabajo" className="text-xs font-bold text-on-surface-variant/60 mb-1.5 block">Nombre del trabajo</label>
         <input
           type="text"
           id="titulo-trabajo"
@@ -21,7 +21,7 @@ export function StepTitulo({ titulo, setTitulo, descripcion, setDescripcion }: P
         />
       </div>
       <div>
-        <label htmlFor="descripcion-trabajo" className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60 mb-1.5 block">Descripción</label>
+        <label htmlFor="descripcion-trabajo" className="text-xs font-bold text-on-surface-variant/60 mb-1.5 block">Descripción</label>
         <textarea
           id="descripcion-trabajo"
           value={descripcion}

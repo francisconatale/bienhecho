@@ -47,7 +47,7 @@ export function PaginationButtons({
   const endItem = Math.min(currentPage * pageSize, totalItems);
 
   const btnBase =
-    "flex items-center justify-center min-w-[36px] h-9 px-3 rounded-[12px] text-[11px] font-bold transition-colors transition-transform duration-200 select-none";
+    "flex items-center justify-center min-w-[36px] h-9 px-3 rounded-[12px] text-[11px] font-bold transition-all duration-200 select-none";
 
   return (
     <div className={cn("flex flex-col items-center gap-3 pt-6", className)}>
@@ -64,7 +64,7 @@ export function PaginationButtons({
           )}
         >
           <ChevronLeft className="w-4 h-4" strokeWidth={2.5} />
-          <span className="hidden sm:inline text-[10px] uppercase tracking-wider">Anterior</span>
+          <span className="hidden sm:inline text-[11px]">Anterior</span>
         </button>
 
         <div className="flex items-center gap-1">
@@ -104,7 +104,7 @@ export function PaginationButtons({
               : "text-on-surface-variant hover:bg-on-surface/5 hover:text-on-surface active:scale-95"
           )}
         >
-          <span className="hidden sm:inline text-[10px] uppercase tracking-wider">Siguiente</span>
+          <span className="hidden sm:inline text-[11px]">Siguiente</span>
           <ChevronRight className="w-4 h-4" strokeWidth={2.5} />
         </button>
       </div>
