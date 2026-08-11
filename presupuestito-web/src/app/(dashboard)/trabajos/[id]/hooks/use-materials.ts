@@ -26,18 +26,27 @@ export function useMaterials(trabajoId: string) {
 
   const addMutation = useMutation({
     mutationFn: materialsService_create,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["materials", trabajoId] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["materials", trabajoId] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+    },
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Material> }) =>
       materialsService_update(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["materials", trabajoId] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["materials", trabajoId] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+    },
   });
 
   const removeMutation = useMutation({
     mutationFn: materialsService_delete,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["materials", trabajoId] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["materials", trabajoId] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+    },
   });
 
   const addMaterial = async (data: MaterialFormValues) => {
