@@ -131,7 +131,7 @@ export function TaskList({ jobId, isJobPaid, onSelectTask }: TaskListProps) {
           <div className="pt-3 pb-3 flex justify-center border-t border-outline-variant/10 bg-surface/30">
             <button
               onClick={() => setShowAll(true)}
-              className="group flex items-center gap-2 px-4 py-2 rounded-full hover:bg-surface-variant/30 text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors transition-transform active:scale-95"
+              className="group flex items-center gap-2 px-4 py-2 rounded-full hover:bg-surface-variant/30 text-xs font-semibold text-on-surface-variant hover:text-primary transition-all active:scale-95"
             >
               <span>Mostrar {jobTasks.length - initialCount} tareas más</span>
               <ChevronDown size={14} strokeWidth={2.5} className="group-hover:translate-y-0.5 transition-transform" />

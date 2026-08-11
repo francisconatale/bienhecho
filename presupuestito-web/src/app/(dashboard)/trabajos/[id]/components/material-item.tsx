@@ -90,14 +90,14 @@ export function MaterialItem({ material, jobId }: MaterialItemProps) {
           <button
             onClick={() => setIsEditing(true)}
             aria-label={`Editar ${material.nombre_material}`}
-            className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors transition-transform duration-300 active:scale-90"
+            className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 active:scale-90"
           >
             <Edit2 className="w-4 h-4" />
           </button>
           <button
             onClick={handleDelete}
             aria-label={`Eliminar ${material.nombre_material}`}
-            className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-colors transition-transform duration-300 active:scale-90"
+            className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 active:scale-90"
           >
             <Trash2 className="w-4 h-4" />
           </button>

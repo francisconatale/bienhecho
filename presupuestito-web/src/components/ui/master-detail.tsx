@@ -183,7 +183,7 @@ export function MasterDetail<T>({
             <div className="hidden md:flex flex-col items-center py-3 gap-2 h-full w-full">
               <button
                 onClick={() => {}}
-                className="w-9 h-9 rounded-xl bg-on-surface/5 hover:bg-on-surface/10 flex items-center justify-center transition-colors transition-transform active:scale-90 cursor-pointer mb-2 shrink-0"
+                className="w-9 h-9 rounded-xl bg-on-surface/5 hover:bg-on-surface/10 flex items-center justify-center transition-all active:scale-90 cursor-pointer mb-2 shrink-0"
                 title="Expandir lista"
               >
                 <ChevronsRight className="w-4 h-4 text-on-surface-variant" />

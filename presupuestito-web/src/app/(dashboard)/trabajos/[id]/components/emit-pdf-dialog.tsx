@@ -45,7 +45,7 @@ export function EmitPdfDialog({
           <button
             onClick={onGuardar}
             disabled={generatingAction !== null}
-            className="flex-1 px-4 py-3 rounded-xl bg-on-surface/5 text-on-surface font-bold text-sm hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 cursor-pointer flex justify-center items-center gap-2 disabled:opacity-50"
+            className="flex-1 px-4 py-3 rounded-xl bg-on-surface/5 text-on-surface font-bold text-sm hover:bg-on-surface/10 transition-all active:scale-95 cursor-pointer flex justify-center items-center gap-2 disabled:opacity-50"
           >
             {generatingAction === "guardar" && <Loader2 className="w-4 h-4 animate-spin" />}
             Solo guardar PDF
@@ -53,7 +53,7 @@ export function EmitPdfDialog({
           <button
             onClick={onEmitir}
             disabled={generatingAction !== null}
-            className="flex-1 px-4 py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-dark transition-colors transition-transform active:scale-95 shadow-[0_4px_12px_rgba(61,139,110,0.3)] cursor-pointer flex justify-center items-center gap-2 disabled:opacity-70"
+            className="flex-1 px-4 py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-dark transition-all active:scale-95 shadow-[0_4px_12px_rgba(61,139,110,0.3)] cursor-pointer flex justify-center items-center gap-2 disabled:opacity-70"
           >
             {generatingAction === "emitir" && <Loader2 className="w-4 h-4 animate-spin" />}
             Emitir

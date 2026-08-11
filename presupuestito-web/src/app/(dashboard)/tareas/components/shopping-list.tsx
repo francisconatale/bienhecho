@@ -23,7 +23,7 @@ export function ShoppingList() {
       {pendingMaterials.map((item) => (
         <div
           key={item.id}
-          className="group relative flex items-start gap-4 p-4 rounded-2xl bg-surface/30 hover:bg-surface/50 border border-outline-variant/10 backdrop-blur-xl transition-colors transition-transform cursor-pointer active:scale-[0.98]"
+          className="group relative flex items-start gap-4 p-4 rounded-2xl bg-surface/30 hover:bg-surface/50 border border-outline-variant/10 backdrop-blur-xl transition-all cursor-pointer active:scale-[0.98]"
           onClick={() => toggleMaterial(item.id, item.comprado)}
         >
           <div className="pt-0.5">

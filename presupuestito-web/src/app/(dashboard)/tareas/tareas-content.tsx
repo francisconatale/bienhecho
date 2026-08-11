@@ -53,7 +53,7 @@ export function TareasContent({ initialData }: { initialData?: TareasInitialData
           <div className="md:hidden sticky top-0 z-50 bg-surface/60 backdrop-blur-2xl border-b border-outline-variant/10 px-4 py-4 mb-6 flex items-center gap-3 shadow-sm">
             <button 
               onClick={() => setCategory("resumen")} 
-              className="p-2 -ml-2 rounded-full bg-surface hover:bg-surface-variant/50 border border-outline-variant/20 active:scale-95 transition-colors transition-transform text-on-surface-variant shadow-sm"
+              className="p-2 -ml-2 rounded-full bg-surface hover:bg-surface-variant/50 border border-outline-variant/20 active:scale-95 transition-all text-on-surface-variant shadow-sm"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -67,7 +67,7 @@ export function TareasContent({ initialData }: { initialData?: TareasInitialData
             {isSpecialized && (
               <button 
                 onClick={() => setCategory("resumen")}
-                className="p-3 rounded-xl bg-surface/50 backdrop-blur-xl border border-outline-variant/20 shadow-sm text-on-surface-variant hover:text-on-surface hover:bg-surface transition-colors transition-transform active:scale-95 group"
+                className="p-3 rounded-xl bg-surface/50 backdrop-blur-xl border border-outline-variant/20 shadow-sm text-on-surface-variant hover:text-on-surface hover:bg-surface transition-all active:scale-95 group"
               >
                 <ArrowLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
               </button>

@@ -50,7 +50,7 @@ export function AgendaContent({ initialData }: { initialData?: AgendaInitialData
         action={
           <button
             onClick={() => actions.setShowNewModal(true)}
-            className="h-12 px-5 rounded-2xl bg-primary text-white font-bold text-sm inline-flex items-center gap-2 hover:bg-primary-dark active:scale-[0.98] transition-colors transition-transform shadow-lg shadow-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
+            className="h-12 px-5 rounded-2xl bg-primary text-white font-bold text-sm inline-flex items-center gap-2 hover:bg-primary-dark active:scale-[0.98] transition-all shadow-lg shadow-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
             aria-label="Crear nueva visita"
           >
             <Plus className="w-4 h-4" strokeWidth={2.5} />

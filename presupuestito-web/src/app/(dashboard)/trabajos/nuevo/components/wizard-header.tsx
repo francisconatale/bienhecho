@@ -13,7 +13,7 @@ export function WizardHeader() {
       <Link
         href={preselectId ? `/clientes?clienteId=${preselectId}` : "/trabajos"}
         aria-label="Volver"
-        className="w-9 h-9 rounded-xl bg-surface border border-outline-variant/30 flex items-center justify-center hover:bg-on-surface/5 transition-colors transition-transform active:scale-95 cursor-pointer"
+        className="w-9 h-9 rounded-xl bg-surface border border-outline-variant/30 flex items-center justify-center hover:bg-on-surface/5 transition-all active:scale-95 cursor-pointer"
       >
         <ChevronLeft className="w-4 h-4 text-on-surface" />
       </Link>

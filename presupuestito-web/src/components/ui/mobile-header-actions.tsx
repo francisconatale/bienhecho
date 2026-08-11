@@ -24,7 +24,7 @@ export function MobileHeaderActions({
         <button
           type="button"
           onClick={onCancel}
-          className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-on-surface/10 text-on-surface-variant transition-colors transition-transform active:scale-95 cursor-pointer"
+          className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-on-surface/10 text-on-surface-variant transition-all active:scale-95 cursor-pointer"
           title="Cancelar"
         >
           <X className="w-5 h-5" />
@@ -34,7 +34,7 @@ export function MobileHeaderActions({
           onClick={onSave}
           disabled={!hasChanges}
           className={cn(
-            "w-10 h-10 rounded-full flex items-center justify-center transition-colors transition-transform active:scale-95 cursor-pointer",
+            "w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-95 cursor-pointer",
             hasChanges
               ? "bg-primary text-white shadow-md hover:bg-primary-dark"
               : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
@@ -53,7 +53,7 @@ export function MobileHeaderActions({
         <button
           type="button"
           onClick={onEditStart}
-          className="w-10 h-10 rounded-full bg-on-surface/5 hover:bg-on-surface/10 flex items-center justify-center transition-colors transition-transform active:scale-95 text-on-surface-variant hover:text-primary cursor-pointer"
+          className="w-10 h-10 rounded-full bg-on-surface/5 hover:bg-on-surface/10 flex items-center justify-center transition-all active:scale-95 text-on-surface-variant hover:text-primary cursor-pointer"
           title="Editar"
         >
           <Pencil className="w-4 h-4 text-on-surface" strokeWidth={2.5} />
@@ -63,7 +63,7 @@ export function MobileHeaderActions({
         <button
           type="button"
           onClick={onDelete}
-          className="w-10 h-10 rounded-full bg-on-surface/5 hover:bg-on-surface/10 flex items-center justify-center transition-colors transition-transform active:scale-95 text-on-surface-variant hover:text-error cursor-pointer"
+          className="w-10 h-10 rounded-full bg-on-surface/5 hover:bg-on-surface/10 flex items-center justify-center transition-all active:scale-95 text-on-surface-variant hover:text-error cursor-pointer"
           title="Eliminar"
         >
           <Trash2 className="w-4 h-4" strokeWidth={2.5} />

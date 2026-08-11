@@ -99,7 +99,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-14 rounded-2xl flex items-center justify-center font-bold text-white text-[15px] bg-primary hover:bg-primary-dark active:scale-[0.98] transition-colors transition-transform disabled:opacity-50 disabled:pointer-events-none shadow-lg shadow-primary/20"
+          className="w-full h-14 rounded-2xl flex items-center justify-center font-bold text-white text-[15px] bg-primary hover:bg-primary-dark active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none shadow-lg shadow-primary/20"
         >
           {isLoading ? "Guardando..." : initialClient ? "Guardar Cambios" : "Crear Cliente"}
         </button>

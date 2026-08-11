@@ -30,7 +30,7 @@ export function WizardNavigation({ currentQ, isLast, canAdvance, canSave, isLoad
         <button
           onClick={next}
           disabled={!canAdvance()}
-          className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-xs uppercase tracking-widest transition-colors transition-transform cursor-pointer ${
+          className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-xs transition-all cursor-pointer ${
             canAdvance()
               ? "bg-primary text-white shadow-sm shadow-primary/20 hover:bg-primary-dark active:scale-95"
               : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
@@ -43,7 +43,7 @@ export function WizardNavigation({ currentQ, isLast, canAdvance, canSave, isLoad
         <button
           onClick={handleSave}
           disabled={!canSave || isLoading}
-          className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-xs uppercase tracking-widest transition-colors transition-transform cursor-pointer ${
+          className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-xs transition-all cursor-pointer ${
             canSave && !isLoading
               ? "bg-primary text-white shadow-sm shadow-primary/20 hover:bg-primary-dark active:scale-95"
               : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"
