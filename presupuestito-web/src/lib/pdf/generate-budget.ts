@@ -171,66 +171,69 @@ export async function generateBudgetPDF(
     }
   }
 
-  // Header
-  strategy.applyHeaderBackground(doc, 0, 0, pageWidth, headerHeight);
-  
-  // Logo in the header (centered, size adjustable)
-  if (logoBase64 && logoFormat) {
-    try {
-      const props = doc.getImageProperties(logoBase64);
-      const scale = effectiveParams.logoScale;
-      const maxHeight = LAYOUT.logoMaxHeight * scale;
-      const maxWidth = LAYOUT.logoMaxWidth * scale;
-      const ratio = Math.min(maxWidth / props.width, maxHeight / props.height);
-      const finalWidth = props.width * ratio;
-      const finalHeight = props.height * ratio;
-
-      const logoX = (pageWidth - finalWidth) / 2;
-      const logoY = (headerHeight - finalHeight) / 2;
-      
-      doc.addImage(logoBase64, logoFormat, logoX, logoY, finalWidth, finalHeight);
-    } catch (e) {
-      const logoSize = LAYOUT.fallbackLogoSize * effectiveParams.logoScale;
-      doc.addImage(logoBase64, logoFormat, (pageWidth - logoSize) / 2, (headerHeight - logoSize) / 2, logoSize, logoSize);
-    }
-  }
-  
-  doc.setTextColor(...onPrimary);
-  
-  // Sender info (Left)
   const senderName = userProfile.company || userProfile.name || "Sin nombre";
-  doc.setFont("Inter", "bold");
-  doc.setFontSize(LAYOUT.senderNameFontSize);
-  doc.text(senderName, margin, 15);
-  
-  if (userProfile.trade) {
-    doc.setFont("Inter", "normal");
-    doc.setFontSize(LAYOUT.tradeFontSize);
-    doc.setTextColor(230, 245, 235);
-    doc.text(userProfile.trade, margin, 21);
-  }
-  
-  // Invoice info (Right)
-  doc.setFont("Inter", "bold");
-  doc.setFontSize(LAYOUT.labelFontSize);
-  doc.setTextColor(230, 245, 235);
-  doc.text("PRESUPUESTO", pageWidth - margin, 10, { align: "right", charSpace: LAYOUT.labelCharSpace });
-  
-  doc.setTextColor(...onPrimary);
-  doc.setFontSize(LAYOUT.invoiceIdFontSize);
   const invoiceId = job.id ? job.id.substring(0, 6).toUpperCase() : "000000";
-  doc.text(`#${invoiceId}`, pageWidth - margin, 16, { align: "right" });
-  
   const dateStr = new Date().toLocaleDateString("es-AR", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
   });
-  doc.setFont("Inter", "normal");
-  doc.setFontSize(LAYOUT.dateFontSize);
-  doc.setTextColor(230, 245, 235);
-  doc.text(dateStr, pageWidth - margin, 22, { align: "right" });
-  
+
+  // Header: se dibuja en cada página del documento
+  const drawHeader = () => {
+    strategy.applyHeaderBackground(doc, 0, 0, pageWidth, headerHeight);
+
+    // Logo in the header (centered, size adjustable)
+    if (logoBase64 && logoFormat) {
+      try {
+        const props = doc.getImageProperties(logoBase64);
+        const scale = effectiveParams.logoScale;
+        const maxHeight = LAYOUT.logoMaxHeight * scale;
+        const maxWidth = LAYOUT.logoMaxWidth * scale;
+        const ratio = Math.min(maxWidth / props.width, maxHeight / props.height);
+        const finalWidth = props.width * ratio;
+        const finalHeight = props.height * ratio;
+
+        const logoX = (pageWidth - finalWidth) / 2;
+        const logoY = (headerHeight - finalHeight) / 2;
+
+        doc.addImage(logoBase64, logoFormat, logoX, logoY, finalWidth, finalHeight);
+      } catch (e) {
+        const logoSize = LAYOUT.fallbackLogoSize * effectiveParams.logoScale;
+        doc.addImage(logoBase64, logoFormat, (pageWidth - logoSize) / 2, (headerHeight - logoSize) / 2, logoSize, logoSize);
+      }
+    }
+
+    doc.setTextColor(...onPrimary);
+
+    // Sender info (Left)
+    doc.setFont("Inter", "bold");
+    doc.setFontSize(LAYOUT.senderNameFontSize);
+    doc.text(senderName, margin, 15);
+
+    if (userProfile.trade) {
+      doc.setFont("Inter", "normal");
+      doc.setFontSize(LAYOUT.tradeFontSize);
+      doc.setTextColor(230, 245, 235);
+      doc.text(userProfile.trade, margin, 21);
+    }
+
+    // Invoice info (Right)
+    doc.setFont("Inter", "bold");
+    doc.setFontSize(LAYOUT.labelFontSize);
+    doc.setTextColor(230, 245, 235);
+    doc.text("PRESUPUESTO", pageWidth - margin, 10, { align: "right", charSpace: LAYOUT.labelCharSpace });
+
+    doc.setTextColor(...onPrimary);
+    doc.setFontSize(LAYOUT.invoiceIdFontSize);
+    doc.text(`#${invoiceId}`, pageWidth - margin, 16, { align: "right" });
+
+    doc.setFont("Inter", "normal");
+    doc.setFontSize(LAYOUT.dateFontSize);
+    doc.setTextColor(230, 245, 235);
+    doc.text(dateStr, pageWidth - margin, 22, { align: "right" });
+  };
+
   currentY = headerHeight + LAYOUT.headerPadding;
   
   // Separator
@@ -448,30 +451,47 @@ export async function generateBudgetPDF(
   }
 
   // Footer / Total
-  
+
   // Only add a new page if the content overlaps with the fixed footer area
   if (currentY + footerHeight + 10 > pageHeight) {
     doc.addPage();
   }
-  
-  // Siempre al fondo de la hoja
-  let finalFooterY = pageHeight - footerHeight;
-  
-  strategy.applyFooterBackground(doc, 0, finalFooterY, pageWidth, footerHeight);
-  
-  doc.setFont("Inter", "normal");
-  doc.setFontSize(LAYOUT.dateFontSize);
-  doc.setTextColor(230, 245, 235);
-  doc.text("bien-hecho.com", margin, finalFooterY + footerHeight - 10);
-  
-  doc.setFont("Inter", "bold");
-  doc.setFontSize(LAYOUT.totalLabelFontSize);
-  doc.text("TOTAL", pageWidth - margin, finalFooterY + 12, { align: "right", charSpace: LAYOUT.labelCharSpace });
-  
+
   const finalTotal = [...tasksItems, ...materialsItems].reduce((acc, i) => acc + i.total, 0);
-  doc.setFontSize(LAYOUT.totalAmountFontSize);
-  doc.setTextColor(...onPrimary);
-  doc.text(`$${finalTotal.toLocaleString("es-AR")}`, pageWidth - margin, finalFooterY + 22, { align: "right" });
+  const totalPages = doc.getNumberOfPages();
+
+  const drawFooterBand = () => {
+    const finalFooterY = pageHeight - footerHeight;
+
+    strategy.applyFooterBackground(doc, 0, finalFooterY, pageWidth, footerHeight);
+
+    doc.setFont("Inter", "normal");
+    doc.setFontSize(LAYOUT.dateFontSize);
+    doc.setTextColor(230, 245, 235);
+    doc.text("bien-hecho.com", margin, finalFooterY + footerHeight - 10);
+  };
+
+  const drawTotalFooter = () => {
+    const finalFooterY = pageHeight - footerHeight;
+
+    doc.setFont("Inter", "bold");
+    doc.setFontSize(LAYOUT.totalLabelFontSize);
+    doc.text("TOTAL", pageWidth - margin, finalFooterY + 12, { align: "right", charSpace: LAYOUT.labelCharSpace });
+
+    doc.setFontSize(LAYOUT.totalAmountFontSize);
+    doc.setTextColor(...onPrimary);
+    doc.text(`$${finalTotal.toLocaleString("es-AR")}`, pageWidth - margin, finalFooterY + 22, { align: "right" });
+  };
+
+  // Header y banda de footer en cada página; el TOTAL solo en la última
+  for (let page = 1; page <= totalPages; page++) {
+    doc.setPage(page);
+    drawHeader();
+    drawFooterBand();
+    if (page === totalPages) {
+      drawTotalFooter();
+    }
+  }
   
   // Asignar el nombre del archivo para que al descargar desde el visor tenga el nombre correcto
   const clientNameStr = client.nombre ? client.nombre.replace(/\s+/g, "_") : "Cliente";
