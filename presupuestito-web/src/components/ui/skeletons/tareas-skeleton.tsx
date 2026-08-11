@@ -1,11 +1,6 @@
 export function TareasSkeleton() {
   return (
     <>
-      <div className="fixed inset-0 pointer-events-none z-[-1] opacity-[0.04] mix-blend-overlay bg-[url('/noise.svg')] bg-repeat" />
-      <div className="fixed inset-0 pointer-events-none z-[-2] overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/10 blur-[120px]" />
-        <div className="absolute bottom-[10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-500/10 blur-[120px]" />
-      </div>
 
       <main className="flex-1 max-w-[1400px] mx-auto w-full px-4 md:px-8 lg:px-10 xl:px-16 py-6 md:py-10 space-y-6">
         <TareasSkeletonContent />

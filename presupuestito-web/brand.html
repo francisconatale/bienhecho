@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presupuestito — Brand Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F0F7F3;
+    --bg-grouped: #E8F2EB;
+    --surface: #FFFFFF;
+    --container: #E5F0E8;
+    --container-low: #EDF5F0;
+    --container-high: #E0ECE4;
+    --primary: #3D8B6E;
+    --primary-dark: #2E7A58;
+    --primary-container: #C2E5CE;
+    --on-primary-container: #1A5C38;
+    --ink: #1A3020;
+    --muted: #3D6048;
+    --outline: #6B9078;
+    --outline-variant: #B5D0BC;
+    --success: #43A047;
+    --accent: #F59E0B;
+    --error: #BA1A1A;
+    --border: #D9E7DE;
+    --radius: 16px;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --shadow: 0 2px 8px rgba(26,48,32,0.05), 0 12px 32px rgba(26,48,32,0.08);
+    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 48px 24px 96px; }
+
+  /* ===== Header ===== */
+  .top { text-align: center; padding: 48px 0 24px; }
+  .top .kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--muted); background: var(--surface);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 6px 14px; margin-bottom: 20px;
+  }
+  .top .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
+  .top h1 { font-size: 44px; font-weight: 800; letter-spacing: -0.03em; }
+  .top p { color: var(--muted); font-size: 17px; max-width: 640px; margin: 12px auto 0; }
+  .top .pill-strip { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+  .top .score-pill {
+    font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+  }
+  .top .score-pill b { color: var(--ink); }
+
+  /* ===== Concept section ===== */
+  .concept { margin-top: 56px; }
+  .concept-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+  .concept-head .num {
+    font-size: 13px; font-weight: 800; letter-spacing: 0.1em;
+    background: var(--ink); color: #fff; border-radius: 10px;
+    padding: 6px 12px; white-space: nowrap;
+  }
+  .concept-head h2 { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; }
+  .concept-head .sub { color: var(--muted); font-size: 15px; margin-top: 4px; }
+  .concept-head .score {
+    text-align: right; font-size: 13px; color: var(--muted);
+    border: 1px solid var(--border); background: var(--surface);
+    border-radius: 14px; padding: 8px 14px; white-space: nowrap;
+  }
+  .concept-head .score b { font-size: 20px; color: var(--ink); display: block; line-height: 1.1; }
+
+  .insight {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 16px 20px; margin-bottom: 24px;
+    font-size: 15px;
+  }
+  .insight .q { font-size: 22px; line-height: 1; }
+  .insight b { font-weight: 700; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+
+  .panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px;
+    box-shadow: var(--shadow);
+  }
+  .panel h3 {
+    font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 20px;
+  }
+
+  /* ===== Swatches ===== */
+  .swatches { display: flex; flex-direction: column; gap: 10px; }
+  .swatch {
+    display: flex; align-items: center; gap: 14px; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    user-select: none;
+  }
+  .swatch:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+  .swatch .chip { width: 44px; height: 44px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.08); flex-shrink: 0; }
+  .swatch .meta { flex: 1; }
+  .swatch .name { font-size: 14px; font-weight: 600; }
+  .swatch .hex { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .swatch .use { font-size: 12px; color: var(--muted); }
+  .swatch .copy { font-size: 11px; color: var(--success); font-weight: 700; opacity: 0; transition: opacity 0.15s; }
+  .swatch:hover .copy { opacity: 1; }
+  .swatch.copied .copy { opacity: 1; color: var(--ink); }
+
+  /* ===== Type demo ===== */
+  .type-demo .aa {
+    font-size: 72px; font-weight: 800; line-height: 1;
+    letter-spacing: -0.03em; margin-bottom: 20px;
+  }
+  .type-demo .type-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .type-demo .type-sub { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+  .type-demo .headline-demo { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 8px; }
+  .type-demo .body-demo { font-size: 14px; color: var(--muted); line-height: 1.55; }
+
+  /* ===== Components ===== */
+  .comp-demo { display: flex; flex-direction: column; gap: 18px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    border: none; border-radius: 999px; padding: 14px 28px;
+    font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer;
+    background: var(--primary); color: #fff;
+    transition: background 0.2s var(--ease), transform 0.12s var(--ease);
+  }
+  .btn:hover { background: var(--primary-dark); }
+  .btn:active { transform: scale(0.98); }
+  .btn .arr { opacity: 0.7; transition: transform 0.2s var(--ease); }
+  .btn:hover .arr { transform: translateX(3px); }
+  .badge-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600; border-radius: 999px; padding: 6px 12px;
+  }
+  .badge .ck { font-size: 13px; line-height: 1; }
+  .fact-card {
+    border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(26,48,32,0.04);
+  }
+  .fact-card .fc-head {
+    background: var(--container-low); border-bottom: 1px solid var(--border);
+    padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+  }
+  .fact-card .fc-head .logo {
+    width: 26px; height: 26px; border-radius: 8px; background: var(--primary);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 13px; font-weight: 800;
+  }
+  .fact-card .fc-head .t { font-size: 13px; font-weight: 700; line-height: 1.2; }
+  .fact-card .fc-head .st { font-size: 11px; color: var(--muted); }
+  .fact-card .fc-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .fact-card .row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+  .fact-card .row + .row { border-top: 1px solid rgba(181,208,188,0.35); padding-top: 8px; }
+  .fact-card .row .lbl { color: var(--muted); }
+  .fact-card .row .val { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .fact-card .total {
+    border-top: 1px dashed var(--outline-variant); margin-top: 4px; padding-top: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 16px; font-weight: 800; color: var(--primary-dark);
+  }
+  .divider { height: 1px; background: var(--border); margin: 18px 0; }
+  .label { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .input {
+    width: 100%; border: 1px solid var(--outline-variant); border-radius: var(--radius-lg);
+    padding: 12px 16px; font-size: 14px; font-weight: 600; font-family: inherit;
+    color: var(--ink); background: var(--surface); outline: none;
+    transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  }
+  .input::placeholder { color: rgba(61,96,72,0.4); font-weight: 400; }
+  .input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(61,139,110,0.12); }
+
+  /* ===== Mini hero ===== */
+  .hero-demo { border-radius: var(--radius); padding: 48px 32px; position: relative; overflow: hidden; }
+  .hero-demo h4 { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; max-width: 460px; }
+  .hero-demo p { margin-top: 12px; font-size: 15px; max-width: 420px; }
+  .hero-demo .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 24px; }
+  .hero-note { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+  /* trust pills */
+  .trust { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; border-radius: 999px; padding: 8px 16px; }
+  .trust .tk { font-size: 14px; }
+
+  /* ===== Concept 1: Luz ===== */
+  .c1 .hero-demo { background: linear-gradient(180deg, #FFFFFF 0%, #F0F7F3 100%); border: 1px solid var(--border); }
+  .c1 .hero-demo h4 { color: var(--ink); }
+  .c1 .badge.ok { background: var(--primary-container); color: var(--on-primary-container); }
+  .c1 .badge.wait { background: #FFFFFF; color: var(--muted); border: 1px solid var(--outline-variant); }
+
+  /* ===== Concept 2: Oscuro (OLED) ===== */
+  .c2 { --bg: #000000; --surface: #0D1F14; --container: #12291A; --container-low: #0A1A10;
+        --primary: #6ECFB0; --primary-dark: #5BBFA0; --primary-container: #1B5E3A;
+        --on-primary-container: #A8E6C3; --ink: #E8F5E9; --muted: #A8D5BA;
+        --outline: #5A8A6A; --outline-variant: #2A5038; --success: #6ECFB0; --accent: #F59E0B; --error: #F87171;
+        --border: #1A3D24; }
+  .c2 .panel { background: var(--surface); border-color: var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 12px 32px rgba(0,0,0,0.5); }
+  .c2 .panel h3 { color: var(--muted); }
+  .c2 .swatch { border-color: var(--border); }
+  .c2 .swatch .name { color: var(--ink); }
+  .c2 .swatch .hex, .c2 .swatch .use { color: var(--muted); }
+  .c2 .swatch .chip { border-color: rgba(255,255,255,0.12); }
+  .c2 .type-demo .aa { color: var(--ink); }
+  .c2 .type-demo .headline-demo { color: var(--ink); }
+  .c2 .type-demo .body-demo { color: var(--muted); }
+  .c2 .type-name { color: var(--ink); }
+  .c2 .type-sub { color: var(--muted); }
+  .c2 .fact-card { border-color: var(--border); box-shadow: none; }
+  .c2 .fact-card .fc-head { background: var(--container-low); border-color: var(--border); }
+  .c2 .fact-card .fc-head .t { color: var(--ink); }
+  .c2 .fact-card .fc-head .st { color: var(--muted); }
+  .c2 .fact-card .row .lbl { color: var(--muted); }
+  .c2 .fact-card .row .val { color: var(--ink); }
+  .c2 .fact-card .total { color: var(--primary); border-color: var(--outline-variant); }
+  .c2 .badge.ok { background: rgba(110,207,176,0.15); color: var(--primary); border: 1px solid rgba(110,207,176,0.35); }
+  .c2 .badge.wait { background: rgba(168,213,186,0.08); color: var(--muted); }
+  .c2 .btn { background: var(--primary); color: #06281A; font-weight: 800; }
+  .c2 .btn:hover { background: var(--primary-dark); }
+  .c2 .btn.ghost { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); }
+  .c2 .btn.ghost:hover { background: rgba(110,207,176,0.08); }
+  .c2 .hero-demo { background: radial-gradient(120% 120% at 80% 0%, #12291A 0%, #000000 55%); border: 1px solid var(--border); }
+  .c2 .hero-demo h4 { color: var(--ink); }
+  .c2 .hero-demo p { color: var(--muted); }
+  .c2 .hero-note { color: var(--muted); }
+  .c2 .divider { background: var(--border); }
+  .c2 .label { color: var(--muted); }
+  .c2 .input { background: #0A1A10; border-color: var(--outline-variant); color: var(--ink); }
+  .c2 .input::placeholder { color: rgba(168,213,186,0.35); }
+  .c2 .input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(110,207,176,0.15); }
+  .c2 .concept-head h2 { color: var(--ink); }
+  .c2 .concept-head .sub { color: var(--muted); }
+  .c2 .insight { background: var(--surface); border-color: var(--border); color: var(--ink); }
+  .c2 .insight i { color: var(--muted); }
+  .c2 .score-pill, .c2 .trust { border-color: var(--border); }
+
+  /* ===== Concept 3: Movimiento ===== */
+  .c3 .token-row {
+    display: flex; align-items: center; gap: 12px; padding: 10px 0;
+    border-bottom: 1px solid var(--border); font-size: 14px;
+  }
+  .c3 .token-row:last-child { border-bottom: none; }
+  .c3 .token-row .name { font-weight: 600; flex: 1; }
+  .c3 .token-row .val { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
+  .c3 .curve-box {
+    background: var(--bg-grouped); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; font-family: "SF Mono", ui-monospace, Consolas, monospace;
+    font-size: 12px; color: var(--muted); margin-top: 8px;
+  }
+  .c3 .motion-demo { display: flex; flex-direction: column; gap: 12px; }
+  .c3 .md-btn {
+    display: flex; align-items: center; gap: 10px;
+    border: 1px solid var(--border); background: var(--surface);
+    border-radius: 12px; padding: 12px 14px; cursor: pointer;
+    font-size: 14px; font-weight: 600; font-family: inherit; color: var(--ink);
+    transition: border-color 0.15s, transform 0.12s var(--ease);
+  }
+  .c3 .md-btn:hover { border-color: var(--primary); }
+  .c3 .md-btn:active { transform: scale(0.98); }
+  .c3 .md-btn .tag { margin-left: auto; font-size: 11px; font-weight: 700; color: var(--primary-dark); background: var(--primary-container); border-radius: 999px; padding: 3px 10px; letter-spacing: 0.02em; }
+  .c3 .motion-stage {
+    border: 1px solid var(--border); border-radius: 16px; background: var(--container-low);
+    padding: 24px; min-height: 150px; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
+  }
+  .mcard {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: var(--shadow); width: 100%; max-width: 320px; padding: 16px;
+  }
+  .mcard .mc-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; }
+  .mcard .mc-row .lbl { color: var(--muted); }
+  .mcard .mc-row .val { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .mcard .mc-total { border-top: 1px dashed var(--outline-variant); margin-top: 6px; padding-top: 10px; display: flex; justify-content: space-between; font-size: 15px; font-weight: 800; color: var(--primary-dark); }
+  .mcard .mc-total span:first-child { color: var(--ink); }
+  /* Motion primitives (same as globals.css) */
+  @keyframes page-transition { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .anim-page-in { animation: page-transition 0.28s var(--ease) forwards; }
+  @keyframes slide-in-right { 0% { opacity: 0; transform: translateX(16px); } 100% { opacity: 1; transform: translateX(0); } }
+  .anim-slide-right { animation: slide-in-right 0.28s var(--ease) forwards; }
+  @keyframes slide-in-left { 0% { opacity: 0; transform: translateX(-16px); } 100% { opacity: 1; transform: translateX(0); } }
+  .anim-slide-left { animation: slide-in-left 0.28s var(--ease) forwards; }
+  @keyframes fade-in-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .anim-fade-up { animation: fade-in-up 0.25s var(--ease) forwards; }
+  @keyframes shimmer { 0% { transform: translateX(-100%) skewX(12deg); } 100% { transform: translateX(200%) skewX(12deg); } }
+  .progress { height: 6px; background: var(--container); border-radius: 999px; overflow: hidden; margin-top: 8px; }
+  .progress .bar { height: 100%; width: 50%; border-radius: 999px; background: var(--primary); animation: shimmer 1.6s var(--ease) infinite; }
+  .c3 .mcard .mc-emoji { font-size: 18px; }
+
+  footer { text-align: center; margin-top: 72px; color: var(--muted); font-size: 14px; }
+  footer b { color: var(--ink); }
+
+  @media (max-width: 640px) {
+    .top h1 { font-size: 32px; }
+    .concept-head { flex-direction: column; }
+    .concept-head .score { text-align: left; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .anim-page-in, .anim-slide-right, .anim-slide-left, .anim-fade-up { animation-duration: 0.01ms !important; }
+    .progress .bar { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="kicker"><span class="dot"></span>Presupuestito · Direcciones de marca</div>
+    <h1>Un solo sistema, dos modos, un timing</h1>
+    <p>Una única identidad — <b>Material 3 con verde salvia</b> — en luz, en oscuro OLED, y con una batería de micro-interacciones que respeta cada movimiento. Tocá los colores para copiar el hex.</p>
+    <div class="pill-strip">
+      <span class="score-pill"><b>01</b> Luz · Tokens de día</span>
+      <span class="score-pill"><b>02</b> Oscuro · OLED Sage</span>
+      <span class="score-pill"><b>03</b> Movimiento · Micro-interacciones</span>
+    </div>
+  </div>
+
+  <!-- ============ CONCEPTO 1: LUZ ============ -->
+  <section class="concept c1">
+    <div class="concept-head">
+      <div>
+        <span class="num">CONCEPTO 01</span>
+        <h2>Luz · Material Sage</h2>
+        <div class="sub">El verde del alivio sobre superficies claras</div>
+      </div>
+      <div class="score">Modo<b>Luz</b></div>
+    </div>
+    <div class="insight"><span class="q">💡</span><span>Misma tensión de base: <b>profesional sin volverse oficinista</b>. Verde salvia <b>#3D8B6E</b> sobre <b>#F0F7F3</b>: sereno, confiable, cero "empresa de contadores". El verde de Mercado Pago y del check de WhatsApp — lenguajes que ya usan todos los días.</span></div>
+
+    <div class="grid">
+      <div class="panel">
+        <h3>Paleta · Luz</h3>
+        <div class="swatches">
+          <div class="swatch" data-hex="#F0F7F3"><div class="chip" style="background:#F0F7F3"></div><div class="meta"><div class="name">Fondo de app</div><div class="hex">#F0F7F3</div><div class="use">background</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#E8F2EB"><div class="chip" style="background:#E8F2EB"></div><div class="meta"><div class="name">Fondo agrupado</div><div class="hex">#E8F2EB</div><div class="use">grouped-bg · listas</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#FFFFFF"><div class="chip" style="background:#FFFFFF"></div><div class="meta"><div class="name">Superficie · cards</div><div class="hex">#FFFFFF</div><div class="use">surface</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#EDF5F0"><div class="chip" style="background:#EDF5F0"></div><div class="meta"><div class="name">Container low · headers</div><div class="hex">#EDF5F0</div><div class="use">surface-container-low</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#3D8B6E"><div class="chip" style="background:#3D8B6E"></div><div class="meta"><div class="name">Primary · CTA / acento</div><div class="hex">#3D8B6E</div><div class="use">botones, links, totales</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#2E7A58"><div class="chip" style="background:#2E7A58"></div><div class="meta"><div class="name">Primary dark · hover</div><div class="hex">#2E7A58</div><div class="use">hover de CTA</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#C2E5CE"><div class="chip" style="background:#C2E5CE"></div><div class="meta"><div class="name">Primary container · estados</div><div class="hex">#C2E5CE</div><div class="use">badges, pill de éxito</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#1A3020"><div class="chip" style="background:#1A3020"></div><div class="meta"><div class="name">Texto principal</div><div class="hex">#1A3020</div><div class="use">on-surface / on-background</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#3D6048"><div class="chip" style="background:#3D6048"></div><div class="meta"><div class="name">Texto secundario</div><div class="hex">#3D6048</div><div class="use">on-surface-variant</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#5A8A6A"><div class="chip" style="background:#5A8A6A"></div><div class="meta"><div class="name">Secondary</div><div class="hex">#5A8A6A</div><div class="use">detalles secundarios</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#43A047"><div class="chip" style="background:#43A047"></div><div class="meta"><div class="name">Success</div><div class="hex">#43A047</div><div class="use">cobrado / al día</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#F59E0B"><div class="chip" style="background:#F59E0B"></div><div class="meta"><div class="name">Accent ámbar</div><div class="hex">#F59E0B</div><div class="use">atención puntual</div></div><span class="copy">copiar</span></div>
+        </div>
+      </div>
+
+      <div class="panel type-demo">
+        <h3>Tipografía</h3>
+        <div class="type-name">Inter · la única familia</div>
+        <div class="type-sub">Google Fonts · 400–900 (referencia: SF Pro)</div>
+        <div class="aa">Aa</div>
+        <div class="headline-demo">Presupuestos profesionales.<br>Sin vueltas.</div>
+        <div class="divider"></div>
+        <div class="type-name">Escala de uso</div>
+        <div class="type-sub">Titulares 800 · botones 600 · cuerpo 400–500</div>
+        <div class="body-demo">Armá y enviá una cotización en PDF desde tu celular en 2 minutos. La herramienta ideal para el trabajador en la calle.</div>
+      </div>
+
+      <div class="panel">
+        <h3>Componentes · Luz</h3>
+        <div class="comp-demo">
+          <div><div class="label">Botón primario</div><button class="btn">Crear mi primer presupuesto <span class="arr">→</span></button></div>
+          <div><div class="label">Estados</div><div class="badge-row"><span class="badge ok"><span class="ck">✓</span>Cobrada</span><span class="badge wait">Pendiente</span></div></div>
+          <div><div class="label">Campo de texto</div><input class="input" type="text" placeholder="Nombre del cliente" value="Edificio Rivadavia"></div>
+          <div><div class="label">Tarjeta de presupuesto</div>
+            <div class="fact-card">
+              <div class="fc-head"><span class="logo">P</span><div><div class="t">Presupuesto #0042</div><div class="st">Para: Juan Pérez</div></div></div>
+              <div class="fc-body">
+                <div class="row"><span class="lbl">Instalación eléctrica</span><span class="val">$150.000</span></div>
+                <div class="row"><span class="lbl">Materiales</span><span class="val">$85.000</span></div>
+                <div class="total"><span>Total</span><span>$235.000</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-demo" style="margin-top:24px">
+      <h4>Presupuestos profesionales.<br>Sin vueltas.</h4>
+      <p>Armá y enviá una cotización en PDF desde tu celular en 2 minutos. Sin cuadernos, sin planillas, sin plata perdida.</p>
+      <div class="actions"><button class="btn">Crear mi primer presupuesto <span class="arr">→</span></button><span class="trust" style="background:var(--primary-container);color:var(--on-primary-container)"><span class="tk">✓</span>Enviado por WhatsApp</span></div>
+      <div class="hero-note">Hero demo · blanco → verde menta, tipografía Inter 800</div>
+    </div>
+  </section>
+
+  <!-- ============ CONCEPTO 2: OSCURO ============ -->
+  <section class="concept c2">
+    <div class="concept-head">
+      <div>
+        <span class="num">CONCEPTO 02</span>
+        <h2>Oscuro · OLED Sage</h2>
+        <div class="sub">Negro puro con verde esmeralda de seguridad</div>
+      </div>
+      <div class="score">Modo<b>Oscuro</b></div>
+    </div>
+    <div class="insight"><span class="q">🌙</span><span>El mayor miedo no es la factura: es <b>lo que no sabés que se te escapa</b>. Verde esmeralda <b>#6ECFB0</b> sobre negro puro = <i>"todo bajo control, dormí tranquilo"</i>. Fondos OLED #000000 para máxima batería en el celu.</span></div>
+
+    <div class="grid">
+      <div class="panel">
+        <h3>Paleta · Oscuro</h3>
+        <div class="swatches">
+          <div class="swatch" data-hex="#000000"><div class="chip" style="background:#000000"></div><div class="meta"><div class="name">Fondo · OLED puro</div><div class="hex">#000000</div><div class="use">background</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#0D1F14"><div class="chip" style="background:#0D1F14"></div><div class="meta"><div class="name">Superficie · cards</div><div class="hex">#0D1F14</div><div class="use">surface</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#0A1A10"><div class="chip" style="background:#0A1A10"></div><div class="meta"><div class="name">Container low · headers</div><div class="hex">#0A1A10</div><div class="use">surface-container-low</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#12291A"><div class="chip" style="background:#12291A"></div><div class="meta"><div class="name">Container</div><div class="hex">#12291A</div><div class="use">surface-container</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#1A3D24"><div class="chip" style="background:#1A3D24"></div><div class="meta"><div class="name">Container high · bordes</div><div class="hex">#1A3D24</div><div class="use">surface-variant</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#6ECFB0"><div class="chip" style="background:#6ECFB0"></div><div class="meta"><div class="name">Primary · CTA / acento</div><div class="hex">#6ECFB0</div><div class="use">botones, totales, glow</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#5BBFA0"><div class="chip" style="background:#5BBFA0"></div><div class="meta"><div class="name">Primary dark · hover</div><div class="hex">#5BBFA0</div><div class="use">hover de CTA</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#1B5E3A"><div class="chip" style="background:#1B5E3A"></div><div class="meta"><div class="name">Primary container</div><div class="hex">#1B5E3A</div><div class="use">estados</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#E8F5E9"><div class="chip" style="background:#E8F5E9"></div><div class="meta"><div class="name">Texto principal</div><div class="hex">#E8F5E9</div><div class="use">on-surface / on-background</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#A8D5BA"><div class="chip" style="background:#A8D5BA"></div><div class="meta"><div class="name">Texto secundario</div><div class="hex">#A8D5BA</div><div class="use">on-surface-variant</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#81C794"><div class="chip" style="background:#81C794"></div><div class="meta"><div class="name">Secondary</div><div class="hex">#81C794</div><div class="use">detalles secundarios</div></div><span class="copy">copiar</span></div>
+          <div class="swatch" data-hex="#F87171"><div class="chip" style="background:#F87171"></div><div class="meta"><div class="name">Error</div><div class="hex">#F87171</div><div class="use">errores en oscuro</div></div><span class="copy">copiar</span></div>
+        </div>
+      </div>
+
+      <div class="panel type-demo">
+        <h3>Tipografía</h3>
+        <div class="type-name">Inter · la única familia</div>
+        <div class="type-sub">Google Fonts · 400–900 · muy legible en oscuro</div>
+        <div class="aa">Aa</div>
+        <div class="headline-demo">Todo al día.<br>Dormí tranquilo.</div>
+        <div class="divider"></div>
+        <div class="type-name">Regla de contraste</div>
+        <div class="type-sub">Texto principal #E8F5E9 sobre #000000</div>
+        <div class="body-demo">Facturas emitidas, cobros registrados, cero pendientes al cierre del día. La app se oscurece con vos.</div>
+      </div>
+
+      <div class="panel">
+        <h3>Componentes · Oscuro</h3>
+        <div class="comp-demo">
+          <div><div class="label">Botón primario</div><button class="btn">Crear mi primer presupuesto <span class="arr">→</span></button></div>
+          <div><div class="label">Estados</div><div class="badge-row"><span class="badge ok"><span class="ck">✓</span>Cobrada</span><span class="badge wait">Pendiente</span></div></div>
+          <div><div class="label">Campo de texto</div><input class="input" type="text" placeholder="Nombre del cliente" value="Edificio Rivadavia"></div>
+          <div><div class="label">Tarjeta de presupuesto</div>
+            <div class="fact-card">
+              <div class="fc-head"><span class="logo" style="background:var(--primary);color:#06281A">P</span><div><div class="t">Presupuesto #0042</div><div class="st">Para: Juan Pérez</div></div></div>
+              <div class="fc-body">
+                <div class="row"><span class="lbl">Instalación eléctrica</span><span class="val">$150.000</span></div>
+                <div class="row"><span class="lbl">Materiales</span><span class="val">$85.000</span></div>
+                <div class="total"><span>Total</span><span>$235.000</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-demo" style="margin-top:24px">
+      <h4>Todo al día.<br>Dormí tranquilo.</h4>
+      <p>Facturas emitidas, cobros registrados, cero pendientes al cierre del día. Negro puro para cuidar la batería del celu.</p>
+      <div class="actions">
+        <button class="btn">Crear mi primer presupuesto <span class="arr">→</span></button>
+        <span class="trust" style="background:rgba(110,207,176,0.12);color:var(--primary);border:1px solid rgba(110,207,176,0.35)"><span class="tk">📶</span>Funciona sin señal</span>
+      </div>
+      <div class="hero-note">Hero demo · radial esmeralda sobre negro, glow suave</div>
+    </div>
+  </section>
+
+  <!-- ============ CONCEPTO 3: MOVIMIENTO ============ -->
+  <section class="concept c3">
+    <div class="concept-head">
+      <div>
+        <span class="num">CONCEPTO 03</span>
+        <h2>Movimiento · Micro-interacciones</h2>
+        <div class="sub">Entradas suaves, un solo timing, cero ruido</div>
+      </div>
+      <div class="score">Timing<b>250–280ms</b></div>
+    </div>
+    <div class="insight"><span class="q">🎬</span><span>Todo se mueve con la misma curva <b>cubic-bezier(0.2, 0.8, 0.2, 1)</b> y el mismo rango de duración. <b>Nada salta: todo se desliza.</b> Y si el sistema pide menos movimiento, se apaga todo.</span></div>
+
+    <div class="grid">
+      <div class="panel">
+        <h3>Timing</h3>
+        <div class="token-row"><span class="name">Entrada de página</span><span class="val">280ms · fade + lift</span></div>
+        <div class="token-row"><span class="name">Slide detalle →</span><span class="val">280ms · translateX(16px)</span></div>
+        <div class="token-row"><span class="name">Slide detalle ←</span><span class="val">280ms · translateX(−16px)</span></div>
+        <div class="token-row"><span class="name">Fade de card</span><span class="val">250ms · fade + lift</span></div>
+        <div class="token-row"><span class="name">Shimmer (progreso)</span><span class="val">1.6s · skewX(12°) loop</span></div>
+      </div>
+
+      <div class="panel">
+        <h3>Easing</h3>
+        <div class="type-name">Curva única</div>
+        <div class="type-sub">Acelera suave, desacelera suave</div>
+        <div class="curve-box">cubic-bezier(0.2, 0.8, 0.2, 1)</div>
+        <div class="divider"></div>
+        <div class="type-name">Accesibilidad</div>
+        <div class="type-sub">prefers-reduced-motion</div>
+        <div class="body-demo">Si el sistema pide menos movimiento, todas las animaciones se reducen a ~0ms. El contenido nunca depende del movimiento para entenderse.</div>
+      </div>
+
+      <div class="panel">
+        <h3>Demo</h3>
+        <div class="motion-demo">
+          <button class="md-btn" data-anim="anim-fade-up"><span>💳</span>Replay · fade de card <span class="tag">250ms</span></button>
+          <button class="md-btn" data-anim="anim-slide-right"><span>📄</span>Replay · slide detalle <span class="tag">280ms</span></button>
+          <button class="md-btn" data-anim="anim-page-in"><span>🏠</span>Replay · entrada de página <span class="tag">280ms</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-demo" style="margin-top:24px">
+      <div class="label">Escenario · pantalla de trabajo</div>
+      <div class="motion-stage">
+        <div class="mcard" id="mcard">
+          <div class="mc-row"><span class="lbl"><span class="mc-emoji">🔧</span> Instalación eléctrica</span><span class="val">#0042</span></div>
+          <div class="mc-row"><span class="lbl">Cliente</span><span class="val">Edificio Rivadavia</span></div>
+          <div class="mc-row"><span class="lbl">Estado</span><span class="badge ok" style="background:var(--primary-container);color:var(--on-primary-container)"><span class="ck">✓</span>En curso</span></div>
+          <div class="mc-total"><span>Total</span><span>$235.000</span></div>
+          <div class="progress"><div class="bar"></div></div>
+        </div>
+      </div>
+      <div class="hero-note">Tocá los botones de la demo para reproducir cada entrada. El shimmer de progreso corre solo.</div>
+    </div>
+  </section>
+
+  <footer>
+    <b>Presupuestito</b> · Brand directions v1 · Luz + Oscuro + Movimiento · Un solo sistema, sin versiones alternativas que mantener.
+  </footer>
+</div>
+
+<script>
+  document.querySelectorAll('.swatch').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var hex = el.getAttribute('data-hex');
+      function done() {
+        el.classList.add('copied');
+        el.querySelector('.copy').textContent = '¡copiado!';
+        setTimeout(function () {
+          el.classList.remove('copied');
+          el.querySelector('.copy').textContent = 'copiar';
+        }, 1500);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(hex).then(done, done);
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = hex; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta); done();
+      }
+    });
+  });
+
+  document.querySelectorAll('.md-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var anim = btn.getAttribute('data-anim');
+      var card = document.getElementById('mcard');
+      card.classList.remove('anim-fade-up', 'anim-slide-right', 'anim-page-in');
+      void card.offsetWidth;
+      card.classList.add(anim);
+    });
+  });
+</script>
+</body>
+</html>

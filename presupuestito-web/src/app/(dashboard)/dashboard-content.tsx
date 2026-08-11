@@ -8,17 +8,7 @@ import { ActivityList } from "./components/activity-list";
 import { VisitsList } from "./components/visits-list";
 import { StatCards } from "./components/stat-cards";
 
-function BackgroundEffects() {
-  return (
-    <>
-      <div aria-hidden="true" className="fixed inset-0 pointer-events-none z-[-1] opacity-[0.04] mix-blend-overlay bg-[url('/noise.svg')] bg-repeat" />
-      <div aria-hidden="true" className="fixed inset-0 pointer-events-none z-[-2] overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[55%] h-[55%] rounded-full bg-primary/10 blur-[130px]" />
-        <div className="absolute bottom-[5%] right-[-15%] w-[45%] h-[45%] rounded-full bg-blue-500/8 blur-[130px]" />
-      </div>
-    </>
-  );
-}
+
 
 function Greeting({ displayName, className }: { displayName: string; className: string }) {
   return (
@@ -52,7 +42,6 @@ export function DashboardContent({ initialData }: { initialData?: DashboardIniti
 
   return (
     <>
-      <BackgroundEffects />
       <main id="main-content">
         <div className="flex flex-col px-4 md:px-10 xl:px-16 pt-14 md:pt-12 pb-28 md:pb-16 gap-5 md:gap-8 w-full max-w-[1400px] mx-auto">
           <div className="flex items-center justify-between gap-6 pt-4">
