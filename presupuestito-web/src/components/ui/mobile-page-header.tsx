@@ -16,7 +16,7 @@ export function MobilePageHeader({
   ...actionsProps
 }: MobilePageHeaderProps) {
   return (
-    <div className="md:hidden fixed top-0 left-0 w-full z-50 px-4 pt-12 pb-3 flex items-center justify-between bg-transparent pointer-events-none">
+    <div className="md:hidden fixed top-0 left-0 w-full z-50 px-4 pt-10 pb-2 flex items-center justify-between bg-transparent pointer-events-none">
       <div className="pointer-events-auto">
         {backHref ? (
           <Link href={backHref} aria-label={backLabel} className="w-10 h-10 rounded-full glass-thin flex items-center justify-center text-primary hover:bg-surface transition-[background-color,transform] duration-200 ease-spring active:scale-[0.96]">

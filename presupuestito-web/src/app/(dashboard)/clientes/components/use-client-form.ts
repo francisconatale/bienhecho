@@ -8,7 +8,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { clientsService_create, clientsService_update } from "@/actions/clients.actions";
 import { Client } from "@/types";
 import { useEffect } from "react";
-import { toast } from "sonner";
 
 const clientSchema = z.object({
   nombre: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
@@ -68,7 +67,6 @@ export function useClientForm(
             direccion: data.direccion || "",
           },
         });
-        toast.success("Cliente actualizado");
         if (onSuccess) {
           onSuccess(initialClient.id);
         } else {
@@ -81,7 +79,6 @@ export function useClientForm(
           telefono: data.telefono || null,
           direccion: data.direccion || "",
         });
-        toast.success("Cliente creado");
         if (onSuccess) {
           onSuccess(newClient.id);
         } else {
@@ -89,7 +86,6 @@ export function useClientForm(
         }
       }
     } catch (error) {
-      toast.error(initialClient ? "Error al actualizar cliente" : "Error al crear cliente");
     }
   };
 

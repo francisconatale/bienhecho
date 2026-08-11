@@ -19,11 +19,6 @@ export function VisitsList({ visits }: VisitsListProps) {
         )}
       </div>
       <div className="flex flex-col bg-surface rounded-lg overflow-hidden border border-outline-variant/10 shadow-sm">
-        <div className="hidden md:flex items-center px-4 py-2 border-b border-outline-variant/20 bg-surface-variant/20">
-          <div className="text-xs font-bold text-on-surface-variant flex-1">Fecha / Trabajo</div>
-          <div className="text-xs font-bold text-on-surface-variant w-32 text-right">Cliente</div>
-        </div>
-        
         <div className="flex flex-col divide-y divide-outline-variant/10">
           {visits.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-5 px-4 text-center">
@@ -40,7 +35,7 @@ export function VisitsList({ visits }: VisitsListProps) {
                 <div key={visit.id} className="flex flex-col md:flex-row md:items-center px-4 py-2.5 hover:bg-primary/5 transition-colors gap-2 md:gap-0">
                   {/* Info Column */}
                   <div className="flex-1 min-w-0 pr-4 flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-on-surface/5 flex items-center justify-center text-on-surface-variant shrink-0">
                       <CalendarDays size={13} aria-hidden="true" />
                     </div>
                     <div className="flex flex-col min-w-0">

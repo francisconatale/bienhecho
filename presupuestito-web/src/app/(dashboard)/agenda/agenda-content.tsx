@@ -1,6 +1,5 @@
 "use client";
 
-import { toast } from "sonner";
 
 import { Plus } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
@@ -133,7 +132,6 @@ export function AgendaContent({ initialData }: { initialData?: AgendaInitialData
               actions.setShowNewModal(false);
               setShowSuccessModal(true);
             } catch (error) {
-              toast.error("Error al crear la visita");
             }
           }}
           onCancel={() => actions.setShowNewModal(false)}
@@ -161,10 +159,8 @@ export function AgendaContent({ initialData }: { initialData?: AgendaInitialData
             onSubmit={async (data) => {
               try {
                 await actions.updateVisit(state.editingVisit!.id, data);
-                toast.success("Visita actualizada");
                 actions.setEditingVisit(null);
               } catch (error) {
-                toast.error("Error al actualizar la visita");
               }
             }}
             onCancel={() => actions.setEditingVisit(null)}

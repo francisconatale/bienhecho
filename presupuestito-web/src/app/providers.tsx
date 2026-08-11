@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { AuthProvider } from "@/contexts/auth-context";
+import { NavigationOriginProvider } from "@/contexts/navigation-origin-context";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -18,10 +19,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
-    </AuthProvider>
+    <NavigationOriginProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </AuthProvider>
+    </NavigationOriginProvider>
   );
 }

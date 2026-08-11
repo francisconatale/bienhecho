@@ -6,7 +6,6 @@ import { clientsService_getAll } from "@/actions/clients.actions";
 import { Visit, VisitStatus } from "@/types";
 import { VisitWithJob } from "@/services/visits.service";
 import { useConfirm } from "@/hooks/use-confirm";
-import { toast } from "sonner";
 
 export const MONTHS = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -142,7 +141,6 @@ export function useAgenda(initialData?: AgendaInitialData) {
       variant: "danger",
       action: async () => {
         await removeVisitMutation.mutateAsync(id);
-        toast.success("Visita eliminada");
       }
     });
   };

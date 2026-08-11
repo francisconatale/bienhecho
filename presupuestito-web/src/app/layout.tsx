@@ -6,7 +6,6 @@ import { Providers } from "./providers";
 
 import { ThemeScript } from "@/components/layout/theme-script";
 import { AuroraBackground } from "@/components/ui/aurora-background";
-import { Toaster } from "@/components/layout/toaster";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -80,7 +79,6 @@ export default function RootLayout({
         <Providers>
           <ThemeProvider>
             {children}
-            <Toaster />
           </ThemeProvider>
         </Providers>
       </body>

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { ArrowLeft, User, Users } from "lucide-react";
+import { User, Users } from "lucide-react";
 import { ClientForm } from "./client-form";
+import { Modal } from "@/components/ui/modal";
 import { MasterDetail } from "@/components/ui/master-detail";
 import { MobileHeaderActions } from "@/components/ui/mobile-header-actions";
 import { ClientDetailPane } from "./client-detail-pane";
@@ -32,25 +32,6 @@ export function ClientList({ initialData }: { initialData?: { data: Client[], to
     ConfirmDialog,
   } = useClients(initialData);
 
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const selectedJobId = searchParams.get("jobId");
-
-  const setSelectedJobId = (jobId: string | null) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (jobId) {
-      params.set("jobId", jobId);
-      router.push(`${pathname}?${params.toString()}`, { scroll: false });
-    } else {
-      params.delete("jobId");
-      params.delete("task");
-      params.delete("view");
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-    }
-  };
-
   // Reset selectedJobId when client changes
   const handleClientChange = (id: string | null) => {
     handleSelectedIdChange(id);
@@ -66,8 +47,6 @@ export function ClientList({ initialData }: { initialData?: { data: Client[], to
       <MasterDetail<Client>
         selectedId={selectedId}
         onSelectedChange={handleClientChange}
-        onDetailBack={selectedJobId ? () => setSelectedJobId(null) : undefined}
-        hideMobileBackButton={!!searchParams.get("task") || !!searchParams.get("view")}
         items={filtered as Client[]}
         getItemId={(c) => c.id}
         search={search}
@@ -77,7 +56,7 @@ export function ClientList({ initialData }: { initialData?: { data: Client[], to
         mobileTitle="Clientes"
         mobileDescription="Gestioná tus clientes."
         detailTitle={(client) => client.nombre}
-        detailRightAction={selectedJobId ? undefined : (client) => (
+        detailRightAction={(client) => (
           <MobileHeaderActions
             isEditing={isEditing}
             hasChanges={isEditing}
@@ -90,19 +69,7 @@ export function ClientList({ initialData }: { initialData?: { data: Client[], to
           />
         )}
         pagination={pag}
-        showCreationForm={showCreationForm}
         onToggleCreation={handleToggleCreation}
-        renderCreationForm={() => (
-          <div className="flex-1 overflow-y-auto">
-            {/* Desktop only header (mobile uses MasterDetail's sticky nav) */}
-            <div className="hidden md:flex px-5 py-3 border-b border-outline-variant/8 bg-surface items-center gap-2.5">
-              <h2 className="text-lg font-bold text-on-surface">Nuevo Cliente</h2>
-            </div>
-            <div className="p-4 pt-4 md:p-6 md:pt-6">
-              <ClientForm onSuccess={handleCreationSuccess} />
-            </div>
-          </div>
-        )}
         renderItem={(client, isSelected) => (
           <ClientItem
             client={client}
@@ -130,8 +97,6 @@ export function ClientList({ initialData }: { initialData?: { data: Client[], to
             onBack={() => handleClientChange(null)}
             isEditing={isEditing}
             setIsEditing={setIsEditing}
-            selectedJobId={selectedJobId}
-            setSelectedJobId={setSelectedJobId}
           />
         )}
         emptyDetail={
@@ -155,6 +120,18 @@ export function ClientList({ initialData }: { initialData?: { data: Client[], to
           </div>
         }
       />
+
+      <Modal
+        isOpen={showCreationForm}
+        onClose={() => setShowCreationForm(false)}
+        title="Nuevo Cliente"
+      >
+        <ClientForm
+          onSuccess={handleCreationSuccess}
+          onCancel={() => setShowCreationForm(false)}
+        />
+      </Modal>
+
       <ConfirmDialog />
     </div>
   );

@@ -31,7 +31,6 @@ import { JobHeader } from "../[id]/components/job-header";
 import { MaterialList } from "../[id]/components/material-list";
 import { PaymentsDashboard } from "../[id]/components/payments-dashboard";
 import { useConfirm } from "@/hooks/use-confirm";
-import { toast } from "sonner";
 
 const TaskDetailPanel = dynamic(
   () => import("../[id]/components/task-detail-panel").then((m) => m.TaskDetailPanel),
@@ -211,7 +210,6 @@ export function TrabajoDetail({
         await jobsService_delete(job.id);
         queryClient.invalidateQueries({ queryKey: ["jobs"] });
         queryClient.invalidateQueries({ queryKey: ["clients"] });
-        toast.success("Trabajo eliminado correctamente");
         if (isEmbedded && onBack) {
           onBack();
         } else {
@@ -340,7 +338,7 @@ export function TrabajoDetail({
                 </button>
               </div>
               <div>
-                <h2 className="text-4xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter mb-2">Materiales</h2>
+                <h2 className="text-display text-on-surface mb-2">Materiales</h2>
                 <p className="text-sm font-medium text-on-surface-variant/60">Gestión de materiales e insumos</p>
               </div>
               <MaterialList jobId={job.id} />
@@ -354,7 +352,7 @@ export function TrabajoDetail({
                 </button>
               </div>
               <div>
-                <h2 className="text-4xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter mb-2">Cuentas a Cobrar</h2>
+                <h2 className="text-display text-on-surface mb-2">Cuentas a Cobrar</h2>
                 <p className="text-sm font-medium text-on-surface-variant/60">Gestión de saldo pendiente y cobros recibidos</p>
               </div>
               <PaymentsDashboard jobId={job.id} />

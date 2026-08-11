@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { Loader2, MessageSquarePlus, Sparkles, X, ArrowDownToLine } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { ChatInterface } from "@/app/design-lab/gemini/components/chat-interface";
@@ -45,7 +44,6 @@ export function TaskChatWidget({ jobId, clienteId, jobTitulo }: TaskChatWidgetPr
     if (!conversation || isAnnexing) return;
     const clienteFinal = clienteId ?? conversation.cliente_id;
     if (!clienteFinal) {
-      toast.error("El trabajo no tiene un cliente asignado.");
       return;
     }
     setIsAnnexing(true);
@@ -56,22 +54,13 @@ export function TaskChatWidget({ jobId, clienteId, jobTitulo }: TaskChatWidgetPr
         titulo: jobTitulo,
       });
       const plural = res.agregadas === 1 ? "" : "s";
-      toast.success(
-        res.agregadas > 0
-          ? `${res.agregadas} tarea${plural} cargada${plural} en "${res.titulo}".`
-          : `No había tareas nuevas en "${res.titulo}".`
-      );
       if (res.sin_precio > 0) {
-        toast.info(
-          `${res.sin_precio} tarea${res.sin_precio === 1 ? "" : "s"} sin precio se cargó${res.sin_precio === 1 ? "" : "ron"} como descriptiva${res.sin_precio === 1 ? "" : "s"}.`
-        );
       }
       queryClient.invalidateQueries({ queryKey: ["tasks", jobId] });
       queryClient.invalidateQueries({ queryKey: ["job", jobId] });
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["clients"] });
     } catch (error: any) {
-      toast.error(error.message || "Error al cargar las tareas.");
     } finally {
       setIsAnnexing(false);
     }

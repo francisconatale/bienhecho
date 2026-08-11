@@ -23,7 +23,7 @@ export function ActivityList({ pagination }: ActivityListProps) {
               {job.titulo}
             </span>
             <span className="md:hidden flex items-center gap-2 text-[11px] text-on-surface-variant">
-              <span className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[9px] shrink-0">
+              <span className="w-4 h-4 rounded-full bg-on-surface/5 flex items-center justify-center text-on-surface-variant font-bold text-[9px] shrink-0">
                 {clientName.charAt(0)}
               </span>
               <span className="truncate">{clientName}</span>
@@ -39,7 +39,7 @@ export function ActivityList({ pagination }: ActivityListProps) {
         const clientName = job.clientes?.nombre || "Sin cliente";
         return (
           <div className="flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[10px] shrink-0">
+            <span className="w-6 h-6 rounded-full bg-on-surface/5 flex items-center justify-center text-on-surface-variant font-bold text-[10px] shrink-0">
               {clientName.charAt(0)}
             </span>
             <span className="text-[13px] text-on-surface-variant truncate">{clientName}</span>

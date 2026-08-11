@@ -1,4 +1,4 @@
-import { useState, useMemo, Suspense } from "react";
+import { useState, useMemo } from "react";
 import { Pencil, Trash2, Plus, Phone, MapPin, Mail, CalendarDays } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 // No services used anymore
@@ -7,13 +7,12 @@ import { useClientForm } from "./use-client-form";
 import { createClient } from "@/utils/supabase/client";
 const supabase = createClient();
 
-import { AjusteManualForm } from "./ajuste-manual-form";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { cn, formatCurrency } from "@/lib/utils";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { DataTable, type Column } from "@/components/ui/data-table";
-import { TrabajoDetail } from "@/app/(dashboard)/trabajos/components/trabajo-detail";
-import { TrabajoDetailSkeleton } from "@/components/ui/skeletons";
+import { useNavigationOrigin } from "@/contexts/navigation-origin-context";
 
 export function getStatusColor(estado: string): string {
   switch (estado) {
@@ -47,18 +46,16 @@ export function ClientDetailPane({
   onBack,
   isEditing,
   setIsEditing,
-  selectedJobId,
-  setSelectedJobId,
 }: {
   client: Client;
   onDelete: (c: Client) => void;
   onBack: () => void;
   isEditing: boolean;
   setIsEditing: (v: boolean) => void;
-  selectedJobId: string | null;
-  setSelectedJobId: (id: string | null) => void;
 }) {
   const [showAjuste, setShowAjuste] = useState(false);
+  const router = useRouter();
+  const { setOrigin } = useNavigationOrigin();
   
   const { data, isLoading } = useQuery({
     queryKey: ["client-data", client.id],
@@ -115,19 +112,6 @@ export function ClientDetailPane({
   const { form, onSubmit, isLoading: isFormLoading } = useClientForm(client, handleSuccess);
   const { register, formState: { errors } } = form;
 
-  // Si hay un trabajo seleccionado, mostrar el TrabajoDetail embebido
-  if (selectedJobId) {
-    return (
-      <Suspense fallback={<TrabajoDetailSkeleton isEmbedded />}>
-        <TrabajoDetail
-          id={selectedJobId}
-          isEmbedded
-          onBack={() => setSelectedJobId(null)}
-        />
-      </Suspense>
-    );
-  }
-
   return (
     <div className="flex-1 overflow-y-auto relative w-full h-full min-h-full flex flex-col">
       <AuroraBackground preset="perfil" />
@@ -137,7 +121,7 @@ export function ClientDetailPane({
         {/* 1. Header Card */}
         <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl p-5 md:p-6 border border-outline-variant/20 shadow-sm flex flex-col md:flex-row md:items-start justify-between gap-6 overflow-hidden w-full">
           <div className="flex flex-row items-start gap-4 md:gap-6 w-full min-w-0">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-[#E8F5E9] text-[#2E7D32] dark:bg-[#2E7D32]/20 dark:text-[#81C784] flex items-center justify-center font-bold text-3xl shrink-0 mt-0.5">
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-3xl shrink-0 mt-0.5">
               {client.nombre.charAt(0)}
             </div>
             
@@ -221,11 +205,7 @@ export function ClientDetailPane({
           href={`/clientes/${client.id}/cuenta-corriente`}
           className={cn(
             "block rounded-xl p-4 md:p-5 border shadow-sm transition-all duration-200 ease-spring active:scale-[0.96] overflow-hidden w-full",
-            deudaTotal > 0
-              ? "bg-[#FEF2F2] dark:bg-[#DC2626]/10 border-[#FECACA] dark:border-[#DC2626]/20"
-              : deudaTotal < 0
-                ? "bg-[#F0FDF4] dark:bg-[#16A34A]/10 border-[#BBF7D0] dark:border-[#16A34A]/20"
-                : "bg-surface/60 dark:bg-surface/40 border-outline-variant/15"
+            "bg-surface/60 dark:bg-surface/40 border-outline-variant/15 hover:bg-surface/80"
           )}
         >
           <div className="flex items-center justify-between gap-4">
@@ -363,7 +343,8 @@ export function ClientDetailPane({
                 items={clientJobs}
                 keyExtractor={(job) => job.id}
                 onRowClick={(job) => {
-                  setSelectedJobId(job.id);
+                  setOrigin({ section: "clientes", clienteId: client.id });
+                  router.push(`/trabajos?id=${job.id}&from=/clientes`, { scroll: false });
                 }}
                 title="Trabajos Activos"
                 emptyMessage="No hay trabajos activos."

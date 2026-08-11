@@ -5,7 +5,6 @@ import { useAuth } from "@/contexts/auth-context";
 import { profileService_upsert } from "@/actions/profile.actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { useProfileSave } from "./profile-save-context";
 
 export function ProfileForm() {
@@ -26,11 +25,9 @@ export function ProfileForm() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
-      toast.success("Perfil guardado", { description: "Tus datos se actualizaron correctamente." });
     },
     onError: (err) => {
       console.error(err);
-      toast.error("Error al guardar", { description: "Intentá nuevamente." });
     },
     onSettled: () => {
       setIsSaving(false);

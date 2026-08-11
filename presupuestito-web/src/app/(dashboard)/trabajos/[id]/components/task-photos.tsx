@@ -8,7 +8,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { PhotoUpload } from "./photo-upload";
 import { cn } from "@/lib/utils";
 import { taskPhotosService_getByTaskId, taskPhotosService_uploadFile, taskPhotosService_create, taskPhotosService_delete } from "@/actions/task-photos.actions";
-import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
 import { TareaPhotosSkeleton } from "@/components/ui/skeletons";
 
@@ -51,7 +50,6 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
       queryClient.invalidateQueries({ queryKey: ["taskPhotos", tareaId] });
     } catch (e) {
       console.error("Error saving photo:", e);
-      toast.error("Error al guardar foto");
       throw e;
     } finally {
       setIsSaving(false);

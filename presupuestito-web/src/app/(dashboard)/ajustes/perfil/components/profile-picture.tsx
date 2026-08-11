@@ -6,7 +6,6 @@ import { useLogoUpload } from "../../hooks/use-logo-upload";
 import { getPublicLogoUrl } from "@/lib/storage-utils";
 import Image from "next/image";
 import { Trash2 } from "lucide-react";
-import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
@@ -35,11 +34,9 @@ export function ProfilePicture() {
     if (!file) return;
 
     if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-      toast.error("Formato inválido", { description: "Solo se permiten formatos .jpg, .jpeg y .png." });
       return;
     }
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("Archivo muy grande", { description: "El tamaño máximo permitido es 2MB." });
       return;
     }
 
@@ -50,10 +47,8 @@ export function ProfilePicture() {
         if (updatedProfile.logo_path) {
           setPreviewUrl(getPublicLogoUrl(updatedProfile.logo_path));
         }
-        toast.success("Foto actualizada correctamente");
       }
     } catch (err) {
-      toast.error("Ocurrió un error al subir la foto");
     }
     
     if (fileInputRef.current) {
@@ -73,10 +68,8 @@ export function ProfilePicture() {
           if (updatedProfile) {
             refetchProfile();
             setPreviewUrl(null);
-            toast.success("Foto eliminada correctamente");
           }
         } catch (err) {
-          toast.error("Ocurrió un error al eliminar la foto");
         }
       },
     });

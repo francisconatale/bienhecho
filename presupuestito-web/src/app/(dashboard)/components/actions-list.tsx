@@ -20,7 +20,7 @@ export function ActionsList() {
           className={`w-full md:w-auto flex items-center justify-between md:justify-start gap-3 p-4 md:px-5 md:py-4 hover:bg-black/[0.03] dark:hover:bg-white/[0.03] active:bg-black/[0.06] dark:active:bg-white/[0.06] transition-colors`}
         >
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0" aria-hidden="true">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${i === 0 ? "bg-primary/10 text-primary" : "bg-on-surface/5 text-on-surface-variant"}`} aria-hidden="true">
               {icon}
             </div>
             <span className="text-[17px] md:text-[15px] font-medium text-on-surface inline">{label}</span>

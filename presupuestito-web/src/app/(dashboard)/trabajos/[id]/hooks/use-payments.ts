@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { cobrosService_getByJobId, cobrosService_create, cobrosService_update, cobrosService_delete } from "@/actions/cobros.actions";
 import { jobsService_getById } from "@/actions/jobs.actions";
 import { Cobro } from "@/types";
-import { toast } from "sonner";
 
 import { z } from "zod";
 
@@ -72,9 +71,7 @@ export function usePayments(trabajoId: string) {
         forma_pago: data.forma_pago,
         notas: data.notas,
       });
-      toast.success("Cobro registrado");
     } catch (error) {
-      toast.error("Error al registrar cobro");
       throw error;
     }
   };
@@ -90,9 +87,7 @@ export function usePayments(trabajoId: string) {
           notas: data.notas,
         },
       });
-      toast.success("Cobro actualizado");
     } catch (error) {
-      toast.error("Error al actualizar cobro");
       throw error;
     }
   };
@@ -100,9 +95,7 @@ export function usePayments(trabajoId: string) {
   const removeCobro = async (id: string) => {
     try {
       await removeMutation.mutateAsync(id);
-      toast.success("Cobro eliminado");
     } catch (error) {
-      toast.error("Error al eliminar cobro");
       throw error;
     }
   };

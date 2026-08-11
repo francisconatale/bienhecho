@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { tasksService_getCounts, tasksService_getResumen, tasksService_getPaginated, tasksService_update, tasksService_delete } from "@/actions/tasks.actions";
 import { useConfirm } from "@/hooks/use-confirm";
-import { toast } from "sonner";
 import { useServerPagination } from "@/hooks/use-server-pagination";
 
 export type FilterType = "pendientes" | "completadas";
@@ -144,7 +143,6 @@ export function useTareas(initialData?: TareasInitialData) {
 
     if (taskObj) {
       if (taskObj.job?.estado === "pagado") {
-        toast.error("No se puede eliminar una tarea de un trabajo pagado");
         return;
       }
     }

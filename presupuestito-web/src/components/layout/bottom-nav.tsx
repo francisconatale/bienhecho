@@ -4,15 +4,17 @@ import { LayoutDashboard, Users, Settings, CheckSquare, Calendar, Briefcase } fr
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import { useNavigationOrigin } from "@/contexts/navigation-origin-context";
 
 interface NavItemProps {
   icon: React.ReactNode;
   label: string;
   href: string;
   active?: boolean;
+  onClick?: () => void;
 }
 
-function NavItem({ icon, label, href, active }: NavItemProps) {
+function NavItem({ icon, label, href, active, onClick }: NavItemProps) {
   const activeClasses = active
     ? "text-primary"
     : "text-on-surface-variant hover:text-on-surface";
@@ -21,6 +23,7 @@ function NavItem({ icon, label, href, active }: NavItemProps) {
     <Link
       className={`flex flex-col items-center justify-center transition-transform duration-200 ease-spring active:scale-[0.96] hit-padding ${activeClasses} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2`}
       href={href}
+      onClick={onClick}
       aria-current={active ? "page" : undefined}
       aria-label={label}
     >
@@ -35,6 +38,7 @@ function NavItem({ icon, label, href, active }: NavItemProps) {
 
 export function BottomNav() {
   const pathname = usePathname();
+  const { origin, clearOrigin } = useNavigationOrigin();
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollYRef = useRef(0);
 
@@ -55,6 +59,10 @@ export function BottomNav() {
     return null;
   }
 
+  const clientesHref = origin?.section === "clientes"
+    ? `/clientes?clienteId=${origin.clienteId}`
+    : "/clientes";
+
   return (
     <div
       className={`fixed bottom-[calc(env(safe-area-inset-bottom)+1rem)] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm z-50 transition-[transform,opacity] duration-300 ease-momentum md:hidden ${
@@ -71,8 +79,9 @@ export function BottomNav() {
       <NavItem
         icon={<Users className="w-5 h-5" strokeWidth={2} />}
         label="Clientes"
-        href="/clientes"
+        href={clientesHref}
         active={pathname.startsWith("/clientes")}
+        onClick={origin?.section === "clientes" ? clearOrigin : undefined}
       />
       <NavItem
         icon={<Briefcase className="w-5 h-5" strokeWidth={2} />}

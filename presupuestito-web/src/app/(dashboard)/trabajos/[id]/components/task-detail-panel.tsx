@@ -12,7 +12,6 @@ import { MobilePageHeader } from "@/components/ui/mobile-page-header";
 import { TaskPhotos } from "./task-photos";
 import { TareaDetailSkeleton } from "@/components/ui/skeletons";
 import { useConfirm } from "@/hooks/use-confirm";
-import { toast } from "sonner";
 
 interface TaskDetailPanelProps {
   jobId: string;
@@ -53,7 +52,6 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["clients"] });
-      toast.success("Tarea eliminada");
       onDelete?.();
     },
   });
@@ -154,7 +152,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
         />
       </div>
 
-      <main className="relative flex-1 px-4 pt-28 pb-24 space-y-6 max-w-4xl mx-auto w-full">
+      <main className="relative flex-1 px-4 pt-24 pb-24 space-y-6 max-w-4xl mx-auto w-full md:pt-6 md:pb-12">
         {/* Desktop Breadcrumb */}
         <div className="hidden md:flex items-center mb-4">
           <div className="flex items-center gap-2 text-sm font-medium text-on-surface-variant/60">
@@ -171,7 +169,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
         <div ref={editRef} className="space-y-4">
           {!isEditing ? (
             <div className="group flex items-start justify-between gap-4">
-              <h1 className="text-xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter cursor-default select-none flex-1">
+              <h1 className="text-display text-on-surface cursor-default select-none flex-1">
                 {task.descripcion}
               </h1>
               <div className="hidden md:flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
@@ -199,7 +197,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
               onChange={(e) => setDescripcion(e.target.value)}
               placeholder="Descripción de la tarea"
               rows={2}
-              className="w-full bg-transparent border-b border-outline-variant/30 text-2xl md:text-5xl font-black text-on-surface leading-[1.1] tracking-tighter placeholder:text-on-surface-variant/25 outline-none focus:border-primary transition-colors resize-none py-1"
+              className="w-full bg-transparent border-b border-outline-variant/30 text-display text-on-surface placeholder:text-on-surface-variant/25 outline-none focus:border-primary transition-colors resize-none py-1"
               autoFocus
             />
           )}

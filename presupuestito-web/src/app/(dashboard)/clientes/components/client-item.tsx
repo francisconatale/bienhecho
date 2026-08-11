@@ -36,7 +36,7 @@ export function ClientItem({ client, isSelected, onSelect }: ClientItemProps) {
         </div>
         {saldo > 0 && (
           <div className="text-right shrink-0">
-            <span className="text-[15px] font-semibold text-error leading-none tabular-nums">
+            <span className="text-[13px] font-medium text-error leading-none tabular-nums">
               Debe {formatCurrency(saldo)}
             </span>
           </div>

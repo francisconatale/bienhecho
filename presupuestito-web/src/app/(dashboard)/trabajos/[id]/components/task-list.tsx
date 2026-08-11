@@ -9,7 +9,6 @@ import { TaskForm } from "./task-form";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { Modal } from "@/components/ui/modal";
 import type { Task } from "@/types";
-import { toast } from "sonner";
 
 interface TaskListProps {
   jobId: string;
@@ -76,7 +75,6 @@ export function TaskList({ jobId, isJobPaid, onSelectTask }: TaskListProps) {
         fecha_vencimiento: data.fecha_vencimiento,
       });
     } catch (error) {
-      toast.error("Error al agregar tarea");
       throw error;
     }
   };

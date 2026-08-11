@@ -3,7 +3,6 @@ import { z } from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { materialsService_getByJobId, materialsService_create, materialsService_update, materialsService_delete } from "@/actions/materials.actions";
 import { Material } from "@/types";
-import { toast } from "sonner";
 export const materialSchema = z.object({
   nombre_material: z.string().min(1, "El nombre es obligatorio"),
   cantidad: z.coerce.number().min(0.01, "La cantidad debe ser mayor a 0"),
@@ -63,9 +62,7 @@ export function useMaterials(trabajoId: string) {
         subtotal,
         comprado: false,
       });
-      toast.success("Material agregado");
     } catch (error) {
-      toast.error("Error al agregar material");
       throw error;
     }
   };
@@ -82,9 +79,7 @@ export function useMaterials(trabajoId: string) {
           subtotal,
         },
       });
-      toast.success("Material actualizado");
     } catch (error) {
-      toast.error("Error al actualizar material");
       throw error;
     }
   };

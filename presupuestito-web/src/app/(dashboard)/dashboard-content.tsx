@@ -45,7 +45,7 @@ export function DashboardContent({ initialData }: { initialData?: DashboardIniti
       <main id="main-content">
         <div className="flex flex-col px-4 md:px-10 xl:px-16 pt-14 md:pt-12 pb-28 md:pb-16 gap-5 md:gap-8 w-full max-w-[1400px] mx-auto">
           <div className="flex items-center justify-between gap-6 pt-4">
-            <Greeting displayName={displayName} className="text-[32px] md:text-[48px] lg:text-[56px] font-bold tracking-tight text-on-surface leading-tight md:leading-none" />
+            <Greeting displayName={displayName} className="text-display text-on-surface" />
             <div className="hidden md:block">
               <ActionsList />
             </div>

@@ -78,7 +78,7 @@ export function JobSummaryCards({
             <>
               <span className={cn(
                 "text-2xl font-bold tracking-tight transition-colors",
-                saldoPendiente <= 0 ? "text-primary" : "text-on-surface group-hover:text-primary"
+                saldoPendiente > 0 ? "text-primary" : "text-on-surface group-hover:text-primary"
               )}>
                 ${Math.max(0, saldoPendiente).toLocaleString("es-AR")}
               </span>

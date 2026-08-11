@@ -14,7 +14,6 @@ import { MobileHeaderActions } from "@/components/ui/mobile-header-actions";
 import { MasterDetail } from "@/components/ui/master-detail";
 import { MasterDetailSkeleton } from "@/components/ui/skeletons";
 import { useConfirm } from "@/hooks/use-confirm";
-import { toast } from "sonner";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { useDebounce } from "@/hooks/use-debounce";
 
@@ -34,7 +33,6 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
       queryClient.invalidateQueries({ queryKey: ["clients"] });
-      toast.success("Trabajo eliminado correctamente");
     }
   });
 
@@ -183,8 +181,7 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
                 <div className="flex-1 min-w-0">
                   <div className={`font-semibold text-sm md:text-base truncate transition-colors ${isSelected ? "text-primary" : "text-on-surface"}`}>{job.titulo}</div>
                   <div className="flex items-center justify-between gap-2 mt-1.5">
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-on-surface/5 text-on-surface-variant/80 capitalize">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary/70 shrink-0" />
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-on-surface/5 text-on-surface-variant/80 capitalize">
                       {job.estado.replace(/_/g, " ")}
                     </span>
                     <span className="text-[13px] font-semibold text-on-surface tabular-nums shrink-0">

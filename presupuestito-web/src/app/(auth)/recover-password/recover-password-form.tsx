@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/auth-context";
 import { Mail, KeyRound, Loader2, ArrowLeft } from "lucide-react";
-import { toast } from "sonner";
 
 export function RecoverPasswordForm() {
   const [email, setEmail] = useState("");
@@ -22,11 +21,8 @@ export function RecoverPasswordForm() {
     setLoading(false);
 
     if (error) {
-      toast.error(error || "Ocurrió un error al intentar enviar el correo.");
       return;
     }
-
-    toast.success("Te enviamos un correo con las instrucciones para recuperar tu contraseña.");
     router.push("/login");
   };
 

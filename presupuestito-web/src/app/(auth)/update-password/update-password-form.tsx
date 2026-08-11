@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
 import { Lock, Loader2 } from "lucide-react";
-import { toast } from "sonner";
 
 export function UpdatePasswordForm() {
   const [password, setPassword] = useState("");
@@ -21,11 +20,8 @@ export function UpdatePasswordForm() {
     setLoading(false);
 
     if (error) {
-      toast.error(error || "Ocurrió un error al actualizar la contraseña.");
       return;
     }
-
-    toast.success("Contraseña actualizada exitosamente.");
     router.push("/dashboard");
   };
 

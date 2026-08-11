@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Trash2, Pencil, Loader2 } from "lucide-react";
+import { Check, Trash2, Pencil, Loader2, Flame } from "lucide-react";
 import { Task } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { tasksService_update, tasksService_delete } from "@/actions/tasks.actions";
@@ -9,12 +9,6 @@ import { TaskForm } from "./task-form";
 import { Modal } from "@/components/ui/modal";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
-
-const PRIORITY_BADGE: Record<string, string> = {
-  alta: "bg-red-500/10 text-red-600 dark:bg-red-500/20 dark:text-red-400",
-  media: "bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400",
-  baja: "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary",
-};
 
 interface TaskItemProps {
   task: Task;
@@ -119,9 +113,14 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
                 {task.descripcion}
               </p>
               {task.prioridad && (
-                <span className={cn("text-[11px] font-bold px-1.5 py-0.5 rounded shrink-0 w-max md:mt-0.5", PRIORITY_BADGE[task.prioridad])}>
-                  {task.prioridad}
-                </span>
+                <Flame className={cn(
+                  "w-[18px] h-[18px] shrink-0 md:mt-0.5",
+                  task.prioridad === "alta"
+                    ? "fill-orange-500 text-orange-500"
+                    : task.prioridad === "media"
+                    ? "fill-amber-500 text-amber-500"
+                    : "text-on-surface-variant/40"
+                )} />
               )}
             </div>
             <div className="md:hidden mt-1.5 flex flex-col gap-0.5">

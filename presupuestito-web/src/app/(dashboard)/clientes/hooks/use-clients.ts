@@ -74,9 +74,6 @@ export function useClients(initialData?: { data: Client[], total: number }) {
   const handleSelectedIdChange = (id: string | null) => {
     setSelectedId(id);
     const params = new URLSearchParams(searchParams.toString());
-    params.delete("jobId");
-    params.delete("task");
-    params.delete("view");
     
     if (id) {
       params.set("clienteId", id);

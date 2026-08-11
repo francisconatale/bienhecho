@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
 import {
   Briefcase,
   Loader2,
@@ -42,11 +41,9 @@ export function TaskLoadPanel() {
       ? conversation.cliente_id || clienteId
       : clienteId;
     if (!clienteFinal) {
-      toast.error("Seleccioná un cliente para el trabajo.");
       return;
     }
     if (!isLinked && !titulo.trim()) {
-      toast.error("Escribí un título para el trabajo.");
       return;
     }
 
@@ -60,18 +57,9 @@ export function TaskLoadPanel() {
       });
 
       if (res.agregadas > 0) {
-        toast.success(
-          `${res.agregadas} tarea${res.agregadas === 1 ? "" : "s"} cargada${res.agregadas === 1 ? "" : "s"} en "${res.titulo}".`
-        );
       } else {
-        toast.success(
-          `No había tareas nuevas: "${res.titulo}" ya tiene las ${cantidadLabel}.`
-        );
       }
       if (res.sin_precio > 0) {
-        toast.info(
-          `${res.sin_precio} tarea${res.sin_precio === 1 ? "" : "s"} sin precio se cargó${res.sin_precio === 1 ? "" : "ron"} como descriptiva${res.sin_precio === 1 ? "" : "s"} (no se factura${res.sin_precio === 1 ? "" : "n"}).`
-        );
       }
       setLoadedJobId(res.trabajo_id);
       setConversation({
@@ -80,7 +68,6 @@ export function TaskLoadPanel() {
         trabajo_id: res.trabajo_id,
       });
     } catch (error: any) {
-      toast.error(error.message || "Error al cargar las tareas.");
     } finally {
       setIsLoading(false);
     }
