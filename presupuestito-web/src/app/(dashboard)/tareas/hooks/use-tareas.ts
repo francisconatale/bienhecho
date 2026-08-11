@@ -53,8 +53,8 @@ export function useTareas(initialData?: TareasInitialData) {
     mutationFn: ({ id, data }: { id: string; data: Partial<any> }) => tasksService_update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
-      // Invalidate dashboard counts/stats where used
       queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 
@@ -63,6 +63,7 @@ export function useTareas(initialData?: TareasInitialData) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 

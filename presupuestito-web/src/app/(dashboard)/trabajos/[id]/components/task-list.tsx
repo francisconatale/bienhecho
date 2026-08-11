@@ -32,6 +32,7 @@ export function TaskList({ jobId, isJobPaid, onSelectTask }: TaskListProps) {
       });
       queryClient.invalidateQueries({ queryKey: ["tasks", jobId] });
       queryClient.invalidateQueries({ queryKey: ["tasks"] }); // For global tasks list
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
   const [isAdding, setIsAdding] = useState(false);

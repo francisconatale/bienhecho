@@ -36,6 +36,7 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
         return old.map(t => t.id === updatedTask.id ? updatedTask : t);
       });
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 
@@ -47,6 +48,7 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
         return old.filter(t => t.id !== deletedId);
       });
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 
