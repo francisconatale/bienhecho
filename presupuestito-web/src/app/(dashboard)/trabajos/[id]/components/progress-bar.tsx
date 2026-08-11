@@ -15,7 +15,7 @@ export function ProgressBar({ tasks }: ProgressBarProps) {
     <div className="relative overflow-hidden bg-surface/80 rounded-xl p-4 md:p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-3 md:space-y-5 transition-shadow duration-[200ms] hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
 
       <div className="relative flex flex-col gap-2 z-10">
-        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
+        <h3 className="text-[11px] font-bold text-on-surface-variant/50">
           Progreso
         </h3>
         <div className="flex items-end justify-between mt-1">
@@ -42,7 +42,7 @@ export function ProgressBar({ tasks }: ProgressBarProps) {
         </div>
       </div>
 
-      <p className="relative text-[11px] font-bold text-on-surface-variant/50 uppercase tracking-widest z-10 text-right">
+      <p className="relative text-xs font-bold text-on-surface-variant/50 z-10 text-right">
         {total === 0
           ? "Sin tareas aún"
           : `${percentage}% completado`}

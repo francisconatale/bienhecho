@@ -92,7 +92,7 @@ export function TaskChatWidget({ jobId, clienteId, jobTitulo }: TaskChatWidgetPr
         ) : (
           <Sparkles className="w-5 h-5" strokeWidth={2.5} />
         )}
-        <span className="hidden sm:block text-[12px] font-black uppercase tracking-widest">
+        <span className="hidden sm:block text-xs font-bold">
           {isOpen ? "Cerrar" : "Asistente"}
         </span>
       </button>
@@ -131,7 +131,7 @@ export function TaskChatWidget({ jobId, clienteId, jobTitulo }: TaskChatWidgetPr
                   type="button"
                   onClick={handleAnnex}
                   disabled={isAnnexing}
-                  className="w-full px-4 py-3 rounded-xl bg-primary text-white text-[12px] font-black uppercase tracking-widest hover:bg-primary-dark transition-colors active:scale-95 disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full px-4 py-3 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-dark transition-colors active:scale-95 disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {isAnnexing ? (
                     <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.5} />

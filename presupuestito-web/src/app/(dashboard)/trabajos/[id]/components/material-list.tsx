@@ -73,7 +73,7 @@ export function MaterialList({ jobId }: MaterialListProps) {
         )}
         footerRow={pag.paginatedItems.length > 0 ? (
           <div className="px-4 py-3 flex items-center justify-between bg-primary/5 border-t border-primary/20">
-            <span className="text-[11px] font-black uppercase tracking-widest text-primary">Total Materiales</span>
+            <span className="text-xs font-bold text-primary">Total Materiales</span>
             <span className="text-[15px] font-bold text-on-surface tabular-nums">${totalMateriales.toLocaleString("es-AR")}</span>
           </div>
         ) : undefined}

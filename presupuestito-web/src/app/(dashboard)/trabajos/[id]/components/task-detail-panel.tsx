@@ -214,7 +214,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
                 isTogglingComplete && "opacity-70 cursor-wait"
               )}
             >
-              <span className="relative z-10 text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant/50">
+              <span className="relative z-10 text-[11px] font-bold text-on-surface-variant/50">
                 Estado Actual
               </span>
               <div className="relative z-10 flex items-center gap-3 mt-1">
@@ -260,7 +260,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
               )}
             >
               <span className={cn(
-                "relative z-10 text-[10px] font-black uppercase tracking-[0.25em] transition-colors duration-300",
+                "relative z-10 text-[11px] font-bold transition-colors duration-300",
                 task.prioridad === "alta" ? "text-orange-500/70" : task.prioridad === "media" ? "text-amber-500/70" : "text-on-surface-variant/50"
               )}>
                 Prioridad
@@ -268,7 +268,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
               <div className="relative z-10 flex items-center gap-3 mt-1">
                 <div
                   className={cn(
-                    "w-7 h-7 rounded-[10px] border-[2.5px] flex items-center justify-center shrink-0 transition-colors transition-transform duration-300 group-active:scale-75",
+                    "w-7 h-7 rounded-[10px] border-[2.5px] flex items-center justify-center shrink-0 transition-all duration-300 group-active:scale-75",
                     task.prioridad === "alta"
                       ? "bg-orange-500 border-orange-500 shadow-[0_0_16px_rgba(249,115,22,0.4)]"
                       : task.prioridad === "media"
@@ -292,7 +292,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
 
             <div className="relative overflow-hidden p-4 md:p-5 rounded-xl bg-surface dark:bg-surface/10 border border-white/20 dark:border-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] flex flex-col gap-2">
               <span className={cn(
-                "relative z-10 text-[10px] font-black uppercase tracking-[0.25em]",
+                "relative z-10 text-[11px] font-bold",
                 task.precio !== null ? "text-primary/70" : "text-on-surface-variant/50"
               )}>
                 {task.precio !== null ? "Línea Facturable" : "Costo / Nota"}
@@ -313,7 +313,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
                   <div className="flex flex-col gap-2">
                     <div className="flex gap-2">
                       <div className="flex-1">
-                        <label className="text-[10px] font-black text-on-surface-variant/50 uppercase tracking-widest block mb-1">Cant.</label>
+                        <label className="text-[11px] font-bold text-on-surface-variant/50 block mb-1">Cant.</label>
                         <input
                           type="number"
                           inputMode="decimal"
@@ -324,7 +324,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
                         />
                       </div>
                       <div className="flex-1 relative">
-                        <label className="text-[10px] font-black text-on-surface-variant/50 uppercase tracking-widest block mb-1">P. Unit.</label>
+                        <label className="text-[11px] font-bold text-on-surface-variant/50 block mb-1">P. Unit.</label>
                         <span className="absolute left-0 bottom-2 text-sm font-bold text-on-surface-variant/40 pointer-events-none">$</span>
                         <input
                           type="number"
@@ -351,7 +351,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
         {taskProgresses.length > 0 && (
           <div className="relative bg-surface/80 rounded-xl p-6 border border-white/20 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-5 transition-shadow duration-300 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
             <div className="relative z-10 flex items-center justify-between">
-              <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-on-surface-variant/50">
+              <h3 className="text-xs font-bold text-on-surface-variant/50">
                 Historial de Avance
               </h3>
               <ClipboardList className="w-4 h-4 text-on-surface-variant/40" strokeWidth={2.5} />
@@ -362,7 +362,7 @@ export function TaskDetailPanel({ jobId, taskId, onBack, backLabel, onDelete }: 
                   key={`${progress.visita_id}-${idx}`}
                   className="group flex flex-col gap-2 p-4 bg-surface dark:bg-surface/20 rounded-xl border border-white/10 dark:border-white/5 transition-colors duration-300 hover:bg-surface/60"
                 >
-                  <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">
+                  <div className="flex items-center gap-2 text-[11px] font-bold text-on-surface-variant/50">
                     <CalendarDays className="w-3 h-3" />
                     {new Date(progress.visita!.fecha).toLocaleDateString('es-AR', {
                       weekday: 'long', day: 'numeric', month: 'short'

@@ -128,7 +128,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
 
             <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium">
               <Calendar className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
-              <span className="text-on-surface-variant/50 text-xs uppercase tracking-wider font-bold">Inicio:</span>
+              <span className="text-on-surface-variant/50 text-xs font-bold">Inicio:</span>
               <input 
                 type="date"
                 value={fechaInicio}
@@ -139,7 +139,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
 
             <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium">
               <Calendar className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
-              <span className="text-on-surface-variant/50 text-xs uppercase tracking-wider font-bold">Fin:</span>
+              <span className="text-on-surface-variant/50 text-xs font-bold">Fin:</span>
               <input 
                 type="date"
                 value={fechaFin}
@@ -174,7 +174,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
               </div>
               <div className="pt-2">
                 <span className={cn(
-                  "text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest select-none inline-block",
+                  "text-[11px] font-bold px-3 py-1 rounded-full select-none inline-block",
                   job.estado === "borrador" && "bg-blue-500/10 text-blue-600 dark:text-blue-400",
                   job.estado === "presupuestado" && "bg-amber-500/10 text-amber-600 dark:text-amber-400",
                   job.estado === "pagado" && "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
@@ -189,7 +189,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
               {job.estado !== "pagado" && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-primary hover:bg-primary/10 transition-colors transition-transform hidden md:flex active:scale-95 shrink-0 cursor-pointer"
+                  className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-primary hover:bg-primary/10 transition-all hidden md:flex active:scale-95 shrink-0 cursor-pointer"
                   title="Editar información del trabajo"
                 >
                   <Pencil className="w-4 h-4" />
@@ -197,7 +197,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
               )}
               <button
                 onClick={() => document.dispatchEvent(new CustomEvent('delete-job', { detail: job.id }))}
-                className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-red-500 hover:bg-red-500/10 transition-colors transition-transform hidden md:flex active:scale-95 shrink-0 cursor-pointer"
+                className="p-2 rounded-xl bg-on-surface/5 text-on-surface-variant/70 hover:text-red-500 hover:bg-red-500/10 transition-all hidden md:flex active:scale-95 shrink-0 cursor-pointer"
                 title="Eliminar trabajo"
               >
                 <Trash2 className="w-4 h-4" />
@@ -224,7 +224,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
             {job.fecha_inicio && (
               <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium cursor-default select-none">
                 <Calendar className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
-                <span className="text-on-surface-variant/50 text-xs uppercase tracking-wider font-bold cursor-default select-none">Inicio:</span>
+                <span className="text-on-surface-variant/50 text-xs font-bold cursor-default select-none">Inicio:</span>
                 <span className="text-on-surface cursor-default select-none">
                   {new Date(job.fecha_inicio).toLocaleDateString("es-AR", { timeZone: "UTC" })}
                 </span>
@@ -234,7 +234,7 @@ export function JobHeader({ job, client, isEditing: externalEditing, onEditingCh
             {job.fecha_fin_estimada && (
               <div className="flex items-center gap-2 text-sm text-on-surface-variant/70 font-medium cursor-default select-none">
                 <Calendar className="w-4 h-4 text-on-surface-variant/40 shrink-0" />
-                <span className="text-on-surface-variant/50 text-xs uppercase tracking-wider font-bold cursor-default select-none">Fin:</span>
+                <span className="text-on-surface-variant/50 text-xs font-bold cursor-default select-none">Fin:</span>
                 <span className="text-on-surface cursor-default select-none">
                   {new Date(job.fecha_fin_estimada).toLocaleDateString("es-AR", { timeZone: "UTC" })}
                 </span>

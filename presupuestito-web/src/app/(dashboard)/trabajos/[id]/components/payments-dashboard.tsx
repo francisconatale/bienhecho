@@ -43,7 +43,7 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
       {/* Saldo Pendiente Card */}
       <div className="relative overflow-hidden bg-primary/10 dark:bg-primary/5 bg-surface/80 rounded-xl p-6 border border-primary/20 shadow-[0_8px_32px_rgba(61,139,110,0.1)] transition-colors transition-shadow duration-300">
         <div className="relative flex flex-col gap-1 z-10">
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/70">
+          <span className="text-[11px] font-bold text-primary/70">
             Saldo Pendiente
           </span>
           <span className={cn(
@@ -52,7 +52,7 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
           )}>
             ${Math.max(0, saldoPendiente).toLocaleString("es-AR")}
             {saldoPendiente < 0 && (
-              <span className="text-sm font-bold text-primary ml-2 uppercase tracking-wider bg-primary/10 px-3 py-1 rounded-full">A favor</span>
+              <span className="text-sm font-bold text-primary ml-2 bg-primary/10 px-3 py-1 rounded-full">A favor</span>
             )}
           </span>
         </div>
@@ -61,13 +61,13 @@ export function PaymentsDashboard({ jobId }: PaymentsDashboardProps) {
       {/* Cuenta Corriente */}
       <div className="space-y-4">
         <div className="flex items-end justify-between px-2">
-          <h2 className="text-[11px] font-black uppercase tracking-[0.4em] text-on-surface-variant/50">
+          <h2 className="text-xs font-bold text-on-surface-variant/50">
             Cuenta Corriente
           </h2>
           <button
             onClick={() => setIsAddingCobro(true)}
             aria-label="Registrar nuevo cobro"
-            className="group flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] border border-primary/30 hover:border-primary bg-primary/10 transition-colors transition-transform duration-300 text-[10px] font-bold text-primary uppercase tracking-wider active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
+            className="group flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] border border-primary/30 hover:border-primary bg-primary/10 transition-all duration-300 text-[11px] font-bold text-primary active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
           >
             <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90 duration-300" strokeWidth={2.5} />
             Registrar Cobro

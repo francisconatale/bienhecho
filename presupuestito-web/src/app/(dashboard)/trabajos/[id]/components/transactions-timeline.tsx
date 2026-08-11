@@ -43,7 +43,7 @@ export function TransactionsTimeline({ transactions, cobros, onEditCobro, onDele
             <div className="w-[calc(100%-3rem)] md:w-[calc(50%-2.5rem)] bg-surface/80 rounded-xl p-3 border border-outline-variant/10 shadow-sm flex items-center justify-between">
               <div className="flex flex-col gap-1 min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-on-surface-variant/60">
+                  <span className="text-[11px] font-bold text-on-surface-variant/60">
                     {format(new Date(t.fecha), "d MMM yyyy", { locale: es })}
                   </span>
                   <span className={cn(
@@ -58,7 +58,7 @@ export function TransactionsTimeline({ transactions, cobros, onEditCobro, onDele
                     {t.concepto}
                   </p>
                   {associatedCobro && associatedCobro.forma_pago && (
-                    <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-on-surface/5 text-on-surface-variant/60 shrink-0">
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-on-surface/5 text-on-surface-variant/60 shrink-0">
                       {associatedCobro.forma_pago}
                     </span>
                   )}

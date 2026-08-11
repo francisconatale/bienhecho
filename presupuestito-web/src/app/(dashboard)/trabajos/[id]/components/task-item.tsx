@@ -86,7 +86,7 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
             aria-checked={task.completada}
             aria-label={`Marcar tarea "${task.descripcion}" como ${task.completada ? "pendiente" : "completada"}`}
             className={cn(
-              "relative z-10 w-5 h-5 rounded-[6px] border-[2px] flex items-center justify-center shrink-0 transition-colors transition-transform duration-300 active:scale-75",
+              "relative z-10 w-5 h-5 rounded-[6px] border-[2px] flex items-center justify-center shrink-0 transition-all duration-300 active:scale-75",
               task.completada
                 ? "bg-primary border-primary shadow-[0_0_8px_rgba(61,139,110,0.4)]"
                 : "border-outline-variant/40 group-hover:border-primary/50 bg-transparent",
@@ -117,7 +117,7 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
                 {task.descripcion}
               </p>
               {task.prioridad && (
-                <span className={cn("text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0 w-max md:mt-0.5", PRIORITY_BADGE[task.prioridad])}>
+                <span className={cn("text-[11px] font-bold px-1.5 py-0.5 rounded shrink-0 w-max md:mt-0.5", PRIORITY_BADGE[task.prioridad])}>
                   {task.prioridad}
                 </span>
               )}
@@ -153,14 +153,14 @@ export function TaskItem({ task, jobId, isJobPaid, onSelect }: TaskItemProps) {
             <button
               onClick={() => setIsEditing(true)}
               aria-label={`Editar tarea: ${task.descripcion}`}
-              className="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors transition-transform duration-300 hover:shadow-sm active:scale-90"
+              className="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 hover:shadow-sm active:scale-90"
             >
               <Pencil className="w-4 h-4" />
             </button>
             <button
               onClick={handleDelete}
               aria-label={`Eliminar tarea: ${task.descripcion}`}
-              className="p-1.5 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-colors transition-transform duration-300 hover:shadow-sm active:scale-90"
+              className="p-1.5 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 hover:shadow-sm active:scale-90"
             >
               <Trash2 className="w-4 h-4" />
             </button>

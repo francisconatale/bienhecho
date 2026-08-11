@@ -83,7 +83,7 @@ export function JobStatusSelector({ job }: JobStatusProps) {
         aria-expanded={isOpen}
         aria-haspopup="true"
         className={cn(
-          "text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest transition-transform active:scale-95",
+          "text-[11px] font-bold px-4 py-2 rounded-full transition-transform active:scale-95",
           STATUS_COLORS[job.estado]
         )}
       >

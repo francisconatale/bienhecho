@@ -47,7 +47,7 @@ export function CobroForm({ initialData, onSave, onCancel, hideFooter = false }:
   return (
     <div className="bg-surface/50 rounded-2xl p-4 border border-outline-variant/10 shadow-sm space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/70">
+        <span className="text-[11px] font-bold text-on-surface-variant/70">
           {initialData ? "Editar Cobro" : "Nuevo Cobro"}
         </span>
         <button
@@ -111,7 +111,7 @@ export function CobroForm({ initialData, onSave, onCancel, hideFooter = false }:
         <div className="flex gap-2 pt-1">
           <button
             onClick={onCancel}
-            className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
+            className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-bold text-xs hover:bg-on-surface/10 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
           >
             Cancelar
           </button>
@@ -119,7 +119,7 @@ export function CobroForm({ initialData, onSave, onCancel, hideFooter = false }:
             onClick={handleSave}
             disabled={!canSave}
             className={cn(
-              "flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2",
+              "flex-1 py-2.5 rounded-xl font-bold text-xs transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2",
               canSave
                 ? "bg-on-surface text-surface shadow-lg shadow-black/10 hover:bg-on-surface-variant"
                 : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"

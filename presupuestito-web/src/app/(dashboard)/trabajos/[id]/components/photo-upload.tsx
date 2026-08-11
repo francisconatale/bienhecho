@@ -65,7 +65,7 @@ export function PhotoUpload({ tareaId, onSave, onCancel, isSaving = false }: Pho
   return (
     <div className="bg-surface rounded-2xl p-4 border border-primary/20 shadow-sm space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+        <span className="text-[11px] font-bold text-primary">
           Agregar foto
         </span>
         <button
@@ -120,7 +120,7 @@ export function PhotoUpload({ tareaId, onSave, onCancel, isSaving = false }: Pho
         <button
           onClick={onCancel}
           disabled={isSaving}
-          className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-bold text-xs hover:bg-on-surface/10 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Cancelar
         </button>
@@ -128,7 +128,7 @@ export function PhotoUpload({ tareaId, onSave, onCancel, isSaving = false }: Pho
           onClick={handleSave}
           disabled={!file || isSaving}
           className={cn(
-            "flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors transition-transform active:scale-95 flex items-center justify-center gap-2",
+            "flex-1 py-2.5 rounded-xl font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-2",
             file
               ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark"
               : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed",

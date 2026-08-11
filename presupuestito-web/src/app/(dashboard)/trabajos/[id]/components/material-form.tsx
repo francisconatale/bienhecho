@@ -45,7 +45,7 @@ export function MaterialForm({ initialData, onSave, onCancel, hideFooter = false
   return (
     <div className="space-y-4">
       <div className="space-y-1.5">
-        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Nombre del Material</label>
+        <label className="text-[11px] font-bold text-on-surface-variant/50">Nombre del Material</label>
         <input
           type="text"
           value={nombre}
@@ -60,7 +60,7 @@ export function MaterialForm({ initialData, onSave, onCancel, hideFooter = false
 
       <div className="flex gap-4">
         <div className="space-y-1.5 w-1/3">
-          <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Cantidad</label>
+          <label className="text-[11px] font-bold text-on-surface-variant/50">Cantidad</label>
           <input
             type="number"
             inputMode="decimal"
@@ -75,7 +75,7 @@ export function MaterialForm({ initialData, onSave, onCancel, hideFooter = false
           />
         </div>
         <div className="space-y-1.5 flex-1">
-          <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Precio Unitario</label>
+          <label className="text-[11px] font-bold text-on-surface-variant/50">Precio Unitario</label>
           <input
             type="number"
             inputMode="decimal"
@@ -94,7 +94,7 @@ export function MaterialForm({ initialData, onSave, onCancel, hideFooter = false
         <div className="sticky bottom-0 bg-surface/95 dark:bg-surface/90 backdrop-blur-xl border-t border-outline-variant/10 -mx-5 px-5 sm:-mx-6 sm:px-6 py-4 flex gap-2 z-10 -mb-8 sm:-mb-6">
           <button
             onClick={onCancel}
-            className="flex-1 py-3 rounded-full bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 disabled:opacity-50"
+            className="flex-1 py-3 rounded-full bg-on-surface/5 text-on-surface font-bold text-xs hover:bg-on-surface/10 transition-all active:scale-95 disabled:opacity-50"
           >
             Cancelar
           </button>
@@ -102,7 +102,7 @@ export function MaterialForm({ initialData, onSave, onCancel, hideFooter = false
             onClick={handleSave}
             disabled={!canSave}
             className={cn(
-              "flex-1 py-3 rounded-full font-black text-[10px] uppercase tracking-widest transition-colors transition-transform active:scale-95",
+              "flex-1 py-3 rounded-full font-bold text-xs transition-all active:scale-95",
               canSave
                 ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark"
                 : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"

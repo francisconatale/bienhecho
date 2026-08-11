@@ -87,7 +87,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false, hide
   return (
     <div className="space-y-4">
       <div className="space-y-1.5">
-        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Qué hay que hacer</label>
+        <label className="text-[11px] font-bold text-on-surface-variant/50">Qué hay que hacer</label>
         <input
           type="text"
           value={descripcion}
@@ -102,7 +102,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false, hide
 
       <div className="flex gap-4">
         <div className="space-y-1.5 w-1/3">
-          <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Cantidad</label>
+          <label className="text-[11px] font-bold text-on-surface-variant/50">Cantidad</label>
           <input
             type="number"
             inputMode="decimal"
@@ -117,7 +117,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false, hide
           />
         </div>
         <div className="space-y-1.5 flex-1">
-          <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Precio Unitario</label>
+          <label className="text-[11px] font-bold text-on-surface-variant/50">Precio Unitario</label>
           <input
             type="number"
             inputMode="decimal"
@@ -140,7 +140,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false, hide
       )}
 
       <div className="space-y-1.5">
-        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Qué tan urgente</label>
+        <label className="text-[11px] font-bold text-on-surface-variant/50">Qué tan urgente</label>
         <div className="flex gap-2">
           {PRIORIDADES.map((p) => (
             <button
@@ -162,7 +162,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false, hide
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Para cuándo</label>
+        <label className="text-[11px] font-bold text-on-surface-variant/50">Para cuándo</label>
         <div className="relative">
           <CalendarDays className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 pointer-events-none" />
           <input
@@ -181,7 +181,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false, hide
             type="button"
             onClick={onCancel}
             disabled={isSaving}
-            className="flex-1 py-3 rounded-full bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 py-3 rounded-full bg-on-surface/5 text-on-surface font-bold text-xs hover:bg-on-surface/10 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancelar
           </button>
@@ -190,7 +190,7 @@ export function TaskForm({ initialData, onSave, onCancel, isSaving = false, hide
             onClick={handleSave}
             disabled={!canSave || isSaving}
             className={cn(
-              "flex-1 py-3 rounded-full font-black text-[10px] uppercase tracking-widest transition-colors transition-transform active:scale-95 flex items-center justify-center gap-2",
+              "flex-1 py-3 rounded-full font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-2",
               canSave
                 ? "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark"
                 : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed",

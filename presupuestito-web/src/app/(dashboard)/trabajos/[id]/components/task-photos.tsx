@@ -108,13 +108,13 @@ export function TaskPhotos({ tareaId }: TaskPhotosProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40">
+        <span className="text-[11px] font-bold text-on-surface-variant/40">
           Fotos {photos.length > 0 && `(${photos.length})`}
         </span>
         {photos.length < MAX_PHOTOS && (
           <button
             onClick={() => setShowUploadForm(true)}
-            className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-primary/20 transition-colors transition-transform active:scale-95"
+            className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-lg text-[11px] font-bold hover:bg-primary/20 transition-all active:scale-95"
           >
             <Plus className="w-3 h-3" strokeWidth={3} />
             Agregar
