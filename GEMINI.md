@@ -246,3 +246,8 @@ import { ListItem } from "@/components/ui/list-item";
 Usar `gcommit` para mensajes en formato **Conventional Commits**.
 - `gcommit` → uno por archivo.
 - `gcommit -iq` → agrupar archivos relacionados.
+
+---
+
+## Interacciones de Botones (Loading States)
+**Regla**: Toda acción de un botón que requiera procesamiento (ej. guardar, enviar), excepto abrir modales, **DEBE** mostrar un estado de carga (un spinner girando o texto "Procesando...") dentro del mismo botón. Este estado finaliza cuando ocurre el `onSuccess` o al terminar la promesa. No bloquear la UI general si no es estrictamente necesario, el feedback se concentra en el botón.
