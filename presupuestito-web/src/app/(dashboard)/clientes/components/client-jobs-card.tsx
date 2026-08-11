@@ -42,7 +42,7 @@ export function ClientJobsCard({ clientId }: { clientId: string }) {
   return (
     <div className="relative bg-surface/40 dark:bg-surface/10 backdrop-blur-2xl rounded-xl p-8 md:p-10 border border-white/30 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-shadow duration-300 hover:shadow-[0_16px_48px_rgba(0,0,0,0.12)]">
       <div className="flex items-center justify-between mb-8">
-        <h3 className="text-xs font-semibold uppercase tracking-widest text-on-surface-variant/60">Trabajos del Cliente</h3>
+        <h3 className="text-xs font-semibold text-on-surface-variant/60">Trabajos del Cliente</h3>
         <Link
           href={`/trabajos/nuevo?clienteId=${clientId}`}
           className="text-xs font-semibold text-primary hover:text-primary-dark transition-colors"
@@ -65,11 +65,11 @@ export function ClientJobsCard({ clientId }: { clientId: string }) {
                 <div className={cn("w-2 h-2 rounded-full shrink-0", getStatusColor(job.estado))} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-on-surface group-hover:text-primary transition-colors truncate">{job.titulo}</p>
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-on-surface-variant/50 mt-1">{job.estado.replace(/_/g, " ")}</p>
+                  <p className="text-[11px] font-medium text-on-surface-variant/50 mt-1">{job.estado.replace(/_/g, " ")}</p>
                 </div>
               </div>
               <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-4">
-                <div className="w-9 h-9 rounded-full bg-on-surface/5 flex items-center justify-center shrink-0 text-on-surface-variant group-hover:text-primary group-hover:bg-primary/10 transition-colors transition-transform group-active:scale-95">
+                <div className="w-9 h-9 rounded-full bg-on-surface/5 flex items-center justify-center shrink-0 text-on-surface-variant group-hover:text-primary group-hover:bg-primary/10 transition-all group-active:scale-95">
                   {loadingJobId === job.id ? (
                     <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                   ) : (

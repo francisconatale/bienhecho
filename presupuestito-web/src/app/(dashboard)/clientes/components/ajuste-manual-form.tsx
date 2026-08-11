@@ -69,7 +69,7 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
     return (
       <div className="bg-surface/50 rounded-2xl p-4 border border-outline-variant/10 shadow-sm space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/70">
+          <span className="text-[11px] font-bold text-on-surface-variant/70">
             Confirmar Ajuste Manual
           </span>
           <button
@@ -92,14 +92,14 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
           <button
             onClick={() => setShowConfirm(false)}
             disabled={isSubmitting}
-            className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 cursor-pointer disabled:opacity-50"
+            className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-bold text-xs hover:bg-on-surface/10 transition-all active:scale-95 cursor-pointer disabled:opacity-50"
           >
             Cancelar
           </button>
           <button
             onClick={handleConfirm}
             disabled={isSubmitting}
-            className="flex-1 py-2.5 rounded-xl bg-amber-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-amber-700 transition-colors transition-transform active:scale-95 shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
+            className="flex-1 py-2.5 rounded-xl bg-amber-600 text-white font-bold text-xs hover:bg-amber-700 transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
           >
             {isSubmitting && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
             Confirmar
@@ -112,7 +112,7 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
   return (
     <div className="bg-surface/50 rounded-2xl p-4 border border-outline-variant/10 shadow-sm space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/70">
+        <span className="text-[11px] font-bold text-on-surface-variant/70">
           Nuevo Ajuste Manual
         </span>
         <button
@@ -162,7 +162,7 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
       <div className="flex gap-2 pt-1">
         <button
           onClick={onClose}
-          className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-black text-[10px] uppercase tracking-widest hover:bg-on-surface/10 transition-colors transition-transform active:scale-95 cursor-pointer"
+          className="flex-1 py-2.5 rounded-xl bg-on-surface/5 text-on-surface font-bold text-xs hover:bg-on-surface/10 transition-all active:scale-95 cursor-pointer"
         >
           Cancelar
         </button>
@@ -170,7 +170,7 @@ export function AjusteManualForm({ clienteId, onClose }: AjusteManualFormProps) 
           onClick={handleSubmit}
           disabled={!canSave}
           className={cn(
-            "flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors transition-transform active:scale-95",
+            "flex-1 py-2.5 rounded-xl font-bold text-xs transition-all active:scale-95",
             canSave
               ? "bg-on-surface text-surface shadow-lg shadow-black/10 hover:bg-on-surface-variant cursor-pointer"
               : "bg-on-surface/10 text-on-surface-variant/30 cursor-not-allowed"

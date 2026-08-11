@@ -20,7 +20,7 @@ export function MetricasCuenta({ clienteId }: { clienteId: string }) {
         <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-xl p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col gap-1 relative overflow-hidden group">
           <div className="relative z-10 flex flex-col h-full">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60">Balance</span>
+              <span className="text-xs font-bold text-on-surface-variant/60">Balance</span>
               <button
                 type="button"
                 onClick={() => setShowAjuste(true)}
@@ -48,7 +48,7 @@ export function MetricasCuenta({ clienteId }: { clienteId: string }) {
         </div>
 
         <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-xl p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col gap-1">
-          <span className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60">Total Facturado</span>
+          <span className="text-xs font-bold text-on-surface-variant/60">Total Facturado</span>
           <span className="text-[32px] font-bold tracking-tight mt-1 text-on-surface leading-none">
             {formatCurrency(totalCargos)}
           </span>
@@ -58,7 +58,7 @@ export function MetricasCuenta({ clienteId }: { clienteId: string }) {
         </div>
 
         <div className="bg-white/90 dark:bg-[#121212]/80 backdrop-blur-2xl rounded-xl p-6 border border-outline-variant/20 dark:border-white/5 shadow-sm flex flex-col gap-1">
-          <span className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/60">Total Cobrado</span>
+          <span className="text-xs font-bold text-on-surface-variant/60">Total Cobrado</span>
           <span className="text-[32px] font-bold tracking-tight mt-1 text-success leading-none">
             {formatCurrency(totalAbonos)}
           </span>

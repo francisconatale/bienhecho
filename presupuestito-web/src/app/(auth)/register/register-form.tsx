@@ -111,7 +111,7 @@ export function RegisterForm() {
             )}
             
             <div className="space-y-1.5 lg:space-y-2">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tu nombre o empresa</label>
+              <label className="text-xs font-bold text-on-surface-variant">Tu nombre o empresa</label>
               <input
                 type="text"
                 autoComplete="name"
@@ -124,7 +124,7 @@ export function RegisterForm() {
             </div>
 
             <div className="space-y-1.5 lg:space-y-2">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Rubro</label>
+              <label className="text-xs font-bold text-on-surface-variant">Rubro</label>
               <div className="relative">
                 <select
                   required
@@ -146,7 +146,7 @@ export function RegisterForm() {
             </div>
             
             <div className="space-y-1.5 lg:space-y-2">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Email</label>
+              <label className="text-xs font-bold text-on-surface-variant">Email</label>
               <input 
                 type="email" 
                 autoComplete="email"
@@ -159,7 +159,7 @@ export function RegisterForm() {
             </div>
             
             <div className="space-y-1.5 lg:space-y-2">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Contraseña</label>
+              <label className="text-xs font-bold text-on-surface-variant">Contraseña</label>
               <input 
                 type="password" 
                 autoComplete="new-password"

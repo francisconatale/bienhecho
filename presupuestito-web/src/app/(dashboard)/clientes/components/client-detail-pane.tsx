@@ -146,20 +146,20 @@ export function ClientDetailPane({
               {isEditing ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                   <div className="md:col-span-2 space-y-1 min-w-0">
-                    <label htmlFor="client-nombre" className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Nombre</label>
+                    <label htmlFor="client-nombre" className="text-[11px] font-bold text-on-surface-variant/60">Nombre</label>
                     <input id="client-nombre" type="text" {...register("nombre")} aria-invalid={!!errors.nombre} aria-describedby={errors.nombre ? "client-nombre-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-lg font-bold focus:border-primary focus:outline-none transition-colors min-w-0" autoFocus />
                     {errors.nombre && <p id="client-nombre-error" role="alert" className="text-xs font-bold text-error mt-1">{errors.nombre.message}</p>}
                   </div>
                   <div className="space-y-1 min-w-0">
-                    <label htmlFor="client-email" className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Email</label>
+                    <label htmlFor="client-email" className="text-[11px] font-bold text-on-surface-variant/60">Email</label>
                     <input id="client-email" type="email" {...register("email")} aria-invalid={!!errors.email} aria-describedby={errors.email ? "client-email-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors min-w-0" />
                   </div>
                   <div className="space-y-1 min-w-0">
-                    <label htmlFor="client-telefono" className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Teléfono</label>
+                    <label htmlFor="client-telefono" className="text-[11px] font-bold text-on-surface-variant/60">Teléfono</label>
                     <input id="client-telefono" type="tel" {...register("telefono")} aria-invalid={!!errors.telefono} aria-describedby={errors.telefono ? "client-telefono-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors min-w-0" />
                   </div>
                   <div className="md:col-span-2 space-y-1 min-w-0">
-                    <label htmlFor="client-direccion" className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">Dirección</label>
+                    <label htmlFor="client-direccion" className="text-[11px] font-bold text-on-surface-variant/60">Dirección</label>
                     <input id="client-direccion" type="text" {...register("direccion")} aria-invalid={!!errors.direccion} aria-describedby={errors.direccion ? "client-direccion-error" : undefined} className="w-full bg-transparent border-b border-outline-variant/30 py-1 text-sm focus:border-primary focus:outline-none transition-colors min-w-0" />
                   </div>
                 </div>
@@ -200,7 +200,7 @@ export function ClientDetailPane({
                 <button type="button" onClick={() => setIsEditing(false)} className="px-4 py-2 rounded-xl bg-on-surface/5 hover:bg-on-surface/10 text-sm font-bold transition-colors shrink-0">
                   Cancelar
                 </button>
-                <button type="submit" disabled={isLoading} data-client-save className="px-5 py-2 rounded-xl bg-primary text-white hover:bg-primary-dark text-sm font-bold shadow-sm transition-colors transition-transform active:scale-95 shrink-0">
+                <button type="submit" disabled={isLoading} data-client-save className="px-5 py-2 rounded-xl bg-primary text-white hover:bg-primary-dark text-sm font-bold shadow-sm transition-all active:scale-95 shrink-0">
                   {isLoading ? "..." : "Guardar"}
                 </button>
               </>
@@ -231,7 +231,7 @@ export function ClientDetailPane({
         >
           <div className="flex items-center justify-between gap-4">
             <div className="flex flex-col gap-0.5 min-w-0 flex-1">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/50 truncate">Cuenta Corriente</span>
+              <span className="text-[11px] font-bold text-on-surface-variant/50 truncate">Cuenta Corriente</span>
               <span className={cn(
                 "text-[22px] md:text-2xl font-bold tabular-nums truncate",
                 deudaTotal > 0
@@ -301,7 +301,7 @@ export function ClientDetailPane({
                     <div className="flex flex-col gap-1.5">
                       <div className="flex items-center gap-2">
                         <div className={cn("w-2 h-2 rounded-full shrink-0", getStatusDotColor(job.estado))} />
-                        <span className={cn("text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded", getStatusColor(job.estado))}>
+                        <span className={cn("text-[11px] font-bold px-1.5 py-0.5 rounded", getStatusColor(job.estado))}>
                           {job.estado.replace(/_/g, " ")}
                         </span>
                       </div>

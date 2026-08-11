@@ -21,7 +21,7 @@ export function ClientAlerts() {
   if (alerts.length === 0) {
     return (
       <section className="w-full flex flex-col">
-        <h2 className="text-[10px] md:text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-3 px-1">
+        <h2 className="text-[11px] md:text-sm font-bold text-on-surface-variant mb-3 px-1">
           Alertas
         </h2>
         <div className="flex-1 flex flex-col items-center justify-center min-h-[100px] bg-surface/40 backdrop-blur-xl rounded-xl border border-outline-variant/10 text-center p-6">
@@ -33,7 +33,7 @@ export function ClientAlerts() {
 
   return (
     <section className="w-full flex flex-col">
-      <h2 className="text-[10px] md:text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-3 px-1">
+      <h2 className="text-[11px] md:text-sm font-bold text-on-surface-variant mb-3 px-1">
         Alertas
       </h2>
       <div className="space-y-3">

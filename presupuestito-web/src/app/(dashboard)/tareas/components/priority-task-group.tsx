@@ -49,7 +49,7 @@ export function PriorityTaskGroup({ title, tasks, onToggle, onTogglePriority, on
   return (
     <div className="flex flex-col overflow-hidden bg-surface rounded-2xl border border-outline-variant/10 shadow-sm mb-6 last:mb-0">
       <div className="flex items-center justify-between gap-4 px-4 py-3 shrink-0 border-b border-outline-variant/10">
-        <h3 className="text-[13px] font-bold text-on-surface-variant uppercase tracking-widest">
+        <h3 className="text-[13px] font-bold text-on-surface-variant">
           {title}
         </h3>
         <span className="bg-surface-variant/30 text-[10px] px-2 py-0.5 rounded-full font-bold text-on-surface-variant/70">

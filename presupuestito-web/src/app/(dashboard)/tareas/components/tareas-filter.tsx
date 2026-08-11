@@ -22,7 +22,7 @@ export function TareasFilter({
           onClick={() => setFilter("pendientes")}
           aria-pressed={filter === "pendientes"}
           className={cn(
-            "flex items-center gap-2 px-5 py-2.5 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-[background-color,box-shadow,color,border-color] duration-[180ms] ease-[cubic-bezier(0.2,0.8,0.2,1)]",
+            "flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs transition-[background-color,box-shadow,color,border-color] duration-[180ms] ease-[cubic-bezier(0.2,0.8,0.2,1)]",
             filter === "pendientes"
               ? "bg-primary text-white shadow-lg shadow-primary/20"
               : "bg-surface border border-outline-variant/30 text-on-surface-variant hover:border-primary/30"
@@ -37,7 +37,7 @@ export function TareasFilter({
           onClick={() => setFilter("completadas")}
           aria-pressed={filter === "completadas"}
           className={cn(
-            "flex items-center gap-2 px-5 py-2.5 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-[background-color,box-shadow,color,border-color] duration-[180ms] ease-[cubic-bezier(0.2,0.8,0.2,1)]",
+            "flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs transition-[background-color,box-shadow,color,border-color] duration-[180ms] ease-[cubic-bezier(0.2,0.8,0.2,1)]",
             filter === "completadas"
               ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
               : "bg-surface border border-outline-variant/30 text-on-surface-variant hover:border-primary/30"

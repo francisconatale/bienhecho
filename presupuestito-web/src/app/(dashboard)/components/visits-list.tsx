@@ -11,7 +11,7 @@ export function VisitsList({ visits }: VisitsListProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-2 px-1">
-        <h2 className="text-[13px] font-bold text-on-surface-variant uppercase tracking-widest">Próximas Visitas</h2>
+        <h2 className="text-[13px] font-bold text-on-surface-variant">Próximas Visitas</h2>
         {visits.length > 0 && (
           <Link href="/agenda" className="text-[11px] font-bold text-primary hover:opacity-70 transition-opacity flex items-center gap-0.5">
             Ver agenda <ChevronRight size={12} aria-hidden="true" />
@@ -20,8 +20,8 @@ export function VisitsList({ visits }: VisitsListProps) {
       </div>
       <div className="flex flex-col bg-surface rounded-lg overflow-hidden border border-outline-variant/10 shadow-sm">
         <div className="hidden md:flex items-center px-4 py-2 border-b border-outline-variant/20 bg-surface-variant/20">
-          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest flex-1">Fecha / Trabajo</div>
-          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-32 text-right">Cliente</div>
+          <div className="text-xs font-bold text-on-surface-variant flex-1">Fecha / Trabajo</div>
+          <div className="text-xs font-bold text-on-surface-variant w-32 text-right">Cliente</div>
         </div>
         
         <div className="flex flex-col divide-y divide-outline-variant/10">

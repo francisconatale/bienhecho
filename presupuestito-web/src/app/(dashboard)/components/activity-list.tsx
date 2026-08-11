@@ -53,7 +53,7 @@ export function ActivityList({ pagination }: ActivityListProps) {
       headerClassName: "text-right",
       render: (job) => (
         <div className="flex flex-col items-end gap-0.5">
-          <span className="md:hidden text-[9px] font-bold text-on-surface-variant/40 uppercase tracking-widest">Importe</span>
+          <span className="md:hidden text-[11px] font-bold text-on-surface-variant/50">Importe</span>
           <div className="flex items-center gap-2">
             <span className="text-[15px] font-bold text-on-surface tabular-nums">
               ${(job.presupuesto || 0).toLocaleString()}

@@ -48,7 +48,7 @@ export function RecoverPasswordForm() {
         <form onSubmit={handleRecover} className="space-y-6">
           <div className="bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-[24px] border border-outline-variant/20 shadow-sm p-8 space-y-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary ml-1">
+              <label className="text-[11px] font-bold text-primary ml-1">
                 Email
               </label>
               <div className="relative">

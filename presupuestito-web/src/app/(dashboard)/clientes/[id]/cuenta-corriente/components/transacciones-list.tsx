@@ -8,13 +8,13 @@ export function TransaccionesList({ clienteId }: { clienteId: string }) {
 
   return (
     <div className="flex flex-col mt-4">
-      <h3 className="text-[13px] font-bold text-on-surface-variant uppercase tracking-widest mb-3 px-1">Historial Detallado</h3>
+      <h3 className="text-[13px] font-bold text-on-surface-variant mb-3 px-1">Historial Detallado</h3>
 
       <div className="flex flex-col bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm">
         <div className="hidden md:flex items-center px-4 py-2 border-b border-outline-variant/20 bg-surface-variant/20">
-          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest flex-1">Concepto</div>
-          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-32">Fecha</div>
-          <div className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest w-32 text-right">Monto</div>
+          <div className="text-xs font-bold text-on-surface-variant flex-1">Concepto</div>
+          <div className="text-xs font-bold text-on-surface-variant w-32">Fecha</div>
+          <div className="text-xs font-bold text-on-surface-variant w-32 text-right">Monto</div>
         </div>
         
         <div className="flex flex-col divide-y divide-outline-variant/10">

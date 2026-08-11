@@ -11,7 +11,7 @@ export function AlertsList({ alerts }: AlertsListProps) {
   
   return (
     <div className="space-y-2">
-      <h2 className="text-[12px] font-bold text-on-surface-variant uppercase tracking-widest px-1">Avisos</h2>
+      <h2 className="text-xs font-bold text-on-surface-variant px-1">Avisos</h2>
       {alerts.map((a) => (
         <div key={a.id} className="flex gap-3 bg-accent-dark/8 dark:bg-accent-dark/10 border border-accent-dark/20 p-3 rounded-xl">
           <AlertCircle className="w-4 h-4 text-accent-dark shrink-0 mt-0.5" aria-hidden="true" />
