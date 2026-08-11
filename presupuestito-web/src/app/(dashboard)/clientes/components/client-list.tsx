@@ -113,7 +113,7 @@ export function ClientList({ initialData }: { initialData?: { data: Client[], to
         renderRailItem={(client, isActive) => (
           <button
             onClick={() => { handleSelectedIdChange(client.id); setShowCreationForm(false); }}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 transition-all duration-200 cursor-pointer active:scale-90 ${
+            className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 transition-all duration-200 ease-spring cursor-pointer active:scale-[0.96] ${
               isActive
                 ? "bg-primary text-white shadow-md shadow-primary/30"
                 : "bg-primary/10 text-primary/70 hover:bg-primary/20"

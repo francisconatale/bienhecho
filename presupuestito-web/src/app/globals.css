@@ -100,6 +100,9 @@
   --spacing-gutter: 12px;
   --spacing-stack-gap: 8px;
   --spacing-section-margin: 20px;
+
+  /* Animation */
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* Sobrescritura de semánticos para el modo oscuro */
@@ -167,6 +170,15 @@ html.dark, :root.dark {
   }
   textarea.input-field { @apply text-sm; }
   
+  @utility hit-padding {
+    position: relative;
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+    }
+  }
+
   @keyframes page-transition {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }

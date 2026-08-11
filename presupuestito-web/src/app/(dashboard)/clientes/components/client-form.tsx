@@ -30,6 +30,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
               id="nombre"
               type="text"
               {...register("nombre")}
+              onFocus={(e) => { setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300); }}
               placeholder="Ej. Acme Corp o María Gómez"
               className={`w-full bg-surface border ${
                 errors.nombre ? "border-red-500" : "border-outline-variant/20"
@@ -51,6 +52,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
               id="email"
               type="email"
               {...register("email")}
+              onFocus={(e) => { setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300); }}
               placeholder="cliente@ejemplo.com"
               className={`w-full bg-surface border ${
                 errors.email ? "border-red-500" : "border-outline-variant/20"
@@ -72,6 +74,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
               id="telefono"
               type="tel"
               {...register("telefono")}
+              onFocus={(e) => { setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300); }}
               placeholder="+54 11 ..."
               className="w-full bg-surface border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
@@ -88,6 +91,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
               id="direccion"
               type="text"
               {...register("direccion")}
+              onFocus={(e) => { setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300); }}
               placeholder="Av. Corrientes 1234"
               className="w-full bg-surface border border-outline-variant/20 rounded-xl px-4 py-3.5 text-[15px] text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
@@ -99,7 +103,7 @@ export function ClientForm({ initialClient, onSuccess }: ClientFormProps) {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-14 rounded-2xl flex items-center justify-center font-bold text-white text-[15px] bg-primary hover:bg-primary-dark active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none shadow-lg shadow-primary/20"
+          className="w-full h-14 rounded-2xl flex items-center justify-center font-bold text-white text-[15px] bg-primary hover:bg-primary-dark active:scale-[0.96] transition-all duration-200 ease-spring disabled:opacity-50 disabled:pointer-events-none shadow-lg shadow-primary/20"
         >
           {isLoading ? "Guardando..." : initialClient ? "Guardar Cambios" : "Crear Cliente"}
         </button>
