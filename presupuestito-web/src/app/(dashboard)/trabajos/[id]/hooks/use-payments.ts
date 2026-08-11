@@ -37,7 +37,7 @@ export function usePayments(trabajoId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cobros", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["job", trabajoId] }); // invalidate job to reflect state change if any
-      queryClient.invalidateQueries({ queryKey: ["transacciones"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 
@@ -47,7 +47,7 @@ export function usePayments(trabajoId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cobros", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["job", trabajoId] });
-      queryClient.invalidateQueries({ queryKey: ["transacciones"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 
@@ -56,7 +56,7 @@ export function usePayments(trabajoId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cobros", trabajoId] });
       queryClient.invalidateQueries({ queryKey: ["job", trabajoId] });
-      queryClient.invalidateQueries({ queryKey: ["transacciones"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 

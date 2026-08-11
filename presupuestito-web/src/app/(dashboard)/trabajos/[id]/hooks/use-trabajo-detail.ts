@@ -37,6 +37,7 @@ export function useTrabajoDetail(id: string) {
       queryClient.invalidateQueries({ queryKey: ['cobros', id] });
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
       queryClient.invalidateQueries({ queryKey: ['job', id] });
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
     },
   });
 
