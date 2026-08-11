@@ -14,24 +14,24 @@ export function StatsCards({ dayVisits }: StatsCardsProps) {
 
   return (
     <div className="grid grid-cols-3 gap-3 mb-6">
-      <div className="bg-amber-500/8 dark:bg-amber-500/10 border border-amber-500/15 rounded-xl p-4">
+      <div className="bg-accent/10 dark:bg-accent/10 border border-accent/20 rounded-xl p-4">
         <div className="flex items-center gap-2 mb-2">
-          <Clock className="w-4 h-4 text-amber-500" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-amber-600/70 dark:text-amber-400/70">Pendientes</span>
+          <Clock className="w-4 h-4 text-accent-dark dark:text-accent" />
+          <span className="text-[11px] font-bold text-accent-dark dark:text-accent">Pendientes</span>
         </div>
         <span className="text-2xl font-bold text-on-surface tabular-nums">{pendientes}</span>
       </div>
-      <div className="bg-green-500/8 dark:bg-green-500/10 border border-green-500/15 rounded-xl p-4">
+      <div className="bg-success/10 border border-success/20 rounded-xl p-4">
         <div className="flex items-center gap-2 mb-2">
-          <CheckCircle2 className="w-4 h-4 text-green-500" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-green-600/70 dark:text-green-400/70">Realizadas</span>
+          <CheckCircle2 className="w-4 h-4 text-success" />
+          <span className="text-[11px] font-bold text-success">Realizadas</span>
         </div>
         <span className="text-2xl font-bold text-on-surface tabular-nums">{realizadas}</span>
       </div>
-      <div className="bg-gray-500/8 dark:bg-gray-500/10 border border-gray-500/15 rounded-xl p-4">
+      <div className="bg-on-surface/5 border border-on-surface/10 rounded-xl p-4">
         <div className="flex items-center gap-2 mb-2">
-          <XCircle className="w-4 h-4 text-gray-400" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500/70">Canceladas</span>
+          <XCircle className="w-4 h-4 text-on-surface-variant" />
+          <span className="text-[11px] font-bold text-on-surface-variant">Canceladas</span>
         </div>
         <span className="text-2xl font-bold text-on-surface tabular-nums">{canceladas}</span>
       </div>

@@ -25,8 +25,8 @@ export function SmartSuggestions() {
   return (
     <>
       <div className="mb-6">
-        <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50 mb-3 flex items-center gap-1.5">
-          <AlertCircle className="w-3.5 h-3.5" />
+        <h3 className="text-sm font-bold text-on-surface-variant/70 mb-3 flex items-center gap-1.5">
+          <AlertCircle className="w-4 h-4 text-accent-dark dark:text-accent" />
           Sugerencias de Planificación
         </h3>
         
@@ -34,13 +34,13 @@ export function SmartSuggestions() {
           {suggestions.map((sug) => (
             <div 
               key={sug.jobId} 
-              className="snap-start shrink-0 w-[280px] bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl border border-orange-500/20 shadow-sm p-4 flex flex-col justify-between"
+              className="snap-start shrink-0 w-[280px] bg-surface/70 dark:bg-surface/40 backdrop-blur-xl rounded-xl border border-accent/20 shadow-sm p-4 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-start justify-between mb-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-orange-500/80 bg-orange-500/10 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <span className="text-[11px] font-bold text-accent-dark dark:text-accent bg-accent/10 dark:bg-accent/10 px-2 py-0.5 rounded-full flex items-center gap-1">
                     <Flame className="w-3 h-3" />
-                    Atención Requerida
+                    Atención requerida
                   </span>
                 </div>
                 <h4 className="text-sm font-bold text-on-surface line-clamp-1">{sug.jobTitle}</h4>
@@ -53,7 +53,7 @@ export function SmartSuggestions() {
               
               <button
                 onClick={() => setSelectedSuggestion(sug)}
-                className="mt-4 w-full h-9 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-orange-500 hover:text-white transition-colors transition-transform active:scale-95"
+                className="mt-4 w-full h-9 rounded-lg bg-accent/10 text-accent-dark dark:text-accent font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-accent hover:text-white transition-all active:scale-95"
               >
                 <Plus className="w-3.5 h-3.5" strokeWidth={3} />
                 Agendar Visita
