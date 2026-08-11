@@ -17,23 +17,20 @@ DECLARE
     m INT;
     c INT;
     
-    v_estado job_status;
+    v_target_estado INT;
     v_precio DECIMAL;
     v_cantidad DECIMAL;
     v_subtotal DECIMAL;
+    v_total_trabajo DECIMAL;
     
     v_nombres TEXT[] := ARRAY['Juan', 'María', 'Carlos', 'Ana', 'Luis', 'Elena', 'Pedro', 'Laura', 'Miguel', 'Sofía'];
     v_apellidos TEXT[] := ARRAY['Gómez', 'Rodríguez', 'López', 'Martínez', 'Pérez', 'García', 'Sánchez', 'Romero', 'Sosa', 'Torres'];
     v_tareas_desc TEXT[] := ARRAY['Pintura pared', 'Instalación eléctrica', 'Reparación de caño', 'Colocación de cerámicos', 'Armado de mueble', 'Limpieza profunda', 'Revisión de aire acondicionado', 'Cambio de cerradura', 'Impermeabilización', 'Mantenimiento general'];
     v_materiales_desc TEXT[] := ARRAY['Lata de pintura', 'Cable 2.5mm', 'Caño PVC', 'Bolsa de cemento', 'Tornillos', 'Pegamento', 'Gas refrigerante', 'Cerradura de seguridad', 'Membrana asfáltica', 'Kit de herramientas'];
 BEGIN
-    -- 1. Obtener o crear un usuario de prueba en auth.users
-    -- Intentamos usar el primer usuario existente, si no hay, fallará silenciosamente
     SELECT id INTO v_user_id FROM auth.users LIMIT 1;
     
     IF v_user_id IS NULL THEN
-        -- No podemos crear un usuario auth de forma simple con pgcrypto en un bloque DO sin saber la contraseña.
-        -- Si estás corriendo en local, deberías haberte registrado primero.
         RAISE NOTICE 'No se encontraron usuarios en auth.users. Registrate en la app primero.';
         RETURN;
     END IF;
@@ -60,15 +57,11 @@ BEGIN
         -- ==========================================
         FOR j IN 1..(1 + trunc(random() * 14)) LOOP
             v_trabajo_id := gen_random_uuid();
-            
-            -- Estado aleatorio
-            v_estado := CASE trunc(random() * 3)
-                WHEN 0 THEN 'borrador'::job_status
-                WHEN 1 THEN 'presupuestado'::job_status
-                ELSE 'pagado'::job_status
-            END;
+            v_target_estado := trunc(random() * 3); -- 0: borrador, 1: presupuestado, 2: pagado
+            v_total_trabajo := 0;
 
-            INSERT INTO public.trabajos (id, user_id, cliente_id, titulo, direccion, descripcion, estado, presupuesto, fecha_inicio, fecha_fin_estimada)
+            -- 1. Insertar siempre como borrador primero para que las tareas/materiales no generen transacciones sueltas aún
+            INSERT INTO public.trabajos (id, user_id, cliente_id, titulo, direccion, descripcion, estado, fecha_inicio, fecha_fin_estimada)
             VALUES (
                 v_trabajo_id,
                 v_user_id,
@@ -76,15 +69,12 @@ BEGIN
                 'Trabajo ' || j || ' - ' || v_tareas_desc[1 + (random() * 9)::int],
                 'Dirección Obra ' || trunc(random() * 10000),
                 'Descripción detallada del trabajo ' || j || ' para el cliente.',
-                v_estado,
-                0, -- Se actualizará luego por los triggers
+                'borrador',
                 CURRENT_DATE - (trunc(random() * 30) || ' days')::interval,
                 CURRENT_DATE + (trunc(random() * 30) || ' days')::interval
             );
 
-            -- ==========================================
-            -- GENERACIÓN DE TAREAS (1 a 8 por trabajo)
-            -- ==========================================
+            -- 2. TAREAS
             FOR k IN 1..(1 + trunc(random() * 7)) LOOP
                 v_tarea_id := gen_random_uuid();
                 v_precio := trunc(random() * 50000 + 5000);
@@ -99,15 +89,14 @@ BEGIN
                     v_precio,
                     v_cantidad,
                     v_precio * v_cantidad,
-                    (random() > 0.5), -- 50% chance completada
+                    (random() > 0.5),
                     CASE trunc(random() * 3) WHEN 0 THEN 'alta'::task_priority WHEN 1 THEN 'media'::task_priority ELSE 'baja'::task_priority END,
                     k
                 );
+                v_total_trabajo := v_total_trabajo + (v_precio * v_cantidad);
             END LOOP;
 
-            -- ==========================================
-            -- GENERACIÓN DE MATERIALES (0 a 5 por trabajo)
-            -- ==========================================
+            -- 3. MATERIALES
             FOR m IN 1..(trunc(random() * 6)) LOOP
                 v_material_id := gen_random_uuid();
                 v_precio := trunc(random() * 10000 + 1000);
@@ -123,26 +112,40 @@ BEGIN
                     v_cantidad,
                     v_precio,
                     v_subtotal,
-                    (random() > 0.5) -- 50% chance comprado
+                    (random() > 0.5)
                 );
+                v_total_trabajo := v_total_trabajo + v_subtotal;
             END LOOP;
 
-            -- ==========================================
-            -- GENERACIÓN DE COBROS (si no es borrador)
-            -- ==========================================
-            IF v_estado IN ('presupuestado', 'pagado') THEN
-                -- Agregar 1 a 3 cobros aleatorios
-                FOR c IN 1..(1 + trunc(random() * 2)) LOOP
-                    INSERT INTO public.cobros (user_id, trabajo_id, monto_cobrado, fecha_cobro, forma_pago, notas)
-                    VALUES (
-                        v_user_id,
-                        v_trabajo_id,
-                        trunc(random() * 20000 + 5000),
-                        CURRENT_DATE - (trunc(random() * 10) || ' days')::interval,
-                        CASE trunc(random() * 3) WHEN 0 THEN 'Efectivo' WHEN 1 THEN 'Transferencia' ELSE 'Mercado Pago' END,
-                        'Pago parcial ' || c
-                    );
-                END LOOP;
+            -- 4. Transicionar estado para disparar los triggers correctamente
+            IF v_target_estado >= 1 THEN
+                -- Pasar a presupuestado dispara emitir_transaccion_presupuesto generando los "cargo"
+                UPDATE public.trabajos SET estado = 'presupuestado' WHERE id = v_trabajo_id;
+            END IF;
+
+            -- 5. COBROS
+            IF v_target_estado = 1 THEN
+                -- Presupuestado pero con pago parcial
+                INSERT INTO public.cobros (user_id, trabajo_id, monto_cobrado, fecha_cobro, forma_pago, notas)
+                VALUES (
+                    v_user_id,
+                    v_trabajo_id,
+                    trunc(v_total_trabajo * 0.3), -- Cobra el 30%
+                    CURRENT_DATE - (trunc(random() * 10) || ' days')::interval,
+                    CASE trunc(random() * 3) WHEN 0 THEN 'Efectivo' WHEN 1 THEN 'Transferencia' ELSE 'Mercado Pago' END,
+                    'Adelanto'
+                );
+            ELSIF v_target_estado = 2 THEN
+                -- Pagado (Cobrar el 100% pasará automáticamente el estado a 'pagado' vía trigger)
+                INSERT INTO public.cobros (user_id, trabajo_id, monto_cobrado, fecha_cobro, forma_pago, notas)
+                VALUES (
+                    v_user_id,
+                    v_trabajo_id,
+                    v_total_trabajo,
+                    CURRENT_DATE - (trunc(random() * 10) || ' days')::interval,
+                    CASE trunc(random() * 3) WHEN 0 THEN 'Efectivo' WHEN 1 THEN 'Transferencia' ELSE 'Mercado Pago' END,
+                    'Pago total'
+                );
             END IF;
             
         END LOOP;

@@ -39,6 +39,21 @@ del backend (CRUD, consultas, joins, estados, flujos), DEBES:
 **NUNCA** inferir nombres de tablas, campos o relaciones de memoria.
 **SIEMPRE** consultar el archivo.
 
+## Regla: Migraciones de base de datos
+
+Todo cambio de esquema (tablas, columnas, tipos, funciones, triggers, RLS,
+storage buckets) DEBE pasar por `docs/MIGRACIONES.md`:
+
+1. Leer `docs/MIGRACIONES.md` antes de tocar la base de datos.
+2. Crear la migración en `supabase/migrations/YYYYMMDDHHMMSS_descripcion.sql`
+   (idempotente: `IF NOT EXISTS` / `CREATE OR REPLACE` / `ON CONFLICT`).
+3. Probar en local con `npx supabase db push --local` o `npx supabase db reset`.
+4. Deploy a producción con `npx supabase db push --linked` (nunca SQL editor
+   directo, y NUNCA pasar `.sql` por el pipe de PowerShell: corrompe el UTF-8).
+
+**NUNCA** editar `supabase/migrations_legacy/` ni `schema.sql` como fuente de
+verdad; la única fuente es `supabase/migrations/`.
+
 ## Regla: Frontend y Decisiones de Diseño
 
 **Condición de activación:** Cuando se trabaje en frontend — diseño, UI/UX, layouts, componentes o estilos.
