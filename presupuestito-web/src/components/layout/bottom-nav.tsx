@@ -61,7 +61,7 @@ export function BottomNav() {
         isVisible ? "translate-y-0 opacity-100" : "translate-y-24 opacity-0"
       }`}
     >
-      <nav aria-label="Navegación principal" className="flex justify-between items-center px-2 py-1.5 bg-surface/98 border border-outline-variant/20 rounded-full shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]">
+      <nav aria-label="Navegación principal" className="flex justify-between items-center px-2 py-1.5 bg-surface/80 backdrop-blur-xl border border-outline-variant/20 rounded-full shadow-[0_8px_30px_-8px_rgba(0,0,0,0.3)]">
         <NavItem
         icon={<LayoutDashboard className="w-5 h-5" strokeWidth={2} />}
         label="Dashboard"
