@@ -15,6 +15,7 @@ export const ClientSchema = z.object({
   email: z.string().email("Email inválido").optional().or(z.literal("")),
   direccion: z.string().min(1, "La dirección es obligatoria"),
   notas: z.string().optional(),
+  saldo_cuenta_corriente: z.number().default(0),
   created_at: z.string(),
 });
 

@@ -26,6 +26,7 @@ Base de todo el sistema. Datos de contacto del cliente.
 | `email` | string | sí | Email (opcional) |
 | `direccion` | string | no | Dirección principal |
 | `notas` | text | sí | Notas libres sobre el cliente |
+| `saldo_cuenta_corriente` | numeric(10,2) | no (default 0) | Snapshot = `SUM(trabajos.saldo_pendiente)` de sus trabajos no `borrador`. Mantenido por trigger, el frontend solo lo lee. |
 | `created_at` | timestamp | no | Fecha de creación |
 
 **Relaciones salientes:**
@@ -225,7 +226,7 @@ Materiales utilizados o presupuestados para un trabajo.
 
 ## Funciones y triggers
 
-Los totales de `trabajos` (`presupuesto`, `total_estimado`, `total_cobrado`, `saldo_pendiente`) y el auto-paso a `pagado` son mantenidos **únicamente** por triggers. El frontend los lee, nunca los escribe.
+Los totales de `trabajos` (`presupuesto`, `total_estimado`, `total_cobrado`, `saldo_pendiente`), el auto-paso a `pagado` y el snapshot de cuenta corriente de `clientes.saldo_cuenta_corriente` son mantenidos **únicamente** por triggers. El frontend los lee, nunca los escribe.
 
 | Trigger | Tabla | Momento / Evento | Función |
 |---------|-------|------------------|---------|
@@ -237,6 +238,7 @@ Los totales de `trabajos` (`presupuesto`, `total_estimado`, `total_cobrado`, `sa
 | `on_cobro_update_sync_abono` | `cobros` | AFTER UPDATE OF `monto_cobrado, fecha_cobro` | `sync_abono_cobro_update` |
 | `on_cobro_delete_revert` | `cobros` | AFTER DELETE | `revertir_abono_cobro_delete` |
 | `on_trabajo_estado_presupuestado` | `trabajos` | AFTER UPDATE OF `estado` | `emitir_transaccion_presupuesto` |
+| `on_trabajo_recalcular_cliente_saldo` | `trabajos` | AFTER INSERT OR DELETE OR UPDATE OF `saldo_pendiente, cliente_id` | `recalcular_cliente_saldo` |
 
 **Eliminados** (reemplazados por `recalcular_trabajo_totales`): `on_tarea_change_update_presupuesto` + `update_trabajo_presupuesto()`, `on_cobro_insert_check_pagado` + `check_trabajo_pagado()`.
 
@@ -246,6 +248,7 @@ Los totales de `trabajos` (`presupuesto`, `total_estimado`, `total_cobrado`, `sa
 - `sync_material_subtotal()` — BEFORE trigger: fuerza `NEW.subtotal = NEW.cantidad * NEW.precio_unitario`.
 - `sync_abono_cobro_update()` — al actualizar un cobro, ajusta el `abono` automático (`monto`, `fecha`, `concepto`) de `transacciones` con `referencia_cobro_id = NEW.id`, `tipo = abono`, `origen = automático`.
 - `revertir_abono_cobro_delete()` — al borrar un cobro, inserta un `cargo` de anulación `"Anulación de cobro: {titulo}"` (el abono original se conserva como rastro, saldo neto cero).
+- `recalcular_cliente_saldo()` — recalcula `clientes.saldo_cuenta_corriente = SUM(trabajos.saldo_pendiente)` de los trabajos del cliente con `estado <> 'borrador'`. Se dispara al insertar/borrar un trabajo o al cambiar su `saldo_pendiente` o `cliente_id` (si el trabajo cambia de cliente, recalcula también el cliente anterior).
 
 ---
 
@@ -295,6 +298,7 @@ VISITA   (N) ──── (N) TAREA                      →  a través de VISIT
 
 ### Lista de clientes
 - Todos los `clientes`
+- Saldo de cuenta corriente por cliente: `clientes.saldo_cuenta_corriente` (snapshot persistido por trigger, suma de `saldo_pendiente` de trabajos no `borrador`)
 - Cantidad de trabajos activos por cliente (JOIN con `trabajos`)
 - Total histórico facturado (futuro, sumatoria de facturas)
 

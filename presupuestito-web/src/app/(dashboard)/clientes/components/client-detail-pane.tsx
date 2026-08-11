@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 // No services used anymore
 import { Client, Job } from "@/types";
 import { useClientForm } from "./use-client-form";
-import { useCuentaCorriente } from "@/hooks/use-cuenta-corriente";
 import { createClient } from "@/utils/supabase/client";
 const supabase = createClient();
 
@@ -110,7 +109,7 @@ export function ClientDetailPane({
 
     return metrics;
   }, [clientJobs, data]);
-  const { saldo: deudaTotal } = useCuentaCorriente(client.id);
+  const deudaTotal = client.saldo_cuenta_corriente ?? 0;
 
   const handleSuccess = () => setIsEditing(false);
   const { form, onSubmit, isLoading: isFormLoading } = useClientForm(client, handleSuccess);
