@@ -39,7 +39,7 @@ export const clientsService = {
     return data as Client;
   },
 
-  create: async (clientData: Omit<Client, "id" | "created_at" | "user_id">): Promise<Client> => {
+  create: async (clientData: Omit<Client, "id" | "created_at" | "user_id" | "saldo_cuenta_corriente">): Promise<Client> => {
     const { supabase, user } = await requireAuth();
 
     const { data, error } = await supabase
