@@ -112,7 +112,7 @@ export function Modal({ isOpen, onClose, title, children, position = "auto", foo
         aria-modal="true"
         aria-labelledby="modal-title"
         onKeyDown={handleKeyDown}
-        className={"relative w-full max-h-[95dvh] glass-thick flex flex-col " + sheetClasses}
+        className={"relative w-full max-h-[95dvh] bg-surface flex flex-col " + sheetClasses}
       >
         {position !== "center" && (
           <div
@@ -138,7 +138,7 @@ export function Modal({ isOpen, onClose, title, children, position = "auto", foo
           {children}
         </div>
         {footer && (
-          <div className="shrink-0 border-t border-outline-variant/10 px-5 sm:px-6 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pb-4 bg-surface/60 backdrop-blur-sm">
+          <div className="shrink-0 border-t border-outline-variant/10 px-5 sm:px-6 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pb-4 bg-surface">
             {footer}
           </div>
         )}
