@@ -25,6 +25,7 @@ export function ClientList({ initialData }: { initialData?: { data: Client[], to
     setIsEditing,
     filtered,
     pag,
+    selected,
     handleDelete,
     handleToggleCreation,
     handleCreationSuccess,
