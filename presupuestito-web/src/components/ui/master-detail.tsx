@@ -49,6 +49,7 @@ export interface MasterDetailProps<T> {
 
 export function MasterDetail<T>({
   selectedId,
+  selectedItem,
   onSelectedChange,
   items,
   getItemId,
