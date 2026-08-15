@@ -3,7 +3,7 @@
 import { useState, useRef, useMemo, useEffect, useDeferredValue } from "react";
 import { Briefcase, Pencil, X, Check } from "lucide-react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { jobsService_delete, jobsService_getPaginated } from "@/actions/jobs.actions";
+import { jobsService_delete, jobsService_getPaginated, jobsService_getById } from "@/actions/jobs.actions";
 import { Job } from "@/types";
 import { useServerPagination } from "@/hooks/use-server-pagination";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
@@ -103,9 +103,16 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
     setPage(1);
   }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const selected = jobs.find((j) => j.id === selectedId) || null;
+  const { data: missingJobData, isLoading: isLoadingMissing } = useQuery({
+    queryKey: ["job", selectedId],
+    queryFn: () => jobsService_getById(selectedId!),
+    enabled: !!selectedId && !jobs.some(j => j.id === selectedId),
+  });
 
-  if (isLoading && jobs.length === 0) {
+  const selectedInPage = jobs.find((j) => j.id === selectedId) || null;
+  const selected = selectedInPage || missingJobData || null;
+
+  if ((isLoading && jobs.length === 0) || isLoadingMissing) {
     return <MasterDetailSkeleton />;
   }
 
@@ -115,6 +122,7 @@ export function JobList({ initialData }: { initialData?: { data: Job[], total: n
       <MasterDetail
         detailAnimationClass={isBackDirection ? "animate-slide-in-left" : "animate-page-in"}
         selectedId={selectedId}
+        selectedItem={selected}
         onSelectedChange={handleSelectedIdChange}
         hideMobileBackButton={!!searchParams.get("task") || !!searchParams.get("view")}
         items={jobs}

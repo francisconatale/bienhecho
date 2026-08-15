@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 
 export interface MasterDetailProps<T> {
   selectedId: string | null;
+  selectedItem?: T | null;
   onSelectedChange: (id: string | null) => void;
 
   items: T[];
@@ -77,14 +78,16 @@ export function MasterDetail<T>({
 
   const isCollapsed = false;
 
-  const selectedItem = selectedId
+  const resolvedSelectedItem = selectedItem !== undefined
+    ? selectedItem
+    : selectedId
     ? items.find((i) => getItemId(i) === selectedId) ?? null
     : null;
 
   const activeContent = showCreationForm && renderCreationForm
     ? renderCreationForm()
-    : selectedItem
-    ? renderDetail(selectedItem)
+    : resolvedSelectedItem
+    ? renderDetail(resolvedSelectedItem)
     : null;
 
   const lastActiveId = useRef<string | null>(selectedId);
@@ -110,7 +113,7 @@ export function MasterDetail<T>({
               e.stopPropagation();
               if (onDetailBack) {
                 onDetailBack();
-              } else if (selectedItem) {
+              } else if (resolvedSelectedItem) {
                 onSelectedChange(null);
               } else if (showCreationForm && onToggleCreation) {
                 onToggleCreation();
@@ -123,7 +126,7 @@ export function MasterDetail<T>({
           </button>
 
           <div className="flex items-center justify-end pointer-events-auto">
-            {selectedItem && detailRightAction ? detailRightAction(selectedItem) : null}
+            {resolvedSelectedItem && detailRightAction ? detailRightAction(resolvedSelectedItem) : null}
           </div>
         </div>
       )}

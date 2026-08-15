@@ -1,7 +1,7 @@
 import { useState, useEffect, useDeferredValue } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { clientsService_getPaginated, clientsService_delete } from "@/actions/clients.actions";
+import { clientsService_getPaginated, clientsService_delete, clientsService_getById } from "@/actions/clients.actions";
 import { useServerPagination } from "@/hooks/use-server-pagination";
 import { Client } from "@/types";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -87,7 +87,14 @@ export function useClients(initialData?: { data: Client[], total: number }) {
     goToPage(1);
   }, [deferredSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const selected = clients.find((c) => c.id === selectedId) || null;
+  const { data: missingClientData } = useQuery({
+    queryKey: ["client", selectedId],
+    queryFn: () => clientsService_getById(selectedId!),
+    enabled: !!selectedId && !clients.some(c => c.id === selectedId),
+  });
+
+  const selectedInPage = clients.find((c) => c.id === selectedId) || null;
+  const selected = selectedInPage || missingClientData || null;
 
   const [ConfirmDialog, confirm] = useConfirm();
 

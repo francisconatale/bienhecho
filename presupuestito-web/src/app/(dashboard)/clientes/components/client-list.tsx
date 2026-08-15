@@ -46,6 +46,7 @@ export function ClientList({ initialData }: { initialData?: { data: Client[], to
     <div className="flex flex-col flex-1 bg-transparent relative overflow-hidden">
       <MasterDetail<Client>
         selectedId={selectedId}
+        selectedItem={selected}
         onSelectedChange={handleClientChange}
         items={filtered as Client[]}
         getItemId={(c) => c.id}
