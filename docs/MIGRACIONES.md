@@ -22,7 +22,7 @@ Entornos:
 
 ## Comandos base
 
-Todos se corren desde `presupuestito-web/`.
+Todos se corren desde la raíz del proyecto.
 
 ```bash
 # Levantar/verificar el stack local

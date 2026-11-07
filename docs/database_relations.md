@@ -26,6 +26,7 @@ Base de todo el sistema. Datos de contacto del cliente.
 | `email` | string | sí | Email (opcional) |
 | `direccion` | string | no | Dirección principal |
 | `notas` | text | sí | Notas libres sobre el cliente |
+| `saldo_cuenta_corriente` | numeric(10,2) | no (default 0) | Snapshot = `SUM(trabajos.saldo_pendiente)` de sus trabajos no `borrador`. Mantenido por trigger, el frontend solo lo lee. |
 | `created_at` | timestamp | no | Fecha de creación |
 
 **Relaciones salientes:**
@@ -45,7 +46,10 @@ El proyecto grande. Cada trabajo pertenece a un cliente y tiene presupuesto prop
 | `titulo` | string | no | Nombre descriptivo del trabajo |
 | `direccion` | string | no | Dirección donde se realiza (puede diferir del cliente) |
 | `descripcion` | text | sí | Notas generales del trabajo |
-| `presupuesto` | decimal | no | Suma automática de precios de tareas (no influye en cobro final) |
+| `presupuesto` | decimal | no | Suma automática de precios de tareas (mantenida por triggers) |
+| `total_estimado` | numeric(10,2) | no (default 0) | Suma de precios de tareas + subtotales de materiales. Fuente de verdad del total mostrado. |
+| `total_cobrado` | numeric(10,2) | no (default 0) | Suma de `cobros.monto_cobrado` del trabajo. |
+| `saldo_pendiente` | numeric(10,2) | no (default 0) | `total_estimado - total_cobrado`. Admite negativos (caso "A favor"). |
 | `estado` | string | no | Estado actual del trabajo |
 | `fecha_inicio` | date | sí | Fecha de inicio real o estimada |
 | `fecha_fin_estimada` | date | sí | Fecha estimada de finalización |
@@ -74,7 +78,9 @@ El proyecto grande. Cada trabajo pertenece a un cliente y tiene presupuesto prop
 | `user_id` | uuid FK | no | Usuario propietario (`→ auth.users.id`) |
 | `trabajo_id` | uuid FK | no | Trabajo al que pertenece (`→ trabajos.id`) |
 | `descripcion` | string | no | Qué es la tarea (ej: "Instalación de foco") |
+| `cantidad` | decimal | sí | Cantidad de unidades (default `1`) |
 | `precio` | decimal | sí | Precio unitario. Si es null, NO se factura |
+| `precio_unitario` | decimal | sí | Precio unitario (duplicado para compatibilidad del servicio) |
 | `completada` | boolean | no | Si la tarea ya fue realizada |
 | `prioridad` | string | sí | Nivel de urgencia (`alta`, `media`, `baja`) para agrupar |
 | `fecha_vencimiento`| date | sí | Fecha límite para realizar la tarea (opcional) |
@@ -212,9 +218,59 @@ Materiales utilizados o presupuestados para un trabajo.
 | `nombre_material` | string | no | Nombre del material |
 | `cantidad` | decimal | no | Cantidad utilizada |
 | `precio_unitario` | decimal | no | Precio por unidad |
-| `subtotal` | decimal | no | cantidad × precio_unitario |
+| `subtotal` | decimal | no | cantidad × precio_unitario (forzado por trigger, la BD es autoridad) |
 | `comprado` | boolean | no | Indica si el material ya fue adquirido (default: false) |
 | `created_at` | timestamp | no | Fecha de creación |
+
+---
+
+## Funciones y triggers
+
+Los totales de `trabajos` (`presupuesto`, `total_estimado`, `total_cobrado`, `saldo_pendiente`), el auto-paso a `pagado` y el snapshot de cuenta corriente de `clientes.saldo_cuenta_corriente` son mantenidos **únicamente** por triggers. El frontend los lee, nunca los escribe.
+
+| Trigger | Tabla | Momento / Evento | Función |
+|---------|-------|------------------|---------|
+| `on_tarea_change_recalcular` | `tareas` | AFTER INSERT OR DELETE OR UPDATE OF `precio, cantidad, precio_unitario` | `recalcular_trabajo_totales` |
+| `on_material_subtotal_sync` | `materiales` | BEFORE INSERT OR UPDATE OF `cantidad, precio_unitario` | `sync_material_subtotal` |
+| `on_material_change_recalcular` | `materiales` | AFTER INSERT OR DELETE OR UPDATE OF `cantidad, precio_unitario, subtotal` | `recalcular_trabajo_totales` |
+| `on_cobro_change_recalcular` | `cobros` | AFTER INSERT OR DELETE OR UPDATE OF `monto_cobrado` | `recalcular_trabajo_totales` |
+| `on_cobro_insert` | `cobros` | AFTER INSERT | `emitir_transaccion_cobro` |
+| `on_cobro_update_sync_abono` | `cobros` | AFTER UPDATE OF `monto_cobrado, fecha_cobro` | `sync_abono_cobro_update` |
+| `on_cobro_delete_revert` | `cobros` | AFTER DELETE | `revertir_abono_cobro_delete` |
+| `on_trabajo_estado_presupuestado` | `trabajos` | AFTER UPDATE OF `estado` | `emitir_transaccion_presupuesto` |
+| `on_trabajo_recalcular_cliente_saldo` | `trabajos` | AFTER INSERT OR DELETE OR UPDATE OF `saldo_pendiente, cliente_id, estado` | `recalcular_cliente_saldo` |
+
+**Eliminados** (reemplazados por `recalcular_trabajo_totales`): `on_tarea_change_update_presupuesto` + `update_trabajo_presupuesto()`, `on_cobro_insert_check_pagado` + `check_trabajo_pagado()`.
+
+**Funciones:**
+
+- `recalcular_trabajo_totales()` — RECALCULA `presupuesto = SUM(tareas.precio)`, `total_estimado = presupuesto + SUM(materiales.subtotal)`, `total_cobrado = SUM(cobros.monto_cobrado)`, `saldo_pendiente = total_estimado - total_cobrado`; si `estado = presupuestado` y `saldo_pendiente <= 0` pasa a `pagado`.
+- `sync_material_subtotal()` — BEFORE trigger: fuerza `NEW.subtotal = NEW.cantidad * NEW.precio_unitario`.
+- `sync_abono_cobro_update()` — al actualizar un cobro, ajusta el `abono` automático (`monto`, `fecha`, `concepto`) de `transacciones` con `referencia_cobro_id = NEW.id`, `tipo = abono`, `origen = automático`.
+- `revertir_abono_cobro_delete()` — al borrar un cobro, inserta un `cargo` de anulación `"Anulación de cobro: {titulo}"` (el abono original se conserva como rastro, saldo neto cero).
+- `recalcular_cliente_saldo()` — recalcula `clientes.saldo_cuenta_corriente = SUM(trabajos.saldo_pendiente)` de los trabajos del cliente con `estado <> 'borrador'`. Se dispara al insertar/borrar un trabajo, al cambiar su `saldo_pendiente`, su `estado` (ej: `borrador` → `presupuestado`) o su `cliente_id` (si el trabajo cambia de cliente, recalcula también el cliente anterior).
+
+---
+
+### `get_smart_suggestions()` (RPC)
+
+Función SQL (`security invoker`, RLS activo) que devuelve sugerencias de agenda:
+trabajos con tareas críticas (sin completar, prioridad `alta`/`media`) que **no** tienen
+una visita futura (hoy o después, y no `cancelada`).
+
+**Parámetros:** ninguno (filtra por `auth.uid()` vía RLS).
+
+**Retorna:**
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `job_id` | uuid | Trabajo sugerido |
+| `job_title` | text | Título del trabajo |
+| `client_name` | text | Nombre del cliente (`Cliente Desconocido` si falta) |
+| `critical_tasks_count` | bigint | Cantidad de tareas críticas |
+| `high_priority_count` | bigint | Cantidad de tareas con prioridad `alta` |
+| `critical_tasks` | jsonb | Tareas críticas ordenadas (alta primero, luego por `orden`) |
+
+**Orden:** por `high_priority_count` DESC, luego `critical_tasks_count` DESC.
 
 ---
 
@@ -242,6 +298,7 @@ VISITA   (N) ──── (N) TAREA                      →  a través de VISIT
 
 ### Lista de clientes
 - Todos los `clientes`
+- Saldo de cuenta corriente por cliente: `clientes.saldo_cuenta_corriente` (snapshot persistido por trigger, suma de `saldo_pendiente` de trabajos no `borrador`)
 - Cantidad de trabajos activos por cliente (JOIN con `trabajos`)
 - Total histórico facturado (futuro, sumatoria de facturas)
 
@@ -253,9 +310,9 @@ VISITA   (N) ──── (N) TAREA                      →  a través de VISIT
 - **Cobros**: listado de `cobros` del trabajo con saldo pendiente
 - **Materiales**: listado de `materiales` del trabajo, con costo total
 - **Notas**: campo `descripcion` del trabajo (editable inline)
-- **Total estimado**: suma de `tareas.precio` where precio IS NOT NULL
-- **Total materiales**: suma de `materiales.subtotal`
-- **Saldo pendiente**: `SUM(tareas.precio WHERE precio IS NOT NULL) + SUM(materiales.subtotal) - SUM(cobros.monto_cobrado)`
+- **Total estimado**: `trabajos.total_estimado` (persistido: suma de `tareas.precio` + `materiales.subtotal`)
+- **Total materiales**: suma de `materiales.subtotal` (en vivo para display)
+- **Saldo pendiente**: `trabajos.saldo_pendiente` (persistido: `total_estimado - total_cobrado`)
 
 ### Agenda / calendario
 - `visitas` agrupadas por semana
@@ -270,7 +327,7 @@ VISITA   (N) ──── (N) TAREA                      →  a través de VISIT
 
 ### Cuentas a cobrar (por trabajo)
 - **Cobros registrados**: `cobros` del trabajo, con fecha y forma de pago
-- **Saldo pendiente**: `SUM(tareas.precio WHERE precio IS NOT NULL) + SUM(materiales.subtotal) - SUM(cobros.monto_cobrado)`
+- **Saldo pendiente**: `trabajos.saldo_pendiente` (persistido por triggers)
 
 ### Materiales (por trabajo)
 - Todos los `materiales` del trabajo
@@ -338,5 +395,84 @@ presupuestado ──(cobro registrado / marcar pagado)──▶ pagado
 | Tabla `visita_tareas` | No | Sí |
 | Cobros | Sí | Sí |
 | Materiales | Opcional | Sí |
+
+---
+
+## Tablas del chat de tareas (asistente IA)
+
+Backend de la arquitectura de interpretación de tareas por chat (spec `001-voice-task-arch`).
+El backend (Server Action `design-lab/gemini/actions.ts`) orquesta el flujo y sirve **una**
+tarea de clarificación a la vez. RLS multi-tenancy por `conversations.user_id`.
+
+### `conversations`
+
+| Campo | Tipo | Nullable | Descripción |
+|-------|------|----------|-------------|
+| `id` | uuid PK | no | Identificador único |
+| `created_at` | timestamptz | no | Fecha de creación |
+| `status` | text | no | Estado de la conversación |
+| `user_id` | uuid FK | no | Usuario propietario / persona (`→ auth.users.id`) |
+| `cliente_id` | uuid FK | sí | Cliente asociado a la conversación (`→ clientes.id`, ON DELETE SET NULL) |
+| `trabajo_id` | uuid FK | sí | Trabajo vinculado; las tareas de la conversación pertenecen a este trabajo (`→ trabajos.id`, ON DELETE SET NULL) |
+
+**Enumerado `status`:**
+- `IN_PROGRESS` — Conversación activa
+- `COMPLETED` — Conversación finalizada
+
+**Relaciones salientes:**
+- Una conversación tiene N tareas (`tasks_snapshot.conversation_id → conversations.id`)
+- Una conversación tiene N pasos pendientes (`pending_steps.conversation_id → conversations.id`)
+- Una conversación se vincula a UN trabajo (`conversations.trabajo_id → trabajos.id`)
+
+### `tasks_snapshot` (tareas detectadas por el LLM)
+
+| Campo | Tipo | Nullable | Descripción |
+|-------|------|----------|-------------|
+| `id` | uuid PK | no | Identificador único |
+| `conversation_id` | uuid FK | no | Conversación a la que pertenece (`→ conversations.id`, ON DELETE CASCADE) |
+| `description` | text | no | Descripción del trabajo detectado |
+| `quantity` | numeric | sí | Cantidad (null si falta aclarar) |
+| `precio` | numeric | sí | Precio unitario (null si falta aclarar) |
+| `status` | text | no | Estado de la tarea |
+| `created_at` | timestamptz | no | Fecha de creación |
+
+**Enumerado `status`:**
+- `PENDING` — Falta completar algún dato (cantidad o precio)
+- `COMPLETED` — Cantidad y precio definidos
+
+### `pending_steps` (cola de aclaraciones)
+
+| Campo | Tipo | Nullable | Descripción |
+|-------|------|----------|-------------|
+| `id` | uuid PK | no | Identificador único |
+| `conversation_id` | uuid FK | no | Conversación (`→ conversations.id`, ON DELETE CASCADE) |
+| `task_id` | uuid FK | no | Tarea a aclarar (`→ tasks_snapshot.id`, ON DELETE CASCADE) |
+| `step_type` | text | no | Qué se está aclarando |
+| `status` | text | no | Estado del paso |
+| `attempts` | int | no | Contador de reintentos (límite: 3) |
+| `created_at` | timestamptz | no | Fecha de creación |
+
+**Enumerado `step_type`:**
+- `CLARIFY_DATOS` — Faltan datos de la tarea (cantidad y/o precio). Se piden juntos si faltan ambos; el prompt deriva qué falta de la tarea (no hay cases por campo)
+- `CLARIFY_CANTIDAD_ADICIONAL` — El usuario quiere SUMAR unidades a una tarea ya registrada pero no dijo cuántas; se pregunta cuántas agregar
+
+**Enumerado `status`:**
+- `PENDING` — Esperando la respuesta del usuario
+- `RESOLVED` — Dato aclarado correctamente
+- `FAILED` — Superó el límite de 3 intentos; requiere intervención manual
+
+**Reglas de negocio:**
+- Solo un `pending_steps` en estado `PENDING` se sirve a la vez por conversación
+- Una tarea está incompleta si `quantity` **o** `precio` es null. Si faltan ambas se piden juntas en una sola pregunta; si el usuario solo aporta una, el próximo turno pregunta por la que sigue faltando
+- Al llegar a 3 `attempts`, el paso pasa a `FAILED` y no se vuelve a preguntar
+- Al completarse una tarea incompleta y no existir un paso activo, se encola la siguiente aclaración
+- El matching de tareas existentes lo decide la IA usando el contexto de la conversación (descripción exacta). Para un aumento de cantidad, si el usuario dijo cuántas, el backend SUMA y resuelve en el mismo turno (`add: true` + `quantity`); si no lo dijo, encola `CLARIFY_CANTIDAD_ADICIONAL`
+
+**Vínculo con trabajos (carga al sistema):**
+- Una conversación se vincula a UN trabajo (`conversations.trabajo_id`) y un cliente (`conversations.cliente_id`)
+- Al cargar, se crea el `trabajo` si no existe, se setea `conversations.trabajo_id`, y las tareas del chat se copian como `tareas` de ese trabajo (sin duplicar: se compara por descripción normalizada contra las tareas existentes del trabajo)
+- El `quantity` y `precio` del chat se copian a `tareas.cantidad` y `tareas.precio` / `precio_unitario`; si `precio` es null la tarea es descriptiva y NO se factura
+- Las tareas nuevas que aparezcan en turnos posteriores se anexan al mismo trabajo vinculado
+
 
 **La app no fuerza ninguno de los dos flujos.** Las visitas y materiales son opcionales.
